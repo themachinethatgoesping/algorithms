@@ -9,7 +9,7 @@ project(
   'cpp',
   license: 'MPL-2.0',
 
-  version: '0.1.0',
+  version: '0.1.1',
   default_options: ['warning_level=2', 'buildtype=release', 'cpp_std=c++20'],
   meson_version: '>=1.1' #first version to support c++20 on macos
 )
@@ -36,9 +36,13 @@ boost_dep = dependency('boost', static: get_option('dynamic_boost').disabled())
 # themachinethatgoesping
 # tools
 tools_dep = dependency('themachinethatgoesping_tools', required: false)
+navigation_dep = dependency('themachinethatgoesping_navigation', required: false)
 
 if not tools_dep.found()
     tools_dep = subproject('tools', default_options: ['cpp_std=' + get_option('cpp_std')]).get_variable('tools_dep')
+endif
+if not navigation_dep.found()
+    navigation_dep = subproject('navigation', default_options: ['cpp_std=' + get_option('cpp_std')]).get_variable('tools_dep')
 endif
 
 

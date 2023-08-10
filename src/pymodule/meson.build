@@ -7,6 +7,7 @@ module_name = 'algorithms'
         
 # -- sources
 sources = [
+    'geoprocessing/datastructures/c_samplelocationlocal.cpp',
     'module.cpp',
 ]
 

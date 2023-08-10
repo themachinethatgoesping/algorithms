@@ -11,6 +11,7 @@ sources = [
 ]
 
 headers = [
+  'geoprocessing/datastructures/samplelocationlocal.hpp',
   'helloping.hpp',
 ]
 
@@ -21,6 +22,7 @@ if build_machine.system() != 'linux'
                         dependencies : [
                           boost_dep, 
                           omp_dep,
+                          navigation_dep,
                           tools_dep
                           ],
                         override_options: [
@@ -34,6 +36,7 @@ else
                         dependencies : [
                           boost_dep, 
                           omp_dep,
+                          navigation_dep,
                           tools_dep
                           ],
                         override_options: [

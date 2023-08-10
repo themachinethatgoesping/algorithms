@@ -5,16 +5,23 @@
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 
-// declare modules
-//void init_m_navtools(pybind11::module& m); // m_navtools.cpp
+#include "geoprocessing/module.hpp"
 
-PYBIND11_MODULE(MODULE_NAME, m)
-{
-    pybind11::add_ostream_redirect(m, "ostream_redirect");
+namespace themachinethatgoesping {
+namespace algorithms {
+namespace pymodule {
 
-    m.doc() = "Python module process ping data, e.g. apply absorption, spreading loss, compute "
-              "range/depth, raytrace ...";
-    m.attr("__version__") = MODULE_VERSION;
+PYBIND11_MODULE(MODULE_NAME, m) {
+  pybind11::add_ostream_redirect(m, "ostream_redirect");
 
-    // init_m_navtools(m);
+  m.doc() = "Python module process ping data, e.g. apply absorption, spreading "
+            "loss, compute "
+            "range/depth, raytrace ...";
+  m.attr("__version__") = MODULE_VERSION;
+
+  py_geoprocessing::init_m_geoprocessing(m);
 }
+
+} // namespace pymodule
+} // namespace algorithms
+} // namespace themachinethatgoesping
