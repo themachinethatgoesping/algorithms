@@ -12,8 +12,6 @@
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 
-// #include "samplelocationutm.hpp"
-
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace geoprocessing {

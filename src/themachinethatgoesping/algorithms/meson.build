@@ -12,6 +12,7 @@ sources = [
 
 headers = [
   'geoprocessing/datastructures/samplelocationlocal.hpp',
+  'geoprocessing/datastructures/samplelocationslocal.hpp',
   'helloping.hpp',
 ]
 

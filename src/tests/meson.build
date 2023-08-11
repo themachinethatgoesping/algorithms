@@ -8,6 +8,7 @@ testcomponent = 'algorithms'
 
 sources = [
     'geoprocessing/datastructures/samplelocationlocal.test.cpp',
+    'geoprocessing/datastructures/samplelocationslocal.test.cpp',
     'tutorial.test.cpp'
 ]
 

@@ -1,4 +1,4 @@
-//sourcehash: 3f450217c6bf7ce334c0637927eb4e1c4791893abec89de547678769657d8b98
+//sourcehash: 11bb9ca1bed32754cf134bf3883aaa9c01709a884970df014b541b917933695a
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,17 +38,17 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal =
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal =
 R"doc(A structure to store a georeferenced sample location. It is used as
 output for the raytracing functions. This object stores local x
 (forward coordinate), y (starboard coordinate) depth and true range.
 These coordinates can be converted to UTM or Lat/Lon if a reference
 position (for coordinate 0) is known.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_SamplelocationLocal = R"doc(Construct a new sample location object (all values set to 0))doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_SampleLocationsLocal = R"doc(Construct a new sample location object (all values set to 0))doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_SamplelocationLocal_2 =
-R"doc(Construct a new SamplelocationLocal object
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_SampleLocationsLocal_2 =
+R"doc(Construct a new SampleLocationsLocal object
 
 Parameter ``x``:
     in m, positive forward
@@ -62,23 +62,21 @@ Parameter ``z``:
 Parameter ``true_range``:
     in m, accumulated ray path length)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_from_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_from_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_operator_eq = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_operator_eq = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_operator_ne = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_printer = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_printer = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_to_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_to_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_true_range = R"doc(< in m, accumulated ray path length)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_true_range = R"doc(< in m, accumulated ray path length)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_x = R"doc(< in m, positive forward)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_x = R"doc(< in m, positive forward)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_y = R"doc(< in m, positive starboard)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_y = R"doc(< in m, positive starboard)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SamplelocationLocal_z = R"doc(< in m, positive downwards)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_z = R"doc(< in m, positive downwards)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
