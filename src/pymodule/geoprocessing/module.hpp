@@ -6,6 +6,7 @@
 #include <pybind11/pybind11.h>
 
 #include "datastructures/module.hpp"
+#include "raytracers/module.hpp"
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -20,6 +21,7 @@ void init_m_geoprocessing(pybind11::module& m)
                       "georefencing) echosounder samples";
 
     py_datastructures::init_m_datastructures(submodule);
+    py_raytracers::init_m_raytracers(submodule);
 }
 
 } // namespace py_geoprocessing

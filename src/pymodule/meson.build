@@ -9,6 +9,8 @@ module_name = 'algorithms'
 sources = [
     'geoprocessing/datastructures/c_samplelocationlocal.cpp',
     'geoprocessing/datastructures/c_samplelocationslocal.cpp',
+    'geoprocessing/raytracers/i_raytracer.cpp',
+    'geoprocessing/raytracers/c_rtconstantsvp.cpp',
     'module.cpp',
 ]
 

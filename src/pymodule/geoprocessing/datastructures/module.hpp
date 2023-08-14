@@ -19,7 +19,7 @@ void init_m_datastructures(pybind11::module& m)
     pybind11::module submodule = m.def_submodule("datastructures");
 
     submodule.doc() =
-        "Submodule that holds datastructures that hold the raytracers/georefrncing results";
+        "Submodule that holds datastructures that hold the raytracers/georeferncing results";
 
     init_c_samplelocationlocal(submodule);
     init_c_samplelocationslocal(submodule);

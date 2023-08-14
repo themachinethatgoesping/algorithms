@@ -41,13 +41,6 @@ class I_Raytracer
     }
     virtual ~I_Raytracer() = default;
 
-    void set_sensor_location(navigation::datastructures::GeoLocation sensor_location)
-    {
-        _sensor_location = std::move(sensor_location);
-
-        _sensor_orientation_local = tools::rotationfunctions::quaternion_from_ypr(
-            0.0f, _sensor_location.pitch, _sensor_location.roll);
-    }
 
     // ----- operators -----
     bool operator==(const I_Raytracer& other) const = default;
@@ -61,6 +54,15 @@ class I_Raytracer
         float                                          two_way_travel_time) const
     {
         not_implemented("trace(SinglePoint)", _name);
+    }
+
+    // ----- setters -----
+    void set_sensor_location(navigation::datastructures::GeoLocation sensor_location)
+    {
+        _sensor_location = std::move(sensor_location);
+
+        _sensor_orientation_local = tools::rotationfunctions::quaternion_from_ypr(
+            0.0f, _sensor_location.pitch, _sensor_location.roll);
     }
 
     // ----- accessors -----

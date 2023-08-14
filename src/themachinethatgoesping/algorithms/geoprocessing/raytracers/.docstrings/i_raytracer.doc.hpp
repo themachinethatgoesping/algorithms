@@ -1,4 +1,4 @@
-//sourcehash: 1a9e46dbec5a68a5f99752521336e1b8865e51d9134fd801fbb23d51c45b549d
+//sourcehash: 8dd56eb93b21e45ddd00d5459b33347046220495f0ed21362f6e5dd8d58e42e5
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -46,11 +46,19 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_name = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_location = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_orientation_local_q = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_orientation_local_ypr = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_name = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_not_implemented = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_not_implemented_not_implemented = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_operator_eq = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_printer = R"doc()doc";
 

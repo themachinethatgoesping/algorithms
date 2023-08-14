@@ -1,6 +1,0 @@
-Processing "../themachinethatgoesping/algorithms/geoprocessing/raytracers/i_raytracer.hpp" ..
-Waiting for jobs to finish ..
-../themachinethatgoesping/algorithms/geoprocessing/raytracers/../datastructures.hpp:1:10: fatal error: 'datastructures/samplecolactionlocal.hpp' file not found
-Processing "../themachinethatgoesping/algorithms/geoprocessing/raytracers/rtconstantsvp.hpp" ..
-Waiting for jobs to finish ..
-../themachinethatgoesping/algorithms/geoprocessing/raytracers/rtconstantsvp.hpp:8:10: fatal error: '.docstrings/rtconstantsvp.doc.hpp' file not found

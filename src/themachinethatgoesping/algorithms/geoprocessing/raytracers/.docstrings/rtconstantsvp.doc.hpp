@@ -1,4 +1,4 @@
-//sourcehash: f0f9ef1db46d38e55752b14c3fc480545c5925ebf449b28f4decf2ce6579d2ef
+//sourcehash: 2f843b56ef573a332f60ce7cfb44d8b00b2010d0ae83b3204e8c34fdcfdbd31f
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,40 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_RTConstantSVP =
+R"doc(Construct a new RTConstantSVP object
+
+Parameter ``sensor_location``:
+    Orientation and depth of the echo sounder
+
+Parameter ``sound_velocity``:
+    Sound velocity in m/s)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_RTConstantSVP_2 =
+R"doc(Construct a new RTConstantSVP object from a base raytracer object
+leaving sound velocity uninitialized (for reading from stream)
+
+Parameter ``raytracer``:
+    base raytracer object)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_from_stream = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_get_sound_velocity = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_operator_eq = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_printer = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_set_sound_velocity = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_to_stream = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

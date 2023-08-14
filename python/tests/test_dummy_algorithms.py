@@ -10,12 +10,18 @@ from pytest import approx
 
 # import numpy as np
 
-#import themachinethatgoesping.algorithms as pproc
 
 
 class TestAlgorithmsDummy:
     """class for grouping (test sections)"""
 
-    def test_algorithms_dummy_should_do_something(self):
+    def test_all_algorithm_modules_should_be_importable(self):
 
-        assert 1 == 1
+        import themachinethatgoesping.algorithms as alg
+        
+        import themachinethatgoesping.algorithms.geoprocessing as gproc
+        import themachinethatgoesping.algorithms.geoprocessing.datastructures as structures
+        import themachinethatgoesping.algorithms.geoprocessing.raytracers as raytracers
+        
+        
+        

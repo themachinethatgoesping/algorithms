@@ -33,8 +33,10 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::datastructure
 template<size_t Dim>
 void init_c_samplelocationslocal_dim(py::module& m)
 {
+    const std::string py_class_name = "SampleLocationsLocal_" + std::to_string(Dim);
+
     py::class_<SampleLocationsLocal<Dim>>(m,
-                                          "SampleLocationsLocal_",
+                                          py_class_name.c_str(),
                                           DOC(themachinethatgoesping,
                                               algorithms,
                                               geoprocessing,
