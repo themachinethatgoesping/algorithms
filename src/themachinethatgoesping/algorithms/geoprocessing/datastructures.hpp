@@ -1,2 +1,2 @@
-#include "datastructures/samplecolactionlocal.hpp"
-#include "datastructures/samplecolactionslocal.hpp"
+#include "datastructures/samplelocationlocal.hpp"
+#include "datastructures/samplelocationslocal.hpp"

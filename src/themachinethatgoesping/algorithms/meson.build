@@ -54,6 +54,7 @@ algorithms_dep = declare_dependency(
   dependencies : [
     boost_dep,
     omp_dep,
+    navigation_dep,
     tools_dep
   ],
   link_with : [algorithms_lib],

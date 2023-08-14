@@ -11,15 +11,16 @@ namespace themachinethatgoesping {
 namespace algorithms {
 namespace pymodule {
 
-PYBIND11_MODULE(MODULE_NAME, m) {
-  pybind11::add_ostream_redirect(m, "ostream_redirect");
+PYBIND11_MODULE(MODULE_NAME, m)
+{
+    pybind11::add_ostream_redirect(m, "ostream_redirect");
 
-  m.doc() = "Python module process ping data, e.g. apply absorption, spreading "
-            "loss, compute "
-            "range/depth, raytrace ...";
-  m.attr("__version__") = MODULE_VERSION;
+    m.doc()               = "Python module process ping data, e.g. apply absorption, spreading "
+                            "loss, compute "
+                            "range/depth, raytrace ...";
+    m.attr("__version__") = MODULE_VERSION;
 
-  py_geoprocessing::init_m_geoprocessing(m);
+    py_geoprocessing::init_m_geoprocessing(m);
 }
 
 } // namespace pymodule

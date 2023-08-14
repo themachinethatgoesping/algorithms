@@ -40,7 +40,7 @@
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal =
 R"doc(A structure to store a georeferenced sample location. It is used as
-output for the raytracing functions. This object stores local x
+output for the raytracers functions. This object stores local x
 (forward coordinate), y (starboard coordinate) depth and true range.
 These coordinates can be converted to UTM or Lat/Lon if a reference
 position (for coordinate 0) is known.)doc";
