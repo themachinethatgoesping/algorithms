@@ -27,8 +27,8 @@ class I_Raytracer
 
     navigation::datastructures::GeoLocation _sensor_location; ///< Location/Orientation of the senor
 
-    Eigen::Quaternion<float> _sensor_orientation_local; ///< Quaternion describing the orientation
-                                                        ///< of the sensor
+    Eigen::Quaternion<float> _sensor_orientation_quat; ///< Quaternion describing the orientation
+                                                       ///< of the sensor
 
   public:
     std::string get_name() const { return _name; }
@@ -41,17 +41,15 @@ class I_Raytracer
     }
     virtual ~I_Raytracer() = default;
 
-
     // ----- operators -----
     bool operator==(const I_Raytracer& other) const = default;
 
     // ----- tracing -----
 
     virtual datastructures::SamplelocationLocal trace(
-        const navigation::datastructures::GeoLocation& sensor_location,
-        float                                          alongtrack_angle,
-        float                                          crosstrack_angle,
-        float                                          two_way_travel_time) const
+        [[maybe_unused]] float alongtrack_angle,
+        [[maybe_unused]] float crosstrack_angle,
+        [[maybe_unused]] float two_way_travel_time) const
     {
         not_implemented("trace(SinglePoint)", _name);
     }
@@ -61,17 +59,17 @@ class I_Raytracer
     {
         _sensor_location = std::move(sensor_location);
 
-        _sensor_orientation_local = tools::rotationfunctions::quaternion_from_ypr(
+        _sensor_orientation_quat = tools::rotationfunctions::quaternion_from_ypr(
             0.0f, _sensor_location.pitch, _sensor_location.roll);
     }
 
     // ----- accessors -----
-    navigation::datastructures::GeoLocation get_sensor_location() const { return _sensor_location; }
-    auto                                    get_sensor_orientation_local_ypr() const
+    const auto& get_sensor_location() const { return _sensor_location; }
+    auto        get_sensor_orientation_quat_ypr() const
     {
-        return tools::rotationfunctions::ypr_from_quaternion(_sensor_orientation_local);
+        return tools::rotationfunctions::ypr_from_quaternion(_sensor_orientation_quat);
     }
-    auto get_sensor_orientation_local_q() const { _sensor_orientation_local; }
+    const auto& get_sensor_orientation_quat() const { return _sensor_orientation_quat; }
 
     // ----- file I/O -----
     static I_Raytracer from_stream(std::istream& is)
@@ -100,7 +98,7 @@ class I_Raytracer
         printer.append(_sensor_location.__printer__(float_precision));
 
         printer.register_section("Sensor location converted", '*');
-        printer.register_container("YPR", get_sensor_orientation_local_ypr(),"°");
+        printer.register_container("YPR", get_sensor_orientation_quat_ypr(), "°");
 
         return printer;
     }

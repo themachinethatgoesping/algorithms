@@ -47,7 +47,7 @@ TEST_CASE("I_Raytracer should support common functions", TESTTAG)
     // test get/set
     REQUIRE(raytracer.get_sensor_location() == location);
 
-    auto ypr = raytracer.get_sensor_orientation_local_ypr();
+    auto ypr = raytracer.get_sensor_orientation_quat_ypr();
 
     //REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw, 0.0001));
     REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(0.f, 0.0001));

@@ -25,7 +25,7 @@ namespace raytracers {
 class RTConstantSVP : public I_Raytracer
 {
     // navigation::datastructures::GeoLocation_sensor_location;
-    // Eigen::Quaternion<float> _sensor_orientation_local;
+    // Eigen::Quaternion<float> _sensor_orientation_quat;
 
     float _sound_velocity;
 
@@ -50,13 +50,33 @@ class RTConstantSVP : public I_Raytracer
     void  set_sound_velocity(float sound_velocity) { _sound_velocity = sound_velocity; }
     float get_sound_velocity() const { return _sound_velocity; }
 
-    datastructures::SamplelocationLocal trace(
-        const navigation::datastructures::GeoLocation& sensor_location,
-        float                                          alongtrack_angle,
-        float                                          crosstrack_angle,
-        float                                          two_way_travel_time) const override
+    datastructures::SamplelocationLocal trace(float alongtrack_angle,
+                                              float crosstrack_angle,
+                                              float two_way_travel_time) const override
     {
         not_implemented("trace(SinglePoint)", get_name());
+
+        datastructures::SamplelocationLocal target;
+
+        target.true_range = two_way_travel_time * _sound_velocity * 0.5f;
+
+        // convert launch angles to quaternion
+        auto target_ypr_quat =
+            tools::rotationfunctions::quaternion_from_ypr(0.f, alongtrack_angle, crosstrack_angle);
+
+        // the true orientation is the sensor orientation rotated by the launch angles
+        target_ypr_quat = get_sensor_orientation_quat() * target_ypr_quat;
+
+        // get rotated positions
+        auto target_xyz =
+            tools::rotationfunctions::rotateXYZ<float>(target_ypr_quat, 0, 0, target.true_range);
+
+        // set target position
+        target.x = target_xyz[0];
+        target.y = target_xyz[1];
+        target.z = target_xyz[2] + get_sensor_location().z;
+
+        return target;
     }
 
     // ----- file I/O -----

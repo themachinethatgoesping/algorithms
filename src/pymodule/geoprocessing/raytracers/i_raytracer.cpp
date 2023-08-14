@@ -38,6 +38,12 @@ void init_i_raytracer(py::module& m)
              py::arg("sensor_location"),
              py::arg("raytracer_name"))
         .def("__eq__", &I_Raytracer::operator==, DOC_I_Raytracer(operator_eq), py::arg("other"))
+        .def("trace",
+             py::overload_cast<float, float, float>(&I_Raytracer::trace, py::const_),
+             DOC_I_Raytracer(trace),
+             py::arg("alongtrack_angle"),
+             py::arg("crosstrack_angle"),
+             py::arg("two_way_travel_time"))
 
         .def("set_sensor_location",
              &I_Raytracer::set_sensor_location,
@@ -46,9 +52,9 @@ void init_i_raytracer(py::module& m)
         .def("get_sensor_location",
              &I_Raytracer::get_sensor_location,
              DOC_I_Raytracer(get_sensor_location))
-        .def("get_sensor_orientation_local_ypr",
-             &I_Raytracer::get_sensor_orientation_local_ypr,
-             DOC_I_Raytracer(get_sensor_orientation_local_ypr))
+        .def("get_sensor_orientation_quat_ypr",
+             &I_Raytracer::get_sensor_orientation_quat_ypr,
+             DOC_I_Raytracer(get_sensor_orientation_quat_ypr))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(I_Raytracer)

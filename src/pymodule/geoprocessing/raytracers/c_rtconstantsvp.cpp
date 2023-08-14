@@ -24,7 +24,7 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::raytracers;
 using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
 using namespace themachinethatgoesping::navigation::datastructures;
 
-#define DOC_RTConstantSVP(ARG)                                                                       \
+#define DOC_RTConstantSVP(ARG)                                                                     \
     DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers, RTConstantSVP, ARG)
 
 void init_c_rtconstantsvp(py::module& m)
@@ -38,6 +38,13 @@ void init_c_rtconstantsvp(py::module& m)
              py::arg("sensor_location"),
              py::arg("sound_velocity"))
         .def("__eq__", &RTConstantSVP::operator==, DOC_RTConstantSVP(operator_eq), py::arg("other"))
+
+        .def("trace",
+             py::overload_cast<float, float, float>(&RTConstantSVP::trace, py::const_),
+             DOC_RTConstantSVP(trace),
+             py::arg("alongtrack_angle"),
+             py::arg("crosstrack_angle"),
+             py::arg("two_way_travel_time"))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(RTConstantSVP)

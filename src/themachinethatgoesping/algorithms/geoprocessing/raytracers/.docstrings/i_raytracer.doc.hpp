@@ -1,4 +1,4 @@
-//sourcehash: 8dd56eb93b21e45ddd00d5459b33347046220495f0ed21362f6e5dd8d58e42e5
+//sourcehash: 9caa8acd5a85bf10220b45c1dbc26a34a713fb23a9dfc117340b4260831661ee
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -48,9 +48,9 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_location = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_orientation_local_q = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_orientation_quat = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_orientation_local_ypr = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_orientation_quat_ypr = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_name = R"doc()doc";
 
@@ -64,7 +64,7 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_sensor_location = R"doc(< Location/Orientation of the senor)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_sensor_orientation_local = R"doc(< Quaternion describing the orientation < of the sensor)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_sensor_orientation_quat = R"doc(< Quaternion describing the orientation < of the sensor)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_set_sensor_location = R"doc()doc";
 
