@@ -45,13 +45,37 @@ class I_Raytracer
     bool operator==(const I_Raytracer& other) const = default;
 
     // ----- tracing -----
-
-    virtual datastructures::SamplelocationLocal trace(
+    /**
+     * @brief Trace the location of a single point.
+     *
+     * @param two_way_travel_time Two way travel time in s
+     * @param alongtrack_angle Along track angle in °
+     * @param crosstrack_angle Across track angle in °
+     * @return datastructures::SamplelocationLocal
+     */
+    virtual datastructures::SamplelocationLocal trace_point(
+        [[maybe_unused]] float two_way_travel_time,
         [[maybe_unused]] float alongtrack_angle,
-        [[maybe_unused]] float crosstrack_angle,
-        [[maybe_unused]] float two_way_travel_time) const
+        [[maybe_unused]] float crosstrack_angle) const
     {
-        not_implemented("trace(SinglePoint)", _name);
+        throw not_implemented("trace(SinglePoint)", _name);
+    }
+
+    /**
+     * @brief Trace the location of a set of points.
+     *
+     * @param two_way_travel_time Two way travel time in s
+     * @param alongtrack_angle Along track angle in °
+     * @param crosstrack_angle Across track angle in °
+     * @return datastructures::SamplelocationLocal
+     */
+    virtual datastructures::SampleLocationsLocal<1> trace_points(
+        [[maybe_unused]] const xt::xtensor<float, 1>& two_way_travel_times,
+        [[maybe_unused]] const xt::xtensor<float, 1>& alongtrack_angles,
+        [[maybe_unused]] const xt::xtensor<float, 1>& crosstrack_angles,
+        [[maybe_unused]] int                          mp_cores = 1) const
+    {
+        throw not_implemented("trace(Multiple points)", _name);
     }
 
     // ----- setters -----

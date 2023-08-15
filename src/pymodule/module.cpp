@@ -7,12 +7,17 @@
 
 #include "geoprocessing/module.hpp"
 
+#define FORCE_IMPORT_ARRAY // this is needed for xtensor-python but must only be included once
+#include <xtensor-python/pyarray.hpp> // Numpy bindings
+
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace pymodule {
 
 PYBIND11_MODULE(MODULE_NAME, m)
 {
+    xt::import_numpy(); // import numpy for xtensor (otherwise there will be weird segfaults)
+
     pybind11::add_ostream_redirect(m, "ostream_redirect");
 
     m.doc()               = "Python module process ping data, e.g. apply absorption, spreading "

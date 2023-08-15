@@ -1,4 +1,4 @@
-//sourcehash: 7d2d113c714a851f19beae71b102e0465c776e8f4fbe2ae1f59e5310d2ea4147
+//sourcehash: a4be8dbb04b1aba1d7dae0754ea18767613f652ae91556d395b3db7f4f4ae173
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -70,7 +70,15 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_to_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_point = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points2 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points3 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points4 = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

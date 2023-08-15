@@ -27,7 +27,7 @@ namespace datastructures {
  * is known.
  */
 template<size_t Dim>
-class SampleLocationsLocal
+struct SampleLocationsLocal
 {
   public:
     xt::xtensor<float, Dim> x;          ///< in m, positive forward

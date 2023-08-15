@@ -12,6 +12,7 @@
 
 // -- include pybind11 headers
 #include <pybind11/stl.h>
+#include <xtensor-python/pyarray.hpp> // Numpy bindings
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -38,12 +39,22 @@ void init_i_raytracer(py::module& m)
              py::arg("sensor_location"),
              py::arg("raytracer_name"))
         .def("__eq__", &I_Raytracer::operator==, DOC_I_Raytracer(operator_eq), py::arg("other"))
-        .def("trace",
-             py::overload_cast<float, float, float>(&I_Raytracer::trace, py::const_),
-             DOC_I_Raytracer(trace),
+        .def("trace_point",
+             py::overload_cast<float, float, float>(&I_Raytracer::trace_point, py::const_),
+             DOC_I_Raytracer(trace_point),
+             py::arg("two_way_travel_time")),
              py::arg("alongtrack_angle"),
-             py::arg("crosstrack_angle"),
-             py::arg("two_way_travel_time"))
+             py::arg("crosstrack_angle")
+        .def("trace_points",
+             py::overload_cast<const xt::xtensor<float, 1>&,
+                               const xt::xtensor<float, 1>&,
+                               const xt::xtensor<float, 1>&,
+                               int>(&I_Raytracer::trace_points, py::const_),
+             DOC_I_Raytracer(trace_points),
+             py::arg("two_way_travel_times"),
+             py::arg("alongtrack_angles"),
+             py::arg("crosstrack_angles"),
+             py::arg("mp_cores") = 1)
 
         .def("set_sensor_location",
              &I_Raytracer::set_sensor_location,

@@ -1,4 +1,4 @@
-//sourcehash: 9caa8acd5a85bf10220b45c1dbc26a34a713fb23a9dfc117340b4260831661ee
+//sourcehash: 3820e24d2f336cd806a57606cdb99a8331e757690419530d883ba6fd97784040
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -70,7 +70,35 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_to_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_point =
+R"doc(Trace the location of a single point.
+
+Parameter ``alongtrack_angle``:
+    Along track angle in °
+
+Parameter ``crosstrack_angle``:
+    Across track angle in °
+
+Parameter ``two_way_travel_time``:
+    Two way travel time in s
+
+Returns:
+    datastructures::SamplelocationLocal)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_points =
+R"doc(Trace the location of a set of points.
+
+Parameter ``alongtrack_angle``:
+    Along track angle in °
+
+Parameter ``crosstrack_angle``:
+    Across track angle in °
+
+Parameter ``two_way_travel_time``:
+    Two way travel time in s
+
+Returns:
+    datastructures::SamplelocationLocal)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

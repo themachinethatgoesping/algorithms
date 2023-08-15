@@ -12,6 +12,7 @@
 
 // -- include pybind11 headers
 #include <pybind11/stl.h>
+#include <xtensor-python/pyarray.hpp> // Numpy bindings
 
 namespace themachinethatgoesping {
 namespace algorithms {
