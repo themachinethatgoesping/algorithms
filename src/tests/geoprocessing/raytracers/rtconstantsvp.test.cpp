@@ -83,18 +83,80 @@ TEST_CASE("RTConstantSVP reproduce some pre computed results (single points)", T
     REQUIRE_THAT(target.y, Catch::Matchers::WithinAbs(0.f, 0.0001));
     REQUIRE_THAT(target.z, Catch::Matchers::WithinAbs(3.f, 0.0001));
     REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(0.f, 0.0001));
+    REQUIRE_THAT(target.true_range,
+                 Catch::Matchers::WithinAbs(std::sqrt(target.x * target.x + target.y * target.y +
+                                                      (target.z - 3.f) * (target.z - 3.f)),
+                                            0.001));
 
     target = raytracer.trace_point(-1, 0, 0);
     REQUIRE_THAT(target.x, Catch::Matchers::WithinAbs(0.f, 0.0001));
     REQUIRE_THAT(target.y, Catch::Matchers::WithinAbs(0.f, 0.0001));
     REQUIRE_THAT(target.z, Catch::Matchers::WithinAbs(3.f - c_2, 0.0001));
     REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(-c_2, 0.0001));
+    REQUIRE_THAT(std::fabs(target.true_range),
+                 Catch::Matchers::WithinAbs(std::sqrt(target.x * target.x + target.y * target.y +
+                                                      (target.z - 3.f) * (target.z - 3.f)),
+                                            0.001));
 
     target = raytracer.trace_point(5, 45, 0);
     REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(c_2 * 5.f, 0.0001));
     CHECK_THAT(target.x, Catch::Matchers::WithinAbs(2563.26221f, 0.0001));
     CHECK_THAT(target.y, Catch::Matchers::WithinAbs(0.f, 0.0001));
     CHECK_THAT(target.z, Catch::Matchers::WithinAbs(2566.26172f, 0.0001));
+    REQUIRE_THAT(target.true_range,
+                 Catch::Matchers::WithinAbs(std::sqrt(target.x * target.x + target.y * target.y +
+                                                      (target.z - 3.f) * (target.z - 3.f)),
+                                            0.001));
+
+    target = raytracer.trace_point(5, 0, 45);
+    REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(c_2 * 5.f, 0.0001));
+    CHECK_THAT(target.x, Catch::Matchers::WithinAbs(0.f, 0.0001));
+    CHECK_THAT(target.y, Catch::Matchers::WithinAbs(-2563.26221f, 0.0001));
+    CHECK_THAT(target.z, Catch::Matchers::WithinAbs(2566.26172f, 0.0001));
+    REQUIRE_THAT(target.true_range,
+                 Catch::Matchers::WithinAbs(std::sqrt(target.x * target.x + target.y * target.y +
+                                                      (target.z - 3.f) * (target.z - 3.f)),
+                                            0.001));
+
+    target = raytracer.trace_point(5, 45, 45);
+    REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(c_2 * 5.f, 0.0001));
+    CHECK_THAT(target.x, Catch::Matchers::WithinAbs(1812.5f, 0.0001));
+    CHECK_THAT(target.y, Catch::Matchers::WithinAbs(-2563.26221f, 0.0001));
+    CHECK_THAT(target.z, Catch::Matchers::WithinAbs(1815.49976f, 0.0001));
+    REQUIRE_THAT(target.true_range,
+                 Catch::Matchers::WithinAbs(std::sqrt(target.x * target.x + target.y * target.y +
+                                                      (target.z - 3.f) * (target.z - 3.f)),
+                                            0.001));
+
+    target = raytracer.trace_point(5, -45, -45);
+    REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(c_2 * 5.f, 0.0001));
+    CHECK_THAT(target.x, Catch::Matchers::WithinAbs(-1812.5f, 0.0001));
+    CHECK_THAT(target.y, Catch::Matchers::WithinAbs(2563.26221f, 0.0001));
+    CHECK_THAT(target.z, Catch::Matchers::WithinAbs(1815.49976f, 0.0001));
+    REQUIRE_THAT(target.true_range,
+                 Catch::Matchers::WithinAbs(std::sqrt(target.x * target.x + target.y * target.y +
+                                                      (target.z - 3.f) * (target.z - 3.f)),
+                                            0.001));
+
+    target = raytracer.trace_point(5, -45, 45);
+    REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(c_2 * 5.f, 0.0001));
+    CHECK_THAT(target.x, Catch::Matchers::WithinAbs(-1812.5f, 0.0001));
+    CHECK_THAT(target.y, Catch::Matchers::WithinAbs(-2563.26221f, 0.0001));
+    CHECK_THAT(target.z, Catch::Matchers::WithinAbs(1815.49976f, 0.0001));
+    REQUIRE_THAT(target.true_range,
+                 Catch::Matchers::WithinAbs(std::sqrt(target.x * target.x + target.y * target.y +
+                                                      (target.z - 3.f) * (target.z - 3.f)),
+                                            0.001));
+
+    target = raytracer.trace_point(5, 45, -45);
+    REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(c_2 * 5.f, 0.0001));
+    CHECK_THAT(target.x, Catch::Matchers::WithinAbs(1812.5f, 0.0001));
+    CHECK_THAT(target.y, Catch::Matchers::WithinAbs(2563.26221f, 0.0001));
+    CHECK_THAT(target.z, Catch::Matchers::WithinAbs(1815.49976f, 0.0001));
+    REQUIRE_THAT(target.true_range,
+                 Catch::Matchers::WithinAbs(std::sqrt(target.x * target.x + target.y * target.y +
+                                                      (target.z - 3.f) * (target.z - 3.f)),
+                                            0.001));
 }
 
 TEST_CASE("RTConstantSVP multi point computations should be equal to single point computations",
@@ -108,18 +170,18 @@ TEST_CASE("RTConstantSVP multi point computations should be equal to single poin
     location.pitch = 0;
     location.roll  = 0;
 
-    float c   = 1450.f;
+    float c = 1450.f;
 
     // initialize raytracer
     auto raytracer = RTConstantSVP(location, c);
 
     xt::random::seed(0);
     // test raytracing some single points
-    xt::xtensor<float, 1> times = xt::random::rand<float>({1000});
-    xt::xtensor<float, 1> along = xt::random::rand<float>({1000});
-    xt::xtensor<float, 1> across = xt::random::rand<float>({1000});
+    xt::xtensor<float, 1> times  = xt::random::rand<float>({ 1000 });
+    xt::xtensor<float, 1> along  = xt::random::rand<float>({ 1000 });
+    xt::xtensor<float, 1> across = xt::random::rand<float>({ 1000 });
 
-    along = along * 180.f - 90.f;
+    along  = along * 180.f - 90.f;
     across = across * 360.f - 180.f;
 
     auto targets = raytracer.trace_points(times, along, across);
@@ -133,5 +195,4 @@ TEST_CASE("RTConstantSVP multi point computations should be equal to single poin
         REQUIRE_THAT(target.z, Catch::Matchers::WithinAbs(targets.z[i], 0.0001));
         REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(targets.true_range[i], 0.0001));
     }
-
 }
