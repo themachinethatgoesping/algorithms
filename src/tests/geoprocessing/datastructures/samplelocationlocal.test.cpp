@@ -13,10 +13,10 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::datastructure
 
 #define TESTTAG "[location]"
 
-TEST_CASE("SamplelocationLocal should support common functions", TESTTAG)
+TEST_CASE("SampleLocationLocal should support common functions", TESTTAG)
 {
     // initialize location
-    auto location = SamplelocationLocal();
+    auto location = SampleLocationLocal();
 
     location.x          = 56.000;
     location.y          = 54.192;
@@ -24,15 +24,15 @@ TEST_CASE("SamplelocationLocal should support common functions", TESTTAG)
     location.true_range = 4.2;
 
     // test copy
-    REQUIRE(location == SamplelocationLocal(location));
+    REQUIRE(location == SampleLocationLocal(location));
 
     // test binary
-    REQUIRE(location == SamplelocationLocal(location.from_binary(location.to_binary())));
+    REQUIRE(location == SampleLocationLocal(location.from_binary(location.to_binary())));
 
     // test stream
     std::stringstream buffer;
     location.to_stream(buffer);
-    REQUIRE(location == SamplelocationLocal(location.from_stream(buffer)));
+    REQUIRE(location == SampleLocationLocal(location.from_stream(buffer)));
 
     // test print does not crash
     REQUIRE(location.info_string().size() != 0);

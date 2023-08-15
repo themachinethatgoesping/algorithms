@@ -29,7 +29,6 @@ TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
     location.roll  = 30;
 
     float c   = 1450.f;
-    float c_2 = c * 0.5;
 
     // initialize raytracer
     auto raytracer = RTConstantSVP(location, c);

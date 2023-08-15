@@ -1,4 +1,4 @@
-//sourcehash: a4be8dbb04b1aba1d7dae0754ea18767613f652ae91556d395b3db7f4f4ae173
+//sourcehash: a76b751b3a4706f947f0b39b9982462c27411b829febee3485ed262347ac4387
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -64,21 +64,101 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_printer = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_scale_beam =
+R"doc(Compute the sample locations of a single beam by scaling between the
+transducer location and a known target location
+
+Parameter ``sample_numbers``:
+    Sample numbers to trace (starting from 0)
+
+Parameter ``sampling_time``:
+    Time betweens samples in s
+
+Parameter ``sampling_time_offset``:
+    Time offset for sample number 0 in s
+
+Parameter ``scale_true_range``:
+    known target range at scale_time
+
+Parameter ``scale_x``:
+    known target x position at scale_time
+
+Parameter ``scale_y``:
+    known target y position at scale_time
+
+Parameter ``scale_z``:
+    known target z position at scale_time
+
+Parameter ``scale_time``:
+    known target two way travel time
+
+Returns:
+    datastructures::SamplelocationsLocal<1>)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_scale_beam_2 =
+R"doc(Compute the sample locations of a single beam by scaling between the
+transducer location and a known target location
+
+Parameter ``sample_numbers``:
+    Sample numbers to trace (starting from 0)
+
+Parameter ``sampling_time``:
+    Time betweens samples in s
+
+Parameter ``sampling_time_offset``:
+    Time offset for sample number 0 in s
+
+Parameter ``scale_target``:
+    known target location at scale_time
+
+Parameter ``scale_time``:
+    known target two way travel time
+
+Returns:
+    datastructures::SamplelocationsLocal<1>)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_scale_swath =
+R"doc(Compute the sample locations of a swath by scaling between the
+transducer location and known target locations
+
+Parameter ``sample_numbers``:
+    Sample numbers to trace (starting from 0)
+
+Parameter ``sampling_time``:
+    Time betweens samples in s
+
+Parameter ``sampling_time_offset``:
+    Time offset for sample number 0 in s
+
+Parameter ``scale_target``:
+    known target location at scale_time
+
+Parameter ``scale_time``:
+    two way travel time for the known target location
+
+Parameter ``mp_cores``:
+    number of cores to use for parallelization
+
+Returns:
+    datastructures::SamplelocationsLocal<1>)doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_set_sound_velocity = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity_2 = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_to_stream = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_beam = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_point = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points2 = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points_2 = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points3 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points4 = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_swath = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

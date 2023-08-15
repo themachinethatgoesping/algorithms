@@ -1,4 +1,4 @@
-//sourcehash: 023b6138f2ff25d4b1b287b2023d1ed793e9953730d6c4ceb5604357f9944f65
+//sourcehash: 65ccb43bf73bb611b4a237e8f0a15c3f8ca2ba59f83ba8bcab3664910877bc38
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -48,6 +48,13 @@ position (for coordinate 0) is known.)doc";
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_SampleLocationsLocal = R"doc(Construct a new sample location object (all values set to 0))doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_SampleLocationsLocal_2 =
+R"doc(Construct a new sample location object (initialize all tensors using
+the specified shape (empty))
+
+Parameter ``shape``:
+    shape of the internal tensors)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_SampleLocationsLocal_3 =
 R"doc(Construct a new SampleLocationsLocal object
 
 Parameter ``x``:
@@ -67,6 +74,8 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastr
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_operator_eq = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_printer = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_size = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleLocationsLocal_to_stream = R"doc()doc";
 

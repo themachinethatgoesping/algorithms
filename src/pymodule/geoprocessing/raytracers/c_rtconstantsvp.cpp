@@ -7,6 +7,7 @@
 // <headerfiles>
 
 // -- c++ library headers
+#include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures.hpp"
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/raytracers/rtconstantsvp.hpp"
 #include <themachinethatgoesping/tools_pybind/classhelper.hpp>
 
@@ -22,7 +23,7 @@ namespace py_raytracers {
 
 namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::geoprocessing::raytracers;
-using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
+using namespace themachinethatgoesping::algorithms::geoprocessing;
 using namespace themachinethatgoesping::navigation::datastructures;
 
 #define DOC_RTConstantSVP(ARG)                                                                     \
@@ -39,6 +40,51 @@ void init_c_rtconstantsvp(py::module& m)
              py::arg("sensor_location"),
              py::arg("sound_velocity"))
         .def("__eq__", &RTConstantSVP::operator==, DOC_RTConstantSVP(operator_eq), py::arg("other"))
+
+        .def("scale_beam",
+             py::overload_cast<const xt::xtensor<unsigned int, 1>&,
+                               float,
+                               float,
+                               float,
+                               float,
+                               float,
+                               float,
+                               float>(&RTConstantSVP::scale_beam, py::const_),
+             DOC_RTConstantSVP(scale_beam),
+             py::arg("sample_numbers"),
+             py::arg("sampling_time"),
+             py::arg("sampling_time_offset"),
+             py::arg("scale_true_range"),
+             py::arg("scale_x"),
+             py::arg("scale_y"),
+             py::arg("scale_z"),
+             py::arg("scale_time"))
+        .def("scale_beam",
+             py::overload_cast<const xt::xtensor<unsigned int, 1>&,
+                               float,
+                               float,
+                               const datastructures::SampleLocationLocal&,
+                               float>(&RTConstantSVP::scale_beam, py::const_),
+             DOC_RTConstantSVP(scale_beam_2),
+             py::arg("sample_numbers"),
+             py::arg("sampling_time"),
+             py::arg("sampling_time_offset"),
+             py::arg("scale_target"),
+             py::arg("scale_time"))
+        .def("scale_swath",
+             py::overload_cast<const xt::xtensor<unsigned int, 2>&,
+                               float,
+                               float,
+                               const datastructures::SampleLocationsLocal<1>&,
+                               const xt::xtensor<float, 1>&,
+                               unsigned int>(&RTConstantSVP::scale_swath, py::const_),
+             DOC_RTConstantSVP(scale_swath),
+             py::arg("sample_numbers"),
+             py::arg("sampling_time"),
+             py::arg("sampling_time_offset"),
+             py::arg("scale_target"),
+             py::arg("scale_time"),
+             py::arg("mp_cores") = 1)
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(RTConstantSVP)

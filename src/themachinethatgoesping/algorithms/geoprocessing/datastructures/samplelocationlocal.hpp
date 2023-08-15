@@ -24,7 +24,7 @@ namespace datastructures {
  * can be converted to UTM or Lat/Lon if a reference position (for coordinate 0)
  * is known.
  */
-struct SamplelocationLocal
+struct SampleLocationLocal
 {
     float x          = 0.0;  ///< in m, positive forward
     float y          = 0.0;  ///< in m, positive starboard
@@ -35,17 +35,17 @@ struct SamplelocationLocal
      * @brief Construct a new sample location object (all values set to 0)
      *
      */
-    SamplelocationLocal() = default;
+    SampleLocationLocal() = default;
 
     /**
-     * @brief Construct a new SamplelocationLocal object
+     * @brief Construct a new SampleLocationLocal object
      *
      * @param x in m, positive forward
      * @param y in m, positive starboard
      * @param z in m, positive downwards
      * @param true_range in m, accumulated ray path length
      */
-    SamplelocationLocal(float x_, float y_, float z_, float true_range_)
+    SampleLocationLocal(float x_, float y_, float z_, float true_range_)
         : x(std::move(x_))
         , y(std::move(y_))
         , z(std::move(z_))
@@ -53,8 +53,8 @@ struct SamplelocationLocal
     {
     }
 
-    bool operator!=(const SamplelocationLocal& rhs) const { return !(operator==(rhs)); }
-    bool operator==(const SamplelocationLocal& rhs) const
+    bool operator!=(const SampleLocationLocal& rhs) const { return !(operator==(rhs)); }
+    bool operator==(const SampleLocationLocal& rhs) const
     {
         if (tools::helper::approx(x, rhs.x))
             if (tools::helper::approx(y, rhs.y))
@@ -67,24 +67,24 @@ struct SamplelocationLocal
 
   public:
     // ----- file I/O -----
-    static SamplelocationLocal from_stream(std::istream& is)
+    static SampleLocationLocal from_stream(std::istream& is)
     {
-        SamplelocationLocal data;
+        SampleLocationLocal data;
 
-        is.read(reinterpret_cast<char*>(&data.x), sizeof(SamplelocationLocal));
+        is.read(reinterpret_cast<char*>(&data.x), sizeof(SampleLocationLocal));
 
         return data;
     }
 
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&x), sizeof(SamplelocationLocal));
+        os.write(reinterpret_cast<const char*>(&x), sizeof(SampleLocationLocal));
     }
 
   public:
     tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
     {
-        tools::classhelper::ObjectPrinter printer("SamplelocationLocal", float_precision);
+        tools::classhelper::ObjectPrinter printer("SampleLocationLocal", float_precision);
 
         printer.register_value("x", x, "positive forward, m");
         printer.register_value("y", y, "positive starboard, m");
@@ -97,7 +97,7 @@ struct SamplelocationLocal
   public:
     // -- class helper function macros --
     // define to_binary and from_binary functions (needs the serialize function)
-    __STREAM_DEFAULT_TOFROM_BINARY_FUNCTIONS__(SamplelocationLocal)
+    __STREAM_DEFAULT_TOFROM_BINARY_FUNCTIONS__(SampleLocationLocal)
     // define info_string and print functions (needs the __printer__ function)
     __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__
 };

@@ -1,4 +1,4 @@
-//sourcehash: 3820e24d2f336cd806a57606cdb99a8331e757690419530d883ba6fd97784040
+//sourcehash: b001d4527211f5812e27f7a9c31b14f60a7c83ea73f251ac5e59acc3039a0f5d
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -70,8 +70,17 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_to_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_point =
-R"doc(Trace the location of a single point.
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_beam =
+R"doc(Trace the sample locations of a single beam.
+
+Parameter ``sample_numbers``:
+    Sample numbers to trace (starting from 0)
+
+Parameter ``sampling_time``:
+    Time betweens samples in s
+
+Parameter ``sampling_time_offset``:
+    Time offset for sample number 0 in s
 
 Parameter ``alongtrack_angle``:
     Along track angle in °
@@ -79,26 +88,144 @@ Parameter ``alongtrack_angle``:
 Parameter ``crosstrack_angle``:
     Across track angle in °
 
+Returns:
+    datastructures::SamplelocationsLocal<1>)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_beam_2 =
+R"doc(Trace the sample locations of a single beam.
+
+Parameter ``first_sample_number``:
+    First sample number to trace
+
+Parameter ``number_of_samples``:
+    Number of samples to trace
+
+Parameter ``sample_step``:
+    Step between samples
+
+Parameter ``sampling_time``:
+    Time betweens samples in s
+
+Parameter ``sampling_time_offset``:
+    Time offset for sample number 0 in s
+
+Parameter ``alongtrack_angle``:
+    Along track angle in °
+
+Parameter ``crosstrack_angle``:
+    Across track angle in °
+
+Returns:
+    datastructures::SampleLocationsLocal<1>)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_point =
+R"doc(Trace the location of a single point.
+
 Parameter ``two_way_travel_time``:
     Two way travel time in s
 
+Parameter ``alongtrack_angle``:
+    Along track angle in °
+
+Parameter ``crosstrack_angle``:
+    Across track angle in °
+
 Returns:
-    datastructures::SamplelocationLocal)doc";
+    datastructures::SampleLocationLocal)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_points =
 R"doc(Trace the location of a set of points.
 
+Parameter ``two_way_travel_time``:
+    Two way travel time in s
+
 Parameter ``alongtrack_angle``:
     Along track angle in °
 
-Parameter ``crosstrack_angle``:
+Parameter ``crosstrack_angles``:
     Across track angle in °
+
+Parameter ``mp_cores``:
+    Number of cores to use for parallelization
+
+Returns:
+    datastructures::SampleLocationLocal)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_points_2 =
+R"doc(Trace the location of a set of points.
 
 Parameter ``two_way_travel_time``:
     Two way travel time in s
 
+Parameter ``alongtrack_angle``:
+    Along track angle of all beams in °
+
+Parameter ``crosstrack_angles``:
+    Across track angle in °
+
+Parameter ``mp_cores``:
+    Number of cores to use for parallelization
+
 Returns:
-    datastructures::SamplelocationLocal)doc";
+    datastructures::SampleLocationLocal)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_swath =
+R"doc(Trace the sample locations of a multiple beams in a swath. Note: a 2d
+Array for sample numbers is expected where the first dimension is the
+beam and the second dimension is the sample number. The beam dimension
+must be the same as for "crosstrack_angles"
+
+Parameter ``sample_numbers``:
+    Sample numbers to trace (starting from 0)
+
+Parameter ``sampling_time``:
+    Time betweens samples in s
+
+Parameter ``sampling_time_offset``:
+    Time offset for sample number 0 in s
+
+Parameter ``alongtrack_angle``:
+    Along track angle of the swath in °
+
+Parameter ``crosstrack_angles``:
+    Across track angle of each beam in °
+
+Parameter ``mp_cores``:
+    Number of cores to use for parallelization
+
+Returns:
+    datastructures::SamplelocationsLocal<2>)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_swath_2 =
+R"doc(Trace the sample locations of a multiple beams in a swath. Note: The
+number of beams is controlled by the dimension of crosstrack_angles
+
+Parameter ``first_sample_number``:
+    First sample number to trace
+
+Parameter ``number_of_samples``:
+    Number of samples to trace
+
+Parameter ``sample_step``:
+    Step between samples
+
+Parameter ``sampling_time``:
+    Time betweens samples in s
+
+Parameter ``sampling_time_offset``:
+    Time offset for sample number 0 in s
+
+Parameter ``alongtrack_angle``:
+    Along track angle of the swath in °
+
+Parameter ``crosstrack_angles``:
+    Across track angle of each beam in °
+
+Parameter ``mp_cores``:
+    Number of cores to use for parallelization
+
+Returns:
+    datastructures::SamplelocationsLocal<2>)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

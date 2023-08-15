@@ -14,6 +14,8 @@
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 
+#include "samplelocationlocal.hpp"
+
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace geoprocessing {
@@ -40,6 +42,21 @@ struct SampleLocationsLocal
      *
      */
     SampleLocationsLocal() = default;
+
+    /**
+     * @brief Construct a new sample location object (initialize all tensors using the specified
+     * shape (empty))
+     *
+     * @param shape shape of the internal tensors
+     *
+     */
+    SampleLocationsLocal(const std::array<unsigned int, Dim>& shape)
+    {
+        x          = xt::xtensor<float, Dim>::from_shape(shape);
+        y          = xt::xtensor<float, Dim>::from_shape(shape);
+        z          = xt::xtensor<float, Dim>::from_shape(shape);
+        true_range = xt::xtensor<float, Dim>::from_shape(shape);
+    }
 
     /**
      * @brief Construct a new SampleLocationsLocal object
@@ -73,6 +90,23 @@ struct SampleLocationsLocal
 
     bool operator==(const SampleLocationsLocal& rhs) const = default;
 
+    size_t size() const
+    {
+        // test if all arrays have the same size
+        if (x.size() != y.size() || x.size() != z.size() || x.size() != true_range.size())
+        {
+            throw std::runtime_error(fmt::format(
+                "SampleLocationsLocal::get_number_of_samples: x, y, z and true_range must have the "
+                "same size. x.size() = {}, y.size() = {}, z.size() = {}, true_range.size() = {}",
+                x.size(),
+                y.size(),
+                z.size(),
+                true_range.size()));
+        }
+
+        return x.size();
+    }
+
   public:
     // ----- file I/O -----
     static SampleLocationsLocal from_stream(std::istream& is)
@@ -103,7 +137,8 @@ struct SampleLocationsLocal
         if (x.shape() != y.shape() || x.shape() != z.shape() || x.shape() != true_range.shape())
         {
             throw std::runtime_error(fmt::format(
-                "SampleLocationsLocal::to_stream: x, y, z and true_range must have the same shape. "
+                "SampleLocationsLocal::to_stream: x, y, z and true_range must have the same "
+                "shape. "
                 "x.size() = {}, y.size() = {}, z.size() = {}, true_range.size() = {}",
                 x.size(),
                 y.size(),

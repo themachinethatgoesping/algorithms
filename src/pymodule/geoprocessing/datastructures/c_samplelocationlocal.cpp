@@ -24,38 +24,38 @@ namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
 
 #define DOC_SampleLocationLocal(ARG)                                                               \
-    DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SamplelocationLocal, ARG)
+    DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleLocationLocal, ARG)
 
-void init_c_samplelocationlocal(py::module& m)
+void init_c_SampleLocationLocal(py::module& m)
 {
 
-    py::class_<SamplelocationLocal>(
+    py::class_<SampleLocationLocal>(
         m,
-        "SamplelocationLocal",
-        DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SamplelocationLocal))
-        .def(py::init<>(), DOC_SampleLocationLocal(SamplelocationLocal))
+        "SampleLocationLocal",
+        DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleLocationLocal))
+        .def(py::init<>(), DOC_SampleLocationLocal(SampleLocationLocal))
         .def(py::init<float, float, float, float>(),
-             DOC_SampleLocationLocal(SamplelocationLocal_2),
+             DOC_SampleLocationLocal(SampleLocationLocal_2),
              py::arg("x"),
              py::arg("y"),
              py::arg("z"),
              py::arg("true_range"))
         .def("__eq__",
-             &SamplelocationLocal::operator==,
+             &SampleLocationLocal::operator==,
              DOC_SampleLocationLocal(operator_eq),
              py::arg("other"))
-        .def_readwrite("x", &SamplelocationLocal::x, DOC_SampleLocationLocal(x))
-        .def_readwrite("y", &SamplelocationLocal::x, DOC_SampleLocationLocal(y))
-        .def_readwrite("z", &SamplelocationLocal::x, DOC_SampleLocationLocal(z))
-        .def_readwrite("true_range", &SamplelocationLocal::x, DOC_SampleLocationLocal(true_range))
+        .def_readwrite("x", &SampleLocationLocal::x, DOC_SampleLocationLocal(x))
+        .def_readwrite("y", &SampleLocationLocal::x, DOC_SampleLocationLocal(y))
+        .def_readwrite("z", &SampleLocationLocal::x, DOC_SampleLocationLocal(z))
+        .def_readwrite("true_range", &SampleLocationLocal::x, DOC_SampleLocationLocal(true_range))
 
         // default copy functions
-        __PYCLASS_DEFAULT_COPY__(SamplelocationLocal)
+        __PYCLASS_DEFAULT_COPY__(SampleLocationLocal)
         // default binary functions
-        __PYCLASS_DEFAULT_BINARY__(SamplelocationLocal)
+        __PYCLASS_DEFAULT_BINARY__(SampleLocationLocal)
         // default printing functions
-        __PYCLASS_DEFAULT_PRINTING__(SamplelocationLocal)
-        // end SamplelocationLocal
+        __PYCLASS_DEFAULT_PRINTING__(SampleLocationLocal)
+        // end SampleLocationLocal
         ;
 }
 

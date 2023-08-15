@@ -44,11 +44,14 @@ void init_c_samplelocationslocal_dim(py::module& m)
                                               datastructures,
                                               SampleLocationsLocal))
         .def(py::init<>(), DOC_SampleLocationsLocal(SampleLocationsLocal))
+        .def(py::init<const std::array<unsigned int, Dim>&>(),
+             DOC_SampleLocationsLocal(SampleLocationsLocal_2),
+             py::arg("shape"))
         .def(py::init<xt::xtensor<float, Dim>,
                       xt::xtensor<float, Dim>,
                       xt::xtensor<float, Dim>,
                       xt::xtensor<float, Dim>>(),
-             DOC_SampleLocationsLocal(SampleLocationsLocal_2),
+             DOC_SampleLocationsLocal(SampleLocationsLocal_3),
              py::arg("x"),
              py::arg("y"),
              py::arg("z"),
@@ -57,6 +60,8 @@ void init_c_samplelocationslocal_dim(py::module& m)
              &SampleLocationsLocal<Dim>::operator==,
              DOC_SampleLocationsLocal(operator_eq),
              py::arg("other"))
+        .def("size", &SampleLocationsLocal<Dim>::size, DOC_SampleLocationsLocal(size))
+
         .def_readwrite("x", &SampleLocationsLocal<Dim>::x, DOC_SampleLocationsLocal(x))
         .def_readwrite("y", &SampleLocationsLocal<Dim>::x, DOC_SampleLocationsLocal(y))
         .def_readwrite("z", &SampleLocationsLocal<Dim>::x, DOC_SampleLocationsLocal(z))

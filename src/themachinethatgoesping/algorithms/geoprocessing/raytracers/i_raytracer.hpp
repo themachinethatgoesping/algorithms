@@ -12,6 +12,8 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
+#include <xtensor/xview.hpp>
+
 #include <themachinethatgoesping/navigation/datastructures.hpp>
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
@@ -51,9 +53,9 @@ class I_Raytracer
      * @param two_way_travel_time Two way travel time in s
      * @param alongtrack_angle Along track angle in °
      * @param crosstrack_angle Across track angle in °
-     * @return datastructures::SamplelocationLocal
+     * @return datastructures::SampleLocationLocal
      */
-    virtual datastructures::SamplelocationLocal trace_point(
+    virtual datastructures::SampleLocationLocal trace_point(
         [[maybe_unused]] float two_way_travel_time,
         [[maybe_unused]] float alongtrack_angle,
         [[maybe_unused]] float crosstrack_angle) const
@@ -66,16 +68,152 @@ class I_Raytracer
      *
      * @param two_way_travel_time Two way travel time in s
      * @param alongtrack_angle Along track angle in °
-     * @param crosstrack_angle Across track angle in °
-     * @return datastructures::SamplelocationLocal
+     * @param crosstrack_angles Across track angle in °
+     * @param mp_cores Number of cores to use for parallelization
+     * @return datastructures::SampleLocationLocal
      */
     virtual datastructures::SampleLocationsLocal<1> trace_points(
         [[maybe_unused]] const xt::xtensor<float, 1>& two_way_travel_times,
         [[maybe_unused]] const xt::xtensor<float, 1>& alongtrack_angles,
         [[maybe_unused]] const xt::xtensor<float, 1>& crosstrack_angles,
-        [[maybe_unused]] int                          mp_cores = 1) const
+        [[maybe_unused]] unsigned int                 mp_cores = 1) const
     {
         throw not_implemented("trace(Multiple points)", _name);
+    }
+
+    /**
+     * @brief Trace the location of a set of points.
+     *
+     * @param two_way_travel_time Two way travel time in s
+     * @param alongtrack_angle Along track angle of all beams in °
+     * @param crosstrack_angles Across track angle in °
+     * @param mp_cores Number of cores to use for parallelization
+     * @return datastructures::SampleLocationLocal
+     */
+    virtual datastructures::SampleLocationsLocal<1> trace_points(
+        [[maybe_unused]] const xt::xtensor<float, 1>& two_way_travel_times,
+        [[maybe_unused]] float                        alongtrack_angles,
+        [[maybe_unused]] const xt::xtensor<float, 1>& crosstrack_angles,
+        [[maybe_unused]] unsigned int                 mp_cores = 1) const
+    {
+        throw not_implemented("trace(Multiple points / single alongtrack angle)", _name);
+    }
+
+    /**
+     * @brief Trace the sample locations of a single beam.
+     *
+     * @param sample_numbers Sample numbers to trace (starting from 0)
+     * @param sampling_time Time betweens samples in s
+     * @param sampling_time_offset Time offset for sample number 0 in s
+     * @param alongtrack_angle Along track angle in °
+     * @param crosstrack_angle Across track angle in °
+     * @return datastructures::SamplelocationsLocal<1>
+     */
+    virtual datastructures::SampleLocationsLocal<1> trace_beam(
+        [[maybe_unused]] const xt::xtensor<unsigned int, 1>& sample_numbers,
+        [[maybe_unused]] float                               sampling_time,
+        [[maybe_unused]] float                               sampling_time_offset,
+        [[maybe_unused]] float                               alongtrack_angle,
+        [[maybe_unused]] float                               crosstrack_angle) const
+    {
+        throw not_implemented("trace(SingleBeam)", _name);
+    }
+
+    /**
+     * @brief Trace the sample locations of a multiple beams in a swath.
+     * Note: a 2d Array for sample numbers is expected where the first dimension is the beam and the
+     * second dimension is the sample number. The beam dimension must be the same as for
+     * "crosstrack_angles"
+     *
+     * @param sample_numbers Sample numbers to trace (starting from 0)
+     * @param sampling_time Time betweens samples in s
+     * @param sampling_time_offset Time offset for sample number 0 in s
+     * @param alongtrack_angle Along track angle of the swath in °
+     * @param crosstrack_angles Across track angle of each beam in °
+     * @param mp_cores Number of cores to use for parallelization
+     * @return datastructures::SamplelocationsLocal<2>
+     */
+    virtual datastructures::SampleLocationsLocal<2> trace_swath(
+        [[maybe_unused]] const xt::xtensor<unsigned int, 2>& sample_numbers,
+        [[maybe_unused]] float                               sampling_time,
+        [[maybe_unused]] float                               sampling_time_offset,
+        [[maybe_unused]] float                               alongtrack_angle,
+        [[maybe_unused]] const xt::xtensor<float, 1>&        crosstrack_angles,
+        [[maybe_unused]] unsigned int                        mp_cores = 1) const
+    {
+        throw not_implemented("trace(Swath)", _name);
+    }
+
+    /**
+     * @brief Trace the sample locations of a single beam.
+     *
+     * @param first_sample_number First sample number to trace
+     * @param number_of_samples Number of samples to trace
+     * @param sample_step Step between samples
+     * @param sampling_time Time betweens samples in s
+     * @param sampling_time_offset Time offset for sample number 0 in s
+     * @param alongtrack_angle Along track angle in °
+     * @param crosstrack_angle Across track angle in °
+     * @return datastructures::SampleLocationsLocal<1>
+     */
+    virtual datastructures::SampleLocationsLocal<1> trace_beam(unsigned int first_sample_number,
+                                                               unsigned int number_of_samples,
+                                                               unsigned int sample_step,
+                                                               float        sampling_time,
+                                                               float        sampling_time_offset,
+                                                               float        alongtrack_angle,
+                                                               float        crosstrack_angle) const
+    {
+        return trace_beam(xt::arange<unsigned int>(first_sample_number,
+                                                   first_sample_number + number_of_samples,
+                                                   sample_step),
+                          sampling_time,
+                          sampling_time_offset,
+                          alongtrack_angle,
+                          crosstrack_angle);
+    }
+
+    /**
+     * @brief Trace the sample locations of a multiple beams in a swath.
+     * Note: The number of beams is controlled by the dimension of crosstrack_angles
+     *
+     * @param first_sample_number First sample number to trace
+     * @param number_of_samples Number of samples to trace
+     * @param sample_step Step between samples
+     * @param sampling_time Time betweens samples in s
+     * @param sampling_time_offset Time offset for sample number 0 in s
+     * @param alongtrack_angle Along track angle of the swath in °
+     * @param crosstrack_angles Across track angle of each beam in °
+     * @param mp_cores Number of cores to use for parallelization
+     * @return datastructures::SamplelocationsLocal<2>
+     */
+    virtual datastructures::SampleLocationsLocal<2> trace_swath(
+        unsigned int                 first_sample_number,
+        unsigned int                 number_of_samples,
+        unsigned int                 sample_step,
+        float                        sampling_time,
+        float                        sampling_time_offset,
+        float                        alongtrack_angle,
+        const xt::xtensor<float, 1>& crosstrack_angles,
+        unsigned int                 mp_cores = 1) const
+    {
+        xt::xtensor<unsigned int, 1> sample_numbers_per_beam = xt::arange<unsigned int>(
+            first_sample_number, first_sample_number + number_of_samples, sample_step);
+
+        auto sample_numbers = xt::xtensor<unsigned int, 2>::from_shape(
+            { crosstrack_angles.size(), sample_numbers_per_beam.size() });
+
+        for (unsigned int bn = 0; bn < crosstrack_angles.size(); bn++)
+        {
+            xt::view(sample_numbers, bn, xt::all()) = sample_numbers_per_beam;
+        }
+
+        return trace_swath(sample_numbers,
+                           sampling_time,
+                           sampling_time_offset,
+                           alongtrack_angle,
+                           crosstrack_angles,
+                           mp_cores);
     }
 
     // ----- setters -----

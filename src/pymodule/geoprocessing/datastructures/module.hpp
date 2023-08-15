@@ -11,7 +11,7 @@ namespace pymodule {
 namespace py_geoprocessing {
 namespace py_datastructures {
 
-void init_c_samplelocationlocal(pybind11::module& m);  // c_samplelocationlocal.cpp
+void init_c_SampleLocationLocal(pybind11::module& m);  // c_SampleLocationLocal.cpp
 void init_c_samplelocationslocal(pybind11::module& m); // c_samplelocationslocal.cpp
 
 void init_m_datastructures(pybind11::module& m)
@@ -21,7 +21,7 @@ void init_m_datastructures(pybind11::module& m)
     submodule.doc() =
         "Submodule that holds datastructures that hold the raytracers/georeferncing results";
 
-    init_c_samplelocationlocal(submodule);
+    init_c_SampleLocationLocal(submodule);
     init_c_samplelocationslocal(submodule);
 }
 
