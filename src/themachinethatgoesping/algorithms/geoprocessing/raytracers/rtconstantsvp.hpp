@@ -222,10 +222,10 @@ class RTConstantSVP : public I_Raytracer
      * @param sample_numbers Sample numbers to trace (starting from 0)
      * @param sampling_time Time betweens samples in s
      * @param sampling_time_offset Time offset for sample number 0 in s
-     * @param scale_true_range known target range at scale_time
      * @param scale_x known target x position at scale_time
      * @param scale_y known target y position at scale_time
      * @param scale_z known target z position at scale_time
+     * @param scale_true_range known target range at scale_time
      * @param scale_time known target two way travel time
      * @return datastructures::SamplelocationsLocal<1>
      */
@@ -233,10 +233,10 @@ class RTConstantSVP : public I_Raytracer
         const xt::xtensor<unsigned int, 1>& sample_numbers,
         float                               sampling_time,
         float                               sampling_time_offset,
-        float                               scale_true_range,
         float                               scale_x,
         float                               scale_y,
         float                               scale_z,
+        float                               scale_true_range,
         float                               scale_time) const
     {
         const xt::xtensor<float, 1>& two_way_travel_times =
@@ -251,7 +251,7 @@ class RTConstantSVP : public I_Raytracer
         targets.x                                  = xt::interp(two_way_travel_times, xp, fp);
         fp[1]                                      = scale_y;
         targets.y                                  = xt::interp(two_way_travel_times, xp, fp);
-        fp[1]                                      = scale_z;
+        fp                                         = { get_sensor_location().z, scale_z };
         targets.z                                  = xt::interp(two_way_travel_times, xp, fp);
 
         return targets;
@@ -278,11 +278,18 @@ class RTConstantSVP : public I_Raytracer
         return scale_beam(sample_numbers,
                           sampling_time,
                           sampling_time_offset,
-                          scale_target.true_range,
                           scale_target.x,
                           scale_target.y,
                           scale_target.z,
+                          scale_target.true_range,
                           scale_time);
+    }
+    datastructures::SampleLocationsLocal<2> test(xt::xtensor<unsigned int, 2> sample_numbers,
+                                                 unsigned int                 number_of_beams,
+                                                 unsigned int number_of_samples) const
+    {
+        datastructures::SampleLocationsLocal<2> targets({ number_of_beams, number_of_samples });
+        return targets;
     }
 
     /**
@@ -305,6 +312,7 @@ class RTConstantSVP : public I_Raytracer
         const xt::xtensor<float, 1>&                   scale_times,
         unsigned int                                   mp_cores = 1) const
     {
+
         // test that beam numbers are consistent
         if (sample_numbers.shape()[0] != scale_times.size() ||
             scale_targets.size() != scale_times.size())
@@ -323,19 +331,19 @@ class RTConstantSVP : public I_Raytracer
 #pragma omp parallel for num_threads(mp_cores)
         for (unsigned int bn = 0; bn < number_of_beams; ++bn)
         {
-            auto beam_targets = scale_beam(xt::view(sample_numbers, bn),
+            auto beam_targets = scale_beam(xt::view(sample_numbers, bn, xt::all()),
                                            sampling_time,
                                            sampling_time_offset,
-                                           targets.x[bn],
-                                           targets.y[bn],
-                                           targets.z[bn],
-                                           targets.true_range[bn],
+                                           scale_targets.x[bn],
+                                           scale_targets.y[bn],
+                                           scale_targets.z[bn],
+                                           scale_targets.true_range[bn],
                                            scale_times[bn]);
 
-            xt::view(targets.true_range, bn) = std::move(beam_targets.true_range);
-            xt::view(targets.x, bn)          = std::move(beam_targets.x);
-            xt::view(targets.y, bn)          = std::move(beam_targets.y);
-            xt::view(targets.z, bn)          = std::move(beam_targets.z);
+            xt::view(targets.true_range, bn, xt::all()) = std::move(beam_targets.true_range);
+            xt::view(targets.x, bn, xt::all())          = std::move(beam_targets.x);
+            xt::view(targets.y, bn, xt::all())          = std::move(beam_targets.y);
+            xt::view(targets.z, bn, xt::all())          = std::move(beam_targets.z);
         }
 
         return targets;

@@ -54,10 +54,10 @@ void init_c_rtconstantsvp(py::module& m)
              py::arg("sample_numbers"),
              py::arg("sampling_time"),
              py::arg("sampling_time_offset"),
-             py::arg("scale_true_range"),
              py::arg("scale_x"),
              py::arg("scale_y"),
              py::arg("scale_z"),
+             py::arg("scale_true_range"),
              py::arg("scale_time"))
         .def("scale_beam",
              py::overload_cast<const xt::xtensor<unsigned int, 1>&,
@@ -85,6 +85,7 @@ void init_c_rtconstantsvp(py::module& m)
              py::arg("scale_target"),
              py::arg("scale_time"),
              py::arg("mp_cores") = 1)
+        .def("test", &RTConstantSVP::test)
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(RTConstantSVP)

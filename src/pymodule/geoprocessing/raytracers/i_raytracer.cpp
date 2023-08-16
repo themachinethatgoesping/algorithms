@@ -78,7 +78,7 @@ void init_i_raytracer(py::module& m)
             "trace_beam",
             py::overload_cast<unsigned int, unsigned int, unsigned int, float, float, float, float>(
                 &I_Raytracer::trace_beam, py::const_),
-            DOC_I_Raytracer(trace_beam),
+            DOC_I_Raytracer(trace_beam_2),
             py::arg("first_sample_number"),
             py::arg("number_of_samples"),
             py::arg("sample_step"),
@@ -109,7 +109,7 @@ void init_i_raytracer(py::module& m)
                                float,
                                const xt::xtensor<float, 1>&,
                                unsigned int>(&I_Raytracer::trace_swath, py::const_),
-             DOC_I_Raytracer(trace_swath),
+             DOC_I_Raytracer(trace_swath_2),
              py::arg("first_sample_number"),
              py::arg("number_of_samples"),
              py::arg("sample_step"),

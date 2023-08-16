@@ -28,7 +28,7 @@ TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
     location.pitch = 20;
     location.roll  = 30;
 
-    float c   = 1450.f;
+    float c = 1450.f;
 
     // initialize raytracer
     auto raytracer = RTConstantSVP(location, c);
@@ -193,5 +193,138 @@ TEST_CASE("RTConstantSVP multi point computations should be equal to single poin
         REQUIRE_THAT(target.y, Catch::Matchers::WithinAbs(targets.y[i], 0.0001));
         REQUIRE_THAT(target.z, Catch::Matchers::WithinAbs(targets.z[i], 0.0001));
         REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(targets.true_range[i], 0.0001));
+    }
+}
+
+TEST_CASE("RTConstantSVP beam computations should be equal to single point computations", TESTTAG)
+{
+    // initialize location
+    auto location = GeoLocation();
+
+    location.z     = 3;
+    location.yaw   = 0;
+    location.pitch = 0;
+    location.roll  = 0;
+
+    float c = 1450.f;
+
+    // initialize raytracer
+    auto raytracer = RTConstantSVP(location, c);
+
+    xt::random::seed(0);
+    // test raytracing some single points
+    xt::xtensor<float, 1> sample_numbers       = xt::arange<unsigned int>(0, 100);
+    xt::xtensor<float, 1> along                = xt::linspace<float>(-90, 90, 42);
+    xt::xtensor<float, 1> across               = xt::linspace<float>(-90, 90, 42);
+    float                 sampling_time        = 0.1;
+    float                 sampling_time_offset = 0.05;
+
+    // along  = along * 180.f - 90.f;
+    // across = across * 360.f - 180.f;
+
+    xt::xtensor<float, 1> times = sample_numbers * sampling_time + sampling_time_offset;
+
+    for (unsigned int bn = 0; bn < along.size(); ++bn)
+    {
+        auto beam = raytracer.trace_beam(
+            sample_numbers, sampling_time, sampling_time_offset, along[bn], across[bn]);
+
+        for (size_t sn : sample_numbers)
+        {
+            auto target = raytracer.trace_point(times[sn], along[bn], across[bn]);
+
+            INFO(fmt::format("bn/sn {}/{} along: {}, across: {}, time: {}",
+                             bn,
+                             sn,
+                             along[bn],
+                             across[bn],
+                             times[sn]));
+            INFO(fmt::format("beam {}", beam.info_string()));
+            INFO(fmt::format("target {}", target.info_string()));
+
+            REQUIRE_THAT(target.x, Catch::Matchers::WithinRel(beam.x[sn], 0.0001));
+            REQUIRE_THAT(target.y, Catch::Matchers::WithinRel(beam.y[sn], 0.0001));
+            REQUIRE_THAT(target.z, Catch::Matchers::WithinRel(beam.z[sn], 0.0001));
+            REQUIRE_THAT(target.true_range,
+                         Catch::Matchers::WithinRel(beam.true_range[sn], 0.0001));
+
+            REQUIRE_THAT(target.x, Catch::Matchers::WithinAbs(beam.x[sn], 0.01));
+            REQUIRE_THAT(target.y, Catch::Matchers::WithinAbs(beam.y[sn], 0.01));
+            REQUIRE_THAT(target.z, Catch::Matchers::WithinAbs(beam.z[sn], 0.01));
+            REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(beam.true_range[sn], 0.01));
+        }
+    }
+}
+
+TEST_CASE("RTConstantSVP swath computations should be equal to beam computations", TESTTAG)
+{
+    // initialize location
+    auto location = GeoLocation();
+
+    location.z     = 3;
+    location.yaw   = 0;
+    location.pitch = 0;
+    location.roll  = 0;
+
+    float c = 1450.f;
+
+    // initialize raytracer
+    auto raytracer = RTConstantSVP(location, c);
+
+    xt::random::seed(0);
+
+    const auto num_beams   = 13;
+    const auto num_samples = 13;
+    const auto num_along   = 13;
+    // test raytracing some single points
+    xt::xtensor<float, 1> sample_numbers_per_beam = xt::arange<unsigned int>(0, num_samples);
+    xt::xtensor<float, 2> sample_numbers =
+        xt::xtensor<float, 2>::from_shape({ num_beams, num_samples });
+    xt::xtensor<float, 1> along                = xt::linspace<float>(-90, 90, num_along);
+    xt::xtensor<float, 1> across               = xt::linspace<float>(-90, 90, num_beams);
+    float                 sampling_time        = 0.1;
+    float                 sampling_time_offset = 0.05;
+
+    for (unsigned int bn = 0; bn < sample_numbers.shape()[0]; ++bn)
+    {
+        xt::view(sample_numbers, bn, xt::all()) = sample_numbers_per_beam;
+    }
+
+    xt::xtensor<float, 1> times = sample_numbers_per_beam * sampling_time + sampling_time_offset;
+
+    for (unsigned int an = 0; an < along.size(); ++an)
+    {
+
+        auto swath = raytracer.trace_swath(
+            sample_numbers, sampling_time, sampling_time_offset, along[an], across);
+
+        for (unsigned int bn = 0; bn < across.size(); ++bn)
+        {
+            auto beam = raytracer.trace_beam(sample_numbers_per_beam,
+                                             sampling_time,
+                                             sampling_time_offset,
+                                             along[an],
+                                             across[bn]);
+
+            for (unsigned int sn = 0; sn < sample_numbers_per_beam.size(); ++sn)
+            {
+                INFO(fmt::format(
+                    "an/bn/sn {}/{}/{} along: {}, across: {}", an, bn, sn, along[an], across[bn]));
+                INFO(fmt::format("beam {}", beam.info_string()));
+                INFO(fmt::format("swath {}", swath.info_string()));
+
+                REQUIRE_THAT(swath.x(bn, sn), Catch::Matchers::WithinRel(beam.x[sn], 0.0001));
+                REQUIRE_THAT(swath.y(bn, sn), Catch::Matchers::WithinRel(beam.y[sn], 0.0001));
+                REQUIRE_THAT(swath.z(bn, sn), Catch::Matchers::WithinRel(beam.z[sn], 0.0001));
+                REQUIRE_THAT(swath.true_range(bn, sn),
+                             Catch::Matchers::WithinRel(beam.true_range[sn], 0.0001));
+
+                REQUIRE_THAT(swath.x(bn, sn), Catch::Matchers::WithinAbs(beam.x[sn], 0.01));
+                REQUIRE_THAT(swath.y(bn, sn), Catch::Matchers::WithinAbs(beam.y[sn], 0.01));
+                REQUIRE_THAT(swath.z(bn, sn), Catch::Matchers::WithinAbs(beam.z[sn], 0.01));
+                REQUIRE_THAT(swath.true_range(bn, sn),
+                             Catch::Matchers::WithinAbs(beam.true_range[sn], 0.01));
+            }
+        }
     }
 }
