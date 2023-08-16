@@ -239,7 +239,7 @@ class RTConstantSVP : public I_Raytracer
         float                               scale_true_range,
         float                               scale_time) const
     {
-        const xt::xtensor<float, 1>& two_way_travel_times =
+        xt::xtensor<float, 1> two_way_travel_times =
             ((sample_numbers * sampling_time) + sampling_time_offset);
 
         datastructures::SampleLocationsLocal<1> targets;
@@ -284,13 +284,6 @@ class RTConstantSVP : public I_Raytracer
                           scale_target.true_range,
                           scale_time);
     }
-    datastructures::SampleLocationsLocal<2> test(xt::xtensor<unsigned int, 2> sample_numbers,
-                                                 unsigned int                 number_of_beams,
-                                                 unsigned int number_of_samples) const
-    {
-        datastructures::SampleLocationsLocal<2> targets({ number_of_beams, number_of_samples });
-        return targets;
-    }
 
     /**
      * @brief Compute the sample locations of a swath by scaling between the transducer
@@ -327,7 +320,6 @@ class RTConstantSVP : public I_Raytracer
         unsigned int number_of_samples = sample_numbers.shape()[1];
 
         datastructures::SampleLocationsLocal<2> targets({ number_of_beams, number_of_samples });
-
 #pragma omp parallel for num_threads(mp_cores)
         for (unsigned int bn = 0; bn < number_of_beams; ++bn)
         {
@@ -340,10 +332,10 @@ class RTConstantSVP : public I_Raytracer
                                            scale_targets.true_range[bn],
                                            scale_times[bn]);
 
-            xt::view(targets.true_range, bn, xt::all()) = std::move(beam_targets.true_range);
-            xt::view(targets.x, bn, xt::all())          = std::move(beam_targets.x);
-            xt::view(targets.y, bn, xt::all())          = std::move(beam_targets.y);
-            xt::view(targets.z, bn, xt::all())          = std::move(beam_targets.z);
+            xt::row(targets.true_range, bn) = beam_targets.true_range;
+            xt::row(targets.x, bn)          = beam_targets.x;
+            xt::row(targets.y, bn)          = beam_targets.y;
+            xt::row(targets.z, bn)          = beam_targets.z;
         }
 
         return targets;

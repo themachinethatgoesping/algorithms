@@ -13,7 +13,10 @@
 
 // -- include pybind11 headers
 #include <pybind11/stl.h>
-#include <xtensor-python/pyarray.hpp> // Numpy bindings
+#include <xtensor-python/pyarray.hpp>  // Numpy bindings
+#include <xtensor-python/pytensor.hpp> // Numpy bindings
+
+#include <xtensor/xadapt.hpp> // Numpy bindings
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -85,7 +88,6 @@ void init_c_rtconstantsvp(py::module& m)
              py::arg("scale_target"),
              py::arg("scale_time"),
              py::arg("mp_cores") = 1)
-        .def("test", &RTConstantSVP::test)
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(RTConstantSVP)

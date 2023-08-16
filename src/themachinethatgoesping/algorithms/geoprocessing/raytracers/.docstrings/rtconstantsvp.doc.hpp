@@ -1,4 +1,4 @@
-//sourcehash: 554163eeb825b528127195a9968ca277f5176dc02ebe8f57b6f957bb654d4615
+//sourcehash: 67110fbda27d8c3e62da685fdf9089333cc6b011a9d3eac4e1561eee35fa86c1
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -77,9 +77,6 @@ Parameter ``sampling_time``:
 Parameter ``sampling_time_offset``:
     Time offset for sample number 0 in s
 
-Parameter ``scale_true_range``:
-    known target range at scale_time
-
 Parameter ``scale_x``:
     known target x position at scale_time
 
@@ -88,6 +85,9 @@ Parameter ``scale_y``:
 
 Parameter ``scale_z``:
     known target z position at scale_time
+
+Parameter ``scale_true_range``:
+    known target range at scale_time
 
 Parameter ``scale_time``:
     known target two way travel time
@@ -147,8 +147,6 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity_2 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_test = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_to_stream = R"doc()doc";
 

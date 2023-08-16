@@ -1,0 +1,3 @@
+Processing "../themachinethatgoesping/algorithms/geoprocessing/raytracers/rtconstantsvp.hpp" ..
+Waiting for jobs to finish ..
+../themachinethatgoesping/algorithms/geoprocessing/raytracers/../datastructures/samplelocationlocal.hpp:10:10: fatal error: 'themachinethatgoesping/tools/classhelper/objectprinter.hpp' file not found
