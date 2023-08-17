@@ -242,16 +242,16 @@ TEST_CASE("RTConstantSVP beam computations should be equal to single point compu
             INFO(fmt::format("beam {}", beam.info_string()));
             INFO(fmt::format("target {}", target.info_string()));
 
-            REQUIRE_THAT(target.x, Catch::Matchers::WithinRel(beam.x[sn], 0.0001));
-            REQUIRE_THAT(target.y, Catch::Matchers::WithinRel(beam.y[sn], 0.0001));
-            REQUIRE_THAT(target.z, Catch::Matchers::WithinRel(beam.z[sn], 0.0001));
+            REQUIRE_THAT(target.x, Catch::Matchers::WithinRel(beam.x[sn], 0.0001f));
+            REQUIRE_THAT(target.y, Catch::Matchers::WithinRel(beam.y[sn], 0.0001f));
+            REQUIRE_THAT(target.z, Catch::Matchers::WithinRel(beam.z[sn], 0.0001f));
             REQUIRE_THAT(target.true_range,
-                         Catch::Matchers::WithinRel(beam.true_range[sn], 0.0001));
+                         Catch::Matchers::WithinRel(beam.true_range[sn], 0.0001f));
 
-            REQUIRE_THAT(target.x, Catch::Matchers::WithinAbs(beam.x[sn], 0.01));
-            REQUIRE_THAT(target.y, Catch::Matchers::WithinAbs(beam.y[sn], 0.01));
-            REQUIRE_THAT(target.z, Catch::Matchers::WithinAbs(beam.z[sn], 0.01));
-            REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(beam.true_range[sn], 0.01));
+            REQUIRE_THAT(target.x, Catch::Matchers::WithinAbs(beam.x[sn], 0.01f));
+            REQUIRE_THAT(target.y, Catch::Matchers::WithinAbs(beam.y[sn], 0.01f));
+            REQUIRE_THAT(target.z, Catch::Matchers::WithinAbs(beam.z[sn], 0.01f));
+            REQUIRE_THAT(target.true_range, Catch::Matchers::WithinAbs(beam.true_range[sn], 0.01f));
         }
     }
 }
@@ -313,17 +313,17 @@ TEST_CASE("RTConstantSVP swath computations should be equal to beam computations
                 INFO(fmt::format("beam {}", beam.info_string()));
                 INFO(fmt::format("swath {}", swath.info_string()));
 
-                REQUIRE_THAT(swath.x(bn, sn), Catch::Matchers::WithinRel(beam.x[sn], 0.0001));
-                REQUIRE_THAT(swath.y(bn, sn), Catch::Matchers::WithinRel(beam.y[sn], 0.0001));
-                REQUIRE_THAT(swath.z(bn, sn), Catch::Matchers::WithinRel(beam.z[sn], 0.0001));
+                REQUIRE_THAT(swath.x(bn, sn), Catch::Matchers::WithinRel(beam.x[sn], 0.0001f));
+                REQUIRE_THAT(swath.y(bn, sn), Catch::Matchers::WithinRel(beam.y[sn], 0.0001f));
+                REQUIRE_THAT(swath.z(bn, sn), Catch::Matchers::WithinRel(beam.z[sn], 0.0001f));
                 REQUIRE_THAT(swath.true_range(bn, sn),
-                             Catch::Matchers::WithinRel(beam.true_range[sn], 0.0001));
+                             Catch::Matchers::WithinRel(beam.true_range[sn], 0.0001f));
 
-                REQUIRE_THAT(swath.x(bn, sn), Catch::Matchers::WithinAbs(beam.x[sn], 0.01));
-                REQUIRE_THAT(swath.y(bn, sn), Catch::Matchers::WithinAbs(beam.y[sn], 0.01));
-                REQUIRE_THAT(swath.z(bn, sn), Catch::Matchers::WithinAbs(beam.z[sn], 0.01));
+                REQUIRE_THAT(swath.x(bn, sn), Catch::Matchers::WithinAbs(beam.x[sn], 0.01f));
+                REQUIRE_THAT(swath.y(bn, sn), Catch::Matchers::WithinAbs(beam.y[sn], 0.01f));
+                REQUIRE_THAT(swath.z(bn, sn), Catch::Matchers::WithinAbs(beam.z[sn], 0.01f));
                 REQUIRE_THAT(swath.true_range(bn, sn),
-                             Catch::Matchers::WithinAbs(beam.true_range[sn], 0.01));
+                             Catch::Matchers::WithinAbs(beam.true_range[sn], 0.01f));
             }
         }
     }

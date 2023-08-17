@@ -332,6 +332,7 @@ class RTConstantSVP : public I_Raytracer
                                            scale_targets.true_range[bn],
                                            scale_times[bn]);
 
+            // TODO: this seems to be slow, maybe there is a better way to do this
             xt::row(targets.true_range, bn) = beam_targets.true_range;
             xt::row(targets.x, bn)          = beam_targets.x;
             xt::row(targets.y, bn)          = beam_targets.y;
