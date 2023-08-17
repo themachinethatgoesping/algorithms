@@ -34,15 +34,29 @@ TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
     auto raytracer = RTConstantSVP(location, c);
 
     // test copy
-    REQUIRE(raytracer == RTConstantSVP(raytracer));
+    {
+        INFO(raytracer.info_string());
+        INFO(RTConstantSVP(raytracer).info_string());
+        REQUIRE(raytracer == RTConstantSVP(raytracer));
+    }
 
     // test binary
-    REQUIRE(raytracer == RTConstantSVP(raytracer.from_binary(raytracer.to_binary())));
+    {
+        auto raytracer2 = RTConstantSVP::from_binary(raytracer.to_binary());
+        INFO(raytracer.info_string());
+        INFO(raytracer2.info_string());
+        REQUIRE(raytracer == raytracer2);
+    }
 
     // test stream
-    std::stringstream buffer;
-    raytracer.to_stream(buffer);
-    REQUIRE(raytracer == RTConstantSVP(raytracer.from_stream(buffer)));
+    {
+        std::stringstream buffer;
+        raytracer.to_stream(buffer);
+        auto raytracer2 = RTConstantSVP::from_stream(buffer);
+        INFO(raytracer.info_string());
+        INFO(raytracer2.info_string());
+        REQUIRE(raytracer == raytracer2);
+    }
 
     // test print does not crash
     REQUIRE(raytracer.info_string().size() != 0);

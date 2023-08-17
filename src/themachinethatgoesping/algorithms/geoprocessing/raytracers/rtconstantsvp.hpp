@@ -48,7 +48,16 @@ class RTConstantSVP : public I_Raytracer
     virtual ~RTConstantSVP() = default;
 
     // ----- operators -----
-    bool operator==(const RTConstantSVP& other) const = default;
+    bool operator==(const RTConstantSVP& other) const
+    {
+        using tools::helper::approx;
+
+        if (I_Raytracer::operator==(other))
+            if (approx(_sound_velocity, other._sound_velocity))
+                return true;
+
+        return false;
+    }
 
     // ----- getters/setters -----
     void  set_sound_velocity(float sound_velocity) { _sound_velocity = sound_velocity; }

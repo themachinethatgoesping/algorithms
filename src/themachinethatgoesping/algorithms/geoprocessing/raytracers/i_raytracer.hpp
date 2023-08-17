@@ -44,7 +44,15 @@ class I_Raytracer
     virtual ~I_Raytracer() = default;
 
     // ----- operators -----
-    bool operator==(const I_Raytracer& other) const = default;
+    bool operator==(const I_Raytracer& other) const
+    {
+        // do not compare sensor quaternion as this is derived from the sensor location
+        if (_name == other._name)
+            if (_sensor_location == other._sensor_location)
+                return true;
+
+        return false;
+    }
 
     // ----- tracing -----
     /**
