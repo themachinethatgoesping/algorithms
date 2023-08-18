@@ -85,8 +85,8 @@ void init_c_rtconstantsvp(py::module& m)
              py::arg("sample_numbers"),
              py::arg("sampling_time"),
              py::arg("sampling_time_offset"),
-             py::arg("scale_target"),
-             py::arg("scale_time"),
+             py::arg("scale_targets"),
+             py::arg("scale_times"),
              py::arg("mp_cores") = 1)
 
         // default copy functions
