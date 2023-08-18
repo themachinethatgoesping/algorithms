@@ -45,9 +45,10 @@ void init_c_SampleLocationLocal(py::module& m)
              DOC_SampleLocationLocal(operator_eq),
              py::arg("other"))
         .def_readwrite("x", &SampleLocationLocal::x, DOC_SampleLocationLocal(x))
-        .def_readwrite("y", &SampleLocationLocal::x, DOC_SampleLocationLocal(y))
-        .def_readwrite("z", &SampleLocationLocal::x, DOC_SampleLocationLocal(z))
-        .def_readwrite("true_range", &SampleLocationLocal::x, DOC_SampleLocationLocal(true_range))
+        .def_readwrite("y", &SampleLocationLocal::y, DOC_SampleLocationLocal(y))
+        .def_readwrite("z", &SampleLocationLocal::z, DOC_SampleLocationLocal(z))
+        .def_readwrite(
+            "true_range", &SampleLocationLocal::true_range, DOC_SampleLocationLocal(true_range))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(SampleLocationLocal)

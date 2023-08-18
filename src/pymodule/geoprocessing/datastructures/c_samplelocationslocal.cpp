@@ -63,10 +63,11 @@ void init_c_samplelocationslocal_dim(py::module& m)
         .def("size", &SampleLocationsLocal<Dim>::size, DOC_SampleLocationsLocal(size))
 
         .def_readwrite("x", &SampleLocationsLocal<Dim>::x, DOC_SampleLocationsLocal(x))
-        .def_readwrite("y", &SampleLocationsLocal<Dim>::x, DOC_SampleLocationsLocal(y))
-        .def_readwrite("z", &SampleLocationsLocal<Dim>::x, DOC_SampleLocationsLocal(z))
-        .def_readwrite(
-            "true_range", &SampleLocationsLocal<Dim>::x, DOC_SampleLocationsLocal(true_range))
+        .def_readwrite("y", &SampleLocationsLocal<Dim>::y, DOC_SampleLocationsLocal(y))
+        .def_readwrite("z", &SampleLocationsLocal<Dim>::z, DOC_SampleLocationsLocal(z))
+        .def_readwrite("true_range",
+                       &SampleLocationsLocal<Dim>::true_range,
+                       DOC_SampleLocationsLocal(true_range))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(SampleLocationsLocal<Dim>)
