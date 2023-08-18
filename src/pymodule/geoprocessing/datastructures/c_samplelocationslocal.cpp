@@ -60,14 +60,26 @@ void init_c_samplelocationslocal_dim(py::module& m)
              &SampleLocationsLocal<Dim>::operator==,
              DOC_SampleLocationsLocal(operator_eq),
              py::arg("other"))
-        .def("size", &SampleLocationsLocal<Dim>::size, DOC_SampleLocationsLocal(size))
+        .def("size",
+             &SampleLocationsLocal<Dim>::size,
+             DOC_SampleLocationsLocal(size))
 
-        .def_readwrite("x", &SampleLocationsLocal<Dim>::x, DOC_SampleLocationsLocal(x))
-        .def_readwrite("y", &SampleLocationsLocal<Dim>::y, DOC_SampleLocationsLocal(y))
-        .def_readwrite("z", &SampleLocationsLocal<Dim>::z, DOC_SampleLocationsLocal(z))
+        .def_readwrite("x",
+                       &SampleLocationsLocal<Dim>::x,
+                       DOC_SampleLocationsLocal(x),
+                       py::return_value_policy::reference_internal)
+        .def_readwrite("y",
+                       &SampleLocationsLocal<Dim>::y,
+                       DOC_SampleLocationsLocal(y),
+                       py::return_value_policy::reference_internal)
+        .def_readwrite("z",
+                       &SampleLocationsLocal<Dim>::z,
+                       DOC_SampleLocationsLocal(z),
+                       py::return_value_policy::reference_internal)
         .def_readwrite("true_range",
                        &SampleLocationsLocal<Dim>::true_range,
-                       DOC_SampleLocationsLocal(true_range))
+                       DOC_SampleLocationsLocal(true_range),
+                       py::return_value_policy::reference_internal)
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(SampleLocationsLocal<Dim>)
