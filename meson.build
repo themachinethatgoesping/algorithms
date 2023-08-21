@@ -21,7 +21,8 @@ omp_dep = dependency('openmp')
 # openmp support for windows (clang-cl)
 message('System:', build_machine.system(), build_machine.system() == 'windows')
 if meson.get_compiler('cpp').get_id() == 'clang'
-  add_global_arguments('-Xclang','-fopenmp', language : 'cpp')
+  #add_global_arguments('-Xclang','-fopenmp', language : 'cpp')
+  add_global_arguments('-Xclang','-fopenmp')
 endif
 
 # system
