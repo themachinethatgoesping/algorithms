@@ -20,9 +20,10 @@ projectnamespace = 'themachinethatgoesping'
 omp_dep = dependency('openmp')
 # openmp support for windows (clang-cl)
 message('System:', build_machine.system(), build_machine.system() == 'windows')
-if meson.get_compiler('cpp').get_id() == 'clang'
+message('Compiler:', meson.get_compiler('cpp').get_id(), meson.get_compiler('cpp').get_id() == 'clang-cl')
+if meson.get_compiler('cpp').get_id() == 'clang-cl'
   #add_global_arguments('-Xclang','-fopenmp', language : 'cpp')
-  add_global_arguments('-Xclang','-fopenmp')
+  add_global_arguments('-Xclang','-fopenmp', language : 'cpp')
 endif
 
 # system
