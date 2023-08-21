@@ -4,9 +4,9 @@
 
 #wrap folders
 packagecache/*
-Catch2*/*
+Catch2**
 date*/*
-geographiclib*
+pugixml*/*
 
 #inherited wrap files
 catch2.wrap
@@ -19,13 +19,17 @@ fmt*
 magic_enum*
 xtensor*
 xsimd*
+xtensor-python*
 fast_float*
 nlohman*
 indicators*
-xtensor-python*
-xxhash_cpp*
+geographiclib*
+xxhash_cpp**
+xtl**
+date**
 
 #inherited repos
 tools-*
 meta-*
+navigation-*
 
