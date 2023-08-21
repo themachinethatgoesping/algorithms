@@ -72,11 +72,11 @@ struct SampleDirections
         {
             throw std::runtime_error(fmt::format(
                 "SampleDirections::SampleDirections: alongtrack_angle, crosstrack_angle and "
-                "two_way_travel_time must have the same shape. alongtrack_angle.shape() = {}, "
-                "crosstrack_angle.shape() = {}, two_way_travel_time.shape() = {}",
-                alongtrack_angle.shape(),
-                crosstrack_angle.shape(),
-                two_way_travel_time.shape()));
+                "two_way_travel_time must have the same shape. alongtrack_angle.size() = {}, "
+                "crosstrack_angle.size() = {}, two_way_travel_time.size() = {}",
+                alongtrack_angle.size(),
+                crosstrack_angle.size(),
+                two_way_travel_time.size()));
         }
     }
 

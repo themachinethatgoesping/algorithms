@@ -1,0 +1,3 @@
+Processing "../themachinethatgoesping/algorithms/geoprocessing/datastructures/sampledirections.hpp" ..
+Waiting for jobs to finish ..
+../themachinethatgoesping/algorithms/geoprocessing/datastructures/sampledirections.hpp:10:10: fatal error: 'xtensor/xtensor.hpp' file not found

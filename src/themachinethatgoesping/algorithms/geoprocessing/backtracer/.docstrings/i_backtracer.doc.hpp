@@ -1,4 +1,4 @@
-//sourcehash: 81a9bc8b8a26c554a1f57071bd3e44e9009af190bccd695a2e2f0fbbb09923af
+//sourcehash: 3ee57b2a685cdd2e179ceb7e19e9aa5a52c64c157e450e4a3e5374281f0b32b8
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -42,15 +42,51 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtra
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_I_Backtracer = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_backtrace_points =
+R"doc(Backtrace the location of a set of points.
+
+Parameter ``two_way_travel_time``:
+    Two way travel time in s
+
+Parameter ``alongtrack_angle``:
+    Along track angle in °
+
+Parameter ``crosstrack_angles``:
+    Across track angle in °
+
+Parameter ``mp_cores``:
+    Number of cores to use for parallelization
+
+Returns:
+    datastructures::SampleLocationLocal)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_from_stream = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_name = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_sensor_location = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_sensor_orientation_quat = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_sensor_orientation_quat_ypr = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_name = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_not_implemented = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_not_implemented_not_implemented = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_operator_eq = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_printer = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_sensor_location = R"doc(< Location/Orientation of the senor)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_sensor_orientation_quat = R"doc(< Quaternion describing the orientation < of the sensor)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_set_sensor_location = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_to_stream = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

@@ -5,6 +5,9 @@
 #pragma once
 
 /* generated doc strings */
+#include ".docstrings/btconstantsvp.doc.hpp"
+
+/* generated doc strings */
 #include ".docstrings/rtconstantsvp.doc.hpp"
 
 #include "../datastructures.hpp"
