@@ -62,18 +62,6 @@ void init_c_rtconstantsvp(py::module& m)
              py::arg("scale_z"),
              py::arg("scale_true_range"),
              py::arg("scale_time"))
-        .def("scale_beam",
-             py::overload_cast<const xt::xtensor<unsigned int, 1>&,
-                               float,
-                               float,
-                               const datastructures::SampleLocationLocal&,
-                               float>(&RTConstantSVP::scale_beam, py::const_),
-             DOC_RTConstantSVP(scale_beam_2),
-             py::arg("sample_numbers"),
-             py::arg("sampling_time"),
-             py::arg("sampling_time_offset"),
-             py::arg("scale_target"),
-             py::arg("scale_time"))
         .def("scale_swath",
              py::overload_cast<const xt::xtensor<unsigned int, 2>&,
                                float,

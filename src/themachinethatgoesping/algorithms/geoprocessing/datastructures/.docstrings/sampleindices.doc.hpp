@@ -1,4 +1,4 @@
-//sourcehash: 2e1a0ed1b7dddfaf29a610ffc3bdc0f40d6480495c742b021c8c2dd045f7e641
+//sourcehash: 9e620f13d3050ec08c7117c4bc2d40b0e7c00a90a5bc1cb3889aa7b8de9735b1
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,29 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices =
+R"doc(A structure to store sample indices (sample nr, beam nr) for a set of
+beams. It is used as output for the backmapper functions and as input
+for the get_wci_amplitude functions.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_SampleIndices = R"doc(Construct a new SampleIndices object (all values set to 0))doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_SampleIndices_2 =
+R"doc(Construct a new SampleIndices object
+
+Parameter ``beam_sample_map_``:
+    map <beam number, sample_number>)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_beam_sample_map = R"doc(< map <beam number, sample_number>)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_from_stream = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_operator_eq = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_printer = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_to_stream = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

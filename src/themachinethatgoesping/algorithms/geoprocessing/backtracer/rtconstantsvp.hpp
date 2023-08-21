@@ -8,7 +8,7 @@
 #include ".docstrings/rtconstantsvp.doc.hpp"
 
 #include "../datastructures.hpp"
-#include "i_raytracer.hpp"
+#include "i_backtracer.hpp"
 
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
@@ -22,9 +22,9 @@
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace geoprocessing {
-namespace raytracers {
+namespace backtracers {
 
-class RTConstantSVP : public I_Raytracer
+class RTConstantSVP : public I_Backtracer
 {
     // navigation::datastructures::GeoLocation_sensor_location;
     // Eigen::Quaternion<float> _sensor_orientation_quat;
@@ -40,7 +40,7 @@ class RTConstantSVP : public I_Raytracer
      * @param sound_velocity Sound velocity in m/s
      */
     RTConstantSVP(navigation::datastructures::GeoLocation sensor_location, float sound_velocity)
-        : I_Raytracer(std::move(sensor_location), "RTConstantSVP")
+        : I_Backtracer(std::move(sensor_location), "RTConstantSVP")
         , _sound_velocity(sound_velocity)
         , _sound_velocity_2(sound_velocity / 2)
     {
@@ -52,7 +52,7 @@ class RTConstantSVP : public I_Raytracer
     {
         using tools::helper::approx;
 
-        if (I_Raytracer::operator==(other))
+        if (I_Backtracer::operator==(other))
             if (approx(_sound_velocity, other._sound_velocity))
                 return true;
 
@@ -356,7 +356,7 @@ class RTConstantSVP : public I_Raytracer
     // ----- file I/O -----
     static RTConstantSVP from_stream(std::istream& is)
     {
-        auto data = RTConstantSVP(I_Raytracer::from_stream(is));
+        auto data = RTConstantSVP(I_Backtracer::from_stream(is));
         if (data.get_name() != "RTConstantSVP")
             throw std::runtime_error(
                 fmt::format("RTConstantSVP::from_stream: wrong object name: {}", data.get_name()));
@@ -368,7 +368,7 @@ class RTConstantSVP : public I_Raytracer
 
     void to_stream(std::ostream& os) const
     {
-        I_Raytracer::to_stream(os);
+        I_Backtracer::to_stream(os);
         os.write(reinterpret_cast<const char*>(&_sound_velocity), sizeof(float));
     }
 
@@ -380,7 +380,7 @@ class RTConstantSVP : public I_Raytracer
         tools::classhelper::ObjectPrinter printer(this->get_name(), float_precision);
 
         printer.register_section("Basics", '*');
-        printer.append(I_Raytracer::__printer__(float_precision));
+        printer.append(I_Backtracer::__printer__(float_precision));
 
         printer.register_section("Profile", '*');
         printer.register_value("sound_velocity", _sound_velocity, "m/s");
@@ -390,13 +390,13 @@ class RTConstantSVP : public I_Raytracer
 
   private:
     /**
-     * @brief Construct a new RTConstantSVP object from a base raytracer object leaving sound
+     * @brief Construct a new RTConstantSVP object from a base backtracer object leaving sound
      * velocity uninitialized (for reading from stream)
      *
-     * @param raytracer base raytracer object
+     * @param backtracer base backtracer object
      */
-    RTConstantSVP(I_Raytracer raytracer)
-        : I_Raytracer(std::move(raytracer))
+    RTConstantSVP(I_Backtracer backtracer)
+        : I_Backtracer(std::move(backtracer))
     {
     }
 
@@ -408,7 +408,7 @@ class RTConstantSVP : public I_Raytracer
     __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__
 };
 
-} // namespace raytracers
+} // namespace backtracers
 } // namespace geoprocessing
 } // namespace algorithms
 } // namespace themachinethatgoesping

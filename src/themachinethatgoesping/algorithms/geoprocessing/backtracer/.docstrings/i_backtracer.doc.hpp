@@ -1,4 +1,4 @@
-//sourcehash: 111ddf6c8f24e5f2e99a8ac9433df9d503499ff669cbcf061988235377df1356
+//sourcehash: 81a9bc8b8a26c554a1f57071bd3e44e9009af190bccd695a2e2f0fbbb09923af
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,20 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_I_Backtracer = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_name = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_name = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_operator_eq = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_sensor_location = R"doc(< Location/Orientation of the senor)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_sensor_orientation_quat = R"doc(< Quaternion describing the orientation < of the sensor)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

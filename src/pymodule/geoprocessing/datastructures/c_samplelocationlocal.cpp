@@ -26,7 +26,7 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::datastructure
 #define DOC_SampleLocationLocal(ARG)                                                               \
     DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleLocationLocal, ARG)
 
-void init_c_SampleLocationLocal(py::module& m)
+void init_c_samplelocationlocal(py::module& m)
 {
 
     py::class_<SampleLocationLocal>(

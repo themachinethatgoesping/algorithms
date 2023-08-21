@@ -7,8 +7,10 @@
 testcomponent = 'algorithms'
 
 sources = [
-    'geoprocessing/datastructures/samplelocationlocal.test.cpp',
     'geoprocessing/datastructures/samplelocationslocal.test.cpp',
+    'geoprocessing/datastructures/samplelocationlocal.test.cpp',
+    'geoprocessing/datastructures/sampledirections.test.cpp',
+    'geoprocessing/datastructures/sampleindices.test.cpp',
     'geoprocessing/raytracers/i_raytracer.test.cpp',
     'geoprocessing/raytracers/rtconstantsvp.test.cpp',
     'tutorial.test.cpp'

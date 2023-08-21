@@ -1,4 +1,4 @@
-//sourcehash: 9cb2a493292a8eeb7a7b0106582336c6f195775d71295a1dd8d6e814c43eb43b
+//sourcehash: 6ec078ff60f17e711e406d5be6d836ab3b48cb7976fbb6e0ae45ee5d962be450
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,9 +38,9 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_RTConstantSVP =
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_RTConstantSVP =
 R"doc(Construct a new RTConstantSVP object
 
 Parameter ``sensor_location``:
@@ -49,22 +49,22 @@ Parameter ``sensor_location``:
 Parameter ``sound_velocity``:
     Sound velocity in m/s)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_RTConstantSVP_2 =
-R"doc(Construct a new RTConstantSVP object from a base raytracer object
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_RTConstantSVP_2 =
+R"doc(Construct a new RTConstantSVP object from a base backtracer object
 leaving sound velocity uninitialized (for reading from stream)
 
-Parameter ``raytracer``:
-    base raytracer object)doc";
+Parameter ``backtracer``:
+    base backtracer object)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_from_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_from_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_get_sound_velocity = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_get_sound_velocity = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_operator_eq = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_operator_eq = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_printer = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_printer = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_scale_beam =
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_scale_beam =
 R"doc(Compute the sample locations of a single beam by scaling between the
 transducer location and a known target location
 
@@ -95,7 +95,7 @@ Parameter ``scale_time``:
 Returns:
     datastructures::SamplelocationsLocal<1>)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_scale_beam_2 =
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_scale_beam_2 =
 R"doc(Compute the sample locations of a single beam by scaling between the
 transducer location and a known target location
 
@@ -117,7 +117,7 @@ Parameter ``scale_time``:
 Returns:
     datastructures::SamplelocationsLocal<1>)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_scale_swath =
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_scale_swath =
 R"doc(Compute the sample locations of a swath by scaling between the
 transducer location and known target locations
 
@@ -142,23 +142,23 @@ Parameter ``mp_cores``:
 Returns:
     datastructures::SamplelocationsLocal<1>)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_set_sound_velocity = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_set_sound_velocity = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_sound_velocity = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity_2 = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_sound_velocity_2 = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_to_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_to_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_beam = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_trace_beam = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_point = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_trace_point = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_trace_points = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points_2 = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_trace_points_2 = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_swath = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_trace_swath = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
