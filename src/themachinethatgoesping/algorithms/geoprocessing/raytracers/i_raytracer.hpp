@@ -61,9 +61,9 @@ class I_Raytracer
      * @param two_way_travel_time Two way travel time in s
      * @param alongtrack_angle Along track angle in °
      * @param crosstrack_angle Across track angle in °
-     * @return datastructures::SampleLocationLocal
+     * @return datastructures::RaytraceResult
      */
-    virtual datastructures::SampleLocationLocal trace_point(
+    virtual datastructures::RaytraceResult trace_point(
         [[maybe_unused]] float two_way_travel_time,
         [[maybe_unused]] float alongtrack_angle,
         [[maybe_unused]] float crosstrack_angle) const
@@ -78,9 +78,9 @@ class I_Raytracer
      * @param alongtrack_angle Along track angle in °
      * @param crosstrack_angles Across track angle in °
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SampleLocationLocal
+     * @return datastructures::RaytraceResult
      */
-    virtual datastructures::SampleLocationsLocal<1> trace_points(
+    virtual datastructures::RaytraceResults<1> trace_points(
         [[maybe_unused]] const xt::xtensor<float, 1>& two_way_travel_times,
         [[maybe_unused]] const xt::xtensor<float, 1>& alongtrack_angles,
         [[maybe_unused]] const xt::xtensor<float, 1>& crosstrack_angles,
@@ -96,9 +96,9 @@ class I_Raytracer
      * @param alongtrack_angle Along track angle of all beams in °
      * @param crosstrack_angles Across track angle in °
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SampleLocationLocal
+     * @return datastructures::RaytraceResult
      */
-    virtual datastructures::SampleLocationsLocal<1> trace_points(
+    virtual datastructures::RaytraceResults<1> trace_points(
         [[maybe_unused]] const xt::xtensor<float, 1>& two_way_travel_times,
         [[maybe_unused]] float                        alongtrack_angles,
         [[maybe_unused]] const xt::xtensor<float, 1>& crosstrack_angles,
@@ -115,9 +115,9 @@ class I_Raytracer
      * @param sampling_time_offset Time offset for sample number 0 in s
      * @param alongtrack_angle Along track angle in °
      * @param crosstrack_angle Across track angle in °
-     * @return datastructures::SamplelocationsLocal<1>
+     * @return datastructures::RaytraceResults<1>
      */
-    virtual datastructures::SampleLocationsLocal<1> trace_beam(
+    virtual datastructures::RaytraceResults<1> trace_beam(
         [[maybe_unused]] const xt::xtensor<unsigned int, 1>& sample_numbers,
         [[maybe_unused]] float                               sampling_time,
         [[maybe_unused]] float                               sampling_time_offset,
@@ -139,9 +139,9 @@ class I_Raytracer
      * @param alongtrack_angle Along track angle of the swath in °
      * @param crosstrack_angles Across track angle of each beam in °
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SamplelocationsLocal<2>
+     * @return datastructures::RaytraceResults<2>
      */
-    virtual datastructures::SampleLocationsLocal<2> trace_swath(
+    virtual datastructures::RaytraceResults<2> trace_swath(
         [[maybe_unused]] const xt::xtensor<unsigned int, 2>& sample_numbers,
         [[maybe_unused]] float                               sampling_time,
         [[maybe_unused]] float                               sampling_time_offset,
@@ -162,9 +162,9 @@ class I_Raytracer
      * @param sampling_time_offset Time offset for sample number 0 in s
      * @param alongtrack_angle Along track angle in °
      * @param crosstrack_angle Across track angle in °
-     * @return datastructures::SampleLocationsLocal<1>
+     * @return datastructures::RaytraceResults<1>
      */
-    virtual datastructures::SampleLocationsLocal<1> trace_beam(unsigned int first_sample_number,
+    virtual datastructures::RaytraceResults<1> trace_beam(unsigned int first_sample_number,
                                                                unsigned int number_of_samples,
                                                                unsigned int sample_step,
                                                                float        sampling_time,
@@ -193,9 +193,9 @@ class I_Raytracer
      * @param alongtrack_angle Along track angle of the swath in °
      * @param crosstrack_angles Across track angle of each beam in °
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SamplelocationsLocal<2>
+     * @return datastructures::RaytraceResults<2>
      */
-    virtual datastructures::SampleLocationsLocal<2> trace_swath(
+    virtual datastructures::RaytraceResults<2> trace_swath(
         unsigned int                 first_sample_number,
         unsigned int                 number_of_samples,
         unsigned int                 sample_step,

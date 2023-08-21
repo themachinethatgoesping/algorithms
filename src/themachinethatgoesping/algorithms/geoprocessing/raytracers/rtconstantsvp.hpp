@@ -63,13 +63,13 @@ class RTConstantSVP : public I_Raytracer
     void  set_sound_velocity(float sound_velocity) { _sound_velocity = sound_velocity; }
     float get_sound_velocity() const { return _sound_velocity; }
 
-    datastructures::SampleLocationLocal trace_point(float two_way_travel_time,
+    datastructures::RaytraceResult trace_point(float two_way_travel_time,
                                                     float alongtrack_angle,
                                                     float crosstrack_angle) const override
     {
         not_implemented("trace(SinglePoint)", get_name());
 
-        datastructures::SampleLocationLocal target;
+        datastructures::RaytraceResult target;
 
         target.true_range = two_way_travel_time * _sound_velocity_2;
 
@@ -92,7 +92,7 @@ class RTConstantSVP : public I_Raytracer
         return target;
     }
 
-    datastructures::SampleLocationsLocal<1> trace_points(
+    datastructures::RaytraceResults<1> trace_points(
         const xt::xtensor<float, 1>& two_way_travel_times,
         const xt::xtensor<float, 1>& alongtrack_angles,
         const xt::xtensor<float, 1>& crosstrack_angles,
@@ -110,7 +110,7 @@ class RTConstantSVP : public I_Raytracer
 
         auto num_points = two_way_travel_times.size();
 
-        datastructures::SampleLocationsLocal<1> targets;
+        datastructures::RaytraceResults<1> targets;
 
         targets.true_range = xt::eval(two_way_travel_times * _sound_velocity_2);
         targets.x          = xt::xtensor<float, 1>::from_shape({ num_points });
@@ -141,7 +141,7 @@ class RTConstantSVP : public I_Raytracer
         return targets;
     }
 
-    datastructures::SampleLocationsLocal<1> trace_points(
+    datastructures::RaytraceResults<1> trace_points(
         const xt::xtensor<float, 1>& two_way_travel_times,
         float                        alongtrack_angle,
         const xt::xtensor<float, 1>& crosstrack_angles,
@@ -157,7 +157,7 @@ class RTConstantSVP : public I_Raytracer
 
         auto num_points = two_way_travel_times.size();
 
-        datastructures::SampleLocationsLocal<1> targets;
+        datastructures::RaytraceResults<1> targets;
 
         targets.true_range = xt::eval(two_way_travel_times * _sound_velocity_2);
         targets.x          = xt::xtensor<float, 1>::from_shape({ num_points });
@@ -188,7 +188,7 @@ class RTConstantSVP : public I_Raytracer
         return targets;
     }
 
-    datastructures::SampleLocationsLocal<1> trace_beam(
+    datastructures::RaytraceResults<1> trace_beam(
         const xt::xtensor<unsigned int, 1>& sample_numbers,
         float                               sampling_time,
         float                               sampling_time_offset,
@@ -202,7 +202,7 @@ class RTConstantSVP : public I_Raytracer
             sample_numbers, sampling_time, sampling_time_offset, scale_target, last_sample_time);
     }
 
-    datastructures::SampleLocationsLocal<2> trace_swath(
+    datastructures::RaytraceResults<2> trace_swath(
         const xt::xtensor<unsigned int, 2>& sample_numbers,
         float                               sampling_time,
         float                               sampling_time_offset,
@@ -236,9 +236,9 @@ class RTConstantSVP : public I_Raytracer
      * @param scale_z known target z position at scale_time
      * @param scale_true_range known target range at scale_time
      * @param scale_time known target two way travel time
-     * @return datastructures::SamplelocationsLocal<1>
+     * @return datastructures::RaytraceResults<1>
      */
-    datastructures::SampleLocationsLocal<1> scale_beam(
+    datastructures::RaytraceResults<1> scale_beam(
         const xt::xtensor<unsigned int, 1>& sample_numbers,
         float                               sampling_time,
         float                               sampling_time_offset,
@@ -251,7 +251,7 @@ class RTConstantSVP : public I_Raytracer
         xt::xtensor<float, 1> two_way_travel_times =
             ((sample_numbers * sampling_time) + sampling_time_offset);
 
-        datastructures::SampleLocationsLocal<1> targets;
+        datastructures::RaytraceResults<1> targets;
 
         xt::xtensor_fixed<float, xt::xshape<2>> xp = { 0.f, scale_time };
         xt::xtensor_fixed<float, xt::xshape<2>> fp = { 0.f, scale_true_range };
@@ -275,13 +275,13 @@ class RTConstantSVP : public I_Raytracer
      * @param sampling_time_offset Time offset for sample number 0 in s
      * @param scale_target known target location at scale_time
      * @param scale_time known target two way travel time
-     * @return datastructures::SamplelocationsLocal<1>
+     * @return datastructures::RaytraceResults<1>
      */
-    datastructures::SampleLocationsLocal<1> scale_beam(
+    datastructures::RaytraceResults<1> scale_beam(
         const xt::xtensor<unsigned int, 1>&        sample_numbers,
         float                                      sampling_time,
         float                                      sampling_time_offset,
-        const datastructures::SampleLocationLocal& scale_target,
+        const datastructures::RaytraceResult& scale_target,
         float                                      scale_time) const
     {
         return scale_beam(sample_numbers,
@@ -304,13 +304,13 @@ class RTConstantSVP : public I_Raytracer
      * @param scale_target known target location at scale_time
      * @param scale_time two way travel time for the known target location
      * @param mp_cores number of cores to use for parallelization
-     * @return datastructures::SamplelocationsLocal<1>
+     * @return datastructures::RaytraceResults<1>
      */
-    datastructures::SampleLocationsLocal<2> scale_swath(
+    datastructures::RaytraceResults<2> scale_swath(
         const xt::xtensor<unsigned int, 2>&            sample_numbers,
         float                                          sampling_time,
         float                                          sampling_time_offset,
-        const datastructures::SampleLocationsLocal<1>& scale_targets,
+        const datastructures::RaytraceResults<1>& scale_targets,
         const xt::xtensor<float, 1>&                   scale_times,
         unsigned int                                   mp_cores = 1) const
     {
@@ -328,7 +328,7 @@ class RTConstantSVP : public I_Raytracer
         unsigned int number_of_beams   = sample_numbers.shape()[0];
         unsigned int number_of_samples = sample_numbers.shape()[1];
 
-        datastructures::SampleLocationsLocal<2> targets({ number_of_beams, number_of_samples });
+        datastructures::RaytraceResults<2> targets({ number_of_beams, number_of_samples });
 #pragma omp parallel for num_threads(mp_cores)
         for (unsigned int bn = 0; bn < number_of_beams; ++bn)
         {

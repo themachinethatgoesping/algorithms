@@ -93,7 +93,7 @@ Parameter ``scale_time``:
     known target two way travel time
 
 Returns:
-    datastructures::SamplelocationsLocal<1>)doc";
+    datastructures::RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_scale_beam_2 =
 R"doc(Compute the sample locations of a single beam by scaling between the
@@ -115,7 +115,7 @@ Parameter ``scale_time``:
     known target two way travel time
 
 Returns:
-    datastructures::SamplelocationsLocal<1>)doc";
+    datastructures::RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_scale_swath =
 R"doc(Compute the sample locations of a swath by scaling between the
@@ -140,7 +140,7 @@ Parameter ``mp_cores``:
     number of cores to use for parallelization
 
 Returns:
-    datastructures::SamplelocationsLocal<1>)doc";
+    datastructures::RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_RTConstantSVP_set_sound_velocity = R"doc()doc";
 

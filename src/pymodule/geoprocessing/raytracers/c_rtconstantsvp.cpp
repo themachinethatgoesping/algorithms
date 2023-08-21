@@ -66,7 +66,7 @@ void init_c_rtconstantsvp(py::module& m)
              py::overload_cast<const xt::xtensor<unsigned int, 2>&,
                                float,
                                float,
-                               const datastructures::SampleLocationsLocal<1>&,
+                               const datastructures::RaytraceResults<1>&,
                                const xt::xtensor<float, 1>&,
                                unsigned int>(&RTConstantSVP::scale_swath, py::const_),
              DOC_RTConstantSVP(scale_swath),

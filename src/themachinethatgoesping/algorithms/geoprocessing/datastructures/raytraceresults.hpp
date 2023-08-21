@@ -5,7 +5,7 @@
 #pragma once
 
 /* generated doc strings */
-#include ".docstrings/samplelocationslocal.doc.hpp"
+#include ".docstrings/raytraceresults.doc.hpp"
 
 #include <xtensor/xtensor.hpp>
 
@@ -14,7 +14,7 @@
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 
-#include "samplelocationlocal.hpp"
+#include "raytraceresult.hpp"
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -29,7 +29,7 @@ namespace datastructures {
  * is known.
  */
 template<size_t Dim>
-struct SampleLocationsLocal
+struct RaytraceResults
 {
   public:
     xt::xtensor<float, Dim> x;          ///< in m, positive forward
@@ -41,7 +41,7 @@ struct SampleLocationsLocal
      * @brief Construct a new sample location object (all values set to 0)
      *
      */
-    SampleLocationsLocal() = default;
+    RaytraceResults() = default;
 
     /**
      * @brief Construct a new sample location object (initialize all tensors using the specified
@@ -50,7 +50,7 @@ struct SampleLocationsLocal
      * @param shape shape of the internal tensors
      *
      */
-    SampleLocationsLocal(const std::array<unsigned int, Dim>& shape)
+    RaytraceResults(const std::array<unsigned int, Dim>& shape)
     {
         x          = xt::xtensor<float, Dim>::from_shape(shape);
         y          = xt::xtensor<float, Dim>::from_shape(shape);
@@ -59,14 +59,14 @@ struct SampleLocationsLocal
     }
 
     /**
-     * @brief Construct a new SampleLocationsLocal object
+     * @brief Construct a new RaytraceResults object
      *
      * @param x in m, positive forward
      * @param y in m, positive starboard
      * @param z in m, positive downwards
      * @param true_range in m, accumulated ray path length
      */
-    SampleLocationsLocal(xt::xtensor<float, Dim> x_,
+    RaytraceResults(xt::xtensor<float, Dim> x_,
                          xt::xtensor<float, Dim> y_,
                          xt::xtensor<float, Dim> z_,
                          xt::xtensor<float, Dim> true_range_)
@@ -79,7 +79,7 @@ struct SampleLocationsLocal
         if (x.shape() != y.shape() || x.shape() != z.shape() || x.shape() != true_range.shape())
         {
             throw std::runtime_error(fmt::format(
-                "SampleLocationsLocal: x, y, z and true_range must have the same shape. "
+                "RaytraceResults: x, y, z and true_range must have the same shape. "
                 "x.size() = {}, y.size() = {}, z.size() = {}, true_range.size() = {}",
                 x.size(),
                 y.size(),
@@ -88,7 +88,7 @@ struct SampleLocationsLocal
         }
     }
 
-    bool operator==(const SampleLocationsLocal& rhs) const = default;
+    bool operator==(const RaytraceResults& rhs) const = default;
 
     size_t size() const
     {
@@ -96,7 +96,7 @@ struct SampleLocationsLocal
         if (x.size() != y.size() || x.size() != z.size() || x.size() != true_range.size())
         {
             throw std::runtime_error(fmt::format(
-                "SampleLocationsLocal::get_number_of_samples: x, y, z and true_range must have the "
+                "RaytraceResults::get_number_of_samples: x, y, z and true_range must have the "
                 "same size. x.size() = {}, y.size() = {}, z.size() = {}, true_range.size() = {}",
                 x.size(),
                 y.size(),
@@ -109,9 +109,9 @@ struct SampleLocationsLocal
 
   public:
     // ----- file I/O -----
-    static SampleLocationsLocal from_stream(std::istream& is)
+    static RaytraceResults from_stream(std::istream& is)
     {
-        SampleLocationsLocal data;
+        RaytraceResults data;
 
         std::array<size_t, Dim> shape;
 
@@ -137,7 +137,7 @@ struct SampleLocationsLocal
         if (x.shape() != y.shape() || x.shape() != z.shape() || x.shape() != true_range.shape())
         {
             throw std::runtime_error(fmt::format(
-                "SampleLocationsLocal::to_stream: x, y, z and true_range must have the same "
+                "RaytraceResults::to_stream: x, y, z and true_range must have the same "
                 "shape. "
                 "x.size() = {}, y.size() = {}, z.size() = {}, true_range.size() = {}",
                 x.size(),
@@ -160,7 +160,7 @@ struct SampleLocationsLocal
   public:
     tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
     {
-        tools::classhelper::ObjectPrinter printer("SampleLocationsLocal", float_precision);
+        tools::classhelper::ObjectPrinter printer("RaytraceResults", float_precision);
 
         printer.register_container("x", x, "positive forward, m");
         printer.register_container("y", y, "positive starboard, m");
@@ -173,7 +173,7 @@ struct SampleLocationsLocal
   public:
     // -- class helper function macros --
     // define to_binary and from_binary functions (needs the serialize function)
-    __STREAM_DEFAULT_TOFROM_BINARY_FUNCTIONS__(SampleLocationsLocal)
+    __STREAM_DEFAULT_TOFROM_BINARY_FUNCTIONS__(RaytraceResults)
     // define info_string and print functions (needs the __printer__ function)
     __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__
 };

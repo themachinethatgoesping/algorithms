@@ -63,7 +63,7 @@ class I_Backtracer
      * @param alongtrack_angle Along track angle in °
      * @param crosstrack_angles Across track angle in °
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SampleLocationLocal
+     * @return datastructures::RaytraceResult
      */
     template <size_t Dim>
     virtual datastructures::SampleDirections<Dim> backtrace_points(

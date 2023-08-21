@@ -1,4 +1,4 @@
-//sourcehash: 3ee57b2a685cdd2e179ceb7e19e9aa5a52c64c157e450e4a3e5374281f0b32b8
+//sourcehash: be3766fe5dc1e244a867c319d0f88f9addc2dcdac168f6cbb3822287bdb69688
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -58,7 +58,7 @@ Parameter ``mp_cores``:
     Number of cores to use for parallelization
 
 Returns:
-    datastructures::SampleLocationLocal)doc";
+    datastructures::RaytraceResult)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_from_stream = R"doc()doc";
 

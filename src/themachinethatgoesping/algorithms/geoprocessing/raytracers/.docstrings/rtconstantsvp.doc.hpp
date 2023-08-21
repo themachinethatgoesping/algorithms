@@ -1,4 +1,4 @@
-//sourcehash: 9cb2a493292a8eeb7a7b0106582336c6f195775d71295a1dd8d6e814c43eb43b
+//sourcehash: 3af2579539f754f8370ef0c746dd80dc71a2baadf95601fe1ff07a6d5f7e99b1
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -93,7 +93,7 @@ Parameter ``scale_time``:
     known target two way travel time
 
 Returns:
-    datastructures::SamplelocationsLocal<1>)doc";
+    datastructures::RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_scale_beam_2 =
 R"doc(Compute the sample locations of a single beam by scaling between the
@@ -115,7 +115,7 @@ Parameter ``scale_time``:
     known target two way travel time
 
 Returns:
-    datastructures::SamplelocationsLocal<1>)doc";
+    datastructures::RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_scale_swath =
 R"doc(Compute the sample locations of a swath by scaling between the
@@ -140,7 +140,7 @@ Parameter ``mp_cores``:
     number of cores to use for parallelization
 
 Returns:
-    datastructures::SamplelocationsLocal<1>)doc";
+    datastructures::RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_set_sound_velocity = R"doc()doc";
 

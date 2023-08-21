@@ -14,7 +14,7 @@
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 
-#include "samplelocationlocal.hpp"
+#include "raytraceresult.hpp"
 
 namespace themachinethatgoesping {
 namespace algorithms {

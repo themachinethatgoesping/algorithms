@@ -7,7 +7,7 @@
 // <headerfiles>
 
 // -- c++ library headers
-#include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures/samplelocationslocal.hpp"
+#include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures/raytraceresults.hpp"
 #include <themachinethatgoesping/tools_pybind/classhelper.hpp>
 
 // -- include pybind11 headers
@@ -23,79 +23,79 @@ namespace py_datastructures {
 namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
 
-#define DOC_SampleLocationsLocal(ARG)                                                              \
+#define DOC_RaytraceResults(ARG)                                                              \
     DOC(themachinethatgoesping,                                                                    \
         algorithms,                                                                                \
         geoprocessing,                                                                             \
         datastructures,                                                                            \
-        SampleLocationsLocal,                                                                      \
+        RaytraceResults,                                                                      \
         ARG)
 
 template<size_t Dim>
-void init_c_samplelocationslocal_dim(py::module& m)
+void init_c_raytraceresults_dim(py::module& m)
 {
-    const std::string py_class_name = "SampleLocationsLocal_" + std::to_string(Dim);
+    const std::string py_class_name = "RaytraceResults_" + std::to_string(Dim);
 
-    py::class_<SampleLocationsLocal<Dim>>(m,
+    py::class_<RaytraceResults<Dim>>(m,
                                           py_class_name.c_str(),
                                           DOC(themachinethatgoesping,
                                               algorithms,
                                               geoprocessing,
                                               datastructures,
-                                              SampleLocationsLocal))
-        .def(py::init<>(), DOC_SampleLocationsLocal(SampleLocationsLocal))
+                                              RaytraceResults))
+        .def(py::init<>(), DOC_RaytraceResults(RaytraceResults))
         .def(py::init<const std::array<unsigned int, Dim>&>(),
-             DOC_SampleLocationsLocal(SampleLocationsLocal_2),
+             DOC_RaytraceResults(RaytraceResults_2),
              py::arg("shape"))
         .def(py::init<xt::xtensor<float, Dim>,
                       xt::xtensor<float, Dim>,
                       xt::xtensor<float, Dim>,
                       xt::xtensor<float, Dim>>(),
-             DOC_SampleLocationsLocal(SampleLocationsLocal_3),
+             DOC_RaytraceResults(RaytraceResults_3),
              py::arg("x"),
              py::arg("y"),
              py::arg("z"),
              py::arg("true_range"))
         .def("__eq__",
-             &SampleLocationsLocal<Dim>::operator==,
-             DOC_SampleLocationsLocal(operator_eq),
+             &RaytraceResults<Dim>::operator==,
+             DOC_RaytraceResults(operator_eq),
              py::arg("other"))
         .def("size",
-             &SampleLocationsLocal<Dim>::size,
-             DOC_SampleLocationsLocal(size))
+             &RaytraceResults<Dim>::size,
+             DOC_RaytraceResults(size))
 
         .def_readwrite("x",
-                       &SampleLocationsLocal<Dim>::x,
-                       DOC_SampleLocationsLocal(x),
+                       &RaytraceResults<Dim>::x,
+                       DOC_RaytraceResults(x),
                        py::return_value_policy::reference_internal)
         .def_readwrite("y",
-                       &SampleLocationsLocal<Dim>::y,
-                       DOC_SampleLocationsLocal(y),
+                       &RaytraceResults<Dim>::y,
+                       DOC_RaytraceResults(y),
                        py::return_value_policy::reference_internal)
         .def_readwrite("z",
-                       &SampleLocationsLocal<Dim>::z,
-                       DOC_SampleLocationsLocal(z),
+                       &RaytraceResults<Dim>::z,
+                       DOC_RaytraceResults(z),
                        py::return_value_policy::reference_internal)
         .def_readwrite("true_range",
-                       &SampleLocationsLocal<Dim>::true_range,
-                       DOC_SampleLocationsLocal(true_range),
+                       &RaytraceResults<Dim>::true_range,
+                       DOC_RaytraceResults(true_range),
                        py::return_value_policy::reference_internal)
 
         // default copy functions
-        __PYCLASS_DEFAULT_COPY__(SampleLocationsLocal<Dim>)
+        __PYCLASS_DEFAULT_COPY__(RaytraceResults<Dim>)
         // default binary functions
-        __PYCLASS_DEFAULT_BINARY__(SampleLocationsLocal<Dim>)
+        __PYCLASS_DEFAULT_BINARY__(RaytraceResults<Dim>)
         // default printing functions
-        __PYCLASS_DEFAULT_PRINTING__(SampleLocationsLocal<Dim>)
-        // end SampleLocationsLocal
+        __PYCLASS_DEFAULT_PRINTING__(RaytraceResults<Dim>)
+        // end RaytraceResults
         ;
 }
 
-void init_c_samplelocationslocal(py::module& m)
+void init_c_raytraceresults(py::module& m)
 {
-    init_c_samplelocationslocal_dim<1>(m);
-    init_c_samplelocationslocal_dim<2>(m);
-    init_c_samplelocationslocal_dim<3>(m);
+    init_c_raytraceresults_dim<1>(m);
+    init_c_raytraceresults_dim<2>(m);
+    init_c_raytraceresults_dim<3>(m);
 }
 
 } // namespace py_datastructures

@@ -1,4 +1,4 @@
-//sourcehash: 8e0a9f1515219e06cad0dc7f25efe223a692b652c3e1e589435264ce02ea0bcd
+//sourcehash: 0676d1f4f89ef655de71e1cf3b217c411660fa353a0f4496cd5750501f6bc443
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -89,7 +89,7 @@ Parameter ``crosstrack_angle``:
     Across track angle in °
 
 Returns:
-    datastructures::SamplelocationsLocal<1>)doc";
+    datastructures::RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_beam_2 =
 R"doc(Trace the sample locations of a single beam.
@@ -116,7 +116,7 @@ Parameter ``crosstrack_angle``:
     Across track angle in °
 
 Returns:
-    datastructures::SampleLocationsLocal<1>)doc";
+    datastructures::RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_point =
 R"doc(Trace the location of a single point.
@@ -131,7 +131,7 @@ Parameter ``crosstrack_angle``:
     Across track angle in °
 
 Returns:
-    datastructures::SampleLocationLocal)doc";
+    datastructures::RaytraceResult)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_points =
 R"doc(Trace the location of a set of points.
@@ -149,7 +149,7 @@ Parameter ``mp_cores``:
     Number of cores to use for parallelization
 
 Returns:
-    datastructures::SampleLocationLocal)doc";
+    datastructures::RaytraceResult)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_points_2 =
 R"doc(Trace the location of a set of points.
@@ -167,7 +167,7 @@ Parameter ``mp_cores``:
     Number of cores to use for parallelization
 
 Returns:
-    datastructures::SampleLocationLocal)doc";
+    datastructures::RaytraceResult)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_swath =
 R"doc(Trace the sample locations of a multiple beams in a swath. Note: a 2d
@@ -194,7 +194,7 @@ Parameter ``mp_cores``:
     Number of cores to use for parallelization
 
 Returns:
-    datastructures::SamplelocationsLocal<2>)doc";
+    datastructures::RaytraceResults<2>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_swath_2 =
 R"doc(Trace the sample locations of a multiple beams in a swath. Note: The
@@ -225,7 +225,7 @@ Parameter ``mp_cores``:
     Number of cores to use for parallelization
 
 Returns:
-    datastructures::SamplelocationsLocal<2>)doc";
+    datastructures::RaytraceResults<2>)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
