@@ -11,12 +11,18 @@ project(
 
   version: '0.1.9',
   default_options: ['warning_level=2', 'buildtype=release', 'cpp_std=c++20'],
-  meson_version: '>=1.1' #first version to support c++20 on macos
+  meson_version: '>=1.1', #first version to support c++20 on macos
 )
 
 projectnamespace = 'themachinethatgoesping'
 
 # --- dependencies ---
+omp_dep = dependency('openmp')
+# openmp support for windows (clang-cl)
+message('System:', build_machine.system(), build_machine.system() == 'windows')
+if meson.get_compiler('cpp').get_id() == 'clang'
+  add_global_arguments('-Xclang','-fopenmp', language : 'cpp')
+endif
 
 # system
 # if meson.get_compiler('cpp').get_id() == 'clang'
@@ -24,7 +30,6 @@ projectnamespace = 'themachinethatgoesping'
 #     compile_args: ['-Xpreprocessor', '-fopenmp', '-I/usr/local/opt/libomp/include', '-L/usr/local/opt/libomp/lib', '-lomp']
 #   )
 # else
-omp_dep = dependency('openmp')
 # endif
 
 # boost
@@ -75,3 +80,4 @@ subdir('src')
  
 # add python files
 #subdir('python')
+
