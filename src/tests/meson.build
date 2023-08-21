@@ -13,6 +13,8 @@ sources = [
     'geoprocessing/datastructures/sampleindices.test.cpp',
     'geoprocessing/raytracers/i_raytracer.test.cpp',
     'geoprocessing/raytracers/rtconstantsvp.test.cpp',
+    'geoprocessing/backtracers/i_backtracer.test.cpp',
+    'geoprocessing/backtracers/btconstantsvp.test.cpp',
     'tutorial.test.cpp'
 ]
 

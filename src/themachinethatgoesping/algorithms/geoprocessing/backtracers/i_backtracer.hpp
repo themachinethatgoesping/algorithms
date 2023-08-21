@@ -59,17 +59,16 @@ class I_Backtracer
     /**
      * @brief Backtrace the location of a set of points.
      *
-     * @param two_way_travel_time Two way travel time in s
-     * @param alongtrack_angle Along track angle in °
-     * @param crosstrack_angles Across track angle in °
+     * @param x in m, positive forward
+     * @param y in m, positive starboard
+     * @param z in m, positive downwards
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::RaytraceResult
+     * @return datastructures::SampleDirections
      */
-    template <size_t Dim>
-    virtual datastructures::SampleDirections<Dim> backtrace_points(
-        [[maybe_unused]] const xt::xtensor<float, Dim>& x,
-        [[maybe_unused]] const xt::xtensor<float, Dim>& y,
-        [[maybe_unused]] const xt::xtensor<float, Dim>& z,
+    virtual datastructures::SampleDirections<1> backtrace_points(
+        [[maybe_unused]] const xt::xtensor<float, 1>& x,
+        [[maybe_unused]] const xt::xtensor<float, 1>& y,
+        [[maybe_unused]] const xt::xtensor<float, 1>& z,
         [[maybe_unused]] unsigned int                 mp_cores = 1) const
     {
         throw not_implemented("backtrace(Multiple points)", _name);

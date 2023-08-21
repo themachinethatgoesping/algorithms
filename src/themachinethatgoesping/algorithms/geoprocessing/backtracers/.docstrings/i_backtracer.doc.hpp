@@ -1,4 +1,4 @@
-//sourcehash: be3766fe5dc1e244a867c319d0f88f9addc2dcdac168f6cbb3822287bdb69688
+//sourcehash: 11a0373717697e26105105d76e31ebafd90f8c43294de8f017b6ee32cf20a691
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -45,20 +45,20 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtra
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_backtrace_points =
 R"doc(Backtrace the location of a set of points.
 
-Parameter ``two_way_travel_time``:
-    Two way travel time in s
+Parameter ``x``:
+    in m, positive forward
 
-Parameter ``alongtrack_angle``:
-    Along track angle in °
+Parameter ``y``:
+    in m, positive starboard
 
-Parameter ``crosstrack_angles``:
-    Across track angle in °
+Parameter ``z``:
+    in m, positive downwards
 
 Parameter ``mp_cores``:
     Number of cores to use for parallelization
 
 Returns:
-    datastructures::RaytraceResult)doc";
+    datastructures::SampleDirections)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_from_stream = R"doc()doc";
 

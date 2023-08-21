@@ -7,6 +7,7 @@
 
 #include "datastructures/module.hpp"
 #include "raytracers/module.hpp"
+#include "backtracers/module.hpp"
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -22,6 +23,7 @@ void init_m_geoprocessing(pybind11::module& m)
 
     py_datastructures::init_m_datastructures(submodule);
     py_raytracers::init_m_raytracers(submodule);
+    py_backtracers::init_m_backtracers(submodule);
 }
 
 } // namespace py_geoprocessing
