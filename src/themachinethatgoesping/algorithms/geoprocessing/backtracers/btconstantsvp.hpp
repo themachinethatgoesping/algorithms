@@ -70,10 +70,10 @@ class BTConstantSVP : public I_Backtracer
     float get_sound_velocity() const { return _sound_velocity; }
 
     datastructures::SampleDirections<1> backtrace_points(
-        [[maybe_unused]] const xt::xtensor<float, 1>& x,
-        [[maybe_unused]] const xt::xtensor<float, 1>& y,
-        [[maybe_unused]] const xt::xtensor<float, 1>& z,
-        [[maybe_unused]] unsigned int                 mp_cores = 1) const override
+        const xt::xtensor<float, 1>&  x,
+        const xt::xtensor<float, 1>&  y,
+        const xt::xtensor<float, 1>&  z,
+        [[maybe_unused]] unsigned int mp_cores = 1) const override
     {
         // check that all vectors have the same shape
         if (x.shape() != y.shape() || x.shape() != z.shape())
@@ -84,7 +84,7 @@ class BTConstantSVP : public I_Backtracer
                             y.size(),
                             z.size()));
 
-        //auto num_points = x.size();
+        // auto num_points = x.size();
 
         datastructures::SampleDirections<1> targets;
 
@@ -94,9 +94,33 @@ class BTConstantSVP : public I_Backtracer
 
         auto r = vec_hypot(x, y, dz);
 
-        targets.alongtrack_angle    = xt::degrees(xt::asin(x / r));
-        targets.crosstrack_angle    = xt::degrees(-xt::asin(y / r));
+        // TODO: check if this subtraction is correct (or approx correct)
+        targets.alongtrack_angle    = xt::degrees(xt::asin(x / r)) - get_sensor_location().pitch;
+        targets.crosstrack_angle    = xt::degrees(-xt::asin(y / r)) - get_sensor_location().roll;
         targets.two_way_travel_time = 2 * r / _sound_velocity;
+
+        return targets;
+    }
+
+    datastructures::SampleDirections<2> backtrace_image(const xt::xtensor<float, 1>& y_coordinates,
+                                                        const xt::xtensor<float, 1>& z_coordinates,
+                                                        unsigned int mp_cores = 1) const override
+    {
+        datastructures::SampleDirections<2> targets({ y_coordinates.size(), z_coordinates.size() });
+
+        auto dz = xt::eval(z_coordinates - get_sensor_location().z);
+        auto r  = xt::eval(xt::hypot(y_coordinates, dz));
+
+#pragma omp parallel for num_threads(mp_cores)
+        for (unsigned int i = 0; i < y_coordinates.size(); ++i)
+        {
+            xt::row(targets.crosstrack_angle, i) =
+                xt::eval(xt::degrees(-xt::asin(y_coordinates / r)));
+        }
+
+        // TODO: check if this subtraction is approx correct enough
+        targets.alongtrack_angle.fill(-get_sensor_location().pitch);
+        targets.crosstrack_angle -= get_sensor_location().roll;
 
         return targets;
     }

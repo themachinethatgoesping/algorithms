@@ -1,4 +1,4 @@
-//sourcehash: 22f8691784611139abce93d8e6d03f99a5b53e7603de01ba94103b6a9b726ec3
+//sourcehash: 10ffa200fbbb96108b7c8d5d22e89f655694ec2fa9b519f02bee321b8e1aec8e
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -55,6 +55,8 @@ leaving sound velocity uninitialized (for reading from stream)
 
 Parameter ``backtracer``:
     base backtracer object)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_backtrace_image = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_backtrace_points = R"doc()doc";
 

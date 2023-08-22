@@ -1,4 +1,4 @@
-//sourcehash: 11a0373717697e26105105d76e31ebafd90f8c43294de8f017b6ee32cf20a691
+//sourcehash: ab193f7c488ab7fe4372db0865c2dd715cd2cbf6a7a133e1595b14527145a62a
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -41,6 +41,23 @@
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_I_Backtracer = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_backtrace_image =
+R"doc(Backtrace the location of an image specified by two coordinate vectors
+x is assumed to be 0
+
+Parameter ``y_coordinates``:
+    in m, positive starboard
+
+Parameter ``z_coordinates``:
+    in m, positive downwards
+
+Parameter ``mp_cores``:
+    Number of cores to use for parallelization
+
+Returns:
+    datastructures::SampleDirections<2>, shape is
+    (y_coordinates.size(), z_coordinates.size()))doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_backtrace_points =
 R"doc(Backtrace the location of a set of points.
