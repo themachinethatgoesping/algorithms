@@ -44,7 +44,7 @@ void init_c_sampledirections_dim(py::module& m)
                                               datastructures,
                                               SampleDirections))
         .def(py::init<>(), DOC_SampleDirections(SampleDirections))
-        .def(py::init<const std::array<unsigned int, Dim>&>(),
+        .def(py::init<const std::array<size_t, Dim>&>(),
              DOC_SampleDirections(SampleDirections_2),
              py::arg("shape"))
         .def(py::init<xt::xtensor<float, Dim>,

@@ -45,7 +45,7 @@ struct SampleDirections
      * @param shape shape of the internal tensors
      *
      */
-    SampleDirections(const std::array<unsigned int, Dim>& shape)
+    SampleDirections(const std::array<size_t, Dim>& shape)
     {
         alongtrack_angle  = xt::xtensor<float, Dim>::from_shape(shape);
         crosstrack_angle = xt::xtensor<float, Dim>::from_shape(shape);
