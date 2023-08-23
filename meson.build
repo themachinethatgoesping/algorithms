@@ -24,6 +24,7 @@ omp_dep = dependency('openmp')
 if meson.get_compiler('cpp').get_id() == 'clang-cl'
   #add_global_arguments('-Xclang','-fopenmp', language : 'cpp')
   add_global_arguments('-Xclang','-fopenmp','-openmp', language : 'cpp')
+  add_global_arguments('-L"C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/lib/libomp.lib', language : 'cpp')
 endif
 
 # system
