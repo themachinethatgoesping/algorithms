@@ -158,10 +158,10 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Set up Clang
-      uses: egor-tensin/setup-clang@v1
-      with:
-        version: latest
+    # - name: Set up Clang
+    #   uses: egor-tensin/setup-clang@v1
+    #   with:
+    #     version: latest
     
     # make sure meson can find msvc
     - uses: TheMrMilchmann/setup-msvc-dev@v2
@@ -177,7 +177,6 @@ jobs:
 
     - name: sccache
       uses: hendrikmuhs/ccache-action@v1.2
-      uses: ilammy/msvc-dev-cmd@v1
       with:
         key: super-ci-win       # name for the cache
         variant: sccache  # supports windows
@@ -186,14 +185,12 @@ jobs:
     - name: Cache Boost
       id: cache-boost
       uses: actions/cache@v3
-      uses: ilammy/msvc-dev-cmd@v1
       with:
         path: c:\Boost
         #key: windows-msvc-14.32-boost-${{matrix.boost-version}}-${{matrix.boost-modules}}
         key: windows-${{matrix.toolset}}-boost-${{matrix.boost-version}}-${{matrix.boost-modules}}
   
     - name: Install dependencies on windows
-      uses: ilammy/msvc-dev-cmd@v1
       if: steps.cache-boost.outputs.cache-hit != 'true'
       run: |
         Invoke-WebRequest -Uri https://boostorg.jfrog.io/artifactory/main/release/${{matrix.boost-version}}/source/boost_${{matrix.boost-version_}}.7z -outfile boost.7z
@@ -218,16 +215,13 @@ jobs:
         d:\ninja.exe --version
 
     - name: configure meson
-      uses: ilammy/msvc-dev-cmd@v1
       run: |
         meson setup builddir/ -D"python.install_env=auto" -Ddefault_library=static -D"python.install_env=auto" -Dcpp_std=${{matrix.cpp_std}}
 
     - name: compile project
-      uses: ilammy/msvc-dev-cmd@v1
       run: meson compile -vC builddir/
 
     - name: test (cpp)
-      uses: ilammy/msvc-dev-cmd@v1
       #run: meson test -C builddir/ --print-errorlogs 
       # meson test does not work with the custom ninja executable
       run: ninja test -C builddir/ --verbose
