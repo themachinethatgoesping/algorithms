@@ -17,14 +17,13 @@ project(
 projectnamespace = 'themachinethatgoesping'
 
 # --- dependencies ---
-omp_dep = dependency('openmp')
 # openmp support for windows (clang-cl)
 # message('System:', build_machine.system(), build_machine.system() == 'windows')
 # message('Compiler:', meson.get_compiler('cpp').get_id(), meson.get_compiler('cpp').get_id() == 'clang-cl')
 if meson.get_compiler('cpp').get_id() == 'clang-cl'
-  #add_global_arguments('-Xclang','-fopenmp', language : 'cpp')
-  add_global_arguments('-Xclang','-fopenmp','-openmp', language : 'cpp')
-  add_global_arguments('-L"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\x64\lib\libomp.lib', language : 'cpp')
+  omp_dep = declare_dependency()
+else
+  omp_dep = dependency('openmp')
 endif
 
 # system
