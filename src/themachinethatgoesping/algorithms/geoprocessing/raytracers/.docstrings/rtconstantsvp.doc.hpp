@@ -1,4 +1,4 @@
-//sourcehash: 3af2579539f754f8370ef0c746dd80dc71a2baadf95601fe1ff07a6d5f7e99b1
+//sourcehash: 1712e4895f824d9520d80d2e7cb049b27abf7e34b1ec53207828f1bac0168e56
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -144,9 +144,9 @@ Returns:
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_set_sound_velocity = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity = R"doc(< sound velocity in m/s)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity_2 = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_sound_velocity_2 = R"doc(< sound velocity in m/s divided by 2 (for 2 way travel time))doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_to_stream = R"doc()doc";
 

@@ -29,8 +29,8 @@ class RTConstantSVP : public I_Raytracer
     // navigation::datastructures::GeoLocation_sensor_location;
     // Eigen::Quaternion<float> _sensor_orientation_quat;
 
-    float _sound_velocity;
-    float _sound_velocity_2;
+    float _sound_velocity;   ///< sound velocity in m/s
+    float _sound_velocity_2; ///< sound velocity in m/s divided by 2 (for 2 way travel time)
 
   public:
     /**
@@ -64,8 +64,8 @@ class RTConstantSVP : public I_Raytracer
     float get_sound_velocity() const { return _sound_velocity; }
 
     datastructures::RaytraceResult trace_point(float two_way_travel_time,
-                                                    float alongtrack_angle,
-                                                    float crosstrack_angle) const override
+                                               float alongtrack_angle,
+                                               float crosstrack_angle) const override
     {
         not_implemented("trace(SinglePoint)", get_name());
 
@@ -278,11 +278,11 @@ class RTConstantSVP : public I_Raytracer
      * @return datastructures::RaytraceResults<1>
      */
     datastructures::RaytraceResults<1> scale_beam(
-        const xt::xtensor<unsigned int, 1>&        sample_numbers,
-        float                                      sampling_time,
-        float                                      sampling_time_offset,
+        const xt::xtensor<unsigned int, 1>&   sample_numbers,
+        float                                 sampling_time,
+        float                                 sampling_time_offset,
         const datastructures::RaytraceResult& scale_target,
-        float                                      scale_time) const
+        float                                 scale_time) const
     {
         return scale_beam(sample_numbers,
                           sampling_time,
@@ -307,12 +307,12 @@ class RTConstantSVP : public I_Raytracer
      * @return datastructures::RaytraceResults<1>
      */
     datastructures::RaytraceResults<2> scale_swath(
-        const xt::xtensor<unsigned int, 2>&            sample_numbers,
-        float                                          sampling_time,
-        float                                          sampling_time_offset,
+        const xt::xtensor<unsigned int, 2>&       sample_numbers,
+        float                                     sampling_time,
+        float                                     sampling_time_offset,
         const datastructures::RaytraceResults<1>& scale_targets,
-        const xt::xtensor<float, 1>&                   scale_times,
-        unsigned int                                   mp_cores = 1) const
+        const xt::xtensor<float, 1>&              scale_times,
+        unsigned int                              mp_cores = 1) const
     {
 
         // test that beam numbers are consistent
@@ -350,8 +350,6 @@ class RTConstantSVP : public I_Raytracer
 
         return targets;
     }
-
-    
 
     // ----- file I/O -----
     static RTConstantSVP from_stream(std::istream& is)

@@ -1,4 +1,4 @@
-//sourcehash: a8d39ea21e4686de29a559cedd4e378a9233dbaa8b093f0b9a5495670978521d
+//sourcehash: df853228f4bb888b799fe5eba431d3fbb048d3e30933eb0439e89b8d642a9794
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,24 +38,24 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults =
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ =
 R"doc(A structure to store a georeferenced sample location. It is used as
 output for the raytracers functions. This object stores local x
-(forward coordinate), y (starboard coordinate) depth and true range.
-These coordinates can be converted to UTM or Lat/Lon if a reference
-position (for coordinate 0) is known.)doc";
+(forward coordinate), y (starboard coordinate) and z (depth). These
+coordinates can be converted to UTM or Lat/Lon if a reference position
+(for coordinate 0) is known.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_RaytraceResults = R"doc(Construct a new sample location object (all values set to 0))doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_XYZ = R"doc(Construct a new sample location object (all values set to 0))doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_RaytraceResults_2 =
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_XYZ_2 =
 R"doc(Construct a new sample location object (initialize all tensors using
 the specified shape (empty))
 
 Parameter ``shape``:
     shape of the internal tensors)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_RaytraceResults_3 =
-R"doc(Construct a new RaytraceResults object
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_XYZ_3 =
+R"doc(Construct a new XYZ object
 
 Parameter ``x``:
     in m, positive forward
@@ -64,38 +64,27 @@ Parameter ``y``:
     in m, positive starboard
 
 Parameter ``z``:
-    in m, positive downwards
+    in m, positive downwards)doc";
 
-Parameter ``true_range``:
-    in m, accumulated ray path length)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_check_shape = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_RaytraceResults_4 =
-R"doc(Construct a new RaytraceResults object
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_from_stream = R"doc()doc";
 
-Parameter ``xyz``:
-    XYZ object
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_operator_eq = R"doc()doc";
 
-Parameter ``true_range``:
-    in m, accumulated ray path length)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_printer = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_RaytraceResults_5 =
-R"doc(Construct a new Raytrace Results object with an uninitialized
-true_range tensor This is private and only used for the from_stream
-function
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_shape = R"doc()doc";
 
-Parameter ``xyz``:)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_size = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_check_shape = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_to_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_from_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_x = R"doc(< x coordinate in m, positive forward)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_operator_eq = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_y = R"doc(< y coordinate in m, positive starboard)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_printer = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_to_stream = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_true_range = R"doc(< in m, accumulated ray path length)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_z = R"doc(< z coordinate in m, positive downwards)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

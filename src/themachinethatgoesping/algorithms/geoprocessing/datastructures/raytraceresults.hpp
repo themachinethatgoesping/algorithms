@@ -7,6 +7,7 @@
 /* generated doc strings */
 #include ".docstrings/raytraceresults.doc.hpp"
 
+#include <xtensor/xadapt.hpp>
 #include <xtensor/xtensor.hpp>
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
@@ -14,7 +15,7 @@
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 
-#include "raytraceresult.hpp"
+#include "xyz.hpp"
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -29,12 +30,16 @@ namespace datastructures {
  * is known.
  */
 template<size_t Dim>
-struct RaytraceResults
+struct RaytraceResults : public XYZ<Dim>
 {
   public:
-    xt::xtensor<float, Dim> x;          ///< in m, positive forward
-    xt::xtensor<float, Dim> y;          ///< in m, positive starboard
-    xt::xtensor<float, Dim> z;          ///< in m, positive downwards
+    using t_base = XYZ<Dim>;
+    using t_base::shape;
+    using t_base::size;
+    using t_base::x;
+    using t_base::y;
+    using t_base::z;
+
     xt::xtensor<float, Dim> true_range; ///< in m, accumulated ray path length
 
     /**
@@ -50,12 +55,10 @@ struct RaytraceResults
      * @param shape shape of the internal tensors
      *
      */
-    RaytraceResults(const std::array<unsigned int, Dim>& shape)
+    RaytraceResults(std::array<unsigned int, Dim> shape)
+        : t_base(std::move(shape))
     {
-        x          = xt::xtensor<float, Dim>::from_shape(shape);
-        y          = xt::xtensor<float, Dim>::from_shape(shape);
-        z          = xt::xtensor<float, Dim>::from_shape(shape);
-        true_range = xt::xtensor<float, Dim>::from_shape(shape);
+        true_range = xt::xtensor<float, Dim>::from_shape(t_base::shape());
     }
 
     /**
@@ -67,64 +70,40 @@ struct RaytraceResults
      * @param true_range in m, accumulated ray path length
      */
     RaytraceResults(xt::xtensor<float, Dim> x_,
-                         xt::xtensor<float, Dim> y_,
-                         xt::xtensor<float, Dim> z_,
-                         xt::xtensor<float, Dim> true_range_)
-        : x(std::move(x_))
-        , y(std::move(y_))
-        , z(std::move(z_))
+                    xt::xtensor<float, Dim> y_,
+                    xt::xtensor<float, Dim> z_,
+                    xt::xtensor<float, Dim> true_range_)
+        : t_base(std::move(x_), std::move(y_), std::move(z_))
         , true_range(std::move(true_range_))
     {
         // compare shape
-        if (x.shape() != y.shape() || x.shape() != z.shape() || x.shape() != true_range.shape())
-        {
-            throw std::runtime_error(fmt::format(
-                "RaytraceResults: x, y, z and true_range must have the same shape. "
-                "x.size() = {}, y.size() = {}, z.size() = {}, true_range.size() = {}",
-                x.size(),
-                y.size(),
-                z.size(),
-                true_range.size()));
-        }
+        check_shape();
+    }
+
+    /**
+     * @brief Construct a new RaytraceResults object
+     *
+     * @param xyz XYZ object
+     * @param true_range in m, accumulated ray path length
+     */
+    RaytraceResults(t_base xyz, xt::xtensor<float, Dim> true_range_)
+        : t_base(std::move(xyz))
+        , true_range(std::move(true_range_))
+    {
+        // compare shape
+        check_shape();
     }
 
     bool operator==(const RaytraceResults& rhs) const = default;
-
-    size_t size() const
-    {
-        // test if all arrays have the same size
-        if (x.size() != y.size() || x.size() != z.size() || x.size() != true_range.size())
-        {
-            throw std::runtime_error(fmt::format(
-                "RaytraceResults::get_number_of_samples: x, y, z and true_range must have the "
-                "same size. x.size() = {}, y.size() = {}, z.size() = {}, true_range.size() = {}",
-                x.size(),
-                y.size(),
-                z.size(),
-                true_range.size()));
-        }
-
-        return x.size();
-    }
 
   public:
     // ----- file I/O -----
     static RaytraceResults from_stream(std::istream& is)
     {
-        RaytraceResults data;
+        RaytraceResults data(t_base::from_stream(is));
 
-        std::array<size_t, Dim> shape;
+        data.true_range = xt::xtensor<float, Dim>::from_shape(data.shape());
 
-        is.read(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
-
-        data.x          = xt::xtensor<float, Dim>::from_shape(shape);
-        data.y          = xt::xtensor<float, Dim>::from_shape(shape);
-        data.z          = xt::xtensor<float, Dim>::from_shape(shape);
-        data.true_range = xt::xtensor<float, Dim>::from_shape(shape);
-
-        is.read(reinterpret_cast<char*>(data.x.data()), sizeof(float) * data.x.size());
-        is.read(reinterpret_cast<char*>(data.y.data()), sizeof(float) * data.y.size());
-        is.read(reinterpret_cast<char*>(data.z.data()), sizeof(float) * data.z.size());
         is.read(reinterpret_cast<char*>(data.true_range.data()),
                 sizeof(float) * data.true_range.size());
 
@@ -133,28 +112,33 @@ struct RaytraceResults
 
     void to_stream(std::ostream& os) const
     {
-        // compare sizes
-        if (x.shape() != y.shape() || x.shape() != z.shape() || x.shape() != true_range.shape())
-        {
-            throw std::runtime_error(fmt::format(
-                "RaytraceResults::to_stream: x, y, z and true_range must have the same "
-                "shape. "
-                "x.size() = {}, y.size() = {}, z.size() = {}, true_range.size() = {}",
-                x.size(),
-                y.size(),
-                z.size(),
-                true_range.size()));
-        }
-
-        std::array<size_t, Dim> shape = x.shape();
-
-        os.write(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
-
-        os.write(reinterpret_cast<const char*>(x.data()), sizeof(float) * x.size());
-        os.write(reinterpret_cast<const char*>(y.data()), sizeof(float) * y.size());
-        os.write(reinterpret_cast<const char*>(z.data()), sizeof(float) * z.size());
+        t_base::to_stream(os);
         os.write(reinterpret_cast<const char*>(true_range.data()),
                  sizeof(float) * true_range.size());
+    }
+
+  private:
+    void check_shape() const override
+    {
+        // compare shape
+        if (t_base::shape() != true_range.shape())
+        {
+            throw std::runtime_error(fmt::format("XYZ: x, y, z must have the same shape. "
+                                                 "xyz.size() = {}, z.size() = {}",
+                                                 t_base::size(),
+                                                 true_range.size()));
+        }
+    }
+
+    /**
+     * @brief Construct a new Raytrace Results object with an uninitialized true_range tensor
+     * This is private and only used for the from_stream function
+     *
+     * @param xyz
+     */
+    RaytraceResults(const t_base& xyz)
+        : t_base(xyz)
+    {
     }
 
   public:
@@ -162,9 +146,8 @@ struct RaytraceResults
     {
         tools::classhelper::ObjectPrinter printer("RaytraceResults", float_precision);
 
-        printer.register_container("x", x, "positive forward, m");
-        printer.register_container("y", y, "positive starboard, m");
-        printer.register_container("z", z, "positive downwards, m");
+        printer.append(t_base::__printer__(float_precision), true);
+
         printer.register_container("true_range", true_range, "ray path length, m");
 
         return printer;

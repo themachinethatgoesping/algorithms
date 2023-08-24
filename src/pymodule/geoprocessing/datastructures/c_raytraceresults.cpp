@@ -23,26 +23,18 @@ namespace py_datastructures {
 namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
 
-#define DOC_RaytraceResults(ARG)                                                              \
-    DOC(themachinethatgoesping,                                                                    \
-        algorithms,                                                                                \
-        geoprocessing,                                                                             \
-        datastructures,                                                                            \
-        RaytraceResults,                                                                      \
-        ARG)
+#define DOC_RaytraceResults(ARG)                                                                   \
+    DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, RaytraceResults, ARG)
 
 template<size_t Dim>
 void init_c_raytraceresults_dim(py::module& m)
 {
     const std::string py_class_name = "RaytraceResults_" + std::to_string(Dim);
 
-    py::class_<RaytraceResults<Dim>>(m,
-                                          py_class_name.c_str(),
-                                          DOC(themachinethatgoesping,
-                                              algorithms,
-                                              geoprocessing,
-                                              datastructures,
-                                              RaytraceResults))
+    py::class_<RaytraceResults<Dim>, XYZ<Dim>, std::shared_ptr<RaytraceResults<Dim>>>(
+        m,
+        py_class_name.c_str(),
+        DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, RaytraceResults))
         .def(py::init<>(), DOC_RaytraceResults(RaytraceResults))
         .def(py::init<const std::array<unsigned int, Dim>&>(),
              DOC_RaytraceResults(RaytraceResults_2),
@@ -56,26 +48,6 @@ void init_c_raytraceresults_dim(py::module& m)
              py::arg("y"),
              py::arg("z"),
              py::arg("true_range"))
-        .def("__eq__",
-             &RaytraceResults<Dim>::operator==,
-             DOC_RaytraceResults(operator_eq),
-             py::arg("other"))
-        .def("size",
-             &RaytraceResults<Dim>::size,
-             DOC_RaytraceResults(size))
-
-        .def_readwrite("x",
-                       &RaytraceResults<Dim>::x,
-                       DOC_RaytraceResults(x),
-                       py::return_value_policy::reference_internal)
-        .def_readwrite("y",
-                       &RaytraceResults<Dim>::y,
-                       DOC_RaytraceResults(y),
-                       py::return_value_policy::reference_internal)
-        .def_readwrite("z",
-                       &RaytraceResults<Dim>::z,
-                       DOC_RaytraceResults(z),
-                       py::return_value_policy::reference_internal)
         .def_readwrite("true_range",
                        &RaytraceResults<Dim>::true_range,
                        DOC_RaytraceResults(true_range),

@@ -7,6 +7,7 @@ module_name = 'algorithms'
         
 # -- sources
 sources = [
+    'geoprocessing/datastructures/c_xyz.cpp',
     'geoprocessing/datastructures/c_raytraceresults.cpp',
     'geoprocessing/datastructures/c_raytraceresult.cpp',
     'geoprocessing/datastructures/c_sampleindices.cpp',
