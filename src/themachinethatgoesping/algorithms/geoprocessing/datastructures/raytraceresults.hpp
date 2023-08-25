@@ -55,7 +55,7 @@ struct RaytraceResults : public XYZ<Dim>
      * @param shape shape of the internal tensors
      *
      */
-    RaytraceResults(std::array<unsigned int, Dim> shape)
+    RaytraceResults(std::array<size_t, Dim> shape)
         : t_base(std::move(shape))
     {
         true_range = xt::xtensor<float, Dim>::from_shape(t_base::shape());

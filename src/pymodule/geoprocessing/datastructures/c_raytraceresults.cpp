@@ -36,7 +36,7 @@ void init_c_raytraceresults_dim(py::module& m)
         py_class_name.c_str(),
         DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, RaytraceResults))
         .def(py::init<>(), DOC_RaytraceResults(RaytraceResults))
-        .def(py::init<const std::array<unsigned int, Dim>&>(),
+        .def(py::init<const std::array<size_t, Dim>&>(),
              DOC_RaytraceResults(RaytraceResults_2),
              py::arg("shape"))
         .def(py::init<xt::xtensor<float, Dim>,

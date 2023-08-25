@@ -36,7 +36,7 @@ void init_c_xyz_dim(py::module& m)
         py_class_name.c_str(),
         DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, XYZ))
         .def(py::init<>(), DOC_XYZ(XYZ))
-        .def(py::init<const std::array<unsigned int, Dim>&>(), DOC_XYZ(XYZ_2), py::arg("shape"))
+        .def(py::init<const std::array<size_t, Dim>&>(), DOC_XYZ(XYZ_2), py::arg("shape"))
         .def(py::init<xt::xtensor<float, Dim>, xt::xtensor<float, Dim>, xt::xtensor<float, Dim>>(),
              DOC_XYZ(XYZ_3),
              py::arg("x"),

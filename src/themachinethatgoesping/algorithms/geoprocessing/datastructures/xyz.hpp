@@ -47,7 +47,7 @@ struct XYZ
      * @param shape shape of the internal tensors
      *
      */
-    XYZ(const std::array<unsigned int, Dim>& shape)
+    XYZ(const std::array<size_t, Dim>& shape)
     {
         x = xt::xtensor<float, Dim>::from_shape(shape);
         y = xt::xtensor<float, Dim>::from_shape(shape);
