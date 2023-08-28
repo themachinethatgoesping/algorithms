@@ -1,4 +1,4 @@
-//sourcehash: ab193f7c488ab7fe4372db0865c2dd715cd2cbf6a7a133e1595b14527145a62a
+//sourcehash: 9cee8d5dffae0113d16af5c025d81f606b04def19d815c3b5642b52804638aa0
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -70,6 +70,18 @@ Parameter ``y``:
 
 Parameter ``z``:
     in m, positive downwards
+
+Parameter ``mp_cores``:
+    Number of cores to use for parallelization
+
+Returns:
+    datastructures::SampleDirections)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_backtrace_points_2 =
+R"doc(Backtrace the location of a set of points.
+
+Parameter ``xyz``:
+    structure with x/y/z coordinates
 
 Parameter ``mp_cores``:
     Number of cores to use for parallelization

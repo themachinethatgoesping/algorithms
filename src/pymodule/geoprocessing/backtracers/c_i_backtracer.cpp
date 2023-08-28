@@ -49,11 +49,17 @@ void init_i_backtracer(py::module& m)
              py::arg("y"),
              py::arg("z"),
              py::arg("mp_cores") = 1)
+        .def("backtrace_points",
+             py::overload_cast<const XYZ<1>&, unsigned int>(&I_Backtracer::backtrace_points,
+                                                            py::const_),
+             DOC_I_Backtracer(backtrace_points),
+             py::arg("xyz"),
+             py::arg("mp_cores") = 1)
         .def("backtrace_image",
              py::overload_cast<const xt::xtensor<float, 1>&,
                                const xt::xtensor<float, 1>&,
                                unsigned int>(&I_Backtracer::backtrace_image, py::const_),
-             DOC_I_Backtracer(backtrace_points),
+             DOC_I_Backtracer(backtrace_image),
              py::arg("y_coordinates"),
              py::arg("z_coordinates"),
              py::arg("mp_cores") = 1)

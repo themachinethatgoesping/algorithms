@@ -11,8 +11,8 @@ namespace pymodule {
 namespace py_geoprocessing {
 namespace py_backtracers {
 
-void init_i_backtracer(pybind11::module& m); // init_i_backtracer.cpp
-void init_c_btconstantsvp(pybind11::module& m); // init_c_btconstantsvp.cpp
+void init_i_backtracer(pybind11::module& m); // c_i_backtracer.cpp
+void init_c_btconstantsvp(pybind11::module& m); // c_btconstantsvp.cpp
 
 void init_m_backtracers(pybind11::module& m)
 {

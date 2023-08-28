@@ -77,6 +77,11 @@ struct XYZ
 
     size_t size() const { return x.size(); }
 
+    // ----- some convenient math -----
+    std::array<float, 2> get_minmax_x() const { return xt::minmax(x)(); }
+    std::array<float, 2> get_minmax_y() const { return xt::minmax(y)(); }
+    std::array<float, 2> get_minmax_z() const { return xt::minmax(z)(); }
+
   public:
     // ----- file I/O -----
     static XYZ from_stream(std::istream& is)

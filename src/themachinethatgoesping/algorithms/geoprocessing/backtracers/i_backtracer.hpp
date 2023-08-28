@@ -75,14 +75,29 @@ class I_Backtracer
     }
 
     /**
+     * @brief Backtrace the location of a set of points.
+     *
+     * @param xyz structure with x/y/z coordinates
+     * @param mp_cores Number of cores to use for parallelization
+     * @return datastructures::SampleDirections
+     */
+    datastructures::SampleDirections<1> backtrace_points(
+        [[maybe_unused]] const datastructures::XYZ<1>& xyz,
+        [[maybe_unused]] unsigned int                  mp_cores = 1) const
+    {
+        return backtrace_points(xyz.x, xyz.y, xyz.z, mp_cores);
+    }
+
+    /**
      * @brief Backtrace the location of an image specified by two coordinate vectors
      * x is assumed to be 0
-     * 
+     *
      *
      * @param y_coordinates in m, positive starboard
      * @param z_coordinates in m, positive downwards
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SampleDirections<2>, shape is (y_coordinates.size(), z_coordinates.size())
+     * @return datastructures::SampleDirections<2>, shape is (y_coordinates.size(),
+     * z_coordinates.size())
      */
     virtual datastructures::SampleDirections<2> backtrace_image(
         [[maybe_unused]] const xt::xtensor<float, 1>& y_coordinates,
@@ -91,7 +106,6 @@ class I_Backtracer
     {
         throw not_implemented("backtrace(Multiple points)", _name);
     }
-
 
     // ----- setters -----
     void set_sensor_location(navigation::datastructures::GeoLocation sensor_location)

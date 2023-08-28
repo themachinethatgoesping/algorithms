@@ -1,4 +1,4 @@
-//sourcehash: 4738aa4c9c9fdbb4f50e0def6feff33457d02330f7e97fd78ee272556986231a
+//sourcehash: d74df7b9ba11e8db7c04a53fdf985624132180ea19166cacaf149b6c060cc330
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -69,6 +69,12 @@ Parameter ``z``:
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_check_shape = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_from_stream = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_get_minmax_x = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_get_minmax_y = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_get_minmax_z = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_operator_eq = R"doc()doc";
 

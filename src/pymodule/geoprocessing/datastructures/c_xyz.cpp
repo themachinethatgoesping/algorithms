@@ -50,6 +50,10 @@ void init_c_xyz_dim(py::module& m)
         .def_readwrite("y", &XYZ<Dim>::y, DOC_XYZ(y), py::return_value_policy::reference_internal)
         .def_readwrite("z", &XYZ<Dim>::z, DOC_XYZ(z), py::return_value_policy::reference_internal)
 
+        .def("get_minmax_x", &XYZ<Dim>::get_minmax_x, DOC_XYZ(get_minmax_x))
+        .def("get_minmax_y", &XYZ<Dim>::get_minmax_y, DOC_XYZ(get_minmax_y))
+        .def("get_minmax_z", &XYZ<Dim>::get_minmax_z, DOC_XYZ(get_minmax_z))
+
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(XYZ<Dim>)
         // default binary functions

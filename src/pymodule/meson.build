@@ -14,7 +14,7 @@ sources = [
     'geoprocessing/datastructures/c_sampledirections.cpp',
     'geoprocessing/raytracers/i_raytracer.cpp',
     'geoprocessing/raytracers/c_rtconstantsvp.cpp',
-    'geoprocessing/backtracers/i_backtracer.cpp',
+    'geoprocessing/backtracers/c_i_backtracer.cpp',
     'geoprocessing/backtracers/c_btconstantsvp.cpp',
     'module.cpp',
 ]
