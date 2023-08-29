@@ -92,7 +92,6 @@ class I_Backtracer
      * @brief Backtrace the location of an image specified by two coordinate vectors
      * x is assumed to be 0
      *
-     *
      * @param y_coordinates in m, positive starboard
      * @param z_coordinates in m, positive downwards
      * @param mp_cores Number of cores to use for parallelization
