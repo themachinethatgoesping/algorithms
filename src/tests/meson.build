@@ -12,6 +12,7 @@ sources = [
     'geoprocessing/datastructures/raytraceresult.test.cpp',
     'geoprocessing/datastructures/sampledirections.test.cpp',
     'geoprocessing/datastructures/sampleindices.test.cpp',
+    'geoprocessing/datastructures/beamsampleparameters.test.cpp',
     'geoprocessing/raytracers/i_raytracer.test.cpp',
     'geoprocessing/raytracers/rtconstantsvp.test.cpp',
     'geoprocessing/backtracers/i_backtracer.test.cpp',

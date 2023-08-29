@@ -16,6 +16,7 @@ void init_c_raytraceresults(pybind11::module& m); // c_raytraceresults.cpp
 void init_c_raytraceresult(pybind11::module& m); // c_raytraceresult.cpp
 void init_c_sampleindices(pybind11::module& m); // c_sampleindices.cpp
 void init_c_sampledirections(pybind11::module& m); // c_sampledirections.cpp
+void init_c_beamsampleparameters(pybind11::module& m); // c_beamsampleparameters.cpp
 
 void init_m_datastructures(pybind11::module& m)
 {
@@ -29,6 +30,7 @@ void init_m_datastructures(pybind11::module& m)
     init_c_raytraceresult(submodule);
     init_c_raytraceresults(submodule);
     init_c_sampleindices(submodule);
+    init_c_beamsampleparameters(submodule);
 }
 
 } // namespace py_datastructures
