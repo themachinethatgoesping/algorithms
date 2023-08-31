@@ -30,7 +30,7 @@ if build_machine.system() != 'linux'
                         override_options: [
                           'b_lundef=false'
                       ],
-                        cpp_pch : 'pch/pch.hpp',
+                        # cpp_pch : 'pch/pch.hpp',
                         install : true, 
                         install_tag : 'library'
                         )
@@ -45,7 +45,7 @@ else
                         override_options: [
                           'b_lundef=false'
                       ],
-                        cpp_pch : 'pch/pch.hpp',
+                        # cpp_pch : 'pch/pch.hpp',
                         install : true, 
                         install_tag : 'library'
                         )
