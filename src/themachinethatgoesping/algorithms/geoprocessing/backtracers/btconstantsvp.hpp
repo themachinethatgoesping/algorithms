@@ -109,13 +109,14 @@ class BTConstantSVP : public I_Backtracer
         datastructures::SampleDirections<2> targets({ y_coordinates.size(), z_coordinates.size() });
 
         auto dz = xt::eval(z_coordinates - get_sensor_location().z);
-        auto r  = xt::eval(xt::hypot(y_coordinates, dz));
 
 #pragma omp parallel for num_threads(mp_cores)
         for (unsigned int i = 0; i < y_coordinates.size(); ++i)
         {
+            auto r = xt::eval(xt::hypot(y_coordinates[i], dz));
+
             xt::row(targets.crosstrack_angle, i) =
-                xt::eval(xt::degrees(-xt::asin(y_coordinates / r)));
+                xt::eval(xt::degrees(-xt::asin(y_coordinates[i] / r)));
         }
 
         // TODO: check if this subtraction is approx correct enough
