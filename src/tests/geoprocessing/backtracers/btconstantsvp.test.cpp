@@ -28,10 +28,8 @@ TEST_CASE("BTConstantSVP should support common functions", TESTTAG)
     location.pitch = 20;
     location.roll  = 30;
 
-    float c = 1450.f;
-
     // initialize backtracer
-    auto backtracer = BTConstantSVP(location, c);
+    auto backtracer = BTConstantSVP(location);
 
     // test copy
     {
@@ -70,8 +68,6 @@ TEST_CASE("BTConstantSVP should support common functions", TESTTAG)
     REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
     REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch, 0.0001));
     REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));
-
-    REQUIRE_THAT(backtracer.get_sound_velocity(), Catch::Matchers::WithinAbs(c, 0.0001));
 }
 
 TEST_CASE("BTConstantSVP reproduce some pre computed results (single points)", TESTTAG)
@@ -84,52 +80,49 @@ TEST_CASE("BTConstantSVP reproduce some pre computed results (single points)", T
     location.pitch = 0;
     location.roll  = 0;
 
-    float c   = 1450.f;
-    //float c_2 = c * 0.5;
-
     // initialize backtracer
-    auto backtracer = BTConstantSVP(location, c);
+    auto backtracer = BTConstantSVP(location);
 
     // test raytracing some single points
     {
         auto targets = backtracer.backtrace_points({ 0 }, { 0 }, { 0 });
         CHECK_THAT(targets.alongtrack_angle[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
         CHECK_THAT(targets.crosstrack_angle[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
-        CHECK_THAT(targets.two_way_travel_time[0], Catch::Matchers::WithinAbs(0.00414f, 0.0001));
+        CHECK_THAT(targets.range[0], Catch::Matchers::WithinAbs(3.f, 0.0001));
     }
 
     {
         auto targets = backtracer.backtrace_points({ 1 }, { 0 }, { 0 });
         CHECK_THAT(targets.alongtrack_angle[0], Catch::Matchers::WithinAbs(18.43495f, 0.0001));
         CHECK_THAT(targets.crosstrack_angle[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
-        CHECK_THAT(targets.two_way_travel_time[0], Catch::Matchers::WithinAbs(0.00436f, 0.0001));
+        CHECK_THAT(targets.range[0], Catch::Matchers::WithinAbs(3.16228f, 0.0001));
     }
 
     {
         auto targets = backtracer.backtrace_points({ 1 }, { 2 }, { 0 });
         CHECK_THAT(targets.alongtrack_angle[0], Catch::Matchers::WithinAbs(15.50136f, 0.0001));
         CHECK_THAT(targets.crosstrack_angle[0], Catch::Matchers::WithinAbs(-32.31153f, 0.0001));
-        CHECK_THAT(targets.two_way_travel_time[0], Catch::Matchers::WithinAbs(0.00516f, 0.0001));
+        CHECK_THAT(targets.range[0], Catch::Matchers::WithinAbs(3.74166f, 0.0001));
     }
 
     {
         auto targets = backtracer.backtrace_points({ 1 }, { 2 }, { 3 });
         CHECK_THAT(targets.alongtrack_angle[0], Catch::Matchers::WithinAbs(26.56505f, 0.0001));
         CHECK_THAT(targets.crosstrack_angle[0], Catch::Matchers::WithinAbs(-63.43494f, 0.0001));
-        CHECK_THAT(targets.two_way_travel_time[0], Catch::Matchers::WithinAbs(0.00308f, 0.0001));
+        CHECK_THAT(targets.range[0], Catch::Matchers::WithinAbs(2.23607f, 0.0001));
     }
 
     {
         auto targets = backtracer.backtrace_points({ -1 }, { 2 }, { 3 });
         CHECK_THAT(targets.alongtrack_angle[0], Catch::Matchers::WithinAbs(-26.56505f, 0.0001));
         CHECK_THAT(targets.crosstrack_angle[0], Catch::Matchers::WithinAbs(-63.43494f, 0.0001));
-        CHECK_THAT(targets.two_way_travel_time[0], Catch::Matchers::WithinAbs(0.00308f, 0.0001));
+        CHECK_THAT(targets.range[0], Catch::Matchers::WithinAbs(2.23607f, 0.0001));
     }
 
     {
         auto targets = backtracer.backtrace_points({ -1 }, { 0 }, { -3 });
         CHECK_THAT(targets.alongtrack_angle[0], Catch::Matchers::WithinAbs(-9.46232f, 0.0001));
         CHECK_THAT(targets.crosstrack_angle[0], Catch::Matchers::WithinAbs(-0.0f, 0.0001));
-        CHECK_THAT(targets.two_way_travel_time[0], Catch::Matchers::WithinAbs(0.00839f, 0.0001));
+        CHECK_THAT(targets.range[0], Catch::Matchers::WithinAbs(6.08276f, 0.0001));
     }
 }

@@ -13,6 +13,8 @@ sources = [
 headers = [
   'geoprocessing/datastructures/sampleindices.hpp',
   'geoprocessing/datastructures/sampledirections.hpp',
+  'geoprocessing/datastructures/sampledirectionstime.hpp',
+  'geoprocessing/datastructures/sampledirectionsrange.hpp',
   'geoprocessing/datastructures/raytraceresults.hpp',
   'helloping.hpp',
 ]

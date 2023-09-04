@@ -2,13 +2,12 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-
 // automatically gernerated using  python -m pybind11_mkdoc -o docstrings.h
 // <headerfiles>
 
 // -- c++ library headers
-#include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures.hpp"
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/backtracers/btconstantsvp.hpp"
+#include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures.hpp"
 #include <themachinethatgoesping/tools_pybind/classhelper.hpp>
 
 // -- include pybind11 headers
@@ -38,10 +37,9 @@ void init_c_btconstantsvp(py::module& m)
         m,
         "BTConstantSVP",
         DOC(themachinethatgoesping, algorithms, geoprocessing, backtracers, BTConstantSVP))
-        .def(py::init<navigation::datastructures::GeoLocation, float>(),
+        .def(py::init<navigation::datastructures::GeoLocation>(),
              DOC_BTConstantSVP(BTConstantSVP),
-             py::arg("sensor_location"),
-             py::arg("sound_velocity"))
+             py::arg("sensor_location"))
         .def("__eq__", &BTConstantSVP::operator==, DOC_BTConstantSVP(operator_eq), py::arg("other"))
 
         // default copy functions

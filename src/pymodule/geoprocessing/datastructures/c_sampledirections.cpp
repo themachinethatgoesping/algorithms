@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-
 // automatically gernerated using  python -m pybind11_mkdoc -o docstrings.h
 // <headerfiles>
 
@@ -23,44 +22,33 @@ namespace py_datastructures {
 namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
 
-#define DOC_SampleDirections(ARG)                                                              \
-    DOC(themachinethatgoesping,                                                                    \
-        algorithms,                                                                                \
-        geoprocessing,                                                                             \
-        datastructures,                                                                            \
-        SampleDirections,                                                                      \
-        ARG)
+#define DOC_SampleDirections(ARG)                                                                  \
+    DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleDirections, ARG)
 
 template<size_t Dim>
 void init_c_sampledirections_dim(py::module& m)
 {
     const std::string py_class_name = "SampleDirections_" + std::to_string(Dim);
 
-    py::class_<SampleDirections<Dim>>(m,
-                                          py_class_name.c_str(),
-                                          DOC(themachinethatgoesping,
-                                              algorithms,
-                                              geoprocessing,
-                                              datastructures,
-                                              SampleDirections))
+    py::class_<SampleDirections<Dim>, std::shared_ptr<SampleDirections<Dim>>>(
+        m,
+        py_class_name.c_str(),
+        DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleDirections))
         .def(py::init<>(), DOC_SampleDirections(SampleDirections))
         .def(py::init<const std::array<size_t, Dim>&>(),
              DOC_SampleDirections(SampleDirections_2),
              py::arg("shape"))
-        .def(py::init<xt::xtensor<float, Dim>,
-                      xt::xtensor<float, Dim>,
-                      xt::xtensor<float, Dim>>(),
+        .def(py::init<xt::xtensor<float, Dim>, xt::xtensor<float, Dim>>(),
              DOC_SampleDirections(SampleDirections_3),
              py::arg("alongtrack_angle"),
-             py::arg("crosstrack_angle"),
-             py::arg("two_way_travel_time"))
+             py::arg("crosstrack_angle"))
         .def("__eq__",
              &SampleDirections<Dim>::operator==,
              DOC_SampleDirections(operator_eq),
              py::arg("other"))
-        .def("size",
-             &SampleDirections<Dim>::size,
-             DOC_SampleDirections(size))
+        .def("size", &SampleDirections<Dim>::size, DOC_SampleDirections(size))
+        .def("shape", &SampleDirections<Dim>::shape, DOC_SampleDirections(shape))
+        .def("check_shape", &SampleDirections<Dim>::check_shape, DOC_SampleDirections(check_shape))
 
         .def_readwrite("alongtrack_angle",
                        &SampleDirections<Dim>::alongtrack_angle,
@@ -69,10 +57,6 @@ void init_c_sampledirections_dim(py::module& m)
         .def_readwrite("crosstrack_angle",
                        &SampleDirections<Dim>::crosstrack_angle,
                        DOC_SampleDirections(crosstrack_angle),
-                       py::return_value_policy::reference_internal)
-        .def_readwrite("two_way_travel_time",
-                       &SampleDirections<Dim>::two_way_travel_time,
-                       DOC_SampleDirections(two_way_travel_time),
                        py::return_value_policy::reference_internal)
 
         // default copy functions

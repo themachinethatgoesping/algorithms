@@ -1,4 +1,4 @@
-//sourcehash: 39491ad81096d2ce23b361ea0e148b930e13461f3e8f038f23b0294decfdc184
+//sourcehash: db3c28c6ddb76cb802ce17341ae12e7fa3b2f0df1d2f33ff1ae91b7909646eb6
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,45 +38,49 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections =
-R"doc(A structure to store beamsample directions (along angle, across
-angle).)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange =
+R"doc(A structure to store beamsample directions (along angle, across angle
+and range).)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_SampleDirections = R"doc(Construct a new sample location object (all values set to 0))doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_SampleDirectionsRange = R"doc(Construct a new SampleDirections object (all values set to 0))doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_SampleDirections_2 =
-R"doc(Construct a new sample location object (initialize all tensors using
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_SampleDirectionsRange_2 =
+R"doc(Construct a new SampleDirections object (initialize all tensors using
 the specified shape (empty))
 
 Parameter ``shape``:
     shape of the internal tensors)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_SampleDirections_3 =
-R"doc(Construct a new SampleDirections object
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_SampleDirectionsRange_3 =
+R"doc(Construct a new SampleDirections object (from a SampleDirections
+object)
+
+Parameter ``range``:
+    in m, accumulated ray path time)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_SampleDirectionsRange_4 =
+R"doc(Construct a new SampleDirectionsRange object
 
 Parameter ``alongtrack_angle``:
     in °, positive bow up, 0 == downwards
 
 Parameter ``crosstrack_angle``:
-    in °, positive starboard up, 0 == downwards)doc";
+    in °, positive starboard up, 0 == downwards
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_alongtrack_angle = R"doc(< in °, positive bow up, 0 == downwards)doc";
+Parameter ``range``:
+    in m, accumulated ray path length)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_check_shape = R"doc(check if the internal variables have the same shape)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_check_shape = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_crosstrack_angle = R"doc(< in °, positive starboard up, 0 == downwards)doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_from_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_from_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_operator_eq = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_operator_eq = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_printer = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_printer = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_range = R"doc(< in m, accumulated ray path time)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_shape = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_size = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirections_to_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleDirectionsRange_to_stream = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

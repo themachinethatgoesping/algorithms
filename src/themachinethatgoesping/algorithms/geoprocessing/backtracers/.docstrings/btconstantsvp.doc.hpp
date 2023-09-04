@@ -1,4 +1,4 @@
-//sourcehash: 1895269242a2918d5a20b42b9e28a3f92261177c4bdb2929b1dc6bf1396809bb
+//sourcehash: de6460a70e9b51f7a4f16a57ef7f19161a90ab32954e8a825c45ad3380880ddd
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -51,7 +51,6 @@ Parameter ``sound_velocity``:
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_BTConstantSVP_2 =
 R"doc(Construct a new BTConstantSVP object from a base backtracer object
-leaving sound velocity uninitialized (for reading from stream)
 
 Parameter ``backtracer``:
     base backtracer object)doc";
@@ -62,17 +61,9 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtra
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_from_stream = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_get_sound_velocity = R"doc()doc";
-
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_operator_eq = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_printer = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_set_sound_velocity = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_sound_velocity = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_sound_velocity_2 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_to_stream = R"doc()doc";
 

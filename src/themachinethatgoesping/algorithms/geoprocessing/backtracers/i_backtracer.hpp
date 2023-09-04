@@ -63,9 +63,9 @@ class I_Backtracer
      * @param y in m, positive starboard
      * @param z in m, positive downwards
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SampleDirections
+     * @return datastructures::SampleDirectionsRange
      */
-    virtual datastructures::SampleDirections<1> backtrace_points(
+    virtual datastructures::SampleDirectionsRange<1> backtrace_points(
         [[maybe_unused]] const xt::xtensor<float, 1>& x,
         [[maybe_unused]] const xt::xtensor<float, 1>& y,
         [[maybe_unused]] const xt::xtensor<float, 1>& z,
@@ -79,9 +79,9 @@ class I_Backtracer
      *
      * @param xyz structure with x/y/z coordinates
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SampleDirections
+     * @return datastructures::SampleDirectionsRange
      */
-    datastructures::SampleDirections<1> backtrace_points(
+    datastructures::SampleDirectionsRange<1> backtrace_points(
         [[maybe_unused]] const datastructures::XYZ<1>& xyz,
         [[maybe_unused]] unsigned int                  mp_cores = 1) const
     {
@@ -95,10 +95,10 @@ class I_Backtracer
      * @param y_coordinates in m, positive starboard
      * @param z_coordinates in m, positive downwards
      * @param mp_cores Number of cores to use for parallelization
-     * @return datastructures::SampleDirections<2>, shape is (y_coordinates.size(),
+     * @return datastructures::SampleDirectionsRange<2>, shape is (y_coordinates.size(),
      * z_coordinates.size())
      */
-    virtual datastructures::SampleDirections<2> backtrace_image(
+    virtual datastructures::SampleDirectionsRange<2> backtrace_image(
         [[maybe_unused]] const xt::xtensor<float, 1>& y_coordinates,
         [[maybe_unused]] const xt::xtensor<float, 1>& z_coordinates,
         [[maybe_unused]] unsigned int                 mp_cores = 1) const
