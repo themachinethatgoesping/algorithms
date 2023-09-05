@@ -109,7 +109,7 @@ class BTConstantSVP : public I_Backtracer
         auto vec_hypot = xt::vectorize(static_cast<float (*)(float, float, float)>(std::hypot));
 
 #pragma omp parallel for num_threads(mp_cores)
-        for (unsigned int i = 0; i < dy.size(); ++i)
+        for (size_t i = 0; i < dy.size(); ++i)
         {
             // auto r = xt::eval(xt::hypot(dy[i], dz));
             auto r = vec_hypot(dx, dy[i], dz);
