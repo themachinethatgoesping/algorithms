@@ -39,8 +39,10 @@ class BTConstantSVP : public I_Backtracer
      * @param sensor_location Orientation and depth of the echo sounder
      * @param sound_velocity Sound velocity in m/s
      */
-    BTConstantSVP(navigation::datastructures::GeoLocation sensor_location)
-        : I_Backtracer(std::move(sensor_location), "BTConstantSVP")
+    BTConstantSVP(navigation::datastructures::GeoLocation sensor_location,
+                  double                                  sensor_x,
+                  double                                  sensor_y)
+        : I_Backtracer(std::move(sensor_location), sensor_x, sensor_y, "BTConstantSVP")
     {
     }
     virtual ~BTConstantSVP() = default;
@@ -76,15 +78,17 @@ class BTConstantSVP : public I_Backtracer
 
         datastructures::SampleDirectionsRange<1> targets;
 
+        auto dx = x - get_sensor_x();
+        auto dy = y - get_sensor_y();
         auto dz = z - get_sensor_location().z;
 
         auto vec_hypot = xt::vectorize(static_cast<float (*)(float, float, float)>(std::hypot));
 
-        auto r = vec_hypot(x, y, dz);
+        auto r = vec_hypot(dx, dy, dz);
 
         // TODO: check if this subtraction is correct (or approx correct)
-        targets.alongtrack_angle = xt::degrees(xt::asin(x / r)) - get_sensor_location().pitch;
-        targets.crosstrack_angle = xt::degrees(-xt::asin(y / r)) - get_sensor_location().roll;
+        targets.alongtrack_angle = xt::degrees(xt::asin(dx / r)) - get_sensor_location().pitch;
+        targets.crosstrack_angle = xt::degrees(-xt::asin(dy / r)) - get_sensor_location().roll;
         targets.range            = r;
 
         return targets;
@@ -98,21 +102,28 @@ class BTConstantSVP : public I_Backtracer
         datastructures::SampleDirectionsRange<2> targets(
             { y_coordinates.size(), z_coordinates.size() });
 
+        auto dx = -get_sensor_x();
+        auto dy = xt::eval(y_coordinates - get_sensor_y());
         auto dz = xt::eval(z_coordinates - get_sensor_location().z);
 
-#pragma omp parallel for num_threads(mp_cores)
-        for (unsigned int i = 0; i < y_coordinates.size(); ++i)
-        {
-            auto r = xt::eval(xt::hypot(y_coordinates[i], dz));
+        auto vec_hypot = xt::vectorize(static_cast<float (*)(float, float, float)>(std::hypot));
 
+#pragma omp parallel for num_threads(mp_cores)
+        for (unsigned int i = 0; i < dy.size(); ++i)
+        {
+            // auto r = xt::eval(xt::hypot(dy[i], dz));
+            auto r = vec_hypot(dx, dy[i], dz);
+
+            xt::row(targets.alongtrack_angle, i) =
+                xt::eval(xt::degrees(xt::degrees(xt::asin(dx / r)))) -
+                get_sensor_location()
+                    .pitch; // TODO: check if this subtraction is approx correct enough
             xt::row(targets.crosstrack_angle, i) =
-                xt::eval(xt::degrees(-xt::asin(xt::eval(y_coordinates[i] / r)))) -
-                get_sensor_location().roll; // TODO: check if this subtraction is approx correct enough
+                xt::eval(xt::degrees(-xt::asin(xt::eval(dy[i] / r)))) -
+                get_sensor_location()
+                    .roll; // TODO: check if this subtraction is approx correct enough
             xt::row(targets.range, i) = std::move(r);
         }
-
-        // TODO: check if this subtraction is approx correct enough
-        targets.alongtrack_angle.fill(-get_sensor_location().pitch);
 
         return targets;
     }

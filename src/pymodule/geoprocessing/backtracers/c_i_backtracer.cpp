@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-
 // automatically gernerated using  python -m pybind11_mkdoc -o docstrings.h
 // <headerfiles>
 
@@ -34,9 +33,11 @@ void init_i_backtracer(py::module& m)
         m,
         "I_Backtracer",
         DOC(themachinethatgoesping, algorithms, geoprocessing, backtracers, I_Backtracer))
-        .def(py::init<navigation::datastructures::GeoLocation, std::string>(),
+        .def(py::init<navigation::datastructures::GeoLocation, float, float, std::string>(),
              DOC_I_Backtracer(I_Backtracer),
              py::arg("sensor_location"),
+             py::arg("sensor_x"),
+             py::arg("sensor_y"),
              py::arg("backtracer_name"))
         .def("__eq__", &I_Backtracer::operator==, DOC_I_Backtracer(operator_eq), py::arg("other"))
         .def("backtrace_points",
@@ -67,7 +68,11 @@ void init_i_backtracer(py::module& m)
         .def("set_sensor_location",
              &I_Backtracer::set_sensor_location,
              DOC_I_Backtracer(set_sensor_location),
-             py::arg("sensor_location"))
+             py::arg("sensor_location"),
+             py::arg("sensor_x"),
+             py::arg("sensor_y"))
+        .def("get_sensor_x", &I_Backtracer::get_sensor_x, DOC_I_Backtracer(get_sensor_x))
+        .def("get_sensor_y", &I_Backtracer::get_sensor_y, DOC_I_Backtracer(get_sensor_y))
         .def("get_sensor_location",
              &I_Backtracer::get_sensor_location,
              DOC_I_Backtracer(get_sensor_location))

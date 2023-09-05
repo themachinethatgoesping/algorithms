@@ -25,8 +25,11 @@ TEST_CASE("I_Backtracer should support common functions", TESTTAG)
     location.pitch = 20;
     location.roll  = 30;
 
+    float x = 2.1;
+    float y = 55.4;
+
     // initialize backtracer
-    auto backtracer = I_Backtracer(location, "I_Backtracer");
+    auto backtracer = I_Backtracer(location, x, y, "I_Backtracer");
 
     // test copy
     REQUIRE(backtracer == I_Backtracer(backtracer));
@@ -49,7 +52,7 @@ TEST_CASE("I_Backtracer should support common functions", TESTTAG)
 
     auto ypr = backtracer.get_sensor_orientation_quat_ypr();
 
-    //REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw, 0.0001));
+    // REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw, 0.0001));
     REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
     REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch, 0.0001));
     REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));

@@ -28,6 +28,8 @@ class I_Backtracer
     std::string _name;
 
     navigation::datastructures::GeoLocation _sensor_location; ///< Location/Orientation of the senor
+    float                                   _sensor_x;
+    float                                   _sensor_y;
 
     Eigen::Quaternion<float> _sensor_orientation_quat; ///< Quaternion describing the orientation
                                                        ///< of the sensor
@@ -36,10 +38,13 @@ class I_Backtracer
     std::string get_name() const { return _name; }
 
   public:
-    I_Backtracer(navigation::datastructures::GeoLocation sensor_location, std::string name)
+    I_Backtracer(navigation::datastructures::GeoLocation sensor_location,
+                 float                                   sensor_x,
+                 float                                   sensor_y,
+                 std::string                             name)
         : _name(std::move(name))
     {
-        set_sensor_location(std::move(sensor_location));
+        set_sensor_location(std::move(sensor_location), sensor_x, sensor_y);
     }
     virtual ~I_Backtracer() = default;
 
@@ -107,15 +112,21 @@ class I_Backtracer
     }
 
     // ----- setters -----
-    void set_sensor_location(navigation::datastructures::GeoLocation sensor_location)
+    void set_sensor_location(navigation::datastructures::GeoLocation sensor_location,
+                             float                                   sensor_x,
+                             float                                   sensor_y)
     {
         _sensor_location = std::move(sensor_location);
+        _sensor_x        = sensor_x;
+        _sensor_y        = sensor_y;
 
         _sensor_orientation_quat = tools::rotationfunctions::quaternion_from_ypr(
             0.0f, _sensor_location.pitch, _sensor_location.roll);
     }
 
     // ----- accessors -----
+    float       get_sensor_x() const { return _sensor_x; }
+    float       get_sensor_y() const { return _sensor_y; }
     const auto& get_sensor_location() const { return _sensor_location; }
     auto        get_sensor_orientation_quat_ypr() const
     {
@@ -128,15 +139,18 @@ class I_Backtracer
     {
         auto name = tools::classhelper::stream::container_from_stream<std::string>(is);
 
-        auto geolocation = navigation::datastructures::GeoLocation::from_stream(is);
+        auto                 geolocation = navigation::datastructures::GeoLocation::from_stream(is);
+        std::array<float, 2> sensor_xy;
+        is.read(reinterpret_cast<char*>(&sensor_xy), sizeof(sensor_xy));
 
-        return I_Backtracer(std::move(geolocation), name);
+        return I_Backtracer(std::move(geolocation), sensor_xy[0], sensor_xy[1], name);
     }
 
     void to_stream(std::ostream& os) const
     {
         tools::classhelper::stream::container_to_stream(os, _name);
         _sensor_location.to_stream(os);
+        os.write(reinterpret_cast<const char*>(&_sensor_x), sizeof(_sensor_x) * 2);
     }
 
   public:

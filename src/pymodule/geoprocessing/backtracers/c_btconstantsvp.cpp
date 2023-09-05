@@ -37,9 +37,11 @@ void init_c_btconstantsvp(py::module& m)
         m,
         "BTConstantSVP",
         DOC(themachinethatgoesping, algorithms, geoprocessing, backtracers, BTConstantSVP))
-        .def(py::init<navigation::datastructures::GeoLocation>(),
+        .def(py::init<navigation::datastructures::GeoLocation, float, float>(),
              DOC_BTConstantSVP(BTConstantSVP),
-             py::arg("sensor_location"))
+             py::arg("sensor_location"),
+             py::arg("sensor_x"),
+             py::arg("sensor_y"))
         .def("__eq__", &BTConstantSVP::operator==, DOC_BTConstantSVP(operator_eq), py::arg("other"))
 
         // default copy functions
