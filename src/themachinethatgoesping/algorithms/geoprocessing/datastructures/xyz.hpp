@@ -7,6 +7,9 @@
 /* generated doc strings */
 #include ".docstrings/xyz.doc.hpp"
 
+#include <Eigen/Eigen>
+#include <Eigen/Geometry>
+
 #include <xtensor/xtensor.hpp>
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
@@ -76,6 +79,90 @@ struct XYZ
     bool operator==(const XYZ& rhs) const = default;
 
     size_t size() const { return x.size(); }
+
+    /**
+     * @brief Concatenate multiple XYZ objects
+     * Note: the dimensionality of the XYZ objects will be lost (transformed to XYZ<1>)
+     *
+     * @param vector of XYZ objects
+     * @return XYZ<1>
+     */
+    static XYZ<1> concat(const std::vector<std::shared_ptr<const XYZ<Dim>>>& xyzs)
+    {
+        // create a new XYZ object with the summed size of all previous xyz objects
+        size_t size = 0;
+        for (const auto& xyz : xyzs)
+            size += xyz->size();
+        XYZ<1> xyz({ size });
+
+        // copy the data from the xyz objects to the new xyz object
+        // use std::copy
+        auto itx = xyz.x.begin();
+        auto ity = xyz.y.begin();
+        auto itz = xyz.z.begin();
+        for (const auto& xyz_ : xyzs)
+        {
+            itx = std::copy(xyz_->x.begin(), xyz_->x.end(), itx);
+            ity = std::copy(xyz_->y.begin(), xyz_->y.end(), ity);
+            itz = std::copy(xyz_->z.begin(), xyz_->z.end(), itz);
+        }
+
+        return xyz;
+    }
+
+    /**
+     * @brief Rotate the XYZ object using a quaternion
+     *
+     * @param q quaternion
+     *
+     */
+    void rotate(const Eigen::Quaternionf& q)
+    {
+        // rotate the xyz object
+        for (size_t i = 0; i < size(); ++i)
+        {
+            auto rotated = tools::rotationfunctions::rotateXYZ(
+                q, x.unchecked(i), y.unchecked(i), z.unchecked(i));
+            x.unchecked(i) = rotated[0];
+            y.unchecked(i) = rotated[1];
+            z.unchecked(i) = rotated[2];
+        }
+    }
+
+    /**
+     * @brief Rotate the XYZ object using yaw, pitch, roll in °
+     *
+     * @param yaw in °
+     * @param pitch in °
+     * @param roll in °
+     *
+     */
+    void rotate(float yaw, float pitch, float roll)
+    {
+        // rotate the xyz object
+        for (size_t i = 0; i < size(); ++i)
+        {
+            auto rotated = tools::rotationfunctions::rotateXYZ(
+                tools::rotationfunctions::quaternion_from_ypr(yaw, pitch, roll),
+                x.unchecked(i),
+                y.unchecked(i),
+                z.unchecked(i));
+            x.unchecked(i) = rotated[0];
+            y.unchecked(i) = rotated[1];
+            z.unchecked(i) = rotated[2];
+        }
+    }
+
+    void translate(float x_, float y_, float z_)
+    {
+        // translate the xyz object
+        for (size_t i = 0; i < size(); ++i)
+        {
+            x.unchecked(i) += x_;
+            y.unchecked(i) += y_;
+            z.unchecked(i) += z_;
+        }
+    }
 
     // ----- some convenient math -----
     std::array<float, 2> get_minmax_x() const { return xt::minmax(x)(); }

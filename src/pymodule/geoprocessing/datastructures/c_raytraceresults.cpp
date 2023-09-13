@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-
 // automatically gernerated using  python -m pybind11_mkdoc -o docstrings.h
 // <headerfiles>
 
@@ -52,6 +51,8 @@ void init_c_raytraceresults_dim(py::module& m)
                        &RaytraceResults<Dim>::true_range,
                        DOC_RaytraceResults(true_range),
                        py::return_value_policy::reference_internal)
+
+        .def_static("concat", &RaytraceResults<Dim>::concat, DOC_RaytraceResults(concat))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(RaytraceResults<Dim>)

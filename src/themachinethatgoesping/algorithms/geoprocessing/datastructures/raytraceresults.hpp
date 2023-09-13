@@ -96,6 +96,40 @@ struct RaytraceResults : public XYZ<Dim>
 
     bool operator==(const RaytraceResults& rhs) const = default;
 
+    /**
+     * @brief Concatenate multiple RaytraceResults objects
+     * Note: the dimensionality of the RaytraceResults objects will be lost (transformed
+     * RaytraceResults XYZ<1>)
+     *
+     * @param vector of RaytraceResults objects
+     * @return RaytraceResults<1>
+     */
+    static RaytraceResults<1> concat(
+        const std::vector<std::shared_ptr<const RaytraceResults<Dim>>>& objects)
+    {
+        // create a new XYZ object with the summed size of all previous xyz objects
+        size_t size = 0;
+        for (const auto& obj_ : objects)
+            size += obj_->size();
+        RaytraceResults<1> obj({size});
+
+        // copy the data from the xyz objects to the new xyz object
+        // use std::copy
+        auto itx = obj.x.begin();
+        auto ity = obj.y.begin();
+        auto itz = obj.z.begin();
+        auto itr = obj.true_range.begin();
+        for (const auto& obj_ : objects)
+        {
+            itx = std::copy(obj_->x.begin(), obj_->x.end(), itx);
+            ity = std::copy(obj_->y.begin(), obj_->y.end(), ity);
+            itz = std::copy(obj_->z.begin(), obj_->z.end(), itz);
+            itr = std::copy(obj_->true_range.begin(), obj_->true_range.end(), itr);
+        }
+
+        return obj;
+    }
+
   public:
     // ----- file I/O -----
     static RaytraceResults from_stream(std::istream& is)

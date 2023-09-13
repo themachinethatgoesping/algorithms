@@ -1,4 +1,4 @@
-//sourcehash: d74df7b9ba11e8db7c04a53fdf985624132180ea19166cacaf149b6c060cc330
+//sourcehash: 24f58207ca1cb8bf2a92d695171bd3aa079b0c3b84e130de71f5df59e9276d5f
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -68,6 +68,16 @@ Parameter ``z``:
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_check_shape = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_concat =
+R"doc(Concatenate multiple XYZ objects Note: the dimensionality of the XYZ
+objects will be lost (transformed to XYZ<1>)
+
+Parameter ``vector``:
+    of XYZ objects
+
+Returns:
+    XYZ<1>)doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_from_stream = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_get_minmax_x = R"doc()doc";
@@ -80,11 +90,31 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastr
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_printer = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_rotate =
+R"doc(Rotate the XYZ object using a quaternion
+
+Parameter ``q``:
+    quaternion)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_rotate_2 =
+R"doc(Rotate the XYZ object using yaw, pitch, roll in °
+
+Parameter ``yaw``:
+    in °
+
+Parameter ``pitch``:
+    in °
+
+Parameter ``roll``:
+    in °)doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_shape = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_size = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_to_stream = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_translate = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_x = R"doc(< x coordinate in m, positive forward)doc";
 

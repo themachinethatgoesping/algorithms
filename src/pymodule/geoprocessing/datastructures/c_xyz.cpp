@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-
 // automatically gernerated using  python -m pybind11_mkdoc -o docstrings.h
 // <headerfiles>
 
@@ -11,6 +10,7 @@
 #include <themachinethatgoesping/tools_pybind/classhelper.hpp>
 
 // -- include pybind11 headers
+#include <pybind11/eigen.h>
 #include <pybind11/stl.h>
 #include <xtensor-python/pyarray.hpp> // Numpy bindings
 
@@ -45,6 +45,24 @@ void init_c_xyz_dim(py::module& m)
         .def("__eq__", &XYZ<Dim>::operator==, DOC_XYZ(operator_eq), py::arg("other"))
         .def("size", &XYZ<Dim>::size, DOC_XYZ(size))
         .def("shape", &XYZ<Dim>::shape, DOC_XYZ(shape))
+        .def_static("concat", &XYZ<Dim>::concat, DOC_XYZ(concat))
+
+        .def("rotate",
+             py::overload_cast<const Eigen::Quaternionf&>(&XYZ<Dim>::rotate),
+             DOC_XYZ(rotate),
+             py::arg("quat"))
+        .def("rotate",
+             py::overload_cast<float, float, float>(&XYZ<Dim>::rotate),
+             DOC_XYZ(rotate_2),
+             py::arg("yaw")   = 0.f,
+             py::arg("pitch") = 0.f,
+             py::arg("roll")  = 0.f)
+        .def("translate",
+             &XYZ<Dim>::translate,
+             DOC_XYZ(translate),
+             py::arg("x") = 0.f,
+             py::arg("y") = 0.f,
+             py::arg("z") = 0.f)
 
         .def_readwrite("x", &XYZ<Dim>::x, DOC_XYZ(x), py::return_value_policy::reference_internal)
         .def_readwrite("y", &XYZ<Dim>::y, DOC_XYZ(y), py::return_value_policy::reference_internal)

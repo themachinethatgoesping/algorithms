@@ -1,4 +1,4 @@
-//sourcehash: 3a46bd66adb851f44e54a4958b64a1901a553c0bffc1c8bb2081d45d8f381235
+//sourcehash: e809ff27066e3040dfc8e53ad5f30f28314d5e5d25805c09650cc1e56ca75572
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -86,6 +86,17 @@ function
 Parameter ``xyz``:)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_check_shape = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_concat =
+R"doc(Concatenate multiple RaytraceResults objects Note: the dimensionality
+of the RaytraceResults objects will be lost (transformed
+RaytraceResults XYZ<1>)
+
+Parameter ``vector``:
+    of RaytraceResults objects
+
+Returns:
+    RaytraceResults<1>)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_RaytraceResults_from_stream = R"doc()doc";
 
