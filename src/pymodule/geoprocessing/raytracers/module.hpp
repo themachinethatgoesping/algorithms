@@ -11,7 +11,7 @@ namespace pymodule {
 namespace py_geoprocessing {
 namespace py_raytracers {
 
-void init_i_raytracer(pybind11::module& m); // init_i_raytracer.cpp
+void init_c_i_raytracer(pybind11::module& m); // init_c_i_raytracer.cpp
 void init_c_rtconstantsvp(pybind11::module& m); // init_c_rtconstantsvp.cpp
 
 void init_m_raytracers(pybind11::module& m)
@@ -20,7 +20,7 @@ void init_m_raytracers(pybind11::module& m)
 
     submodule.doc() = "Submodule for raytracing echo sounder sample locations";
 
-    init_i_raytracer(submodule);
+    init_c_i_raytracer(submodule);
     init_c_rtconstantsvp(submodule);
 }
 

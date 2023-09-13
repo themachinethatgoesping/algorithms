@@ -92,19 +92,18 @@ class I_Raytracer
     /**
      * @brief Trace the location of a set of points.
      *
-     * @param two_way_travel_time Two way travel time in s
-     * @param alongtrack_angle Along track angle of all beams in °
-     * @param crosstrack_angles Across track angle in °
+     * @param sampledirections One dimensional sample directions array
      * @param mp_cores Number of cores to use for parallelization
      * @return datastructures::RaytraceResult
      */
-    virtual datastructures::RaytraceResults<1> trace_points(
-        [[maybe_unused]] const xt::xtensor<float, 1>& two_way_travel_times,
-        [[maybe_unused]] float                        alongtrack_angles,
-        [[maybe_unused]] const xt::xtensor<float, 1>& crosstrack_angles,
-        [[maybe_unused]] unsigned int                 mp_cores = 1) const
+    datastructures::RaytraceResults<1> trace_points(
+        const datastructures::SampleDirectionsTime<1>& sampledirections,
+        unsigned int                                   mp_cores = 1) const
     {
-        throw not_implemented("trace(Multiple points / single alongtrack angle)", _name);
+        return trace_points(sampledirections.two_way_travel_time,
+                            sampledirections.alongtrack_angle,
+                            sampledirections.crosstrack_angle,
+                            mp_cores);
     }
 
     /**
@@ -145,7 +144,7 @@ class I_Raytracer
         [[maybe_unused]] const xt::xtensor<unsigned int, 2>& sample_numbers,
         [[maybe_unused]] float                               sampling_time,
         [[maybe_unused]] float                               sampling_time_offset,
-        [[maybe_unused]] float                               alongtrack_angle,
+        [[maybe_unused]] const xt::xtensor<float, 1>&        alongtrack_angle,
         [[maybe_unused]] const xt::xtensor<float, 1>&        crosstrack_angles,
         [[maybe_unused]] unsigned int                        mp_cores = 1) const
     {
@@ -165,12 +164,12 @@ class I_Raytracer
      * @return datastructures::RaytraceResults<1>
      */
     virtual datastructures::RaytraceResults<1> trace_beam(unsigned int first_sample_number,
-                                                               unsigned int number_of_samples,
-                                                               unsigned int sample_step,
-                                                               float        sampling_time,
-                                                               float        sampling_time_offset,
-                                                               float        alongtrack_angle,
-                                                               float        crosstrack_angle) const
+                                                          unsigned int number_of_samples,
+                                                          unsigned int sample_step,
+                                                          float        sampling_time,
+                                                          float        sampling_time_offset,
+                                                          float        alongtrack_angle,
+                                                          float        crosstrack_angle) const
     {
         return trace_beam(xt::arange<unsigned int>(first_sample_number,
                                                    first_sample_number + number_of_samples,
@@ -201,7 +200,7 @@ class I_Raytracer
         unsigned int                 sample_step,
         float                        sampling_time,
         float                        sampling_time_offset,
-        float                        alongtrack_angle,
+        const xt::xtensor<float, 1>& alongtrack_angles,
         const xt::xtensor<float, 1>& crosstrack_angles,
         unsigned int                 mp_cores = 1) const
     {
@@ -219,7 +218,7 @@ class I_Raytracer
         return trace_swath(sample_numbers,
                            sampling_time,
                            sampling_time_offset,
-                           alongtrack_angle,
+                           alongtrack_angles,
                            crosstrack_angles,
                            mp_cores);
     }

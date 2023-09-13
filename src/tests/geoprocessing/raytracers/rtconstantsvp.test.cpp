@@ -308,16 +308,18 @@ TEST_CASE("RTConstantSVP swath computations should be equal to beam computations
 
     for (unsigned int an = 0; an < along.size(); ++an)
     {
+        auto along_angles = xt::empty<float>({ num_beams });
+        along_angles.fill(along[an]);
 
         auto swath = raytracer.trace_swath(
-            sample_numbers, sampling_time, sampling_time_offset, along[an], across);
+            sample_numbers, sampling_time, sampling_time_offset, along_angles, across);
 
         for (unsigned int bn = 0; bn < across.size(); ++bn)
         {
             auto beam = raytracer.trace_beam(sample_numbers_per_beam,
                                              sampling_time,
                                              sampling_time_offset,
-                                             along[an],
+                                             along_angles[bn],
                                              across[bn]);
 
             for (unsigned int sn = 0; sn < sample_numbers_per_beam.size(); ++sn)

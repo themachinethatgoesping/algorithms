@@ -1,4 +1,4 @@
-//sourcehash: 0676d1f4f89ef655de71e1cf3b217c411660fa353a0f4496cd5750501f6bc443
+//sourcehash: 5144e0cbe762e8c399155b4e06af9d1dca5d880fc76407e5a07fa28b97b51ec3
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -154,14 +154,8 @@ Returns:
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_trace_points_2 =
 R"doc(Trace the location of a set of points.
 
-Parameter ``two_way_travel_time``:
-    Two way travel time in s
-
-Parameter ``alongtrack_angle``:
-    Along track angle of all beams in °
-
-Parameter ``crosstrack_angles``:
-    Across track angle in °
+Parameter ``sampledirections``:
+    One dimensional sample directions array
 
 Parameter ``mp_cores``:
     Number of cores to use for parallelization

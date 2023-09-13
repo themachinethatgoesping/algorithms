@@ -141,53 +141,6 @@ class RTConstantSVP : public I_Raytracer
         return targets;
     }
 
-    datastructures::RaytraceResults<1> trace_points(
-        const xt::xtensor<float, 1>& two_way_travel_times,
-        float                        alongtrack_angle,
-        const xt::xtensor<float, 1>& crosstrack_angles,
-        unsigned int                 mp_cores = 1) const override
-    {
-        // check that all vectors have the same length
-        if (crosstrack_angles.size() != two_way_travel_times.size())
-            throw std::runtime_error(
-                fmt::format("RTConstantSVP::trace(Multiple points): input vectors must have the "
-                            "same length: {} {}",
-                            crosstrack_angles.size(),
-                            two_way_travel_times.size()));
-
-        auto num_points = two_way_travel_times.size();
-
-        datastructures::RaytraceResults<1> targets;
-
-        targets.true_range = xt::eval(two_way_travel_times * _sound_velocity_2);
-        targets.x          = xt::xtensor<float, 1>::from_shape({ num_points });
-        targets.y          = xt::xtensor<float, 1>::from_shape({ num_points });
-        targets.z          = xt::xtensor<float, 1>::from_shape({ num_points });
-
-#pragma omp parallel for num_threads(mp_cores)
-        for (unsigned int i = 0; i < num_points; ++i)
-        {
-            // convert launch angles to quaternion
-            auto target_ypr_quat = tools::rotationfunctions::quaternion_from_ypr(
-                0.f, alongtrack_angle, crosstrack_angles[i]);
-
-            // the true orientation is the sensor orientation rotated by the launch angles
-            target_ypr_quat = get_sensor_orientation_quat() * target_ypr_quat;
-
-            // get rotated positions
-            auto target_xyz = tools::rotationfunctions::rotateXYZ<float>(
-                target_ypr_quat, 0, 0, targets.true_range[i]);
-
-            // set target position
-            targets.x[i] = target_xyz[0];
-            targets.y[i] = target_xyz[1];
-            targets.z[i] = target_xyz[2];
-        }
-        targets.z += get_sensor_location().z;
-
-        return targets;
-    }
-
     datastructures::RaytraceResults<1> trace_beam(
         const xt::xtensor<unsigned int, 1>& sample_numbers,
         float                               sampling_time,
@@ -206,7 +159,7 @@ class RTConstantSVP : public I_Raytracer
         const xt::xtensor<unsigned int, 2>& sample_numbers,
         float                               sampling_time,
         float                               sampling_time_offset,
-        float                               alongtrack_angle,
+        const xt::xtensor<float, 1>&        alongtrack_angles,
         const xt::xtensor<float, 1>&        crosstrack_angles,
         unsigned int                        mp_cores = 1) const override
     {
@@ -214,7 +167,7 @@ class RTConstantSVP : public I_Raytracer
             xt::view(sample_numbers, xt::all(), -1) * sampling_time + sampling_time_offset;
 
         auto scale_targets =
-            trace_points(last_sample_times, alongtrack_angle, crosstrack_angles, mp_cores);
+            trace_points(last_sample_times, alongtrack_angles, crosstrack_angles, mp_cores);
 
         return scale_swath(sample_numbers,
                            sampling_time,

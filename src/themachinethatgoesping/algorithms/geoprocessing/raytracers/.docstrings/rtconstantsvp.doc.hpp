@@ -1,4 +1,4 @@
-//sourcehash: 1712e4895f824d9520d80d2e7cb049b27abf7e34b1ec53207828f1bac0168e56
+//sourcehash: 4a94e9d6eabab09aff81a7686e61b2ccdd135825ade91629c3ef5d49851ad198
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -155,8 +155,6 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_point = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_points_2 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_RTConstantSVP_trace_swath = R"doc()doc";
 

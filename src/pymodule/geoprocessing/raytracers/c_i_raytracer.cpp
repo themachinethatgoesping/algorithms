@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-
 // automatically gernerated using  python -m pybind11_mkdoc -o docstrings.h
 // <headerfiles>
 
@@ -28,7 +27,7 @@ using namespace themachinethatgoesping::navigation::datastructures;
 #define DOC_I_Raytracer(ARG)                                                                       \
     DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers, I_Raytracer, ARG)
 
-void init_i_raytracer(py::module& m)
+void init_c_i_raytracer(py::module& m)
 {
     py::class_<I_Raytracer>(
         m,
@@ -56,14 +55,10 @@ void init_i_raytracer(py::module& m)
              py::arg("crosstrack_angles"),
              py::arg("mp_cores") = 1)
         .def("trace_points",
-             py::overload_cast<const xt::xtensor<float, 1>&,
-                               float,
-                               const xt::xtensor<float, 1>&,
-                               unsigned int>(&I_Raytracer::trace_points, py::const_),
+             py::overload_cast<const SampleDirectionsTime<1>&, unsigned int>(
+                 &I_Raytracer::trace_points, py::const_),
              DOC_I_Raytracer(trace_points_2),
-             py::arg("two_way_travel_times"),
-             py::arg("alongtrack_angle"),
-             py::arg("crosstrack_angles"),
+             py::arg("sample_directions"),
              py::arg("mp_cores") = 1)
         .def("trace_beam",
              py::overload_cast<const xt::xtensor<unsigned int, 1>&, float, float, float, float>(
@@ -90,7 +85,7 @@ void init_i_raytracer(py::module& m)
              py::overload_cast<const xt::xtensor<unsigned int, 2>&,
                                float,
                                float,
-                               float,
+                               const xt::xtensor<float, 1>&,
                                const xt::xtensor<float, 1>&,
                                unsigned int>(&I_Raytracer::trace_swath, py::const_),
              DOC_I_Raytracer(trace_swath),
@@ -106,7 +101,7 @@ void init_i_raytracer(py::module& m)
                                unsigned int,
                                float,
                                float,
-                               float,
+                               const xt::xtensor<float, 1>&,
                                const xt::xtensor<float, 1>&,
                                unsigned int>(&I_Raytracer::trace_swath, py::const_),
              DOC_I_Raytracer(trace_swath_2),
@@ -115,7 +110,7 @@ void init_i_raytracer(py::module& m)
              py::arg("sample_step"),
              py::arg("sampling_time"),
              py::arg("sampling_time_offset"),
-             py::arg("alongtrack_angle"),
+             py::arg("alongtrack_angles"),
              py::arg("crosstrack_angles"),
              py::arg("mp_cores") = 1)
 
