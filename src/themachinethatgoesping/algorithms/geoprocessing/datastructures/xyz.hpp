@@ -7,8 +7,12 @@
 /* generated doc strings */
 #include ".docstrings/xyz.doc.hpp"
 
+#include <utility> // std::pair
+
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
+
+#include <GeographicLib/UTMUPS.hpp>
 
 #include <xtensor/xtensor.hpp>
 
@@ -236,6 +240,27 @@ struct XYZ
         printer.register_container("z", z, "positive downwards, m");
 
         return printer;
+    }
+
+    std::pair<xt::xtensor<double, Dim>, xt::xtensor<double, Dim>> to_latlon(
+        int  utm_zone,
+        bool northern_hemisphere) const
+    {
+        auto LaLoZ = std::make_pair<xt::xtensor<double, Dim>, xt::xtensor<double, Dim>>(
+            xt::xtensor<double, Dim>::from_shape(x.shape()),
+            xt::xtensor<double, Dim>::from_shape(y.shape()));
+
+        for (size_t i = 0; i < size(); ++i)
+        {
+            GeographicLib::UTMUPS::Reverse(utm_zone,
+                                           northern_hemisphere,
+                                           y.unchecked(i),
+                                           x.unchecked(i),
+                                           LaLoZ.first.unchecked(i),
+                                           LaLoZ.second.unchecked(i));
+        }
+
+        return LaLoZ;
     }
 
   public:

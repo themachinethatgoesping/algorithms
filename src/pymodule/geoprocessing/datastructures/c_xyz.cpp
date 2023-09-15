@@ -63,6 +63,11 @@ void init_c_xyz_dim(py::module& m)
              py::arg("x") = 0.f,
              py::arg("y") = 0.f,
              py::arg("z") = 0.f)
+        .def("to_latlon",
+             &XYZ<Dim>::to_latlon,
+             //DOC_XYZ(to_latlon), //TODO: pybind_mkdoc crashes on this
+             py::arg("utm_zone"),
+             py::arg("northern_hemisphere"))
 
         .def_readwrite("x", &XYZ<Dim>::x, DOC_XYZ(x), py::return_value_policy::reference_internal)
         .def_readwrite("y", &XYZ<Dim>::y, DOC_XYZ(y), py::return_value_policy::reference_internal)
