@@ -1,4 +1,4 @@
-//sourcehash: 9e620f13d3050ec08c7117c4bc2d40b0e7c00a90a5bc1cb3889aa7b8de9735b1
+//sourcehash: 06c8fa17b83f412bee852e9f01d2c16992675fc0e80dcb37b8732f049018e798
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -39,25 +39,42 @@
 
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices =
-R"doc(A structure to store sample indices (sample nr, beam nr) for a set of
-beams. It is used as output for the backmapper functions and as input
-for the get_wci_amplitude functions.)doc";
+R"doc(A structure to store beamsample directions (along angle, across
+angle).)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_SampleIndices = R"doc(Construct a new SampleIndices object (all values set to 0))doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_SampleIndices = R"doc(Construct a new sample location object (all values set to 0))doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_SampleIndices_2 =
+R"doc(Construct a new sample location object (initialize all tensors using
+the specified shape (empty))
+
+Parameter ``shape``:
+    shape of the internal tensors)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_SampleIndices_3 =
 R"doc(Construct a new SampleIndices object
 
-Parameter ``beam_sample_map_``:
-    map <beam number, sample_number>)doc";
+Parameter ``beam_numbers``:
+    in °, positive bow up, 0 == downwards
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_beam_sample_map = R"doc(< map <beam number, sample_number>)doc";
+Parameter ``sample_numbers``:
+    in °, positive starboard up, 0 == downwards)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_beam_numbers = R"doc(< in °, positive bow up, 0 == downwards)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_check_shape = R"doc(check if the internal variables have the same shape)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_from_stream = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_operator_eq = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_printer = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_sample_numbers = R"doc(< in °, positive starboard up, 0 == downwards)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_shape = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_size = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_SampleIndices_to_stream = R"doc()doc";
 

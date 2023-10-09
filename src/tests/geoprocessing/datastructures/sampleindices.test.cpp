@@ -11,33 +11,30 @@
 using namespace std;
 using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
 
-#define TESTTAG "[object]"
+#define TESTTAG "[location]"
 
 TEST_CASE("SampleIndices should support common functions", TESTTAG)
 {
-    // initialize object
-    auto object = SampleIndices();
+    // initialize location
+    auto location = SampleIndices<2>();
 
-    object.beam_sample_map = { { 56, { 1, 3, 5 } }, { 81, { 2, 3, 5 } }, { 21, { 3, 4, 7 } } };
+    location.beam_numbers   = { { 56.000 }, { 1.000 } };
+    location.sample_numbers = { { 54.192 }, { 2.000 } };
 
-    // test inequality
-    REQUIRE(SampleIndices() != object);
+    // test inequalitySampleDirections
+    REQUIRE(SampleIndices<2>() != location);
 
     // test copy
-    REQUIRE(object == SampleIndices(object));
+    REQUIRE(location == SampleIndices(location));
 
     // test binary
-    {
-        INFO(object.info_string());
-        INFO(object.from_binary(object.to_binary()).info_string());
-        REQUIRE(object == object.from_binary(object.to_binary()));
-    }
+    REQUIRE(location == SampleIndices(location.from_binary(location.to_binary())));
 
     // test stream
     std::stringstream buffer;
-    object.to_stream(buffer);
-    REQUIRE(object == SampleIndices(object.from_stream(buffer)));
+    location.to_stream(buffer);
+    REQUIRE(location == SampleIndices(location.from_stream(buffer)));
 
     // test print does not crash
-    REQUIRE(object.info_string().size() != 0);
+    REQUIRE(location.info_string().size() != 0);
 }

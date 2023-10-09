@@ -7,9 +7,6 @@
 /* generated doc strings */
 #include ".docstrings/sampleindices.doc.hpp"
 
-#include <map>
-#include <vector>
-
 #include <xtensor/xtensor.hpp>
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
@@ -17,38 +14,72 @@
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 
+#include "raytraceresult.hpp"
+
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace geoprocessing {
 namespace datastructures {
 
 /**
- * @brief A structure to store sample indices (sample nr, beam nr) for a set of beams. It is used
- * as output for the backmapper functions and as input for the get_wci_amplitude functions.
+ * @brief A structure to store beamsample directions (along angle, across angle).
  */
+template<size_t Dim>
 struct SampleIndices
 {
-    std::map<unsigned int, std::vector<unsigned int>>
-        beam_sample_map; ///< map <beam number, sample_number>
+  public:
+    xt::xtensor<float, Dim> beam_numbers; ///< in °, positive bow up, 0 == downwards
+    xt::xtensor<float, Dim> sample_numbers; ///< in °, positive starboard up, 0 == downwards
 
     /**
-     * @brief Construct a new SampleIndices object (all values set to 0)
+     * @brief Construct a new sample location object (all values set to 0)
      *
      */
     SampleIndices() = default;
 
     /**
+     * @brief Construct a new sample location object (initialize all tensors using the specified
+     * shape (empty))
+     *
+     * @param shape shape of the internal tensors
+     *
+     */
+    SampleIndices(const std::array<size_t, Dim>& shape)
+    {
+        beam_numbers = xt::xtensor<float, Dim>::from_shape(shape);
+        sample_numbers = xt::xtensor<float, Dim>::from_shape(shape);
+        SampleIndices::check_shape();
+    }
+
+    /**
      * @brief Construct a new SampleIndices object
      *
-     * @param beam_sample_map_ map <beam number, sample_number>
-
+     * @param beam_numbers in °, positive bow up, 0 == downwards
+     * @param sample_numbers in °, positive starboard up, 0 == downwards
      */
-    SampleIndices(std::map<unsigned int, std::vector<unsigned int>> beam_sample_map_)
-        : beam_sample_map(std::move(beam_sample_map_))
+    SampleIndices(xt::xtensor<float, Dim> beam_numbers_,
+                     xt::xtensor<float, Dim> sample_numbers_)
+        : beam_numbers(std::move(beam_numbers_))
+        , sample_numbers(std::move(sample_numbers_))
     {
+        SampleIndices::check_shape();
     }
 
     bool operator==(const SampleIndices& rhs) const = default;
+
+    size_t size() const
+    {
+        check_shape();
+
+        return beam_numbers.size();
+    }
+
+    std::array<size_t, Dim> shape() const
+    {
+        check_shape();
+
+        return beam_numbers.shape();
+    }
 
   public:
     // ----- file I/O -----
@@ -56,16 +87,34 @@ struct SampleIndices
     {
         SampleIndices data;
 
-        using tools::classhelper::stream::map_container_from_stream;
-        data.beam_sample_map = map_container_from_stream<decltype(data.beam_sample_map)>(is);
+        std::array<size_t, Dim> shape;
 
+        is.read(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
+
+        data.beam_numbers = xt::xtensor<float, Dim>::from_shape(shape);
+        data.sample_numbers = xt::xtensor<float, Dim>::from_shape(shape);
+
+        is.read(reinterpret_cast<char*>(data.beam_numbers.data()),
+                sizeof(float) * data.beam_numbers.size());
+        is.read(reinterpret_cast<char*>(data.sample_numbers.data()),
+                sizeof(float) * data.sample_numbers.size());
+
+        data.check_shape();
         return data;
     }
 
     void to_stream(std::ostream& os) const
     {
-        using tools::classhelper::stream::map_container_to_stream;
-        map_container_to_stream(os, beam_sample_map);
+        check_shape();
+
+        std::array<size_t, Dim> shape = beam_numbers.shape();
+
+        os.write(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
+
+        os.write(reinterpret_cast<const char*>(beam_numbers.data()),
+                 sizeof(float) * beam_numbers.size());
+        os.write(reinterpret_cast<const char*>(sample_numbers.data()),
+                 sizeof(float) * sample_numbers.size());
     }
 
   public:
@@ -73,12 +122,29 @@ struct SampleIndices
     {
         tools::classhelper::ObjectPrinter printer("SampleIndices", float_precision);
 
-        for (const auto& [bn, sn] : beam_sample_map)
-        {
-            printer.register_container(fmt::format("Beam number ({})", bn), sn);
-        }
+        printer.register_container("beam_numbers", beam_numbers, "°");
+        printer.register_container("sample_numbers", sample_numbers, "°");
 
         return printer;
+    }
+
+  public:
+    /**
+     * @brief check if the internal variables have the same shape
+     *
+     */
+    virtual void check_shape() const
+    {
+        // compare shape
+        if (beam_numbers.shape() != sample_numbers.shape())
+        {
+            throw std::runtime_error(fmt::format(
+                "SampleIndices::SampleIndices: beam_numbers, sample_numbers must have "
+                "the same shape. beam_numbers.size() = {}, "
+                "sample_numbers.size() = {}",
+                beam_numbers.size(),
+                sample_numbers.size()));
+        }
     }
 
   public:

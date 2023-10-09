@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-
 // automatically gernerated using  python -m pybind11_mkdoc -o docstrings.h
 // <headerfiles>
 
@@ -26,36 +25,55 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::datastructure
 #define DOC_SampleIndices(ARG)                                                                     \
     DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleIndices, ARG)
 
-void init_c_sampleindices(py::module& m)
+template<size_t Dim>
+void init_c_sampleindices_dim(py::module& m)
 {
-    const std::string py_class_name = "SampleIndices";
+    const std::string py_class_name = "SampleIndices_" + std::to_string(Dim);
 
-    py::class_<SampleIndices>(
+    py::class_<SampleIndices<Dim>, std::shared_ptr<SampleIndices<Dim>>>(
         m,
         py_class_name.c_str(),
         DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleIndices))
         .def(py::init<>(), DOC_SampleIndices(SampleIndices))
-        .def(py::init<std::map<unsigned int, std::vector<unsigned int>>>(),
+        .def(py::init<const std::array<size_t, Dim>&>(),
              DOC_SampleIndices(SampleIndices_2),
-             py::arg("beam_sample_map"))
+             py::arg("shape"))
+        .def(py::init<xt::xtensor<float, Dim>, xt::xtensor<float, Dim>>(),
+             DOC_SampleIndices(SampleIndices_3),
+             py::arg("beam_numbers"),
+             py::arg("sample_numbers"))
         .def("__eq__",
-             &SampleIndices::operator==,
+             &SampleIndices<Dim>::operator==,
              DOC_SampleIndices(operator_eq),
              py::arg("other"))
+        .def("size", &SampleIndices<Dim>::size, DOC_SampleIndices(size))
+        .def("shape", &SampleIndices<Dim>::shape, DOC_SampleIndices(shape))
+        .def("check_shape", &SampleIndices<Dim>::check_shape, DOC_SampleIndices(check_shape))
 
-        .def_readwrite("beam_sample_map",
-                       &SampleIndices::beam_sample_map,
-                       DOC_SampleIndices(beam_sample_map),
+        .def_readwrite("beam_numbers",
+                       &SampleIndices<Dim>::beam_numbers,
+                       DOC_SampleIndices(beam_numbers),
+                       py::return_value_policy::reference_internal)
+        .def_readwrite("sample_numbers",
+                       &SampleIndices<Dim>::sample_numbers,
+                       DOC_SampleIndices(sample_numbers),
                        py::return_value_policy::reference_internal)
 
         // default copy functions
-        __PYCLASS_DEFAULT_COPY__(SampleIndices)
+        __PYCLASS_DEFAULT_COPY__(SampleIndices<Dim>)
         // default binary functions
-        __PYCLASS_DEFAULT_BINARY__(SampleIndices)
+        __PYCLASS_DEFAULT_BINARY__(SampleIndices<Dim>)
         // default printing functions
-        __PYCLASS_DEFAULT_PRINTING__(SampleIndices)
+        __PYCLASS_DEFAULT_PRINTING__(SampleIndices<Dim>)
         // end SampleIndices
         ;
+}
+
+void init_c_sampleindices(py::module& m)
+{
+    init_c_sampleindices_dim<1>(m);
+    init_c_sampleindices_dim<2>(m);
+    init_c_sampleindices_dim<3>(m);
 }
 
 } // namespace py_datastructures
