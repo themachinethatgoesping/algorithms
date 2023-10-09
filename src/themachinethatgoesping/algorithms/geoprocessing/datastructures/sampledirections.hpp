@@ -30,7 +30,7 @@ struct SampleDirections
   public:
     xt::xtensor<float, Dim> alongtrack_angle; ///< in °, positive bow up, 0 == downwards
     xt::xtensor<float, Dim> crosstrack_angle; ///< in °, positive starboard up, 0 == downwards
-
+    
     /**
      * @brief Construct a new sample location object (all values set to 0)
      *

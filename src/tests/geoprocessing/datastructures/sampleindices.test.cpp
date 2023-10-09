@@ -18,8 +18,8 @@ TEST_CASE("SampleIndices should support common functions", TESTTAG)
     // initialize location
     auto location = SampleIndices<2>();
 
-    location.beam_numbers   = { { 56.000 }, { 1.000 } };
-    location.sample_numbers = { { 54.192 }, { 2.000 } };
+    location.beam_numbers   = { { 56 }, { 1 } };
+    location.sample_numbers = { { 54 }, { 2 } };
 
     // test inequalitySampleDirections
     REQUIRE(SampleIndices<2>() != location);

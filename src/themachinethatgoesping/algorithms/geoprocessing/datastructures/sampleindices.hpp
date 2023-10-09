@@ -28,8 +28,8 @@ template<size_t Dim>
 struct SampleIndices
 {
   public:
-    xt::xtensor<float, Dim> beam_numbers; ///< in °, positive bow up, 0 == downwards
-    xt::xtensor<float, Dim> sample_numbers; ///< in °, positive starboard up, 0 == downwards
+    xt::xtensor<uint16_t, Dim> beam_numbers; ///< beam number of each sample
+    xt::xtensor<uint16_t, Dim> sample_numbers; ///< sample number of each sample
 
     /**
      * @brief Construct a new sample location object (all values set to 0)
@@ -46,8 +46,8 @@ struct SampleIndices
      */
     SampleIndices(const std::array<size_t, Dim>& shape)
     {
-        beam_numbers = xt::xtensor<float, Dim>::from_shape(shape);
-        sample_numbers = xt::xtensor<float, Dim>::from_shape(shape);
+        beam_numbers = xt::xtensor<uint16_t, Dim>::from_shape(shape);
+        sample_numbers = xt::xtensor<uint16_t, Dim>::from_shape(shape);
         SampleIndices::check_shape();
     }
 
@@ -57,8 +57,8 @@ struct SampleIndices
      * @param beam_numbers in °, positive bow up, 0 == downwards
      * @param sample_numbers in °, positive starboard up, 0 == downwards
      */
-    SampleIndices(xt::xtensor<float, Dim> beam_numbers_,
-                     xt::xtensor<float, Dim> sample_numbers_)
+    SampleIndices(xt::xtensor<uint16_t, Dim> beam_numbers_,
+                     xt::xtensor<uint16_t, Dim> sample_numbers_)
         : beam_numbers(std::move(beam_numbers_))
         , sample_numbers(std::move(sample_numbers_))
     {
@@ -91,13 +91,13 @@ struct SampleIndices
 
         is.read(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
 
-        data.beam_numbers = xt::xtensor<float, Dim>::from_shape(shape);
-        data.sample_numbers = xt::xtensor<float, Dim>::from_shape(shape);
+        data.beam_numbers = xt::xtensor<uint16_t, Dim>::from_shape(shape);
+        data.sample_numbers = xt::xtensor<uint16_t, Dim>::from_shape(shape);
 
         is.read(reinterpret_cast<char*>(data.beam_numbers.data()),
-                sizeof(float) * data.beam_numbers.size());
+                sizeof(uint16_t) * data.beam_numbers.size());
         is.read(reinterpret_cast<char*>(data.sample_numbers.data()),
-                sizeof(float) * data.sample_numbers.size());
+                sizeof(uint16_t) * data.sample_numbers.size());
 
         data.check_shape();
         return data;
@@ -112,15 +112,15 @@ struct SampleIndices
         os.write(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
 
         os.write(reinterpret_cast<const char*>(beam_numbers.data()),
-                 sizeof(float) * beam_numbers.size());
+                 sizeof(uint16_t) * beam_numbers.size());
         os.write(reinterpret_cast<const char*>(sample_numbers.data()),
-                 sizeof(float) * sample_numbers.size());
+                 sizeof(uint16_t) * sample_numbers.size());
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int uint16_t_precision) const
     {
-        tools::classhelper::ObjectPrinter printer("SampleIndices", float_precision);
+        tools::classhelper::ObjectPrinter printer("SampleIndices", uint16_t_precision);
 
         printer.register_container("beam_numbers", beam_numbers, "°");
         printer.register_container("sample_numbers", sample_numbers, "°");

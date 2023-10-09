@@ -38,7 +38,7 @@ void init_c_sampleindices_dim(py::module& m)
         .def(py::init<const std::array<size_t, Dim>&>(),
              DOC_SampleIndices(SampleIndices_2),
              py::arg("shape"))
-        .def(py::init<xt::xtensor<float, Dim>, xt::xtensor<float, Dim>>(),
+        .def(py::init<xt::xtensor<uint16_t, Dim>, xt::xtensor<uint16_t, Dim>>(),
              DOC_SampleIndices(SampleIndices_3),
              py::arg("beam_numbers"),
              py::arg("sample_numbers"))

@@ -12,11 +12,13 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
+#include <xtensor/xsort.hpp>
 #include <xtensor/xview.hpp>
 
 #include <themachinethatgoesping/navigation/datastructures.hpp>
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+#include <themachinethatgoesping/tools/vectorinterpolators.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -33,6 +35,10 @@ class I_Backtracer
 
     Eigen::Quaternion<float> _sensor_orientation_quat; ///< Quaternion describing the orientation
                                                        ///< of the sensor
+
+    // // transducer parameters
+    // datastructures::BeamSampleParameters     _beam_sample_parameters;
+    // datastructures::SampleDirectionsRange<1> _sample_directions;
 
   public:
     std::string get_name() const { return _name; }
@@ -109,6 +115,59 @@ class I_Backtracer
         [[maybe_unused]] unsigned int                 mp_cores = 1) const
     {
         throw not_implemented("backtrace(Multiple points)", _name);
+    }
+
+    datastructures::SampleIndices<2> lookup_indices(
+        const datastructures::SampleDirectionsRange<1>& beam_reference_directions,
+        const std::vector<uint16_t>&                    beam_reference_sample_numbers,
+        const std::vector<uint16_t>&                    beam_reference_max_sample_numbers,
+        const datastructures::SampleDirectionsRange<2>& target_directions,
+        [[maybe_unused]] unsigned int                   mp_cores = 1) const
+    {
+        using tools::vectorinterpolators::LinearInterpolator;
+        using tools::vectorinterpolators::NearestInterpolator;
+
+        datastructures::SampleIndices<2> indices(target_directions.shape());
+
+        // sort the beam indices by angle and add them to a nearest interpolator
+        auto sorted_beam_index = xt::argsort(beam_reference_directions.crosstrack_angle);
+        auto sorted_beam_angles =
+            xt::index_view(beam_reference_directions.crosstrack_angle, sorted_beam_index);
+
+        auto bi_interpolator = NearestInterpolator(
+            std::vector<double>(sorted_beam_angles.begin(), sorted_beam_angles.end()),
+            std::vector<double>(sorted_beam_index.begin(), sorted_beam_index.end()));
+
+        // create sample interpolator for each beam
+        std::vector<LinearInterpolator> sample_interpolators;
+        sample_interpolators.reserve(beam_reference_directions.size());
+        for (size_t bn = 0; bn < beam_reference_directions.size(); ++bn)
+        {
+            sample_interpolators.emplace_back(
+                std::vector<double>{ 0., double(beam_reference_directions.range[bn]) },
+                std::vector<double>{ 0., double(beam_reference_sample_numbers[bn]) });
+        }
+
+        // loop through all target directions (flattened view)
+        for (size_t ti = 0; ti < target_directions.size(); ++ti)
+        {
+            indices.beam_numbers.data()[ti] =
+                bi_interpolator(target_directions.crosstrack_angle.data()[ti]);
+
+            // indices.sample_numbers.data()[ti] =
+            //     std::round(sample_interpolators[indices.beam_numbers.data()[ti]](
+            //         target_directions.range.data()[ti]));
+            indices.sample_numbers.data()[ti] =
+                uint16_t(sample_interpolators[indices.beam_numbers.data()[ti]](
+                    target_directions.range.data()[ti]));
+
+            if (indices.sample_numbers.data()[ti] >
+                beam_reference_max_sample_numbers[indices.beam_numbers.data()[ti]])
+                indices.sample_numbers.data()[ti] =
+                    beam_reference_max_sample_numbers[indices.beam_numbers.data()[ti]];
+        }
+
+        return indices;
     }
 
     // ----- setters -----
