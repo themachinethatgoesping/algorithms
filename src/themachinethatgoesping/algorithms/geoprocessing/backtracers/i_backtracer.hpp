@@ -149,6 +149,7 @@ class I_Backtracer
         }
 
         // loop through all target directions (flattened view)
+        // TODO: use openmp for this: the problem isthat the interpolators are not thread safe at the moment
         for (size_t ti = 0; ti < target_directions.size(); ++ti)
         {
             indices.beam_numbers.data()[ti] =
