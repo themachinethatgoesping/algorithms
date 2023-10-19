@@ -94,37 +94,50 @@ class BTConstantSVP : public I_Backtracer
         return targets;
     }
 
+    /**
+     * Computes the backtrace image for a given set of y and z coordinates.
+     *
+     * @param y_coordinates The y coordinates of the backtrace image.
+     * @param z_coordinates The z coordinates of the backtrace image.
+     * @param mp_cores The number of cores to use for parallelization.
+     * @return The backtrace image as a SampleDirectionsRange<2> object.
+     */
     datastructures::SampleDirectionsRange<2> backtrace_image(
         const xt::xtensor<float, 1>& y_coordinates,
         const xt::xtensor<float, 1>& z_coordinates,
         unsigned int                 mp_cores = 1) const override
     {
+        // Create a SampleDirectionsRange<2> object to store the backtrace image.
         datastructures::SampleDirectionsRange<2> targets(
             { y_coordinates.size(), z_coordinates.size() });
 
+        // Compute the x, y, and z distances from the sensor to each point in the backtrace image.
         auto dx = -get_sensor_x();
         auto dy = xt::eval(y_coordinates - get_sensor_y());
         auto dz = xt::eval(z_coordinates - get_sensor_location().z);
 
+        // Create a vectorized version of the hypot function for performance.
         auto vec_hypot = xt::vectorize(static_cast<float (*)(float, float, float)>(std::hypot));
 
+        // Compute the alongtrack angle, crosstrack angle, and range for each point in the backtrace
+        // image.
 #pragma omp parallel for num_threads(mp_cores)
         for (size_t i = 0; i < dy.size(); ++i)
         {
-            // auto r = xt::eval(xt::hypot(dy[i], dz));
-            auto r = vec_hypot(dx, dy[i], dz);
+            auto r = vec_hypot(
+                dx, dy[i], dz); // Compute the distance from the sensor to the current point.
 
+            // Compute the alongtrack angle, crosstrack angle, and range for the current point.
             xt::row(targets.alongtrack_angle, i) =
                 xt::eval(xt::degrees(xt::degrees(xt::asin(dx / r)))) -
-                get_sensor_location()
-                    .pitch; // TODO: check if this subtraction is approx correct enough
+                get_sensor_location().pitch; // Subtract the sensor pitch from the alongtrack angle.
             xt::row(targets.crosstrack_angle, i) =
                 xt::eval(xt::degrees(-xt::asin(xt::eval(dy[i] / r)))) -
-                get_sensor_location()
-                    .roll; // TODO: check if this subtraction is approx correct enough
+                get_sensor_location().roll; // Subtract the sensor roll from the crosstrack angle.
             xt::row(targets.range, i) = std::move(r);
         }
 
+        // Return the backtrace image.
         return targets;
     }
 

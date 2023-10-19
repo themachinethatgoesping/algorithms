@@ -1,4 +1,4 @@
-//sourcehash: c15f321f671082e189cdc029da1391922e6c1de15d560ea2d5d2a922153fea7c
+//sourcehash: a3907f0346fe4886eee9a7143099524b1f764ea9ad0eef1986b9fd14290d7b8e
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -55,7 +55,20 @@ R"doc(Construct a new BTConstantSVP object from a base backtracer object
 Parameter ``backtracer``:
     base backtracer object)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_backtrace_image = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_backtrace_image =
+R"doc(Computes the backtrace image for a given set of y and z coordinates.
+
+Parameter ``y_coordinates``:
+    The y coordinates of the backtrace image.
+
+Parameter ``z_coordinates``:
+    The z coordinates of the backtrace image.
+
+Parameter ``mp_cores``:
+    The number of cores to use for parallelization.
+
+Returns:
+    The backtrace image as a SampleDirectionsRange<2> object.)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BTConstantSVP_backtrace_points = R"doc()doc";
 
