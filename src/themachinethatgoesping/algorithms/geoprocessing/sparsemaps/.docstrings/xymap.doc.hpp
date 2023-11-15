@@ -48,38 +48,6 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsem
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_gridPos = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_gridPos_2 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_gridPos_3 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_gridPos_4 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_gridPos_5 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_gridPos_6 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_gridPos_7 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_gridPos_8 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_xy = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_xy_2 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_at_xy_3 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_at_gridPos = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_at_gridPos_2 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_at_gridPos_3 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_at_xy = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_at_xy_2 = R"doc()doc";
-
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_gridFraction_x = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_gridFraction_xy = R"doc()doc";
@@ -94,39 +62,7 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsem
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_gridPos_y = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_indexWeights = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_initValue = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_x = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_xbase = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_xres = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_xy = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_xy_2 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_y = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_ybase = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_yres = R"doc()doc";
-
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_initValue = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_print_grid = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_print_setup = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_reset = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_reset_2 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_reset_3 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_reset_4 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_xbase = R"doc()doc";
 
