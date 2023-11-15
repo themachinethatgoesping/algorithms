@@ -54,8 +54,6 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsem
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_gridFraction_y = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_gridPos = R"doc()doc";
-
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_gridPos_x = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_xyMap_get_gridPos_xy = R"doc()doc";
