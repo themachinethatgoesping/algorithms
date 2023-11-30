@@ -145,9 +145,9 @@ class BTConstantSVP : public I_Backtracer
     static BTConstantSVP from_stream(std::istream& is)
     {
         auto data = BTConstantSVP(I_Backtracer::from_stream(is));
-        if (data.get_name() != "BTConstantSVP")
+        if (data.class_name() != "BTConstantSVP")
             throw std::runtime_error(
-                fmt::format("BTConstantSVP::from_stream: wrong object name: {}", data.get_name()));
+                fmt::format("BTConstantSVP::from_stream: wrong object name: {}", data.class_name()));
 
         return data;
     }
@@ -159,7 +159,7 @@ class BTConstantSVP : public I_Backtracer
     // __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__ macro below)
     tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
     {
-        tools::classhelper::ObjectPrinter printer(this->get_name(), float_precision);
+        tools::classhelper::ObjectPrinter printer(this->class_name(), float_precision);
 
         printer.register_section("Basics", '*');
         printer.append(I_Backtracer::__printer__(float_precision));

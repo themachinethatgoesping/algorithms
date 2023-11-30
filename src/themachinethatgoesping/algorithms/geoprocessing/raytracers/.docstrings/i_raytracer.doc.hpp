@@ -1,4 +1,4 @@
-//sourcehash: 5144e0cbe762e8c399155b4e06af9d1dca5d880fc76407e5a07fa28b97b51ec3
+//sourcehash: 10d7d0bd2ea263559d30c8c2499922e2c81ec0d61676e8d8b048eae15a6870f1
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -42,9 +42,9 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytrac
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_I_Raytracer = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_from_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_class_name = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_name = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_from_stream = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_raytracers_I_Raytracer_get_sensor_location = R"doc()doc";
 

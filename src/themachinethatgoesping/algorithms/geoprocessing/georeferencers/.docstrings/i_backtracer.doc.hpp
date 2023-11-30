@@ -1,4 +1,4 @@
-//sourcehash: 1090eb3b1f5a67e00e0b0ddeca7802448ae7823fdf874fb54d4d5f13cfcf1131
+//sourcehash: b868285f904fe1cc76c1de9814817f97776f9b130b4673898433c8667f279d7e
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -89,9 +89,9 @@ Parameter ``mp_cores``:
 Returns:
     datastructures::SampleDirectionsRange)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_from_stream = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_class_name = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_name = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_from_stream = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_sensor_location = R"doc()doc";
 

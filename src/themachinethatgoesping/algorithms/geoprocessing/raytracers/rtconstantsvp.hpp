@@ -67,7 +67,7 @@ class RTConstantSVP : public I_Raytracer
                                                float alongtrack_angle,
                                                float crosstrack_angle) const override
     {
-        not_implemented("trace(SinglePoint)", get_name());
+        not_implemented("trace(SinglePoint)", class_name());
 
         datastructures::RaytraceResult target;
 
@@ -308,9 +308,9 @@ class RTConstantSVP : public I_Raytracer
     static RTConstantSVP from_stream(std::istream& is)
     {
         auto data = RTConstantSVP(I_Raytracer::from_stream(is));
-        if (data.get_name() != "RTConstantSVP")
+        if (data.class_name() != "RTConstantSVP")
             throw std::runtime_error(
-                fmt::format("RTConstantSVP::from_stream: wrong object name: {}", data.get_name()));
+                fmt::format("RTConstantSVP::from_stream: wrong object name: {}", data.class_name()));
 
         is.read(reinterpret_cast<char*>(&data._sound_velocity), sizeof(float));
 
@@ -328,7 +328,7 @@ class RTConstantSVP : public I_Raytracer
     // __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__ macro below)
     tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
     {
-        tools::classhelper::ObjectPrinter printer(this->get_name(), float_precision);
+        tools::classhelper::ObjectPrinter printer(this->class_name(), float_precision);
 
         printer.register_section("Basics", '*');
         printer.append(I_Raytracer::__printer__(float_precision));

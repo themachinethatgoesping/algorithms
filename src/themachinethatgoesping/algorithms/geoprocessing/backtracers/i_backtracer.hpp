@@ -41,7 +41,7 @@ class I_Backtracer
     // datastructures::SampleDirectionsRange<1> _sample_directions;
 
   public:
-    std::string get_name() const { return _name; }
+    std::string class_name() const { return _name; }
 
   public:
     I_Backtracer(navigation::datastructures::GeoLocation sensor_location,
@@ -218,7 +218,7 @@ class I_Backtracer
     // __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__ macro below)
     tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
     {
-        tools::classhelper::ObjectPrinter printer(this->get_name(), float_precision);
+        tools::classhelper::ObjectPrinter printer(this->class_name(), float_precision);
 
         printer.register_section("Sensor location", '*');
         printer.append(_sensor_location.__printer__(float_precision));
