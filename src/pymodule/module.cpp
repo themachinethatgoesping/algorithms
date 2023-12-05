@@ -6,6 +6,7 @@
 #include <pybind11/pybind11.h>
 
 #include "geoprocessing/module.hpp"
+#include "signalprocessing/module.hpp"
 
 #define FORCE_IMPORT_ARRAY // this is needed for xtensor-python but must only be included once
 #include <xtensor-python/pyarray.hpp> // Numpy bindings
@@ -26,6 +27,7 @@ PYBIND11_MODULE(MODULE_NAME, m)
     m.attr("__version__") = MODULE_VERSION;
 
     py_geoprocessing::init_m_geoprocessing(m);
+    py_signalprocessing::init_m_signalprocessing(m);
 }
 
 } // namespace pymodule
