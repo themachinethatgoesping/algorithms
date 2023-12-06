@@ -19,7 +19,8 @@ sources = [
     'geoprocessing/raytracers/rtconstantsvp.test.cpp',
     'geoprocessing/backtracers/i_backtracer.test.cpp',
     'geoprocessing/backtracers/btconstantsvp.test.cpp',
-    'signalprocessing/datastructures/cwsignalinfos.test.cpp',
+    'signalprocessing/datastructures/cwsignalparameters.test.cpp',
+    'signalprocessing/datastructures/fmsignalparameters.test.cpp',
     'tutorial.test.cpp'
 ]
 

@@ -1,4 +1,4 @@
-//sourcehash: 99a46590c046494eb36e6eda2ca4f556c64d71c95bbb8499718bbd6e3b659452
+//sourcehash: b3c58552335439c146359b3ec9d121a2a7b007130659d7ba1fadaa2e7f317749
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,20 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_CW = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_FM_DOWN_SWEEP = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_FM_UP_SWEEP = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_OTHER = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_to_string = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_tx_signal_type_from_string = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

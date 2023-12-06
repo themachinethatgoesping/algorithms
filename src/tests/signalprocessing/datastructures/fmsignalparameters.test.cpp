@@ -6,36 +6,39 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "../../../themachinethatgoesping/algorithms/signalprocessing/datastructures.hpp"
+#include "../../../themachinethatgoesping/algorithms/signalprocessing/types.hpp"
 
 // using namespace testing;
 using namespace std;
 using namespace themachinethatgoesping::algorithms::signalprocessing::datastructures;
+using namespace themachinethatgoesping::algorithms::signalprocessing::types;
 
 using Catch::Approx;
 
 #define TESTTAG "[location]"
 
-TEST_CASE("CWSignalInfos should support common functions", TESTTAG)
+TEST_CASE("FMSignalParameters should support common functions", TESTTAG)
 {
     // initialize location
-    auto txs = CWSignalInfos(123567.891f, // center_frequency
-                             789.012f,    // bandwidth
-                             0.00234f     // effective_pulse_duration
+    auto txs = FMSignalParameters(123567.891f,              // center_frequency
+                                  789.012f,                 // bandwidth
+                                  0.00234f,                 // effective_pulse_duration
+                                  t_TxSignalType::FM_UP_SWEEP // up_sweep
     );
 
     // test inequality
-    REQUIRE(CWSignalInfos() != txs);
+    REQUIRE(FMSignalParameters() != txs);
 
     // test copy
-    REQUIRE(txs == CWSignalInfos(txs));
+    REQUIRE(txs == FMSignalParameters(txs));
 
     // test binary
-    REQUIRE(txs == CWSignalInfos(txs.from_binary(txs.to_binary())));
+    REQUIRE(txs == FMSignalParameters(txs.from_binary(txs.to_binary())));
 
     // test stream
     std::stringstream buffer;
     txs.to_stream(buffer);
-    REQUIRE(txs == CWSignalInfos(txs.from_stream(buffer)));
+    REQUIRE(txs == FMSignalParameters(txs.from_stream(buffer)));
 
     // test print does not crash
     REQUIRE(txs.info_string().size() != 0);
@@ -44,4 +47,5 @@ TEST_CASE("CWSignalInfos should support common functions", TESTTAG)
     REQUIRE(txs.center_frequency == Approx(123567.891f));
     REQUIRE(txs.bandwidth == Approx(789.012f));
     REQUIRE(txs.effective_pulse_duration == Approx(0.00234));
+    REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::FM_UP_SWEEP);
 }

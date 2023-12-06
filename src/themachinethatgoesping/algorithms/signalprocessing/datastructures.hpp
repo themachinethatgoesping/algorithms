@@ -5,14 +5,15 @@
 
 #include <variant>
 
-#include "datastructures/cwsignalinfos.hpp"
+#include "datastructures/cwsignalparameters.hpp"
+#include "datastructures/fmsignalparameters.hpp"
 
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace signalprocessing {
 namespace datastructures {
 
-using TxSignalInfos = std::variant<CWSignalInfos>;
+using TxSignalParameters = std::variant<CWSignalParameters, FMSignalParameters>;
 
 
 } // namespace datastructures

@@ -1,4 +1,4 @@
-//sourcehash: 12c227d9e59a11e6d1b94eef5b5559c347dacf1278e03df264e295d7a8ed6f1d
+//sourcehash: 86ac552a702fced1c68f2227c57818fcc2eb1445337072fbb765761805e2869c
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,13 +38,13 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters =
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters =
 R"doc(@struct CWSignalParameters Struct representing information about a
 continuous wave signal.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_Cwsignalparameters = R"doc(Default constructor.)doc";
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_CWSignalParameters = R"doc(Default constructor.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_Cwsignalparameters_2 =
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_CWSignalParameters_2 =
 R"doc(Constructor.
 
 Parameter ``center_frequency``:
@@ -56,13 +56,13 @@ Parameter ``bandwidth``:
 Parameter ``effective_pulse_duration``:
     The effective pulse duration of the signal in seconds.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_bandwidth = R"doc(< Bandwidth of the signal in Hz.)doc";
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_bandwidth = R"doc(< Bandwidth of the signal in Hz.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_center_frequency = R"doc(< Center frequency of the signal in Hz.)doc";
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_center_frequency = R"doc(< Center frequency of the signal in Hz.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_effective_pulse_duration = R"doc(< Effective pulse duration of the signal in seconds.)doc";
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_effective_pulse_duration = R"doc(< Effective pulse duration of the signal in seconds.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_from_stream =
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_from_stream =
 R"doc(Read CWSignalParameters from a stream.
 
 Parameter ``is``:
@@ -71,7 +71,9 @@ Parameter ``is``:
 Returns:
     The read CWSignalParameters object.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_operator_eq =
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_get_tx_signal_type = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_operator_eq =
 R"doc(Equality operator.
 
 Parameter ``rhs``:
@@ -80,7 +82,7 @@ Parameter ``rhs``:
 Returns:
     True if the objects are equal, false otherwise.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_printer =
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_printer =
 R"doc(Get the ObjectPrinter for CWSignalParameters.
 
 Parameter ``float_precision``:
@@ -89,7 +91,7 @@ Parameter ``float_precision``:
 Returns:
     The ObjectPrinter.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_Cwsignalparameters_to_stream =
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_to_stream =
 R"doc(Write CWSignalParameters to a stream.
 
 Parameter ``os``:
