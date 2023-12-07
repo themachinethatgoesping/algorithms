@@ -48,4 +48,7 @@ TEST_CASE("FMSignalParameters should support common functions", TESTTAG)
     REQUIRE(txs.bandwidth == Approx(789.012f));
     REQUIRE(txs.effective_pulse_duration == Approx(0.00234));
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::FM_UP_SWEEP);
+
+    // test hash
+    REQUIRE(txs.binary_hash() == 4636758341217930380);
 }

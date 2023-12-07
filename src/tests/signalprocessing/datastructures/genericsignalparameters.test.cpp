@@ -20,9 +20,9 @@ using Catch::Approx;
 TEST_CASE("GenericSignalParameters should support common functions", TESTTAG)
 {
     // initialize location
-    auto txs = GenericSignalParameters(123567.891f,          // center_frequency
-                                       789.012f,             // bandwidth
-                                       0.00234f,             // effective_pulse_duration
+    auto txs = GenericSignalParameters(123567.891f,            // center_frequency
+                                       0.00223f,               // bandwidth
+                                       0.0023f,                // effective_pulse_duration
                                        t_TxSignalType::UNKNOWN // up_sweep
     );
 
@@ -45,7 +45,10 @@ TEST_CASE("GenericSignalParameters should support common functions", TESTTAG)
 
     // test individual variables
     REQUIRE(txs.center_frequency == Approx(123567.891f));
-    REQUIRE(txs.bandwidth == Approx(789.012f));
-    REQUIRE(txs.effective_pulse_duration == Approx(0.00234));
+    REQUIRE(txs.bandwidth == Approx(0.00223f));
+    REQUIRE(txs.effective_pulse_duration == Approx(0.0023f));
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::UNKNOWN);
+
+    // test hash
+    REQUIRE(txs.binary_hash() == 5014453207090090244);
 }

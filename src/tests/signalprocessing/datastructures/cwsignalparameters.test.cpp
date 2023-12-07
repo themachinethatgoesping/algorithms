@@ -46,4 +46,7 @@ TEST_CASE("CWSignalParameters should support common functions", TESTTAG)
     REQUIRE(txs.bandwidth == Approx(789.012f));
     REQUIRE(txs.effective_pulse_duration == Approx(0.00234));
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::CW);
+
+    // test hash
+    REQUIRE(txs.binary_hash() == 2912944253744273239);
 }
