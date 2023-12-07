@@ -28,7 +28,7 @@ struct FMSignalParameters
     float center_frequency;         ///< Center frequency of the signal in Hz.
     float bandwidth;                ///< Bandwidth of the signal in Hz.
     float effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
-    bool  up_sweep;                 ///< True if the signal is an up sweep, false otherwise.
+    bool  up_sweep = false;         ///< True if the signal is an up sweep, false otherwise.
 
   public:
     /**
@@ -59,25 +59,25 @@ struct FMSignalParameters
      * @param bandwidth The bandwidth of the signal in Hz.
      * @param effective_pulse_duration The effective pulse duration of the signal in seconds.
      */
-    FMSignalParameters(float center_frequency,
-                       float bandwidth,
-                       float effective_pulse_duration,
-                       types::t_TxSignalType  signal_type)
+    FMSignalParameters(float                 center_frequency,
+                       float                 bandwidth,
+                       float                 effective_pulse_duration,
+                       types::t_TxSignalType signal_type)
         : center_frequency(center_frequency)
         , bandwidth(bandwidth)
         , effective_pulse_duration(effective_pulse_duration)
     {
-      switch (signal_type)
-      {
-        case types::t_TxSignalType::FM_UP_SWEEP:
-          up_sweep = true;
-          break;
-        case types::t_TxSignalType::FM_DOWN_SWEEP:
-          up_sweep = false;
-          break;
-        default:
-          throw std::runtime_error("Invalid signal type for FMSignalParameters");
-      }
+        switch (signal_type)
+        {
+            case types::t_TxSignalType::FM_UP_SWEEP:
+                up_sweep = true;
+                break;
+            case types::t_TxSignalType::FM_DOWN_SWEEP:
+                up_sweep = false;
+                break;
+            default:
+                throw std::runtime_error("Invalid signal type for FMSignalParameters");
+        }
     }
 
     /**
