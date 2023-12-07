@@ -14,8 +14,9 @@ namespace pymodule {
 namespace py_signalprocessing {
 namespace py_datastructures {
 
-void init_c_cwsignalparameters(pybind11::module& m); // c_cwsignalparameters.cpp
-void init_c_fmsignalparameters(pybind11::module& m); // c_fmsignalparameters.cpp
+void init_c_genericsignalparameters(pybind11::module& m); // c_genericsignalparameters.cpp
+void init_c_cwsignalparameters(pybind11::module& m);      // c_cwsignalparameters.cpp
+void init_c_fmsignalparameters(pybind11::module& m);      // c_fmsignalparameters.cpp
 
 void init_m_datastructures(pybind11::module& m)
 {
@@ -34,12 +35,14 @@ void init_m_datastructures(pybind11::module& m)
             .value("CW", t_TxSignalType::CW)
             .value("FM_UP_SWEEP", t_TxSignalType::FM_UP_SWEEP)
             .value("FM_DOWN_SWEEP", t_TxSignalType::FM_DOWN_SWEEP)
+            .value("UNKNOWN", t_TxSignalType::UNKNOWN)
             .export_values()
         //
         ;
 
     tools::pybind_helper::add_string_to_enum_conversion<t_TxSignalType>(pyenum_tx_signal_types);
 
+    init_c_genericsignalparameters(submodule);
     init_c_cwsignalparameters(submodule);
     init_c_fmsignalparameters(submodule);
 }

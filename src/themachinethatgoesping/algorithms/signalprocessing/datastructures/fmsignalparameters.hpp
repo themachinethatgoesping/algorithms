@@ -21,7 +21,7 @@ namespace datastructures {
 
 /**
  * @struct FMSignalParameters
- * @brief Struct representing information about a continuous wave signal.
+ * @brief Struct representing information about a frequency modulated wave signal (chirp).
  */
 struct FMSignalParameters
 {

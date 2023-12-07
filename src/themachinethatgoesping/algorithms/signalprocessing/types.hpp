@@ -16,7 +16,7 @@ enum class t_TxSignalType
     CW,
     FM_UP_SWEEP,
     FM_DOWN_SWEEP,
-    OTHER
+    UNKNOWN
 };
 
 inline std::string_view to_string(t_TxSignalType tx_signal_type)

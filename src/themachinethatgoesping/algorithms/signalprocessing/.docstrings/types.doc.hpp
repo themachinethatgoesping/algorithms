@@ -1,4 +1,4 @@
-//sourcehash: b3c58552335439c146359b3ec9d121a2a7b007130659d7ba1fadaa2e7f317749
+//sourcehash: 8f876ebef146a5c0d3c250e50c43dd914d0efbd13bc20a419c8c23f5a1c30737
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -46,7 +46,7 @@ static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_type
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_FM_UP_SWEEP = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_OTHER = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_UNKNOWN = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_types_to_string = R"doc()doc";
 

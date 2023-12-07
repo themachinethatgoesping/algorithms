@@ -5,6 +5,7 @@
 
 #include <variant>
 
+#include "datastructures/genericsignalparameters.hpp"
 #include "datastructures/cwsignalparameters.hpp"
 #include "datastructures/fmsignalparameters.hpp"
 

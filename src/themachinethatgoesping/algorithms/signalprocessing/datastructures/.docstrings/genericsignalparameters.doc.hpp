@@ -1,4 +1,4 @@
-//sourcehash: 21318ddcb047a99f64c249eb238e355e1929baf4d801a6f0f449ef121a7e4327
+//sourcehash: 5a68f451b97699dda1d8e75f89b4e0792a2f981ceb1db885779cef4cd84c0afb
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,13 +38,13 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters =
-R"doc(@struct FMSignalParameters Struct representing information about a
-frequency modulated wave signal (chirp).)doc";
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters =
+R"doc(@struct GenericSignalParameters Struct representing information about
+a generic type.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_FMSignalParameters = R"doc(Default constructor.)doc";
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_GenericSignalParameters = R"doc(Default constructor.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_FMSignalParameters_2 =
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_GenericSignalParameters_2 =
 R"doc(Constructor.
 
 Parameter ``center_frequency``:
@@ -56,36 +56,24 @@ Parameter ``bandwidth``:
 Parameter ``effective_pulse_duration``:
     The effective pulse duration of the signal in seconds.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_FMSignalParameters_3 =
-R"doc(Constructor.
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_bandwidth = R"doc(< Bandwidth of the signal in Hz.)doc";
 
-Parameter ``center_frequency``:
-    The center frequency of the signal in Hz.
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_center_frequency = R"doc(< Center frequency of the signal in Hz.)doc";
 
-Parameter ``bandwidth``:
-    The bandwidth of the signal in Hz.
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_effective_pulse_duration = R"doc(< Effective pulse duration of the signal in seconds.)doc";
 
-Parameter ``effective_pulse_duration``:
-    The effective pulse duration of the signal in seconds.)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_bandwidth = R"doc(< Bandwidth of the signal in Hz.)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_center_frequency = R"doc(< Center frequency of the signal in Hz.)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_effective_pulse_duration = R"doc(< Effective pulse duration of the signal in seconds.)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_from_stream =
-R"doc(Read FMSignalParameters from a stream.
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_from_stream =
+R"doc(Read GenericSignalParameters from a stream.
 
 Parameter ``is``:
     The input stream.
 
 Returns:
-    The read FMSignalParameters object.)doc";
+    The read GenericSignalParameters object.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_get_tx_signal_type = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_get_tx_signal_type = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_operator_eq =
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_operator_eq =
 R"doc(Equality operator.
 
 Parameter ``rhs``:
@@ -94,8 +82,8 @@ Parameter ``rhs``:
 Returns:
     True if the objects are equal, false otherwise.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_printer =
-R"doc(Get the ObjectPrinter for FMSignalParameters.
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_printer =
+R"doc(Get the ObjectPrinter for GenericSignalParameters.
 
 Parameter ``float_precision``:
     The precision for floating-point values.
@@ -103,13 +91,13 @@ Parameter ``float_precision``:
 Returns:
     The ObjectPrinter.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_to_stream =
-R"doc(Write FMSignalParameters to a stream.
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_signal_type = R"doc(< Signal type)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_to_stream =
+R"doc(Write GenericSignalParameters to a stream.
 
 Parameter ``os``:
     The output stream.)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_up_sweep = R"doc(< True if the signal is an up sweep, false otherwise.)doc";
 
 
 #if defined(__GNUG__)

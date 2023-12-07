@@ -19,6 +19,7 @@ sources = [
     'geoprocessing/raytracers/c_rtconstantsvp.cpp',
     'geoprocessing/backtracers/c_i_backtracer.cpp',
     'geoprocessing/backtracers/c_btconstantsvp.cpp',
+    'signalprocessing/datastructures/c_genericsignalparameters.cpp',
     'signalprocessing/datastructures/c_cwsignalparameters.cpp',
     'signalprocessing/datastructures/c_fmsignalparameters.cpp',
     'module.cpp',
