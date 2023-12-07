@@ -1,4 +1,4 @@
-//sourcehash: 86ac552a702fced1c68f2227c57818fcc2eb1445337072fbb765761805e2869c
+//sourcehash: dbf0076cc41e11d5cb58f2334f0b5ee2b2704a680af85c68bb7952cad111d86e
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -96,6 +96,7 @@ R"doc(Write CWSignalParameters to a stream.
 
 Parameter ``os``:
     The output stream.)doc";
+
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

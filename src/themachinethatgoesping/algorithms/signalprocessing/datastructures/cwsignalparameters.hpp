@@ -114,6 +114,18 @@ struct CWSignalParameters
     __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__
 };
 
+// IGNORE_DOC: __doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_hash_value
+/**
+ * @brief Boost hash function
+ *
+ * @param object object to hash
+ * @return std::size_t
+ */
+inline std::size_t hash_value(const CWSignalParameters& object)
+{
+    return object.binary_hash();
+}
+
 } // namespace datastructures
 } // namespace signalprocessing
 } // namespace algorithms

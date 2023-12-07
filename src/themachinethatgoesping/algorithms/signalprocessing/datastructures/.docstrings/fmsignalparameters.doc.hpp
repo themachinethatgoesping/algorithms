@@ -1,4 +1,4 @@
-//sourcehash: eada9dc1bfd51428e7c037d049d0f4490b18fdcf23e042f17918783bb28f5925
+//sourcehash: 418c2d72cfb8e45e24c92985545e0305395183b44cac82d6a7e057b83b762cfa
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -110,6 +110,7 @@ Parameter ``os``:
     The output stream.)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_up_sweep = R"doc(< True if the signal is an up sweep, false otherwise.)doc";
+
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
