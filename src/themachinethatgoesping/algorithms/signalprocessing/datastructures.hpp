@@ -14,7 +14,7 @@ namespace algorithms {
 namespace signalprocessing {
 namespace datastructures {
 
-using TxSignalParameters = std::variant<CWSignalParameters, FMSignalParameters>;
+using TxSignalParameters = std::variant<CWSignalParameters, FMSignalParameters, GenericSignalParameters>;
 
 
 } // namespace datastructures
