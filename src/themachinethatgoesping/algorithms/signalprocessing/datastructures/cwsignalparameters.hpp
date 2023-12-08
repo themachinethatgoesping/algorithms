@@ -34,7 +34,6 @@ struct CWSignalParameters
      * @brief Default constructor.
      */
     CWSignalParameters() = default;
-    
 
     /**
      * @brief Constructor.
@@ -75,7 +74,7 @@ struct CWSignalParameters
     {
         CWSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency), sizeof(CWSignalParameters));
+        is.read(reinterpret_cast<char*>(&data.center_frequency), sizeof(float)*3 );
 
         return data;
     }
@@ -86,7 +85,7 @@ struct CWSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency), sizeof(CWSignalParameters));
+        os.write(reinterpret_cast<const char*>(&center_frequency), sizeof(float)*3 );
     }
 
   public:

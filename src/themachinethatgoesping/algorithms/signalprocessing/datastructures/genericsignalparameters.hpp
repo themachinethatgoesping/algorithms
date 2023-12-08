@@ -43,9 +43,9 @@ struct GenericSignalParameters
      * @param effective_pulse_duration The effective pulse duration of the signal in seconds.
      */
     GenericSignalParameters(float                 center_frequency,
-                       float                 bandwidth,
-                       float                 effective_pulse_duration,
-                       types::t_TxSignalType signal_type)
+                            float                 bandwidth,
+                            float                 effective_pulse_duration,
+                            types::t_TxSignalType signal_type)
         : center_frequency(center_frequency)
         , bandwidth(bandwidth)
         , effective_pulse_duration(effective_pulse_duration)
@@ -66,10 +66,7 @@ struct GenericSignalParameters
     bool operator==(const GenericSignalParameters& rhs) const = default;
 
   public:
-    types::t_TxSignalType get_tx_signal_type() const
-    {
-        return signal_type;
-    }
+    types::t_TxSignalType get_tx_signal_type() const { return signal_type; }
 
     // ----- file I/O -----
 
@@ -82,7 +79,8 @@ struct GenericSignalParameters
     {
         GenericSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency), sizeof(GenericSignalParameters));
+        is.read(reinterpret_cast<char*>(&data.center_frequency),
+                sizeof(float) * 3 + sizeof(types::t_TxSignalType));
 
         return data;
     }
@@ -93,7 +91,8 @@ struct GenericSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency), sizeof(GenericSignalParameters));
+        os.write(reinterpret_cast<const char*>(&center_frequency),
+                 sizeof(float) * 3 + sizeof(types::t_TxSignalType));
     }
 
   public:

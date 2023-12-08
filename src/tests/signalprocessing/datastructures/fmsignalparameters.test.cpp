@@ -50,5 +50,8 @@ TEST_CASE("FMSignalParameters should support common functions", TESTTAG)
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::FM_UP_SWEEP);
 
     // test hash
-    REQUIRE(txs.binary_hash() == 4636758341217930380);
+    REQUIRE(txs.binary_hash() == 6578226545546968191);
+    REQUIRE(txs.binary_hash() == FMSignalParameters(txs).binary_hash());
+    REQUIRE(txs.binary_hash() ==
+            FMSignalParameters(txs.from_binary(txs.to_binary())).binary_hash());
 }

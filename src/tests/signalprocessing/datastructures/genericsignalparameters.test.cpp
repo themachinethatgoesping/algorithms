@@ -50,5 +50,8 @@ TEST_CASE("GenericSignalParameters should support common functions", TESTTAG)
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::UNKNOWN);
 
     // test hash
-    REQUIRE(txs.binary_hash() == 5014453207090090244);
+    REQUIRE(txs.binary_hash() == 10730480407014384156);
+    REQUIRE(txs.binary_hash() == GenericSignalParameters(txs).binary_hash());
+    REQUIRE(txs.binary_hash() ==
+            GenericSignalParameters(txs.from_binary(txs.to_binary())).binary_hash());
 }

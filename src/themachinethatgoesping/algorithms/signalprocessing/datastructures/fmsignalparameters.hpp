@@ -112,7 +112,7 @@ struct FMSignalParameters
     {
         FMSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency), sizeof(FMSignalParameters));
+        is.read(reinterpret_cast<char*>(&data.center_frequency), sizeof(float) * 3 + sizeof(bool));
 
         return data;
     }
@@ -123,7 +123,8 @@ struct FMSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency), sizeof(FMSignalParameters));
+        os.write(reinterpret_cast<const char*>(&center_frequency),
+                 sizeof(float) * 3 + sizeof(bool));
     }
 
   public:

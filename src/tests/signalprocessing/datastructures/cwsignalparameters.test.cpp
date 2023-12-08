@@ -20,8 +20,8 @@ TEST_CASE("CWSignalParameters should support common functions", TESTTAG)
 {
     // initialize location
     auto txs = CWSignalParameters(123567.891f, // center_frequency
-                             789.012f,    // bandwidth
-                             0.00234f     // effective_pulse_duration
+                                  789.012f,    // bandwidth
+                                  0.00234f     // effective_pulse_duration
     );
 
     // test inequality
@@ -44,9 +44,12 @@ TEST_CASE("CWSignalParameters should support common functions", TESTTAG)
     // test individual variables
     REQUIRE(txs.center_frequency == Approx(123567.891f));
     REQUIRE(txs.bandwidth == Approx(789.012f));
-    REQUIRE(txs.effective_pulse_duration == Approx(0.00234));
+    REQUIRE(txs.effective_pulse_duration == Approx(0.00234f));
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::CW);
 
     // test hash
-    REQUIRE(txs.binary_hash() == 2912944253744273239);
+    REQUIRE(txs.binary_hash() == 6748335302485371792);
+    REQUIRE(txs.binary_hash() == CWSignalParameters(txs).binary_hash());
+    REQUIRE(txs.binary_hash() ==
+            CWSignalParameters(txs.from_binary(txs.to_binary())).binary_hash());
 }
