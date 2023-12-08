@@ -25,10 +25,10 @@ namespace datastructures {
  */
 struct GenericSignalParameters
 {
-    float center_frequency;            ///< Center frequency of the signal in Hz.
-    float bandwidth;                   ///< Bandwidth of the signal in Hz.
-    float effective_pulse_duration;    ///< Effective pulse duration of the signal in seconds.
-    types::t_TxSignalType signal_type; ///< Signal type
+    float center_frequency;         ///< Center frequency of the signal in Hz.
+    float bandwidth;                ///< Bandwidth of the signal in Hz.
+    float effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
+    types::t_TxSignalType signal_type = types::t_TxSignalType::UNKNOWN; ///< Signal type
 
   public:
     /**
