@@ -37,4 +37,10 @@ TEST_CASE("SampleIndices should support common functions", TESTTAG)
 
     // test print does not crash
     REQUIRE(location.info_string().size() != 0);
+
+    // test hash
+    REQUIRE(location.binary_hash() == 545582192469170180);
+    REQUIRE(location.binary_hash() == SampleIndices(location).binary_hash());
+    REQUIRE(location.binary_hash() ==
+            SampleIndices(location.from_binary(location.to_binary())).binary_hash());
 }

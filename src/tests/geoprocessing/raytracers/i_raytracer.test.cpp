@@ -49,8 +49,14 @@ TEST_CASE("I_Raytracer should support common functions", TESTTAG)
 
     auto ypr = raytracer.get_sensor_orientation_quat_ypr();
 
-    //REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw, 0.0001));
+    // REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw, 0.0001));
     REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
     REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch, 0.0001));
     REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));
+
+    // test hash
+    REQUIRE(raytracer.binary_hash() == 17645473512760939812);
+    REQUIRE(raytracer.binary_hash() == I_Raytracer(raytracer).binary_hash());
+    REQUIRE(raytracer.binary_hash() ==
+            I_Raytracer(raytracer.from_binary(raytracer.to_binary())).binary_hash());
 }

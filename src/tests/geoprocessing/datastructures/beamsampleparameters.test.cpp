@@ -40,4 +40,10 @@ TEST_CASE("BeamSampleParameters should support common functions", TESTTAG)
 
     // test print does not crash
     REQUIRE(param.info_string().size() != 0);
+
+    // test hash
+    REQUIRE(param.binary_hash() == 4652324683533098954);
+    REQUIRE(param.binary_hash() == BeamSampleParameters(param).binary_hash());
+    REQUIRE(param.binary_hash() ==
+            BeamSampleParameters(param.from_binary(param.to_binary())).binary_hash());
 }

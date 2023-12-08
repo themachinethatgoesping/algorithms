@@ -72,6 +72,12 @@ TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
     REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));
 
     REQUIRE_THAT(raytracer.get_sound_velocity(), Catch::Matchers::WithinAbs(c, 0.0001));
+
+    // test hash
+    REQUIRE(raytracer.binary_hash() == 16667922773826043259);
+    REQUIRE(raytracer.binary_hash() == RTConstantSVP(raytracer).binary_hash());
+    REQUIRE(raytracer.binary_hash() ==
+            RTConstantSVP(raytracer.from_binary(raytracer.to_binary())).binary_hash());
 }
 
 TEST_CASE("RTConstantSVP reproduce some pre computed results (single points)", TESTTAG)

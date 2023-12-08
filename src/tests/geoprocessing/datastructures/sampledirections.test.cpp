@@ -37,4 +37,10 @@ TEST_CASE("SampleDirections should support common functions", TESTTAG)
 
     // test print does not crash
     REQUIRE(location.info_string().size() != 0);
+
+    // test hash
+    REQUIRE(location.binary_hash() == 7946198183670543780);
+    REQUIRE(location.binary_hash() == SampleDirections(location).binary_hash());
+    REQUIRE(location.binary_hash() ==
+            SampleDirections(location.from_binary(location.to_binary())).binary_hash());
 }

@@ -71,6 +71,12 @@ TEST_CASE("BTConstantSVP should support common functions", TESTTAG)
     REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
     REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch, 0.0001));
     REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));
+
+    // test hash
+    REQUIRE(backtracer.binary_hash() == 3830516406371434649);
+    REQUIRE(backtracer.binary_hash() == BTConstantSVP(backtracer).binary_hash());
+    REQUIRE(backtracer.binary_hash() ==
+            BTConstantSVP(backtracer.from_binary(backtracer.to_binary())).binary_hash());
 }
 
 TEST_CASE("BTConstantSVP reproduce some pre computed results (single points)", TESTTAG)
