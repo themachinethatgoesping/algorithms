@@ -55,7 +55,7 @@ TEST_CASE("I_Raytracer should support common functions", TESTTAG)
     REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));
 
     // test hash
-    REQUIRE(raytracer.binary_hash() == 17645473512760939812);
+    REQUIRE(raytracer.binary_hash() == 17645473512760939812llu);
     REQUIRE(raytracer.binary_hash() == I_Raytracer(raytracer).binary_hash());
     REQUIRE(raytracer.binary_hash() ==
             I_Raytracer(raytracer.from_binary(raytracer.to_binary())).binary_hash());
