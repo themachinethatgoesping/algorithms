@@ -21,7 +21,7 @@ using namespace themachinethatgoesping::navigation::datastructures;
 TEST_CASE("BTConstantSVP should support common functions", TESTTAG)
 {
     // initialize location
-    auto location = GeoLocation();
+    auto location = Geolocation();
 
     location.z     = 3;
     location.yaw   = 10;
@@ -82,7 +82,7 @@ TEST_CASE("BTConstantSVP should support common functions", TESTTAG)
 TEST_CASE("BTConstantSVP reproduce some pre computed results (single points)", TESTTAG)
 {
     // initialize location
-    auto location = GeoLocation();
+    auto location = Geolocation();
 
     location.z     = 3;
     location.yaw   = 0;

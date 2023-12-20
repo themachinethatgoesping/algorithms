@@ -21,7 +21,7 @@ using namespace themachinethatgoesping::navigation::datastructures;
 TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
 {
     // initialize location
-    auto location = GeoLocation();
+    auto location = Geolocation();
 
     location.z     = 3;
     location.yaw   = 10;
@@ -83,7 +83,7 @@ TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
 TEST_CASE("RTConstantSVP reproduce some pre computed results (single points)", TESTTAG)
 {
     // initialize location
-    auto location = GeoLocation();
+    auto location = Geolocation();
 
     location.z     = 3;
     location.yaw   = 0;
@@ -182,7 +182,7 @@ TEST_CASE("RTConstantSVP multi point computations should be equal to single poin
           TESTTAG)
 {
     // initialize location
-    auto location = GeoLocation();
+    auto location = Geolocation();
 
     location.z     = 3;
     location.yaw   = 0;
@@ -219,7 +219,7 @@ TEST_CASE("RTConstantSVP multi point computations should be equal to single poin
 TEST_CASE("RTConstantSVP beam computations should be equal to single point computations", TESTTAG)
 {
     // initialize location
-    auto location = GeoLocation();
+    auto location = Geolocation();
 
     location.z     = 3;
     location.yaw   = 0;
@@ -279,7 +279,7 @@ TEST_CASE("RTConstantSVP beam computations should be equal to single point compu
 TEST_CASE("RTConstantSVP swath computations should be equal to beam computations", TESTTAG)
 {
     // initialize location
-    auto location = GeoLocation();
+    auto location = Geolocation();
 
     location.z     = 3;
     location.yaw   = 0;

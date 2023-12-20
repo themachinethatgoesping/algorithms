@@ -22,7 +22,7 @@ TEST_CASE("SparseMapTypes should support common functions", TESTTAG)
 TEST_CASE("SparseMap should support common functions", TESTTAG)
 {
     // // initialize location
-    // auto location = GeoLocation();
+    // auto location = Geolocation();
 
     // location.z     = 3;
     // location.yaw   = 10;

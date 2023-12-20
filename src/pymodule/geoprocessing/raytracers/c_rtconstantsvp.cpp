@@ -40,7 +40,7 @@ void init_c_rtconstantsvp(py::module& m)
         m,
         "RTConstantSVP",
         DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers, RTConstantSVP))
-        .def(py::init<navigation::datastructures::GeoLocation, float>(),
+        .def(py::init<navigation::datastructures::Geolocation, float>(),
              DOC_RTConstantSVP(RTConstantSVP),
              py::arg("sensor_location"),
              py::arg("sound_velocity"))

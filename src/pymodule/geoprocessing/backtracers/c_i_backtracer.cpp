@@ -33,7 +33,7 @@ void init_i_backtracer(py::module& m)
         m,
         "I_Backtracer",
         DOC(themachinethatgoesping, algorithms, geoprocessing, backtracers, I_Backtracer))
-        .def(py::init<navigation::datastructures::GeoLocation, float, float, std::string>(),
+        .def(py::init<navigation::datastructures::Geolocation, float, float, std::string>(),
              DOC_I_Backtracer(I_Backtracer),
              py::arg("sensor_location"),
              py::arg("sensor_x"),

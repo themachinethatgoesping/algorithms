@@ -18,7 +18,7 @@ using namespace themachinethatgoesping::navigation::datastructures;
 TEST_CASE("I_Raytracer should support common functions", TESTTAG)
 {
     // initialize location
-    auto location = GeoLocation();
+    auto location = Geolocation();
 
     location.z     = 3;
     location.yaw   = 10;

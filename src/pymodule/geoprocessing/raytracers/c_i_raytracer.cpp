@@ -33,7 +33,7 @@ void init_c_i_raytracer(py::module& m)
         m,
         "I_Raytracer",
         DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers, I_Raytracer))
-        .def(py::init<navigation::datastructures::GeoLocation, std::string>(),
+        .def(py::init<navigation::datastructures::Geolocation, std::string>(),
              DOC_I_Raytracer(I_Raytracer),
              py::arg("sensor_location"),
              py::arg("raytracer_name"))

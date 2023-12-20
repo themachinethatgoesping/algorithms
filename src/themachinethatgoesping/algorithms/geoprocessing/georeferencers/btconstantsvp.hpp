@@ -39,7 +39,7 @@ class BTConstantSVP : public I_Backtracer
      * @param sensor_location Orientation and depth of the echo sounder
      * @param sound_velocity Sound velocity in m/s
      */
-    BTConstantSVP(navigation::datastructures::GeoLocation sensor_location,
+    BTConstantSVP(navigation::datastructures::Geolocation sensor_location,
                   double                                  sensor_x,
                   double                                  sensor_y)
         : I_Backtracer(std::move(sensor_location), sensor_x, sensor_y, "BTConstantSVP")

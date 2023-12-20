@@ -26,7 +26,7 @@ namespace raytracers {
 
 class RTConstantSVP : public I_Raytracer
 {
-    // navigation::datastructures::GeoLocation_sensor_location;
+    // navigation::datastructures::Geolocation_sensor_location;
     // Eigen::Quaternion<float> _sensor_orientation_quat;
 
     float _sound_velocity;   ///< sound velocity in m/s
@@ -39,7 +39,7 @@ class RTConstantSVP : public I_Raytracer
      * @param sensor_location Orientation and depth of the echo sounder
      * @param sound_velocity Sound velocity in m/s
      */
-    RTConstantSVP(navigation::datastructures::GeoLocation sensor_location, float sound_velocity)
+    RTConstantSVP(navigation::datastructures::Geolocation sensor_location, float sound_velocity)
         : I_Raytracer(std::move(sensor_location), "RTConstantSVP")
         , _sound_velocity(sound_velocity)
         , _sound_velocity_2(sound_velocity / 2)

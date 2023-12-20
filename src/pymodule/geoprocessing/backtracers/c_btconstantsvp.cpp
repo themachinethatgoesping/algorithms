@@ -37,7 +37,7 @@ void init_c_btconstantsvp(py::module& m)
         m,
         "BTConstantSVP",
         DOC(themachinethatgoesping, algorithms, geoprocessing, backtracers, BTConstantSVP))
-        .def(py::init<navigation::datastructures::GeoLocation, float, float>(),
+        .def(py::init<navigation::datastructures::Geolocation, float, float>(),
              DOC_BTConstantSVP(BTConstantSVP),
              py::arg("sensor_location"),
              py::arg("sensor_x"),

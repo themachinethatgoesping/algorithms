@@ -27,7 +27,7 @@ class I_Raytracer
 {
     std::string _name;
 
-    navigation::datastructures::GeoLocation _sensor_location; ///< Location/Orientation of the senor
+    navigation::datastructures::Geolocation _sensor_location; ///< Location/Orientation of the senor
 
     Eigen::Quaternion<float> _sensor_orientation_quat; ///< Quaternion describing the orientation
                                                        ///< of the sensor
@@ -36,7 +36,7 @@ class I_Raytracer
     std::string class_name() const { return _name; }
 
   public:
-    I_Raytracer(navigation::datastructures::GeoLocation sensor_location, std::string name)
+    I_Raytracer(navigation::datastructures::Geolocation sensor_location, std::string name)
         : _name(std::move(name))
     {
         set_sensor_location(std::move(sensor_location));
@@ -224,7 +224,7 @@ class I_Raytracer
     }
 
     // ----- setters -----
-    void set_sensor_location(navigation::datastructures::GeoLocation sensor_location)
+    void set_sensor_location(navigation::datastructures::Geolocation sensor_location)
     {
         _sensor_location = std::move(sensor_location);
 
@@ -245,7 +245,7 @@ class I_Raytracer
     {
         auto name = tools::classhelper::stream::container_from_stream<std::string>(is);
 
-        auto geolocation = navigation::datastructures::GeoLocation::from_stream(is);
+        auto geolocation = navigation::datastructures::Geolocation::from_stream(is);
 
         return I_Raytracer(std::move(geolocation), name);
     }

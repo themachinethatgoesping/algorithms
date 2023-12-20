@@ -29,7 +29,7 @@ class I_Backtracer
 {
     std::string _name;
 
-    navigation::datastructures::GeoLocation _sensor_location; ///< Location/Orientation of the senor
+    navigation::datastructures::Geolocation _sensor_location; ///< Location/Orientation of the senor
     float                                   _sensor_x;
     float                                   _sensor_y;
 
@@ -44,7 +44,7 @@ class I_Backtracer
     std::string class_name() const { return _name; }
 
   public:
-    I_Backtracer(navigation::datastructures::GeoLocation sensor_location,
+    I_Backtracer(navigation::datastructures::Geolocation sensor_location,
                  float                                   sensor_x,
                  float                                   sensor_y,
                  std::string                             name)
@@ -172,7 +172,7 @@ class I_Backtracer
     }
 
     // ----- setters -----
-    void set_sensor_location(navigation::datastructures::GeoLocation sensor_location,
+    void set_sensor_location(navigation::datastructures::Geolocation sensor_location,
                              float                                   sensor_x,
                              float                                   sensor_y)
     {
@@ -199,7 +199,7 @@ class I_Backtracer
     {
         auto name = tools::classhelper::stream::container_from_stream<std::string>(is);
 
-        auto                 geolocation = navigation::datastructures::GeoLocation::from_stream(is);
+        auto                 geolocation = navigation::datastructures::Geolocation::from_stream(is);
         std::array<float, 2> sensor_xy;
         is.read(reinterpret_cast<char*>(&sensor_xy), sizeof(sensor_xy));
 
