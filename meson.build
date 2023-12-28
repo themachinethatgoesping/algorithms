@@ -18,11 +18,14 @@ projectnamespace = 'themachinethatgoesping'
 
 # --- dependencies ---
 if meson.get_compiler('cpp').get_id() == 'clang-cl'
-  omp_dep = declare_dependency()
+  omp = dependency('openmp')
+  libomp = meson.get_compiler('cpp').find_library('libomp')
+  omp_dep = declare_dependency(
+  dependencies : [omp, libomp],
+  )
 else
   omp_dep = dependency('openmp')
 endif
-
 
 # boost
 boost_dep = dependency('boost', static: get_option('dynamic_boost').disabled())
