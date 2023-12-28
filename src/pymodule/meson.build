@@ -30,6 +30,7 @@ py_algorithms = pymod.extension_module(
     module_name,
     sources: sources,
     dependencies : [
+        omp_dep,
         tools_pybind_dep,
         algorithms_dep,
         pybind11_dep,
