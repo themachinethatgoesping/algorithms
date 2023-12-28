@@ -9,7 +9,7 @@ project(
   'cpp',
   license: 'MPL-2.0',
 
-  version: '0.5.6',
+  version: '0.5.7',
   default_options: ['warning_level=2', 'buildtype=release', 'cpp_std=c++20'],
   meson_version: '>=1.1', #first version to support c++20 on macos
 )
@@ -22,7 +22,7 @@ if meson.get_compiler('cpp').get_id() == 'clang-cl'
   libomp = meson.get_compiler('cpp').find_library('libomp')
   omp_dep = declare_dependency(
   #compile_args : ['-Xclang', '-fopenmp', '-openmp'],
-  compile_args : ['-Xclang', '-fopenmp'],
+  compile_args : ['-fopenmp'],
   dependencies : [libomp]
   )
   #omp_dep = declare_dependency()
