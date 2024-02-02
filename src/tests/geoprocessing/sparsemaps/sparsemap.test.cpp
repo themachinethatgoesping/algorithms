@@ -6,11 +6,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "../../../themachinethatgoesping/algorithms/geoprocessing/sparsemaps/sparsemap.hpp"
+//#include "../../../themachinethatgoesping/algorithms/geoprocessing/sparsemaps/sparsemap.hpp"
 
 // using namespace testing;
 using namespace std;
-using namespace themachinethatgoesping::algorithms::geoprocessing::sparsemaps;
+//using namespace themachinethatgoesping::algorithms::geoprocessing::sparsemaps;
 
 #define TESTTAG "[location]"
 

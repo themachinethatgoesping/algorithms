@@ -7,22 +7,23 @@
 testcomponent = 'algorithms'
 
 sources = [
-    'geoprocessing/datastructures/xyz.test.cpp',
-    'geoprocessing/datastructures/raytraceresults.test.cpp',
-    'geoprocessing/datastructures/raytraceresult.test.cpp',
-    'geoprocessing/datastructures/sampledirections.test.cpp',
-    'geoprocessing/datastructures/sampledirectionsrange.test.cpp',
-    'geoprocessing/datastructures/sampledirectionstime.test.cpp',
-    'geoprocessing/datastructures/sampleindices.test.cpp',
-    'geoprocessing/datastructures/beamsampleparameters.test.cpp',
-    'geoprocessing/raytracers/i_raytracer.test.cpp',
-    'geoprocessing/raytracers/rtconstantsvp.test.cpp',
-    'geoprocessing/backtracers/i_backtracer.test.cpp',
-    'geoprocessing/backtracers/btconstantsvp.test.cpp',
-    'signalprocessing/datastructures/genericsignalparameters.test.cpp',
-    'signalprocessing/datastructures/cwsignalparameters.test.cpp',
-    'signalprocessing/datastructures/fmsignalparameters.test.cpp',
-    'tutorial.test.cpp'
+  'tutorial.test.cpp',
+  'signalprocessing/datastructures/cwsignalparameters.test.cpp',
+  'signalprocessing/datastructures/fmsignalparameters.test.cpp',
+  'signalprocessing/datastructures/genericsignalparameters.test.cpp',
+  'geoprocessing/datastructures/beamsampleparameters.test.cpp',
+  'geoprocessing/datastructures/raytraceresult.test.cpp',
+  'geoprocessing/datastructures/raytraceresults.test.cpp',
+  'geoprocessing/datastructures/sampledirections.test.cpp',
+  'geoprocessing/datastructures/sampledirectionsrange.test.cpp',
+  'geoprocessing/datastructures/sampledirectionstime.test.cpp',
+  'geoprocessing/datastructures/sampleindices.test.cpp',
+  'geoprocessing/datastructures/xyz.test.cpp',
+  'geoprocessing/raytracers/i_raytracer.test.cpp',
+  'geoprocessing/raytracers/rtconstantsvp.test.cpp',
+  'geoprocessing/backtracers/btconstantsvp.test.cpp',
+  'geoprocessing/backtracers/i_backtracer.test.cpp',
+  'geoprocessing/sparsemaps/sparsemap.test.cpp',
 ]
 
 foreach source : sources

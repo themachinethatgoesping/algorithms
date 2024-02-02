@@ -40,7 +40,7 @@ TEST_CASE("SampleDirectionsRange should support common functions", TESTTAG)
     REQUIRE(location.info_string().size() != 0);
 
     // test hash
-    REQUIRE(location.binary_hash() == 15106317722440586394);
+    REQUIRE(location.binary_hash() == 15106317722440586394ULL);
     REQUIRE(location.binary_hash() == SampleDirectionsRange(location).binary_hash());
     REQUIRE(location.binary_hash() ==
             SampleDirectionsRange(location.from_binary(location.to_binary())).binary_hash());

@@ -7,22 +7,22 @@ module_name = 'algorithms'
         
 # -- sources
 sources = [
-    'geoprocessing/datastructures/c_xyz.cpp',
-    'geoprocessing/datastructures/c_raytraceresults.cpp',
-    'geoprocessing/datastructures/c_raytraceresult.cpp',
-    'geoprocessing/datastructures/c_sampleindices.cpp',
-    'geoprocessing/datastructures/c_sampledirections.cpp',
-    'geoprocessing/datastructures/c_sampledirectionsrange.cpp',
-    'geoprocessing/datastructures/c_sampledirectionstime.cpp',
-    'geoprocessing/datastructures/c_beamsampleparameters.cpp',
-    'geoprocessing/raytracers/c_i_raytracer.cpp',
-    'geoprocessing/raytracers/c_rtconstantsvp.cpp',
-    'geoprocessing/backtracers/c_i_backtracer.cpp',
-    'geoprocessing/backtracers/c_btconstantsvp.cpp',
-    'signalprocessing/datastructures/c_genericsignalparameters.cpp',
-    'signalprocessing/datastructures/c_cwsignalparameters.cpp',
-    'signalprocessing/datastructures/c_fmsignalparameters.cpp',
-    'module.cpp',
+  'module.cpp',
+  'signalprocessing/datastructures/c_cwsignalparameters.cpp',
+  'signalprocessing/datastructures/c_fmsignalparameters.cpp',
+  'signalprocessing/datastructures/c_genericsignalparameters.cpp',
+  'geoprocessing/datastructures/c_beamsampleparameters.cpp',
+  'geoprocessing/datastructures/c_raytraceresult.cpp',
+  'geoprocessing/datastructures/c_raytraceresults.cpp',
+  'geoprocessing/datastructures/c_sampledirections.cpp',
+  'geoprocessing/datastructures/c_sampledirectionsrange.cpp',
+  'geoprocessing/datastructures/c_sampledirectionstime.cpp',
+  'geoprocessing/datastructures/c_sampleindices.cpp',
+  'geoprocessing/datastructures/c_xyz.cpp',
+  'geoprocessing/raytracers/c_i_raytracer.cpp',
+  'geoprocessing/raytracers/c_rtconstantsvp.cpp',
+  'geoprocessing/backtracers/c_btconstantsvp.cpp',
+  'geoprocessing/backtracers/c_i_backtracer.cpp',
 ]
 
 # define python module
