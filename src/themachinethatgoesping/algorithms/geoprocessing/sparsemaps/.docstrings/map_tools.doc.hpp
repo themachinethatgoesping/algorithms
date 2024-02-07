@@ -1,4 +1,4 @@
-//sourcehash: 16c4cc136c33921b61f260c719a1454b9724bb6ca37c145f615451efd0bf638b
+//sourcehash: 09d71fb87a5e8fd338a9a6246ce9918b291f1504499821bca869a7167fd74e2a
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,9 +38,9 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_get_ref_with_default = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_get_from_map_with_default = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_get_with_default = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_get_ref_with_default = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_sparsemaps_increment_with_default = R"doc()doc";
 

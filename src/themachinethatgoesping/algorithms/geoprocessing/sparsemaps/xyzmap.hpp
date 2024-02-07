@@ -234,11 +234,11 @@ class xyzMap
 
     gridValueType get_at_xyz(double x, double y, double z) const
     {
-        return get_with_default((t_xyzmap&)*this, get_gridPos_xyz(x, y, z), _initValue);
+        return get_from_map_with_default((t_xyzmap&)*this, get_gridPos_xyz(x, y, z), _initValue);
     }
     gridValueType get_at_xyz(double x, double y, double z, const gridValueType& _defaultValue) const
     {
-        return get_with_default((t_xyzmap&)*this, get_gridPos_xyz(x, y, z), _defaultValue);
+        return get_from_map_with_default((t_xyzmap&)*this, get_gridPos_xyz(x, y, z), _defaultValue);
     }
     gridValueType get_at_gridPos(uint64_t gridPos_x, uint64_t gridPos_y, uint64_t gridPos_z) const
     {

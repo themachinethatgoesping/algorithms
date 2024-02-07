@@ -153,22 +153,22 @@ class xMap : public std::unordered_map<uint64_t, gridValueType>
 
     gridValueType get_at_x(double x) const
     {
-        return get_with_default(
+        return get_from_map_with_default(
             (std::unordered_map<uint64_t, gridValueType>&)*this, get_gridPos(x), _initValue);
     }
     gridValueType get_at_x(double x, const gridValueType& defaultValue) const
     {
-        return get_with_default(
+        return get_from_map_with_default(
             (std::unordered_map<uint64_t, gridValueType>&)*this, get_gridPos(x), defaultValue);
     }
     gridValueType get_at_gridPos(uint64_t gridPos) const
     {
-        return get_with_default(
+        return get_from_map_with_default(
             (std::unordered_map<uint64_t, gridValueType>&)*this, gridPos, _initValue);
     }
     gridValueType get_at_gridPos(uint64_t gridPos, const gridValueType& defaultValue) const
     {
-        return get_with_default(
+        return get_from_map_with_default(
             (std::unordered_map<uint64_t, gridValueType>&)*this, gridPos, defaultValue);
     }
 

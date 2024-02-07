@@ -228,32 +228,32 @@ class xyMap
 
     gridValueType get_at_xy(double x, double y) const
     {
-        return get_with_default((t_xymap&)*this, get_gridPos_xy(x, y), _initValue);
+        return get_from_map_with_default((t_xymap&)*this, get_gridPos_xy(x, y), _initValue);
     }
     gridValueType get_at_xy(double x, double y, const gridValueType& _defaultValue) const
     {
-        return get_with_default((t_xymap&)*this, get_gridPos_xy(x, y), _defaultValue);
+        return get_from_map_with_default((t_xymap&)*this, get_gridPos_xy(x, y), _defaultValue);
     }
     gridValueType get_at_gridPos(uint64_t gridPos_x, uint64_t gridPos_y) const
     {
-        return get_with_default((t_xymap&)*this, std::make_pair(gridPos_x, gridPos_y), _initValue);
+        return get_from_map_with_default((t_xymap&)*this, std::make_pair(gridPos_x, gridPos_y), _initValue);
     }
     gridValueType get_at_gridPos(uint64_t            gridPos_x,
                                  uint64_t            gridPos_y,
                                  const gridValueType& _defaultValue) const
     {
-        return get_with_default(
+        return get_from_map_with_default(
             (t_xymap&)*this, std::make_pair(gridPos_x, gridPos_y), _defaultValue);
     }
 
     gridValueType& get_at_gridPos(std::pair<uint64_t, uint64_t> gridPos_xy) const
     {
-        return get_with_default((t_xymap&)*this, gridPos_xy, _initValue);
+        return get_from_map_with_default((t_xymap&)*this, gridPos_xy, _initValue);
     }
     gridValueType& get_gridPos(std::pair<uint64_t, uint64_t> gridPos_xy,
                                const gridValueType&            _defaultValue) const
     {
-        return get_with_default((t_xymap&)*this, gridPos_xy, _defaultValue);
+        return get_from_map_with_default((t_xymap&)*this, gridPos_xy, _defaultValue);
     }
 
     /* -------------------------------- reset functions ----------------------------------------*/

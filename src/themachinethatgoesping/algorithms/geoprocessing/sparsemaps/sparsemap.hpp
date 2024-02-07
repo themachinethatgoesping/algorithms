@@ -231,11 +231,11 @@ class SparseMap
 
     t_GridValue get_at_xyz(double x, double y, double z) const
     {
-        return get_with_default((t_sparsemap&)*this, get_gridPos_xyz(x, y, z), _initValue);
+        return get_from_map_with_default((t_sparsemap&)*this, get_gridPos_xyz(x, y, z), _initValue);
     }
     t_GridValue get_at_xyz(double x, double y, double z, const t_GridValue& _defaultValue) const
     {
-        return get_with_default((t_sparsemap&)*this, get_gridPos_xyz(x, y, z), _defaultValue);
+        return get_from_map_with_default((t_sparsemap&)*this, get_gridPos_xyz(x, y, z), _defaultValue);
     }
     t_GridValue get_at_gridPos(uint64_t gridPos_x, uint64_t gridPos_y, uint64_t gridPos_z) const
     {
