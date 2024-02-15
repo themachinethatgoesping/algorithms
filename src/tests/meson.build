@@ -32,7 +32,7 @@ foreach source : sources
 
     testexe = executable(testname,
             sources: [source],
-            dependencies : [catch2, algorithms_dep, omp_dep],
+            dependencies : [catch2, algorithms_dep],
             link_language : 'cpp',
             override_options: [
             ],
