@@ -33,7 +33,8 @@ py_algorithms = pymod.extension_module(
         tools_pybind_dep,
         algorithms_dep,
         pybind11_dep,
-        python3_dep],
+        python3_dep,
+        omp_dep],
     link_language : 'cpp',
     # cpp_pch : 'pch/pch.hpp',
     override_options: [
