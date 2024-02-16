@@ -63,7 +63,22 @@ struct GenericSignalParameters
      * @param rhs The right-hand side of the operator.
      * @return True if the objects are equal, false otherwise.
      */
-    bool operator==(const GenericSignalParameters& rhs) const = default;
+    bool operator==(const GenericSignalParameters& rhs) const
+    {
+        if (center_frequency != rhs.center_frequency)
+            if (!std::isnan(center_frequency) && !std::isnan(rhs.center_frequency))
+                return false;
+
+        if (bandwidth != rhs.bandwidth)
+            if (!std::isnan(bandwidth) && !std::isnan(rhs.bandwidth))
+                return false;
+
+        if (effective_pulse_duration != rhs.effective_pulse_duration)
+            if (!std::isnan(effective_pulse_duration) && !std::isnan(rhs.effective_pulse_duration))
+                return false;
+
+        return signal_type == rhs.signal_type;
+    }
 
   public:
     types::t_TxSignalType get_tx_signal_type() const { return signal_type; }
