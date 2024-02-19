@@ -30,11 +30,11 @@ struct GenericSignalParameters
     float effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
     types::t_TxSignalType signal_type = types::t_TxSignalType::UNKNOWN; ///< Signal type
 
-  public:
     /**
      * @brief Default constructor.
      */
     GenericSignalParameters() = default;
+  public:
 
     /**
      * @brief Constructor.

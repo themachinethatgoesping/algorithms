@@ -29,11 +29,11 @@ struct CWSignalParameters
     float bandwidth;                ///< Bandwidth of the signal in Hz.
     float effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
 
-  public:
     /**
      * @brief Default constructor.
      */
     CWSignalParameters() = default;
+  public:
 
     /**
      * @brief Constructor.

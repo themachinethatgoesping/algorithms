@@ -30,11 +30,11 @@ struct FMSignalParameters
     float effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
     bool  up_sweep = false;         ///< True if the signal is an up sweep, false otherwise.
 
-  public:
     /**
      * @brief Default constructor.
      */
     FMSignalParameters() = default;
+  public:
 
     /**
      * @brief Constructor.
