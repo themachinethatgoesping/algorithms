@@ -34,8 +34,8 @@ struct GenericSignalParameters
      * @brief Default constructor.
      */
     GenericSignalParameters() = default;
-  public:
 
+  public:
     /**
      * @brief Constructor.
      * @param center_frequency The center frequency of the signal in Hz.
@@ -84,6 +84,10 @@ struct GenericSignalParameters
     types::t_TxSignalType get_tx_signal_type() const { return signal_type; }
 
     // ----- file I/O -----
+    static constexpr size_t binary_size()
+    {
+        return sizeof(float) * 3 + sizeof(types::t_TxSignalType);
+    }
 
     /**
      * @brief Read GenericSignalParameters from a stream.
@@ -94,8 +98,7 @@ struct GenericSignalParameters
     {
         GenericSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency),
-                sizeof(float) * 3 + sizeof(types::t_TxSignalType));
+        is.read(reinterpret_cast<char*>(&data.center_frequency), binary_size());
 
         return data;
     }
@@ -106,8 +109,7 @@ struct GenericSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency),
-                 sizeof(float) * 3 + sizeof(types::t_TxSignalType));
+        os.write(reinterpret_cast<const char*>(&center_frequency), binary_size());
     }
 
   public:

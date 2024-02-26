@@ -1,4 +1,4 @@
-//sourcehash: 6ad197ad4b0655d159783704ba5fad7ba02f3ccc496a0f3d76cd837674e2757f
+//sourcehash: bcb5e4723706bba5f02615a6f4c663986c30f804886cd67529054d5b7ee48986
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -57,6 +57,8 @@ Parameter ``effective_pulse_duration``:
     The effective pulse duration of the signal in seconds.)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_bandwidth = R"doc(< Bandwidth of the signal in Hz.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_binary_size = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_center_frequency = R"doc(< Center frequency of the signal in Hz.)doc";
 

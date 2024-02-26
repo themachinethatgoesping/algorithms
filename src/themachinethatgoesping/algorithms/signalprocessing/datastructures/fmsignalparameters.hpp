@@ -34,8 +34,8 @@ struct FMSignalParameters
      * @brief Default constructor.
      */
     FMSignalParameters() = default;
-  public:
 
+  public:
     /**
      * @brief Constructor.
      * @param center_frequency The center frequency of the signal in Hz.
@@ -102,6 +102,7 @@ struct FMSignalParameters
     }
 
     // ----- file I/O -----
+    static constexpr size_t binary_size() { return sizeof(float) * 3 + sizeof(bool); }
 
     /**
      * @brief Read FMSignalParameters from a stream.
@@ -112,7 +113,7 @@ struct FMSignalParameters
     {
         FMSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency), sizeof(float) * 3 + sizeof(bool));
+        is.read(reinterpret_cast<char*>(&data.center_frequency), binary_size());
 
         return data;
     }
@@ -123,8 +124,7 @@ struct FMSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency),
-                 sizeof(float) * 3 + sizeof(bool));
+        os.write(reinterpret_cast<const char*>(&center_frequency), binary_size());
     }
 
   public:

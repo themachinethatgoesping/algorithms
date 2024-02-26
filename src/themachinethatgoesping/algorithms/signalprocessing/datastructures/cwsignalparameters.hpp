@@ -33,8 +33,8 @@ struct CWSignalParameters
      * @brief Default constructor.
      */
     CWSignalParameters() = default;
-  public:
 
+  public:
     /**
      * @brief Constructor.
      * @param center_frequency The center frequency of the signal in Hz.
@@ -64,6 +64,7 @@ struct CWSignalParameters
     types::t_TxSignalType get_tx_signal_type() const { return types::t_TxSignalType::CW; }
 
     // ----- file I/O -----
+    static constexpr size_t binary_size() { return sizeof(float) * 3; }
 
     /**
      * @brief Read CWSignalParameters from a stream.
@@ -74,7 +75,7 @@ struct CWSignalParameters
     {
         CWSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency), sizeof(float)*3 );
+        is.read(reinterpret_cast<char*>(&data.center_frequency), binary_size());
 
         return data;
     }
@@ -85,7 +86,7 @@ struct CWSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency), sizeof(float)*3 );
+        os.write(reinterpret_cast<const char*>(&center_frequency), binary_size());
     }
 
   public:
