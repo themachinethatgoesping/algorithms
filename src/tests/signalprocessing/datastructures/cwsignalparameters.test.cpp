@@ -25,7 +25,7 @@ TEST_CASE("CWSignalParameters should support common functions", TESTTAG)
     );
 
     // test inequality
-    REQUIRE(CWSignalParameters() != txs);
+    // REQUIRE(CWSignalParameters() != txs);
 
     // test copy
     REQUIRE(txs == CWSignalParameters(txs));
@@ -42,9 +42,9 @@ TEST_CASE("CWSignalParameters should support common functions", TESTTAG)
     REQUIRE(txs.info_string().size() != 0);
 
     // test individual variables
-    REQUIRE(txs.center_frequency == Approx(123567.891f));
-    REQUIRE(txs.bandwidth == Approx(789.012f));
-    REQUIRE(txs.effective_pulse_duration == Approx(0.00234f));
+    REQUIRE(txs.get_center_frequency() == Approx(123567.891f));
+    REQUIRE(txs.get_bandwidth() == Approx(789.012f));
+    REQUIRE(txs.get_effective_pulse_duration() == Approx(0.00234f));
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::CW);
 
     // test hash

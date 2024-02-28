@@ -20,14 +20,14 @@ namespace signalprocessing {
 namespace datastructures {
 
 /**
- * @struct CWSignalParameters
- * @brief Struct representing information about a continuous wave signal.
+ * @class CWSignalParameters
+ * @brief Class representing information about a continuous wave signal.
  */
-struct CWSignalParameters
+class CWSignalParameters
 {
-    float center_frequency;         ///< Center frequency of the signal in Hz.
-    float bandwidth;                ///< Bandwidth of the signal in Hz.
-    float effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
+    float _center_frequency;         ///< Center frequency of the signal in Hz.
+    float _bandwidth;                ///< Bandwidth of the signal in Hz.
+    float _effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
 
     /**
      * @brief Default constructor.
@@ -42,9 +42,9 @@ struct CWSignalParameters
      * @param effective_pulse_duration The effective pulse duration of the signal in seconds.
      */
     CWSignalParameters(float center_frequency, float bandwidth, float effective_pulse_duration)
-        : center_frequency(center_frequency)
-        , bandwidth(bandwidth)
-        , effective_pulse_duration(effective_pulse_duration)
+        : _center_frequency(center_frequency)
+        , _bandwidth(bandwidth)
+        , _effective_pulse_duration(effective_pulse_duration)
     {
     }
 
@@ -58,10 +58,41 @@ struct CWSignalParameters
      * @param rhs The right-hand side of the operator.
      * @return True if the objects are equal, false otherwise.
      */
-    bool operator==(const CWSignalParameters& rhs) const = default;
+    bool operator==(const CWSignalParameters& rhs) const
+    {
+        if (_center_frequency != rhs._center_frequency)
+            if (!std::isnan(_center_frequency) && !std::isnan(rhs._center_frequency))
+                return false;
+
+        if (_bandwidth != rhs._bandwidth)
+            if (!std::isnan(_bandwidth) && !std::isnan(rhs._bandwidth))
+                return false;
+
+        if (_effective_pulse_duration != rhs._effective_pulse_duration)
+            if (!std::isnan(_effective_pulse_duration) &&
+                !std::isnan(rhs._effective_pulse_duration))
+                return false;
+
+        return true;
+    }
 
   public:
+    // ----- getters -----
+    float                 get_center_frequency() const { return _center_frequency; }
+    float                 get_bandwidth() const { return _bandwidth; }
+    float                 get_effective_pulse_duration() const { return _effective_pulse_duration; }
     types::t_TxSignalType get_tx_signal_type() const { return types::t_TxSignalType::CW; }
+
+    // ----- setters -----
+    void set_center_frequency(float center_frequency)
+    {
+        this->_center_frequency = center_frequency;
+    }
+    void set_bandwidth(float bandwidth) { this->_bandwidth = bandwidth; }
+    void set_effective_pulse_duration(float effective_pulse_duration)
+    {
+        this->_effective_pulse_duration = effective_pulse_duration;
+    }
 
     // ----- file I/O -----
     static constexpr size_t binary_size() { return sizeof(float) * 3; }
@@ -75,7 +106,7 @@ struct CWSignalParameters
     {
         CWSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency), binary_size());
+        is.read(reinterpret_cast<char*>(&data._center_frequency), binary_size());
 
         return data;
     }
@@ -86,7 +117,7 @@ struct CWSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency), binary_size());
+        os.write(reinterpret_cast<const char*>(&_center_frequency), binary_size());
     }
 
   public:
@@ -99,9 +130,9 @@ struct CWSignalParameters
     {
         tools::classhelper::ObjectPrinter printer("CWSignalParameters", float_precision);
 
-        printer.register_value("center_frequency", center_frequency, "Hz");
-        printer.register_value("bandwidth", bandwidth, "Hz");
-        printer.register_value("effective_pulse_duration", effective_pulse_duration, "s");
+        printer.register_value("center_frequency", _center_frequency, "Hz");
+        printer.register_value("bandwidth", _bandwidth, "Hz");
+        printer.register_value("effective_pulse_duration", _effective_pulse_duration, "s");
 
         return printer;
     }

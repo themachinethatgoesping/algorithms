@@ -20,15 +20,15 @@ namespace signalprocessing {
 namespace datastructures {
 
 /**
- * @struct GenericSignalParameters
- * @brief Struct representing information about a generic type.
+ * @class GenericSignalParameters
+ * @brief Class representing information about a generic type.
  */
-struct GenericSignalParameters
+class GenericSignalParameters
 {
-    float center_frequency;         ///< Center frequency of the signal in Hz.
-    float bandwidth;                ///< Bandwidth of the signal in Hz.
-    float effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
-    types::t_TxSignalType signal_type = types::t_TxSignalType::UNKNOWN; ///< Signal type
+    float _center_frequency;         ///< Center frequency of the signal in Hz.
+    float _bandwidth;                ///< Bandwidth of the signal in Hz.
+    float _effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
+    types::t_TxSignalType _signal_type = types::t_TxSignalType::UNKNOWN; ///< Signal type
 
     /**
      * @brief Default constructor.
@@ -46,10 +46,10 @@ struct GenericSignalParameters
                             float                 bandwidth,
                             float                 effective_pulse_duration,
                             types::t_TxSignalType signal_type)
-        : center_frequency(center_frequency)
-        , bandwidth(bandwidth)
-        , effective_pulse_duration(effective_pulse_duration)
-        , signal_type(signal_type)
+        : _center_frequency(center_frequency)
+        , _bandwidth(bandwidth)
+        , _effective_pulse_duration(effective_pulse_duration)
+        , _signal_type(signal_type)
     {
     }
 
@@ -65,23 +65,39 @@ struct GenericSignalParameters
      */
     bool operator==(const GenericSignalParameters& rhs) const
     {
-        if (center_frequency != rhs.center_frequency)
-            if (!std::isnan(center_frequency) && !std::isnan(rhs.center_frequency))
+        if (_center_frequency != rhs._center_frequency)
+            if (!std::isnan(_center_frequency) && !std::isnan(rhs._center_frequency))
                 return false;
 
-        if (bandwidth != rhs.bandwidth)
-            if (!std::isnan(bandwidth) && !std::isnan(rhs.bandwidth))
+        if (_bandwidth != rhs._bandwidth)
+            if (!std::isnan(_bandwidth) && !std::isnan(rhs._bandwidth))
                 return false;
 
-        if (effective_pulse_duration != rhs.effective_pulse_duration)
-            if (!std::isnan(effective_pulse_duration) && !std::isnan(rhs.effective_pulse_duration))
+        if (_effective_pulse_duration != rhs._effective_pulse_duration)
+            if (!std::isnan(_effective_pulse_duration) &&
+                !std::isnan(rhs._effective_pulse_duration))
                 return false;
 
-        return signal_type == rhs.signal_type;
+        return _signal_type == rhs._signal_type;
     }
 
   public:
-    types::t_TxSignalType get_tx_signal_type() const { return signal_type; }
+    // ----- getters/setters -----
+    float                 get_center_frequency() const { return _center_frequency; }
+    float                 get_bandwidth() const { return _bandwidth; }
+    float                 get_effective_pulse_duration() const { return _effective_pulse_duration; }
+    types::t_TxSignalType get_tx_signal_type() const { return _signal_type; }
+
+    void set_center_frequency(float center_frequency)
+    {
+        this->_center_frequency = center_frequency;
+    }
+    void set_bandwidth(float bandwidth) { this->_bandwidth = bandwidth; }
+    void set_effective_pulse_duration(float effective_pulse_duration)
+    {
+        this->_effective_pulse_duration = effective_pulse_duration;
+    }
+    void set_tx_signal_type(types::t_TxSignalType signal_type) { this->_signal_type = signal_type; }
 
     // ----- file I/O -----
     static constexpr size_t binary_size()
@@ -98,7 +114,7 @@ struct GenericSignalParameters
     {
         GenericSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency), binary_size());
+        is.read(reinterpret_cast<char*>(&data._center_frequency), binary_size());
 
         return data;
     }
@@ -109,7 +125,7 @@ struct GenericSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency), binary_size());
+        os.write(reinterpret_cast<const char*>(&_center_frequency), binary_size());
     }
 
   public:
@@ -122,9 +138,9 @@ struct GenericSignalParameters
     {
         tools::classhelper::ObjectPrinter printer("GenericSignalParameters", float_precision);
 
-        printer.register_value("center_frequency", center_frequency, "Hz");
-        printer.register_value("bandwidth", bandwidth, "Hz");
-        printer.register_value("effective_pulse_duration", effective_pulse_duration, "s");
+        printer.register_value("center_frequency", _center_frequency, "Hz");
+        printer.register_value("bandwidth", _bandwidth, "Hz");
+        printer.register_value("effective_pulse_duration", _effective_pulse_duration, "s");
         printer.register_value("signal_type", types::to_string(get_tx_signal_type()));
 
         return printer;

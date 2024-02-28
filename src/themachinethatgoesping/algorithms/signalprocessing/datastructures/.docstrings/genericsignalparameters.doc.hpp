@@ -1,4 +1,4 @@
-//sourcehash: 40cf3e33d68d97a502a2984bf28a5aa4a8ae99b63e972dd627cdd317e9d3a939
+//sourcehash: 7cb965ae9d30458b518a1f12a72b92e82eef92f6bd9f4f36367065f5c5de51d2
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -39,8 +39,8 @@
 
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters =
-R"doc(@struct GenericSignalParameters Struct representing information about
-a generic type.)doc";
+R"doc(@class GenericSignalParameters Class representing information about a
+generic type.)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_GenericSignalParameters = R"doc(Default constructor.)doc";
 
@@ -73,6 +73,12 @@ Parameter ``is``:
 Returns:
     The read GenericSignalParameters object.)doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_get_bandwidth = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_get_center_frequency = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_get_effective_pulse_duration = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_get_tx_signal_type = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_operator_eq =
@@ -92,6 +98,14 @@ Parameter ``float_precision``:
 
 Returns:
     The ObjectPrinter.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_set_bandwidth = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_set_center_frequency = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_set_effective_pulse_duration = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_set_tx_signal_type = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_GenericSignalParameters_signal_type = R"doc(< Signal type)doc";
 

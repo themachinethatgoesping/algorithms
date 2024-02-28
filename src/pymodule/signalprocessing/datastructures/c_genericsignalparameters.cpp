@@ -23,7 +23,7 @@ namespace py_datastructures {
 namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::signalprocessing::datastructures;
 
-#define DOC_XYZ(ARG)                                                                               \
+#define DOC_GenericSignalParameters(ARG)                                                           \
     DOC(themachinethatgoesping,                                                                    \
         algorithms,                                                                                \
         signalprocessing,                                                                          \
@@ -41,26 +41,47 @@ void init_c_genericsignalparameters(py::module& m)
             signalprocessing,
             datastructures,
             GenericSignalParameters))
-        .def(py::init<>(), DOC_XYZ(GenericSignalParameters))
+        //.def(py::init<>(), DOC_GenericSignalParameters(GenericSignalParameters))
         .def(py::init<float, float, float, signalprocessing::types::t_TxSignalType>(),
-             DOC_XYZ(GenericSignalParameters),
+             DOC_GenericSignalParameters(GenericSignalParameters),
              py::arg("center_frequency"),
              py::arg("bandwidth"),
              py::arg("effective_pulse_duration"),
              py::arg("tx_signal_type"))
-        .def("__eq__", &GenericSignalParameters::operator==, DOC_XYZ(operator_eq), py::arg("other"))
+        .def("__eq__",
+             &GenericSignalParameters::operator==,
+             DOC_GenericSignalParameters(operator_eq),
+             py::arg("other"))
 
-        .def_readwrite("center_frequency",
-                       &GenericSignalParameters::center_frequency,
-                       DOC_XYZ(center_frequency))
-        .def_readwrite("bandwidth", &GenericSignalParameters::bandwidth, DOC_XYZ(bandwidth))
-        .def_readwrite("effective_pulse_duration",
-                       &GenericSignalParameters::effective_pulse_duration,
-                       DOC_XYZ(effective_pulse_duration))
-        .def_readwrite("signal_type", &GenericSignalParameters::signal_type, DOC_XYZ(signal_type))
+        .def("get_center_frequency",
+             &GenericSignalParameters::get_center_frequency,
+             DOC_GenericSignalParameters(center_frequency))
+        .def("get_bandwidth",
+             &GenericSignalParameters::get_bandwidth,
+             DOC_GenericSignalParameters(bandwidth))
+        .def("get_effective_pulse_duration",
+             &GenericSignalParameters::get_effective_pulse_duration,
+             DOC_GenericSignalParameters(effective_pulse_duration))
         .def("get_tx_signal_type",
              &GenericSignalParameters::get_tx_signal_type,
-             DOC_XYZ(get_tx_signal_type))
+             DOC_GenericSignalParameters(get_tx_signal_type))
+
+        .def("set_center_frequency",
+             &GenericSignalParameters::set_center_frequency,
+             DOC_GenericSignalParameters(center_frequency),
+             py::arg("center_frequency"))
+        .def("set_bandwidth",
+             &GenericSignalParameters::set_bandwidth,
+             DOC_GenericSignalParameters(bandwidth),
+             py::arg("bandwidth"))
+        .def("set_effective_pulse_duration",
+             &GenericSignalParameters::set_effective_pulse_duration,
+             DOC_GenericSignalParameters(effective_pulse_duration),
+             py::arg("effective_pulse_duration"))
+        .def("set_tx_signal_type",
+             &GenericSignalParameters::set_tx_signal_type,
+             DOC_GenericSignalParameters(set_tx_signal_type),
+             py::arg("tx_signal_type"))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(GenericSignalParameters)

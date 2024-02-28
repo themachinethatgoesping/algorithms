@@ -1,4 +1,4 @@
-//sourcehash: bcb5e4723706bba5f02615a6f4c663986c30f804886cd67529054d5b7ee48986
+//sourcehash: 47bf28d26b4a9ce7585bcb4079b88d1173d7d08dd90f76601e8f4b4e1b58c75c
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -39,7 +39,7 @@
 
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters =
-R"doc(@struct CWSignalParameters Struct representing information about a
+R"doc(@class CWSignalParameters Class representing information about a
 continuous wave signal.)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_CWSignalParameters = R"doc(Default constructor.)doc";
@@ -73,6 +73,12 @@ Parameter ``is``:
 Returns:
     The read CWSignalParameters object.)doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_get_bandwidth = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_get_center_frequency = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_get_effective_pulse_duration = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_get_tx_signal_type = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_operator_eq =
@@ -92,6 +98,12 @@ Parameter ``float_precision``:
 
 Returns:
     The ObjectPrinter.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_set_bandwidth = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_set_center_frequency = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_set_effective_pulse_duration = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_CWSignalParameters_to_stream =
 R"doc(Write CWSignalParameters to a stream.

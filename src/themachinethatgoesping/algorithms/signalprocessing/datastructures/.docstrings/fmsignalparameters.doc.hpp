@@ -1,4 +1,4 @@
-//sourcehash: 3473ef91919b6434a8eee3a5e2186f79b292d2a64c378924bbef0e86174bb90c
+//sourcehash: d72f304222f072bb82904705dc63f346557dff5a083416c22c150520fe21f85f
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -39,7 +39,7 @@
 
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters =
-R"doc(@struct FMSignalParameters Struct representing information about a
+R"doc(@class FMSignalParameters Class representing information about a
 frequency modulated wave signal (chirp).)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_FMSignalParameters = R"doc(Default constructor.)doc";
@@ -85,7 +85,15 @@ Parameter ``is``:
 Returns:
     The read FMSignalParameters object.)doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_get_bandwidth = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_get_center_frequency = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_get_effective_pulse_duration = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_get_tx_signal_type = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_get_up_sweep = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_operator_eq =
 R"doc(Equality operator.
@@ -104,6 +112,14 @@ Parameter ``float_precision``:
 
 Returns:
     The ObjectPrinter.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_set_bandwidth = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_set_center_frequency = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_set_effective_pulse_duration = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_set_up_sweep = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_FMSignalParameters_to_stream =
 R"doc(Write FMSignalParameters to a stream.

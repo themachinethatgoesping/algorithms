@@ -23,7 +23,7 @@ namespace py_datastructures {
 namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::signalprocessing::datastructures;
 
-#define DOC_XYZ(ARG)                                                                               \
+#define DOC_FMSignalParameters(ARG)                                                                               \
     DOC(themachinethatgoesping,                                                                    \
         algorithms,                                                                                \
         signalprocessing,                                                                          \
@@ -40,31 +40,49 @@ void init_c_fmsignalparameters(py::module& m)
                                                                             signalprocessing,
                                                                             datastructures,
                                                                             FMSignalParameters))
-        .def(py::init<>(), DOC_XYZ(FMSignalParameters))
+        //.def(py::init<>(), DOC_FMSignalParameters(FMSignalParameters))
         .def(py::init<float, float, float, bool>(),
-             DOC_XYZ(FMSignalParameters),
+             DOC_FMSignalParameters(FMSignalParameters),
              py::arg("center_frequency"),
              py::arg("bandwidth"),
              py::arg("effective_pulse_duration"),
              py::arg("up_sweep"))
         .def(py::init<float, float, float, signalprocessing::types::t_TxSignalType>(),
-             DOC_XYZ(FMSignalParameters),
+             DOC_FMSignalParameters(FMSignalParameters),
              py::arg("center_frequency"),
              py::arg("bandwidth"),
              py::arg("effective_pulse_duration"),
              py::arg("tx_signal_type"))
-        .def("__eq__", &FMSignalParameters::operator==, DOC_XYZ(operator_eq), py::arg("other"))
+        .def("__eq__", &FMSignalParameters::operator==, DOC_FMSignalParameters(operator_eq), py::arg("other"))
 
-        .def_readwrite(
-            "center_frequency", &FMSignalParameters::center_frequency, DOC_XYZ(center_frequency))
-        .def_readwrite("bandwidth", &FMSignalParameters::bandwidth, DOC_XYZ(bandwidth))
-        .def_readwrite("effective_pulse_duration",
-                       &FMSignalParameters::effective_pulse_duration,
-                       DOC_XYZ(effective_pulse_duration))
-        .def_readwrite("up_sweep", &FMSignalParameters::up_sweep, DOC_XYZ(up_sweep))
+        .def("get_center_frequency",
+             &FMSignalParameters::get_center_frequency,
+             DOC_FMSignalParameters(center_frequency))
+        .def("get_bandwidth", &FMSignalParameters::get_bandwidth, DOC_FMSignalParameters(bandwidth))
+        .def("get_effective_pulse_duration",
+             &FMSignalParameters::get_effective_pulse_duration,
+             DOC_FMSignalParameters(effective_pulse_duration))
+        .def("get_up_sweep", &FMSignalParameters::get_up_sweep, DOC_FMSignalParameters(up_sweep))
         .def("get_tx_signal_type",
              &FMSignalParameters::get_tx_signal_type,
-             DOC_XYZ(get_tx_signal_type))
+             DOC_FMSignalParameters(get_tx_signal_type))
+
+        .def("set_center_frequency",
+             &FMSignalParameters::set_center_frequency,
+             DOC_FMSignalParameters(set_center_frequency),
+             py::arg("center_frequency"))
+        .def("set_bandwidth",
+             &FMSignalParameters::set_bandwidth,
+             DOC_FMSignalParameters(set_bandwidth),
+             py::arg("bandwidth"))
+        .def("set_effective_pulse_duration",
+             &FMSignalParameters::set_effective_pulse_duration,
+             DOC_FMSignalParameters(set_effective_pulse_duration),
+             py::arg("effective_pulse_duration"))
+        .def("set_up_sweep",
+             &FMSignalParameters::set_up_sweep,
+             DOC_FMSignalParameters(set_up_sweep),
+             py::arg("up_sweep"))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(FMSignalParameters)

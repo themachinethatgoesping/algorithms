@@ -20,15 +20,15 @@ namespace signalprocessing {
 namespace datastructures {
 
 /**
- * @struct FMSignalParameters
- * @brief Struct representing information about a frequency modulated wave signal (chirp).
+ * @class FMSignalParameters
+ * @brief Class representing information about a frequency modulated wave signal (chirp).
  */
-struct FMSignalParameters
+class FMSignalParameters
 {
-    float center_frequency;         ///< Center frequency of the signal in Hz.
-    float bandwidth;                ///< Bandwidth of the signal in Hz.
-    float effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
-    bool  up_sweep = false;         ///< True if the signal is an up sweep, false otherwise.
+    float _center_frequency;         ///< Center frequency of the signal in Hz.
+    float _bandwidth;                ///< Bandwidth of the signal in Hz.
+    float _effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
+    bool  _up_sweep = false;         ///< True if the signal is an up sweep, false otherwise.
 
     /**
      * @brief Default constructor.
@@ -46,10 +46,10 @@ struct FMSignalParameters
                        float bandwidth,
                        float effective_pulse_duration,
                        bool  up_sweep)
-        : center_frequency(center_frequency)
-        , bandwidth(bandwidth)
-        , effective_pulse_duration(effective_pulse_duration)
-        , up_sweep(up_sweep)
+        : _center_frequency(center_frequency)
+        , _bandwidth(bandwidth)
+        , _effective_pulse_duration(effective_pulse_duration)
+        , _up_sweep(up_sweep)
     {
     }
 
@@ -63,17 +63,17 @@ struct FMSignalParameters
                        float                 bandwidth,
                        float                 effective_pulse_duration,
                        types::t_TxSignalType signal_type)
-        : center_frequency(center_frequency)
-        , bandwidth(bandwidth)
-        , effective_pulse_duration(effective_pulse_duration)
+        : _center_frequency(center_frequency)
+        , _bandwidth(bandwidth)
+        , _effective_pulse_duration(effective_pulse_duration)
     {
         switch (signal_type)
         {
             case types::t_TxSignalType::FM_UP_SWEEP:
-                up_sweep = true;
+                _up_sweep = true;
                 break;
             case types::t_TxSignalType::FM_DOWN_SWEEP:
-                up_sweep = false;
+                _up_sweep = false;
                 break;
             default:
                 throw std::runtime_error("Invalid signal type for FMSignalParameters");
@@ -90,16 +90,49 @@ struct FMSignalParameters
      * @param rhs The right-hand side of the operator.
      * @return True if the objects are equal, false otherwise.
      */
-    bool operator==(const FMSignalParameters& rhs) const = default;
+    bool operator==(const FMSignalParameters& rhs) const
+    {
+        if (_center_frequency != rhs._center_frequency)
+            if (!std::isnan(_center_frequency) && !std::isnan(rhs._center_frequency))
+                return false;
+
+        if (_bandwidth != rhs._bandwidth)
+            if (!std::isnan(_bandwidth) && !std::isnan(rhs._bandwidth))
+                return false;
+
+        if (_effective_pulse_duration != rhs._effective_pulse_duration)
+            if (!std::isnan(_effective_pulse_duration) &&
+                !std::isnan(rhs._effective_pulse_duration))
+                return false;
+
+        return _up_sweep == rhs._up_sweep;
+    }
 
   public:
+    // ----- getters -----
+    float                 get_center_frequency() const { return _center_frequency; }
+    float                 get_bandwidth() const { return _bandwidth; }
+    float                 get_effective_pulse_duration() const { return _effective_pulse_duration; }
+    bool                  get_up_sweep() const { return _up_sweep; }
     types::t_TxSignalType get_tx_signal_type() const
     {
-        if (up_sweep)
+        if (_up_sweep)
             return types::t_TxSignalType::FM_UP_SWEEP;
         else
             return types::t_TxSignalType::FM_DOWN_SWEEP;
     }
+
+    // ----- setters -----
+    void set_center_frequency(float center_frequency)
+    {
+        this->_center_frequency = center_frequency;
+    }
+    void set_bandwidth(float bandwidth) { this->_bandwidth = bandwidth; }
+    void set_effective_pulse_duration(float effective_pulse_duration)
+    {
+        this->_effective_pulse_duration = effective_pulse_duration;
+    }
+    void set_up_sweep(bool up_sweep) { this->_up_sweep = up_sweep; }
 
     // ----- file I/O -----
     static constexpr size_t binary_size() { return sizeof(float) * 3 + sizeof(bool); }
@@ -113,7 +146,7 @@ struct FMSignalParameters
     {
         FMSignalParameters data;
 
-        is.read(reinterpret_cast<char*>(&data.center_frequency), binary_size());
+        is.read(reinterpret_cast<char*>(&data._center_frequency), binary_size());
 
         return data;
     }
@@ -124,7 +157,7 @@ struct FMSignalParameters
      */
     void to_stream(std::ostream& os) const
     {
-        os.write(reinterpret_cast<const char*>(&center_frequency), binary_size());
+        os.write(reinterpret_cast<const char*>(&_center_frequency), binary_size());
     }
 
   public:
@@ -137,9 +170,9 @@ struct FMSignalParameters
     {
         tools::classhelper::ObjectPrinter printer("FMSignalParameters", float_precision);
 
-        printer.register_value("center_frequency", center_frequency, "Hz");
-        printer.register_value("bandwidth", bandwidth, "Hz");
-        printer.register_value("effective_pulse_duration", effective_pulse_duration, "s");
+        printer.register_value("center_frequency", _center_frequency, "Hz");
+        printer.register_value("bandwidth", _bandwidth, "Hz");
+        printer.register_value("effective_pulse_duration", _effective_pulse_duration, "s");
         printer.register_value("Sweep direction", types::to_string(get_tx_signal_type()));
 
         return printer;

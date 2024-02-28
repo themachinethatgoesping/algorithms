@@ -23,7 +23,7 @@ namespace py_datastructures {
 namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::signalprocessing::datastructures;
 
-#define DOC_XYZ(ARG)                                                                               \
+#define DOC_CWSignalParameters(ARG)                                                                \
     DOC(themachinethatgoesping,                                                                    \
         algorithms,                                                                                \
         signalprocessing,                                                                          \
@@ -33,23 +33,47 @@ using namespace themachinethatgoesping::algorithms::signalprocessing::datastruct
 
 void init_c_cwsignalparameters(py::module& m)
 {
-    py::class_<CWSignalParameters, std::shared_ptr<CWSignalParameters>>(
-        m,
-        "CWSignalParameters",
-        DOC(themachinethatgoesping, algorithms, signalprocessing, datastructures, CWSignalParameters))
-        .def(py::init<>(), DOC_XYZ(CWSignalParameters))
+    py::class_<CWSignalParameters, std::shared_ptr<CWSignalParameters>>(m,
+                                                                        "CWSignalParameters",
+                                                                        DOC(themachinethatgoesping,
+                                                                            algorithms,
+                                                                            signalprocessing,
+                                                                            datastructures,
+                                                                            CWSignalParameters))
+        //.def(py::init<>(), DOC_CWSignalParameters(CWSignalParameters))
         .def(py::init<float, float, float>(),
-             DOC_XYZ(CWSignalParameters),
+             DOC_CWSignalParameters(CWSignalParameters),
              py::arg("center_frequency"),
              py::arg("bandwidth"),
              py::arg("effective_pulse_duration"))
-        .def("__eq__", &CWSignalParameters::operator==, DOC_XYZ(operator_eq), py::arg("other"))
+        .def("__eq__",
+             &CWSignalParameters::operator==,
+             DOC_CWSignalParameters(operator_eq),
+             py::arg("other"))
 
-        .def_readwrite("center_frequency", &CWSignalParameters::center_frequency, DOC_XYZ(center_frequency))
-        .def_readwrite("bandwidth", &CWSignalParameters::bandwidth, DOC_XYZ(bandwidth))
-        .def_readwrite("effective_pulse_duration", &CWSignalParameters::effective_pulse_duration, DOC_XYZ(effective_pulse_duration) )
+        .def("get_center_frequency",
+             &CWSignalParameters::get_center_frequency,
+             DOC_CWSignalParameters(center_frequency))
+        .def("get_bandwidth", &CWSignalParameters::get_bandwidth, DOC_CWSignalParameters(bandwidth))
+        .def("get_effective_pulse_duration",
+             &CWSignalParameters::get_effective_pulse_duration,
+             DOC_CWSignalParameters(effective_pulse_duration))
+        .def("get_tx_signal_type",
+             &CWSignalParameters::get_tx_signal_type,
+             DOC_CWSignalParameters(get_tx_signal_type))
 
-        .def("get_tx_signal_type", &CWSignalParameters::get_tx_signal_type, DOC_XYZ(get_tx_signal_type))
+        .def("set_center_frequency",
+             &CWSignalParameters::set_center_frequency,
+             DOC_CWSignalParameters(set_center_frequency),
+             py::arg("center_frequency"))
+        .def("set_bandwidth",
+             &CWSignalParameters::set_bandwidth,
+             DOC_CWSignalParameters(set_bandwidth),
+             py::arg("bandwidth"))
+        .def("set_effective_pulse_duration",
+             &CWSignalParameters::set_effective_pulse_duration,
+             DOC_CWSignalParameters(set_effective_pulse_duration),
+             py::arg("effective_pulse_duration"))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(CWSignalParameters)
