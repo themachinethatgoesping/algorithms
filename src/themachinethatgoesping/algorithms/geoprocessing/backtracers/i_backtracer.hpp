@@ -136,10 +136,10 @@ class I_Backtracer
 
         auto bi_interpolator = NearestInterpolator(
             std::vector<double>(sorted_beam_angles.begin(), sorted_beam_angles.end()),
-            std::vector<double>(sorted_beam_index.begin(), sorted_beam_index.end()));
+            std::vector<uint16_t>(sorted_beam_index.begin(), sorted_beam_index.end()));
 
         // create sample interpolator for each beam
-        std::vector<LinearInterpolator> sample_interpolators;
+        std::vector<LinearInterpolator<double, double>> sample_interpolators;
         sample_interpolators.reserve(beam_reference_directions.size());
         for (size_t bn = 0; bn < beam_reference_directions.size(); ++bn)
         {
@@ -149,7 +149,8 @@ class I_Backtracer
         }
 
         // loop through all target directions (flattened view)
-        // TODO: use openmp for this: the problem isthat the interpolators are not thread safe at the moment
+        // TODO: use openmp for this: the problem isthat the interpolators are not thread safe at
+        // the moment
         for (size_t ti = 0; ti < target_directions.size(); ++ti)
         {
             indices.beam_numbers.data()[ti] =
