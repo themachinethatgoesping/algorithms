@@ -1,4 +1,4 @@
-//sourcehash: e55f0fc70624c3c3f712a93008f4fb0c51fde38cfefb228290dc4c33672dc694
+//sourcehash: 630d1c3042c5fc300649d6c9e0318432afe837214214340ef1d2d3c40b98a0c1
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -102,6 +102,8 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtra
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_sensor_x = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_get_sensor_y = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_lookup = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_I_Backtracer_lookup_indices = R"doc()doc";
 

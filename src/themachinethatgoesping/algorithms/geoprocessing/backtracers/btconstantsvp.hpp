@@ -141,6 +141,7 @@ class BTConstantSVP : public I_Backtracer
         return targets;
     }
 
+
     // ----- file I/O -----
     static BTConstantSVP from_stream(std::istream& is)
     {
