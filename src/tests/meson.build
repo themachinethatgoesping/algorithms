@@ -21,6 +21,7 @@ sources = [
   'geoprocessing/datastructures/xyz.test.cpp',
   'geoprocessing/raytracers/i_raytracer.test.cpp',
   'geoprocessing/raytracers/rtconstantsvp.test.cpp',
+  'geoprocessing/backtracers/backtracedwci.test.cpp',
   'geoprocessing/backtracers/btconstantsvp.test.cpp',
   'geoprocessing/backtracers/i_backtracer.test.cpp',
   'geoprocessing/sparsemaps/sparsemap.test.cpp',

@@ -118,9 +118,9 @@ struct SampleIndices
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int uint16_t_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
     {
-        tools::classhelper::ObjectPrinter printer("SampleIndices", uint16_t_precision);
+        tools::classhelper::ObjectPrinter printer("SampleIndices", float_precision);
 
         printer.register_container("beam_numbers", beam_numbers, "°");
         printer.register_container("sample_numbers", sample_numbers, "°");

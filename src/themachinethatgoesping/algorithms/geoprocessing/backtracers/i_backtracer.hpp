@@ -20,6 +20,8 @@
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 #include <themachinethatgoesping/tools/vectorinterpolators.hpp>
 
+#include "backtracedwci.hpp"
+
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace geoprocessing {
@@ -180,52 +182,14 @@ class I_Backtracer
         const datastructures::SampleDirectionsRange<2>& target_directions,
         [[maybe_unused]] unsigned int                   mp_cores = 1) const
     {
-        using tools::vectorinterpolators::LinearInterpolator;
-        using tools::vectorinterpolators::NearestInterpolator;
+        auto output_image = xt::empty<float>(target_directions.shape());
+        auto traced_wci =
+            BacktracedWCI(wci, beam_reference_directions, beam_reference_sample_numbers);
 
-        if (beam_reference_directions.size() == 0)
-            throw std::runtime_error("lookup: beam_reference_directions is empty");
-
-        if (wci.shape()[0] < beam_reference_directions.size() ||
-            wci.shape()[1] < *std::max_element(beam_reference_sample_numbers.begin(),
-                                               beam_reference_sample_numbers.end()))
-            throw std::runtime_error(
-                fmt::format("lookup: wci shape ({}, {}) is smaller then beam_reference shape ({}, "
-                            "{}), or beam_reference_sample_numbers",
-                            wci.shape()[0],
-                            wci.shape()[1],
-                            beam_reference_directions.size(),
-                            *std::max_element(beam_reference_sample_numbers.begin(),
-                                              beam_reference_sample_numbers.end())));
-
-        // datastructures::SampleIndices<2> indices(target_directions.shape());
-        auto output_image = xt::xtensor<float, 2>::from_shape(target_directions.shape());
-
-        // sort the beam indices by angle and add them to a nearest interpolator
-        auto sorted_beam_index = xt::argsort(beam_reference_directions.crosstrack_angle);
-        auto sorted_beam_angles =
-            xt::index_view(beam_reference_directions.crosstrack_angle, sorted_beam_index);
-
-        size_t last_index = sorted_beam_angles.size() - 1;
-        float  delta_angle =
-            (sorted_beam_angles.unchecked(last_index) - sorted_beam_angles.unchecked(0)) /
-            (last_index);
-        float min_angle = sorted_beam_angles.unchecked(0) - delta_angle / 2;
-        float max_angle = sorted_beam_angles.unchecked(last_index) + delta_angle / 2;
-
-        auto bi_interpolator = NearestInterpolator(
-            std::vector<double>(sorted_beam_angles.begin(), sorted_beam_angles.end()),
-            std::vector<uint16_t>(sorted_beam_index.begin(), sorted_beam_index.end()));
-
-        // create sample interpolator for each beam
-        std::vector<LinearInterpolator<double, double>> sample_interpolators;
-        sample_interpolators.reserve(beam_reference_directions.size());
-        for (size_t bn = 0; bn < beam_reference_directions.size(); ++bn)
-        {
-            sample_interpolators.emplace_back(
-                std::vector<double>{ 0., double(beam_reference_directions.range[bn]) },
-                std::vector<double>{ 0., double(beam_reference_sample_numbers[bn]) });
-        }
+        auto bi_interpolator      = traced_wci.get_angle_beamnumber_interpolator();
+        auto sample_interpolators = traced_wci.get_range_samplenumber_interpolators();
+        auto min_angle            = traced_wci.get_min_angle();
+        auto max_angle            = traced_wci.get_max_angle();
 
         // loop through all target directions (flattened view)
         // TODO: use openmp for this: the problem isthat the interpolators are not thread safe at
@@ -257,7 +221,7 @@ class I_Backtracer
             else
                 si = sample_interpolators[bi].get_y_const(target_directions.range.data()[ti]);
 
-            if (si > beam_reference_max_sample_numbers[bi] || si < 0)
+            if (si > beam_reference_max_sample_numbers[bi] || si < 0 || si >= wci.shape()[1])
             {
                 output_image.data()[ti] = std::numeric_limits<float>::quiet_NaN();
                 continue;
