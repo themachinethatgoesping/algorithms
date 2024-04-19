@@ -80,7 +80,6 @@ void init_i_backtracer(py::module& m)
              py::arg("wci"),
              py::arg("beam_reference_directions"),
              py::arg("beam_reference_sample_numbers"),
-             py::arg("beam_reference_max_sample_numbers"),
              py::arg("target_directions"),
              py::arg("mp_cores") = 1)
 

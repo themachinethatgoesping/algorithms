@@ -1,4 +1,4 @@
-//sourcehash: ed9d119366a97153e13fe1dec071cea170bf519a7f9ff6ec2c35950961f1ce91
+//sourcehash: 36df082194b3fc6e11d1565497c88ece5438032ab792b4479ae2c3e81476458f
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -64,6 +64,10 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtra
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_range_samplenumber_interpolators = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_wci = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_lookup = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_lookup_const = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_max_angle = R"doc()doc";
 

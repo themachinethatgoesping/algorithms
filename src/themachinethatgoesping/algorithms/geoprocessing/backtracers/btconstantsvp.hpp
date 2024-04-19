@@ -147,8 +147,8 @@ class BTConstantSVP : public I_Backtracer
     {
         auto data = BTConstantSVP(I_Backtracer::from_stream(is));
         if (data.class_name() != "BTConstantSVP")
-            throw std::runtime_error(
-                fmt::format("BTConstantSVP::from_stream: wrong object name: {}", data.class_name()));
+            throw std::runtime_error(fmt::format(
+                "BTConstantSVP::from_stream: wrong object name: {}", data.class_name()));
 
         return data;
     }

@@ -178,57 +178,26 @@ class I_Backtracer
         xt::xtensor<float, 2>                           wci,
         const datastructures::SampleDirectionsRange<1>& beam_reference_directions,
         const std::vector<uint16_t>&                    beam_reference_sample_numbers,
-        const std::vector<uint16_t>&                    beam_reference_max_sample_numbers,
         const datastructures::SampleDirectionsRange<2>& target_directions,
         [[maybe_unused]] unsigned int                   mp_cores = 1) const
     {
-        auto output_image = xt::empty<float>(target_directions.shape());
-        auto traced_wci =
-            BacktracedWCI(wci, beam_reference_directions, beam_reference_sample_numbers);
+        auto output_image = xt::xtensor<float, 2>::from_shape(target_directions.shape());
+        auto BWCI = BacktracedWCI(wci, beam_reference_directions, beam_reference_sample_numbers);
 
-        auto bi_interpolator      = traced_wci.get_angle_beamnumber_interpolator();
-        auto sample_interpolators = traced_wci.get_range_samplenumber_interpolators();
-        auto min_angle            = traced_wci.get_min_angle();
-        auto max_angle            = traced_wci.get_max_angle();
-
-        // loop through all target directions (flattened view)
-        // TODO: use openmp for this: the problem isthat the interpolators are not thread safe at
-        // the moment
+        if (mp_cores != 1)
 #pragma omp parallel for num_threads(mp_cores)
-        for (size_t ti = 0; ti < target_directions.size(); ++ti)
-        {
-            if (target_directions.crosstrack_angle.data()[ti] < min_angle ||
-                target_directions.crosstrack_angle.data()[ti] > max_angle)
+            for (size_t ti = 0; ti < target_directions.size(); ++ti)
             {
-                output_image.data()[ti] = std::numeric_limits<float>::quiet_NaN();
-                continue;
+                output_image.data()[ti] =
+                    BWCI.lookup_const(target_directions.crosstrack_angle.data()[ti],
+                                      target_directions.range.data()[ti]);
             }
-
-            uint16_t bi;
-            if (mp_cores == 1)
-                bi = bi_interpolator(target_directions.crosstrack_angle.data()[ti]);
-            else
-                bi = bi_interpolator.get_y_const(target_directions.crosstrack_angle.data()[ti]);
-
-            if (target_directions.range.data()[ti] < 0)
+        else
+            for (size_t ti = 0; ti < target_directions.size(); ++ti)
             {
-                output_image.data()[ti] = std::numeric_limits<float>::quiet_NaN();
-                continue;
+                output_image.data()[ti] = BWCI.lookup(target_directions.crosstrack_angle.data()[ti],
+                                                      target_directions.range.data()[ti]);
             }
-            int si;
-            if (mp_cores == 1)
-                si = sample_interpolators[bi](target_directions.range.data()[ti]);
-            else
-                si = sample_interpolators[bi].get_y_const(target_directions.range.data()[ti]);
-
-            if (si > beam_reference_max_sample_numbers[bi] || si < 0 || si >= wci.shape()[1])
-            {
-                output_image.data()[ti] = std::numeric_limits<float>::quiet_NaN();
-                continue;
-            }
-
-            output_image.data()[ti] = wci.unchecked(bi, si);
-        }
 
         return output_image;
     }
