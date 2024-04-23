@@ -49,8 +49,17 @@ TEST_CASE("BacktracedWCI should support common functions", TESTTAG)
     // test print does not crash
     REQUIRE(BWCI.info_string().size() != 0);
 
+    auto B = BWCI.get_angle_beamnumber_interpolator();
+    auto S = BWCI.get_range_samplenumber_interpolators();
+
+    CHECK(B.binary_hash() == 16542792567673540722ULL);
+    REQUIRE(S.size() == 2); 
+    CHECK(S[0].binary_hash() == 17516376884828913569ULL);
+    CHECK(S[1].binary_hash() == 10310803827488579691ULL); 
+
+
     // test hash
-    //REQUIRE(BWCI.binary_hash() == 855170144638534307ULL); //TODO: fix hash (changes on each re-compile, this shouldn't happen ..)
+    REQUIRE(BWCI.binary_hash() == 10221334945506934621ULL); 
     REQUIRE(BWCI.binary_hash() == BacktracedWCI(BWCI).binary_hash());
     REQUIRE(BWCI.binary_hash() == BacktracedWCI(BWCI.from_binary(BWCI.to_binary())).binary_hash());
 }
