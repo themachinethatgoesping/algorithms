@@ -76,6 +76,7 @@ if build_machine.system() != 'linux'
   algorithms_lib = static_library(libname,sources,
                         dependencies : [
                           boost_dep, 
+                          omp_dep,
                           navigation_dep,
                           tools_dep
                           ],
@@ -90,6 +91,7 @@ else
   algorithms_lib = library(libname,sources,
                         dependencies : [
                           boost_dep, 
+                          omp_dep,
                           navigation_dep,
                           tools_dep
                           ],
@@ -107,6 +109,7 @@ endif
 algorithms_dep = declare_dependency(
   dependencies : [
     boost_dep,
+    omp_dep,
     navigation_dep,
     tools_dep
   ],

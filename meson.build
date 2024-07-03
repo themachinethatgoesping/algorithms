@@ -22,6 +22,7 @@ projectnamespace = 'themachinethatgoesping'
 boost_dep = dependency('boost', static: get_option('dynamic_boost').disabled())
 
 # ext libraries
+omp_dep = dependency('openmp', static: true)
 
 
 # themachinethatgoesping
