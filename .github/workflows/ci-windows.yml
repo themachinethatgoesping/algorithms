@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019]
+        os: [windows-2019, windows-2022]
         boost-version: [1.84.0]
         boost-version_: [1_84_0]
         boost-modules: [--with-iostreams]
