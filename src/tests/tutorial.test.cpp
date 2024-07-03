@@ -60,7 +60,7 @@ inline bool openmp_parallel_pragma_is_working()
 }
 TEST_CASE("openmp_parallel_pragma_is_working_in_header")
 {
-    //REQUIRE(openmp_parallel_pragma_is_working());
+    REQUIRE(openmp_parallel_pragma_is_working());
 }
 
 }
