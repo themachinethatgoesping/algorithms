@@ -60,7 +60,11 @@ inline bool openmp_parallel_pragma_is_working()
 }
 TEST_CASE("openmp_parallel_pragma_is_working_in_header")
 {
+#if defined(_OPENMP)
     REQUIRE(openmp_parallel_pragma_is_working());
+#else
+    WARN("OpenMP is not enabled, skipping test");
+#endif
 }
 
 }
