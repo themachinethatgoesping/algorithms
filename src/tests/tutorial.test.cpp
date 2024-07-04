@@ -9,7 +9,7 @@
 #include <iostream>
 #include <thread>
 
-#include <omp.h>
+#include <themachinethatgoesping/tools/helper/omp_helper.hpp>
 
 // using namespace testing;
 using namespace std;
