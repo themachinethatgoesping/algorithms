@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 # -- library setup --
-libname   = projectnamespace + '_algorithms'
+libname = projectnamespace + '_algorithms'
 headerdir = projectnamespace + '/algorithms'
 
 # -- source files --
@@ -12,6 +12,14 @@ sources = [
 
 headers = [
   'helloping.hpp',
+  'amplitudecorrection/functions.hpp',
+  'amplitudecorrection/.docstrings/functions.doc.hpp',
+  'amplitudecorrection/functions/absorption.hpp',
+  'amplitudecorrection/functions/rangecorrection.hpp',
+  'amplitudecorrection/functions/wcicorrection.hpp',
+  'amplitudecorrection/functions/.docstrings/absorption.doc.hpp',
+  'amplitudecorrection/functions/.docstrings/rangecorrection.doc.hpp',
+  'amplitudecorrection/functions/.docstrings/wcicorrection.doc.hpp',
   'signalprocessing/datastructures.hpp',
   'signalprocessing/types.hpp',
   'signalprocessing/datastructures/cwsignalparameters.hpp',
@@ -73,57 +81,45 @@ headers = [
 # -- targets --
 # for now force static linking on windows
 if build_machine.system() != 'linux'
-  algorithms_lib = static_library(libname,sources,
-                        dependencies : [
-                          boost_dep, 
-                          navigation_dep,
-                          tools_dep
-                          ],
-                        override_options: [
-                          'b_lundef=false'
-                      ],
-                        # cpp_pch : 'pch/pch.hpp',
-                        install : true, 
-                        install_tag : 'library'
-                        )
-else  
-  algorithms_lib = library(libname,sources,
-                        dependencies : [
-                          boost_dep, 
-                          navigation_dep,
-                          tools_dep
-                          ],
-                        override_options: [
-                          'b_lundef=false'
-                      ],
-                        # cpp_pch : 'pch/pch.hpp',
-                        install : true, 
-                        install_tag : 'library'
-                        )
+  algorithms_lib = static_library(
+    libname,
+    sources,
+    dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
+    override_options: ['b_lundef=false'],
+    # cpp_pch : 'pch/pch.hpp',
+    install: true,
+    install_tag: 'library',
+  )
+else
+  algorithms_lib = library(
+    libname,
+    sources,
+    dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
+    override_options: ['b_lundef=false'],
+    # cpp_pch : 'pch/pch.hpp',
+    install: true,
+    install_tag: 'library',
+  )
 endif
-                      
 
 # -- internal dependency --
 algorithms_dep = declare_dependency(
-  dependencies : [
-    boost_dep,
-    navigation_dep,
-    tools_dep
-  ],
-  link_with : [algorithms_lib],
-  include_directories : ['../../']
-  )
-
+  dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
+  link_with: [algorithms_lib],
+  include_directories: ['../../'],
+)
 
 # -- installation setup --
 
 # install headers
 if headers != ['']
-    install_headers(headers, subdir: headerdir+'/', preserve_path: true)
+  install_headers(headers, subdir: headerdir + '/', preserve_path: true)
 endif
 
 # create pkgconfig file
 pkg = import('pkgconfig')
-pkg.generate(algorithms_lib,
-             description : 'Library for processing themachinethatgoesping pings',
-             url : 'https://github.com/themachinethatgoesping/algorithms')
+pkg.generate(
+  algorithms_lib,
+  description: 'Library for processing themachinethatgoesping pings',
+  url: 'https://github.com/themachinethatgoesping/algorithms',
+)

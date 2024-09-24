@@ -1,4 +1,4 @@
-//sourcehash: fe33432f6337ae8971ac01f79910fbd6f7a7cf3746aa10ae1a41ce8176476dc9
+//sourcehash: fd3765d68f5b2a0a54c3a4057bfde38c84b4a141f4eaacb1862ef398989d077a
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,14 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_range_factor = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_compute_cw_range_correction = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_get_sample_numbers_plus_half = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

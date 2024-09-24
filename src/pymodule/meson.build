@@ -33,6 +33,7 @@ py_algorithms = pymod.extension_module(
     dependencies : [
         tools_pybind_dep,
         algorithms_dep,
+        gswteos_10_dep,
         pybind11_dep,
         python3_dep],
     link_language : 'cpp',

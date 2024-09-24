@@ -1,4 +1,4 @@
-//sourcehash: f832ca529d511eb1355e2ffa7576b496727810220ef0c08ce75b8943910b56b5
+//sourcehash: 5c8188cb5f1b2d240c72954adc6430e13d22062d6b400c11476baed51945113c
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,40 +37,6 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
-
-static const char *__doc_themachinethatgoesping_algorithms_rangecorrection_functions_calc_absorption_coefficient_db_m =
-R"doc(Compute the logarithmic absorption coefficient in dB/m based on
-Francois and Garrison (1982) [taken from Fisheries Acoustics Theory
-and Practice, 2nd Edition, Simmonds and MacLennan, 2005]
-
-Parameter ``frequency``:
-    // Frequency in Hz
-
-Parameter ``depth``:
-    // Depth in m
-
-Parameter ``speedOfSound``:
-    // Speed of sound in m/s
-
-Parameter ``temperature``:
-    // ITS-90 temperature in degrees Celsius
-
-Parameter ``salinity_psu``:
-    // Salinity in PSU
-
-Parameter ``pH``:
-    // pH
-
-Returns:
-    double)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_rangecorrection_functions_its90_to_its68 =
-R"doc(Convert temperature from ITS-68 to ITS-90
-
-Parameter ``T90``:
-    $Returns:
-
-double)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

@@ -2,14 +2,15 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
+#define FORCE_IMPORT_ARRAY // this is needed for xtensor-python but must only be included once
+#include <xtensor-python/pyarray.hpp> // Numpy bindings
+
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 
+#include "amplitudecorrection/module.hpp"
 #include "geoprocessing/module.hpp"
 #include "signalprocessing/module.hpp"
-
-#define FORCE_IMPORT_ARRAY // this is needed for xtensor-python but must only be included once
-#include <xtensor-python/pyarray.hpp> // Numpy bindings
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -26,6 +27,7 @@ PYBIND11_MODULE(MODULE_NAME, m)
                             "range/depth, raytrace ...";
     m.attr("__version__") = MODULE_VERSION;
 
+    py_amplitudecorrection::init_m_amplitudecorrection(m);
     py_geoprocessing::init_m_geoprocessing(m);
     py_signalprocessing::init_m_signalprocessing(m);
 }
