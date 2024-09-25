@@ -13,44 +13,61 @@
 #include <Eigen/Dense>
 #include <xtensor/xtensor.hpp>
 
+#include <themachinethatgoesping/tools/helper/xtensor.hpp>
+
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace amplitudecorrection {
 namespace functions {
 
-template<template<typename, size_t> typename t_xtensor, typename t_float, typename t_int>
-inline t_xtensor<t_float, 1> get_sample_numbers_plus_half(t_int first_sample_nr,
-                                                          t_int last_sample_nr,
-                                                          t_int step = 1)
+// template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+
+template<tools::helper::c_xtensor t_xtensor_1d, typename t_int>
+inline t_xtensor_1d get_sample_numbers_plus_half(t_int first_sample_nr,
+                                                 t_int last_sample_nr,
+                                                 t_int step = 1)
 {
+    static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
+                  "Template parameter must be a 1D tensor");
+
+    using t_float = tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+
     // calculate the sample numbers
-    return xt::arange<t_float>(first_sample_nr + 0.5, last_sample_nr + 0.5 + 1, step);
+    return xt::arange<t_float>(first_sample_nr + t_float(0.5), last_sample_nr + t_float(1.5), step);
 }
 
 template<typename t_float>
 inline t_float approximate_range_factor(t_float sample_interval_s, t_float sound_velocity_m_s)
 {
     // calculate the ranges
-    return sample_interval_s * sound_velocity_m_s * 0.5;
+    return sample_interval_s * sound_velocity_m_s * t_float(0.5);
 }
 
-template<template<typename, size_t> typename t_xtensor, typename t_float, typename t_int>
-inline t_xtensor<t_float, 1> approximate_ranges(t_float sample_interval_s,
-                                                t_float sound_velocity_m_s,
-                                                t_int   first_sample_nr,
-                                                t_int   last_sample_nr,
-                                                t_int   step = 1)
+template<tools::helper::c_xtensor t_xtensor_1d, typename t_int>
+inline t_xtensor_1d approximate_ranges(
+    typename tools::helper::xtensor_datatype<t_xtensor_1d>::type sample_interval_s,
+    typename tools::helper::xtensor_datatype<t_xtensor_1d>::type sound_velocity_m_s,
+    t_int                                                        first_sample_nr,
+    t_int                                                        last_sample_nr,
+    t_int                                                        step = 1)
 {
-    return get_sample_numbers_plus_half<t_xtensor, t_float, t_int>(
+    static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
+                  "Template parameter must be a 1D tensor");
+
+    return get_sample_numbers_plus_half<t_xtensor_1d, t_int>(
                first_sample_nr, last_sample_nr, step) *
            approximate_range_factor(sample_interval_s, sound_velocity_m_s);
 }
 
-template<template<typename, size_t> typename t_xtensor, typename t_float>
-inline t_xtensor<t_float, 1> compute_cw_range_correction(const t_xtensor<t_float, 1>& ranges_m,
-                                                         t_float absorption_db_m,
-                                                         t_float tvg_factor)
+template<tools::helper::c_xtensor t_xtensor_1d>
+inline t_xtensor_1d compute_cw_range_correction(
+    const t_xtensor_1d&                                          ranges_m,
+    typename tools::helper::xtensor_datatype<t_xtensor_1d>::type absorption_db_m,
+    typename tools::helper::xtensor_datatype<t_xtensor_1d>::type tvg_factor)
 {
+    static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
+                  "Template parameter must be a 1D tensor");
+
     // range correction = absorption*R + tvg_factor*log10(R)
     return absorption_db_m * ranges_m + tvg_factor * xt::log10(ranges_m);
 }

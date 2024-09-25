@@ -13,8 +13,11 @@
 #include <fmt/core.h>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xarray.hpp>
+#include <xtensor/xexpression.hpp>
 #include <xtensor/xio.hpp>
 #include <xtensor/xview.hpp>
+
+#include <themachinethatgoesping/tools/helper/xtensor.hpp>
 
 #include "rangecorrection.hpp"
 
@@ -23,12 +26,17 @@ namespace algorithms {
 namespace amplitudecorrection {
 namespace functions {
 
-template<template<typename, size_t> typename t_xtensor, typename t_float>
-inline t_xtensor<t_float, 2> apply_wci_correction(t_xtensor<t_float, 2>        wci,
-                                                  const t_xtensor<t_float, 1>& per_beam_offset,
-                                                  const t_xtensor<t_float, 1>& per_sample_offset,
-                                                  int                          mp_cores = 1)
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline t_xtensor_2d apply_wci_correction(t_xtensor_2d        wci,
+                                         const t_xtensor_1d& per_beam_offset,
+                                         const t_xtensor_1d& per_sample_offset,
+                                         int                 mp_cores = 1)
 {
+    static_assert(tools::helper::c_xtensor_2d<t_xtensor_2d>,
+                  "Template parameter must be a 2D tensor");
+    static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
+                  "Template parameter must be a 1D tensor");
+
     // assert that beam_offset has the same shape as wci.shape[0]
     if (wci.shape(0) != per_beam_offset.size())
         throw std::invalid_argument(fmt::format("wci.shape(0) [{}] != per_beam_offset.size() [{}]",
