@@ -50,7 +50,7 @@ void init_m_functions(pybind11::module& m)
 
     // range correction
     submodule.def("get_sample_numbers_plus_half",
-                  &get_sample_numbers_plus_half<xt::pytensor<float, 1>, int64_t>,
+                  &get_sample_numbers_plus_half<xt::pytensor<float, 1>, int32_t>,
                   DOC_functions(get_sample_numbers_plus_half),
                   py::arg("first_sample_nr"),
                   py::arg("last_sample_nr"),
@@ -63,13 +63,22 @@ void init_m_functions(pybind11::module& m)
                   py::arg("sound_velocity_m_s"));
 
     submodule.def("approximate_ranges",
-                  &approximate_ranges<xt::pytensor<float, 1>, int64_t>,
+                  py::overload_cast<float, float, int32_t, int32_t, int32_t>(
+                      &approximate_ranges<xt::pytensor<float, 1>, int32_t>),
                   DOC_functions(approximate_ranges),
                   py::arg("sample_interval_s"),
                   py::arg("sound_velocity_m_s"),
                   py::arg("first_sample_nr"),
                   py::arg("last_sample_nr"),
                   py::arg("step") = 1);
+
+    submodule.def("approximate_ranges",
+                  py::overload_cast<float, float, const xt::pytensor<int32_t, 1>&>(
+                      &approximate_ranges<xt::pytensor<float, 1>, xt::pytensor<int32_t, 1>>),
+                  DOC_functions(approximate_ranges_2),
+                  py::arg("sample_interval_s"),
+                  py::arg("sound_velocity_m_s"),
+                  py::arg("sample_numbers"));
 
     submodule.def("compute_cw_range_correction",
                   &compute_cw_range_correction<xt::pytensor<float, 1>>,
@@ -78,13 +87,62 @@ void init_m_functions(pybind11::module& m)
                   py::arg("absorption_db_m"),
                   py::arg("tvg_factor"));
 
-    submodule.def("apply_wci_correction",
-                  &apply_wci_correction<xt::pytensor<float, 2>, xt::pytensor<float, 1>>,
-                  DOC_functions(apply_wci_correction),
+    submodule.def("apply_beam_sample_correction",
+                  &apply_beam_sample_correction<xt::pytensor<float, 2>, xt::pytensor<float, 1>>,
+                  DOC_functions(apply_beam_sample_correction),
                   py::arg("wci"),
                   py::arg("per_beam_offset"),
                   py::arg("per_sample_offset"),
                   py::arg("mp_cores") = 1);
+
+    submodule.def("apply_beam_correction",
+                  &apply_beam_correction<xt::pytensor<float, 2>, xt::pytensor<float, 1>>,
+                  DOC_functions(apply_beam_correction),
+                  py::arg("wci"),
+                  py::arg("per_beam_offset"),
+                  py::arg("mp_cores") = 1);
+
+    submodule.def("apply_sample_correction",
+                  &apply_sample_correction<xt::pytensor<float, 2>, xt::pytensor<float, 1>>,
+                  DOC_functions(apply_sample_correction),
+                  py::arg("wci"),
+                  py::arg("per_sample_offset"),
+                  py::arg("mp_cores") = 1);
+
+    submodule.def(
+        "apply_beam_sample_correction_loop",
+        &apply_beam_sample_correction_loop<xt::pytensor<float, 2>, xt::pytensor<float, 1>>,
+        DOC_functions(apply_beam_sample_correction_loop),
+        py::arg("wci"),
+        py::arg("per_beam_offset"),
+        py::arg("per_sample_offset"),
+        py::arg("mp_cores") = 1);
+
+    submodule.def(
+        "apply_beam_sample_correction_xtensor2",
+        &apply_beam_sample_correction_xtensor2<xt::pytensor<float, 2>, xt::pytensor<float, 1>>,
+        DOC_functions(apply_beam_sample_correction_xtensor2),
+        py::arg("wci"),
+        py::arg("per_beam_offset"),
+        py::arg("per_sample_offset"),
+        py::arg("mp_cores") = 1);
+    submodule.def(
+        "apply_beam_sample_correction_xtensor3",
+        &apply_beam_sample_correction_xtensor3<xt::pytensor<float, 2>, xt::pytensor<float, 1>>,
+        DOC_functions(apply_beam_sample_correction_xtensor3),
+        py::arg("wci"),
+        py::arg("per_beam_offset"),
+        py::arg("per_sample_offset"),
+        py::arg("mp_cores") = 1);
+
+    submodule.def(
+        "apply_beam_sample_correction_xsimd",
+        &apply_beam_sample_correction_xsimd<xt::pytensor<float, 2>, xt::pytensor<float, 1>>,
+        DOC_functions(apply_beam_sample_correction_xsimd),
+        py::arg("wci"),
+        py::arg("per_beam_offset"),
+        py::arg("per_sample_offset"),
+        py::arg("mp_cores") = 1);
 }
 
 } // namespace py_functions

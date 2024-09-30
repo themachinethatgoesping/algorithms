@@ -59,6 +59,23 @@ inline t_xtensor_1d approximate_ranges(
            approximate_range_factor(sample_interval_s, sound_velocity_m_s);
 }
 
+template<tools::helper::c_xtensor t_xtensor_1d,
+         tools::helper::c_xtensor t_xtensor_1d_int>
+inline t_xtensor_1d approximate_ranges(
+    typename tools::helper::xtensor_datatype<t_xtensor_1d>::type sample_interval_s,
+    typename tools::helper::xtensor_datatype<t_xtensor_1d>::type sound_velocity_m_s,
+    const t_xtensor_1d_int&                                          sample_numbers)
+{
+    static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
+                  "Template parameter must be a 1D tensor");
+    static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d_int>,
+                  "Template parameter must be a 1D tensor");
+    using t_float = tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+
+    return (sample_numbers + t_float(0.5)) *
+           approximate_range_factor(sample_interval_s, sound_velocity_m_s);
+}
+
 template<tools::helper::c_xtensor t_xtensor_1d>
 inline t_xtensor_1d compute_cw_range_correction(
     const t_xtensor_1d&                                          ranges_m,
@@ -68,8 +85,21 @@ inline t_xtensor_1d compute_cw_range_correction(
     static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
                   "Template parameter must be a 1D tensor");
 
+    using t_float = typename tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+
     // range correction = absorption*R + tvg_factor*log10(R)
-    return absorption_db_m * ranges_m + tvg_factor * xt::log10(ranges_m);
+    if (tools::helper::float_is_finite_and_not_zero(absorption_db_m))
+        if (tools::helper::float_is_finite_and_not_zero(tvg_factor))
+            return absorption_db_m * ranges_m + tvg_factor * xt::log10(ranges_m);
+
+    if (tools::helper::float_is_finite_and_not_zero(tvg_factor))
+        return tvg_factor * xt::log10(ranges_m);
+
+    if (tools::helper::float_is_finite_and_not_zero(absorption_db_m))
+        return absorption_db_m * ranges_m;
+
+    return xt::zeros_like(ranges_m);
+    // range correction = absorption*R + tvg_factor*log10(R)
 }
 
 }

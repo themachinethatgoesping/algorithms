@@ -1,4 +1,4 @@
-//sourcehash: 449e2ac24adaedde10a18e765cfb777059a926172151583846f99e67ba681c04
+//sourcehash: dc65b20c5b98bd8cd1ccdc2c90c6d9cb5381f4277602d31839d11b1132321279
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -41,6 +41,8 @@
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_range_factor = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges_2 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_compute_cw_range_correction = R"doc()doc";
 

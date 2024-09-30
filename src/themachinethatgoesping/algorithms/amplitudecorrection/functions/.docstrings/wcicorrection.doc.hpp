@@ -1,4 +1,4 @@
-//sourcehash: 9f9b40bf69cc0bc6ec707420219e7f552a786bcfa4cc47a6f78c86291bd384ae
+//sourcehash: a302a9f48e1b20efdf9ab01a6bae5c8fea7eea95c0e2aafc2ed22d54e3dbd97a
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,7 +38,23 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_wci_correction = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_correction = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_loop = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_xsimd = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_xtensor2 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_xtensor3 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_sample_correction = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_axis_shape = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_beam_sample_shape = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
