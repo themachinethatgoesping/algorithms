@@ -90,13 +90,13 @@ inline t_xtensor_1d compute_cw_range_correction(
     // range correction = absorption*R + tvg_factor*log10(R)
     if (tools::helper::float_is_finite_and_not_zero(absorption_db_m))
         if (tools::helper::float_is_finite_and_not_zero(tvg_factor))
-            return absorption_db_m * ranges_m + tvg_factor * xt::log10(ranges_m);
+            return (2*absorption_db_m) * ranges_m + tvg_factor * xt::log10(ranges_m);
 
     if (tools::helper::float_is_finite_and_not_zero(tvg_factor))
         return tvg_factor * xt::log10(ranges_m);
 
     if (tools::helper::float_is_finite_and_not_zero(absorption_db_m))
-        return absorption_db_m * ranges_m;
+        return (2*absorption_db_m) * ranges_m;
 
     return xt::zeros_like(ranges_m);
     // range correction = absorption*R + tvg_factor*log10(R)
