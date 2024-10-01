@@ -166,9 +166,9 @@ class FMSignalParameters
      * @param float_precision The precision for floating-point values.
      * @return The ObjectPrinter.
      */
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer("FMSignalParameters", float_precision);
+        tools::classhelper::ObjectPrinter printer("FMSignalParameters", float_precision, superscript_exponents);
 
         printer.register_value("center_frequency", _center_frequency, "Hz");
         printer.register_value("bandwidth", _bandwidth, "Hz");

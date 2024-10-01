@@ -168,9 +168,9 @@ class BeamSampleParameters
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer("BeamSampleParameters", float_precision);
+        tools::classhelper::ObjectPrinter printer("BeamSampleParameters", float_precision, superscript_exponents);
 
         printer.register_container("alongtrack_angles", _alongtrack_angles);
         printer.register_container("crosstrack_angles", _crosstrack_angles);

@@ -198,16 +198,16 @@ class BacktracedWCI
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer("BacktracedWCI", float_precision);
+        tools::classhelper::ObjectPrinter printer("BacktracedWCI", float_precision, superscript_exponents);
 
         printer.register_container("wci", _wci, "°");
         printer.register_value("min_angle", _min_angle, "°");
         printer.register_value("max_angle", _max_angle, "°");
-        printer.append(_angle_beamnumber_interpolator.__printer__(float_precision));
+        printer.append(_angle_beamnumber_interpolator.__printer__(float_precision, superscript_exponents));
         for (size_t i = 0; i < _range_samplenumber_interpolators.size(); ++i)
-            printer.append(_range_samplenumber_interpolators[i].__printer__(float_precision));
+            printer.append(_range_samplenumber_interpolators[i].__printer__(float_precision, superscript_exponents));
 
         return printer;
     }

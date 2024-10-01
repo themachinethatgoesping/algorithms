@@ -176,11 +176,11 @@ struct RaytraceResults : public XYZ<Dim>
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer("RaytraceResults", float_precision);
+        tools::classhelper::ObjectPrinter printer("RaytraceResults", float_precision, superscript_exponents);
 
-        printer.append(t_base::__printer__(float_precision), true);
+        printer.append(t_base::__printer__(float_precision, superscript_exponents), true);
 
         printer.register_container("true_range", true_range, "ray path length, m");
 

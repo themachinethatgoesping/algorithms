@@ -158,12 +158,12 @@ class BTConstantSVP : public I_Backtracer
   public:
     // __printer__ function is necessary to support print() info_string() etc (defined by
     // __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__ macro below)
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer(this->class_name(), float_precision);
+        tools::classhelper::ObjectPrinter printer(this->class_name(), float_precision, superscript_exponents);
 
         printer.register_section("Basics", '*');
-        printer.append(I_Backtracer::__printer__(float_precision));
+        printer.append(I_Backtracer::__printer__(float_precision, superscript_exponents));
 
         return printer;
     }

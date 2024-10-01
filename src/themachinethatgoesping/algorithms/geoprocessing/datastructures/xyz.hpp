@@ -231,9 +231,9 @@ struct XYZ
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer("XYZ", float_precision);
+        tools::classhelper::ObjectPrinter printer("XYZ", float_precision, superscript_exponents);
 
         printer.register_container("x", x, "positive forward, m");
         printer.register_container("y", y, "positive starboard, m");

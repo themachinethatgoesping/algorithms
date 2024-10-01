@@ -82,9 +82,9 @@ struct RaytraceResult
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer("RaytraceResult", float_precision);
+        tools::classhelper::ObjectPrinter printer("RaytraceResult", float_precision, superscript_exponents);
 
         printer.register_value("x", x, "positive forward, m");
         printer.register_value("y", y, "positive starboard, m");

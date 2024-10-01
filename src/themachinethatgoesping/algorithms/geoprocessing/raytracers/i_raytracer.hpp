@@ -259,12 +259,12 @@ class I_Raytracer
   public:
     // __printer__ function is necessary to support print() info_string() etc (defined by
     // __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__ macro below)
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer(this->class_name(), float_precision);
+        tools::classhelper::ObjectPrinter printer(this->class_name(), float_precision, superscript_exponents);
 
         printer.register_section("Sensor location", '*');
-        printer.append(_sensor_location.__printer__(float_precision));
+        printer.append(_sensor_location.__printer__(float_precision, superscript_exponents));
 
         printer.register_section("Sensor location converted", '*');
         printer.register_container("YPR", get_sensor_orientation_quat_ypr(), "°");
