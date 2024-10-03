@@ -85,7 +85,7 @@ inline t_xtensor_1d compute_cw_range_correction(
     static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
                   "Template parameter must be a 1D tensor");
 
-    using t_float = typename tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+    //using t_float = typename tools::helper::xtensor_datatype<t_xtensor_1d>::type;
 
     // range correction = absorption*R + tvg_factor*log10(R)
     if (tools::helper::float_is_finite_and_not_zero(absorption_db_m))
