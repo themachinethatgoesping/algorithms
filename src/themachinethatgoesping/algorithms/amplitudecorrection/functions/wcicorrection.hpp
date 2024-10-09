@@ -81,6 +81,21 @@ inline t_xtensor_2d apply_beam_sample_correction(const t_xtensor_2d& wci,
 }
 
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline void inplace_beam_sample_correction([[maybe_unused]] t_xtensor_2d& wci,
+                                           const t_xtensor_1d&            per_beam_offset,
+                                           const t_xtensor_1d&            per_sample_offset,
+                                           int                            mp_cores = 1)
+{
+    assert_wci_beam_sample_shape(wci, per_beam_offset, per_sample_offset);
+
+    // Apply the range correction to each sample
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = 0; bi < per_beam_offset.size(); ++bi)
+        xt::row(wci, bi) =
+            xt::eval(xt::row(wci, bi) + (per_beam_offset.unchecked(bi) + per_sample_offset));
+}
+
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
 inline t_xtensor_2d apply_beam_correction(const t_xtensor_2d& wci,
                                           const t_xtensor_1d& per_beam_offset,
                                           int                 mp_cores = 1)
@@ -97,6 +112,18 @@ inline t_xtensor_2d apply_beam_correction(const t_xtensor_2d& wci,
 }
 
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline t_xtensor_2d inplace_beam_correction([[maybe_unused]] t_xtensor_2d& wci,
+                                            const t_xtensor_1d&            per_beam_offset,
+                                            int                            mp_cores = 1)
+{
+    assert_wci_axis_shape(wci, per_beam_offset, 0, "per_beam_offset");
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = 0; bi < per_beam_offset.size(); ++bi)
+        xt::row(wci, bi) = xt::eval(xt::row(wci, bi) + per_beam_offset.unchecked(bi));
+}
+
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
 inline t_xtensor_2d apply_sample_correction(const t_xtensor_2d&  wci,
                                             const t_xtensor_1d&  per_sample_offset,
                                             [[maybe_unused]] int mp_cores = 1)
@@ -104,6 +131,27 @@ inline t_xtensor_2d apply_sample_correction(const t_xtensor_2d&  wci,
     assert_wci_axis_shape(wci, per_sample_offset, 1, "per_sample_offset");
 
     return wci + xt::view(per_sample_offset, xt::newaxis(), xt::all());
+}
+
+/**
+ * @brief
+ *
+ * @tparam t_xtensor_2d
+ * @tparam t_xtensor_1d
+ * @param wci
+ * @param per_sample_offset
+ * @param mp_cores
+ */
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+void inplace_sample_correction(
+    [[maybe_unused]] t_xtensor_2d& wci, //[[maybe_unused]] is used here because pybind11-mkdoc fails
+                                        // of no specifier is used for this template type
+    const t_xtensor_1d&  per_sample_offset,
+    [[maybe_unused]] int mp_cores = 1)
+{
+    assert_wci_axis_shape(wci, per_sample_offset, 1, "per_sample_offset");
+
+    wci = xt::eval(wci + xt::view(per_sample_offset, xt::newaxis(), xt::all()));
 }
 
 //--- these functions are for benchmarking purposes ---
@@ -122,7 +170,6 @@ inline t_xtensor_2d apply_beam_sample_correction_loop(const t_xtensor_2d& wci,
     for (unsigned int bi = 0; bi < per_beam_offset.size(); ++bi)
     {
         auto beam_offset = per_beam_offset.unchecked(bi);
-#pragma GCC ivdep
         for (unsigned int si = 0; si < per_sample_offset.size(); ++si)
             result.unchecked(bi, si) =
                 wci.unchecked(bi, si) + beam_offset + per_sample_offset.unchecked(si);
@@ -168,6 +215,12 @@ inline t_xtensor_2d apply_beam_sample_correction_xsimd(const t_xtensor_2d& wci,
                                                        const t_xtensor_1d& per_sample_offset,
                                                        int                 mp_cores = 1)
 {
+    using t_float  = tools::helper::xtensor_datatype<t_xtensor_2d>::type;
+    using t_float1 = tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+
+    static_assert(std::is_same<t_float, t_float1>::value,
+                  "float type for all tensors must be the same type");
+
     assert_wci_beam_sample_shape(wci, per_beam_offset, per_sample_offset);
 
     // Get the size of the vectors
@@ -175,7 +228,7 @@ inline t_xtensor_2d apply_beam_sample_correction_xsimd(const t_xtensor_2d& wci,
     int64_t nsamples = per_sample_offset.size();
 
     // Determine the SIMD batch size
-    int64_t simd_size          = xsimd::batch<float>::size;
+    int64_t simd_size          = xsimd::batch<t_float>::size;
     int64_t max_simd_sample_nr = nsamples - simd_size;
 
     t_xtensor_2d result = xt::empty_like(wci);
@@ -185,18 +238,18 @@ inline t_xtensor_2d apply_beam_sample_correction_xsimd(const t_xtensor_2d& wci,
     for (int64_t bi = 0; bi < nbeams; ++bi)
     {
         // Load the beam offset for the current row
-        float beam_offset = per_beam_offset.unchecked(bi);
+        t_float beam_offset = per_beam_offset.unchecked(bi);
 
         // Process the inner loop in chunks of SIMD batch size
         int64_t si = 0;
         for (; si < max_simd_sample_nr; si += simd_size)
         {
             // Load the sample offsets into a SIMD batch
-            xsimd::batch<float> sample_offset =
+            xsimd::batch<t_float> sample_offset =
                 xsimd::load_aligned(&(per_sample_offset.unchecked(si)));
 
             // Load the current values from the wci matrix
-            xsimd::batch<float> wci_values = xsimd::load_aligned(&wci.unchecked(bi, si));
+            xsimd::batch<t_float> wci_values = xsimd::load_aligned(&wci.unchecked(bi, si));
 
             // Perform the SIMD addition
             wci_values += beam_offset + sample_offset;

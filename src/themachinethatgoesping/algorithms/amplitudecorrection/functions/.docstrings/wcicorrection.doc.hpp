@@ -1,4 +1,4 @@
-//sourcehash: a302a9f48e1b20efdf9ab01a6bae5c8fea7eea95c0e2aafc2ed22d54e3dbd97a
+//sourcehash: 54bf0668598cbd418b0b6ab4ab8932dc0359c8ffad2744f7d4c9db5ec3c64f26
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -55,6 +55,19 @@ static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_f
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_axis_shape = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_beam_sample_shape = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_beam_correction = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_beam_sample_correction = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_sample_correction =
+R"doc(Template parameter ``t_xtensor_2d``:
+    $Template parameter ``t_xtensor_1d``:
+
+Parameter ``wci``:
+    $Parameter ``per_sample_offset``:
+
+Parameter ``mp_cores``:)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
