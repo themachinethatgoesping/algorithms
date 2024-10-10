@@ -4,6 +4,7 @@
 
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <xtensor-python/pytensor.hpp>
 
 #include <themachinethatgoesping/algorithms/amplitudecorrection/functions.hpp>
@@ -104,6 +105,114 @@ void init_functions(pybind11::module& m)
           py::arg("wci"),
           py::arg("per_sample_offset"),
           py::arg("mp_cores") = 1);
+
+    m.def("apply_system_offset",
+          &apply_system_offset<xt::pytensor<t_float, 2>>,
+          DOC_functions(apply_sample_correction),
+          py::arg("wci"),
+          py::arg("system_offset"),
+          py::arg("mp_cores") = 1);
+
+    m.def(
+        "inplace_beam_sample_correction",
+        // &inplace_beam_sample_correction<xt::pytensor<t_float, 2>, xt::pytensor<t_float,1 >> ,
+        // use lambda here because for some reason xt::pytensor is seen as reference from python on
+        // xt::pytensor& is not seen as reference
+        [](xt::pytensor<t_float, 2>        wci,
+           const xt::pytensor<t_float, 1>& per_beam_offset,
+           const xt::pytensor<t_float, 1>& per_sample_offset,
+           std::optional<size_t>           min_beam_index = std::nullopt,
+           std::optional<size_t>           max_beam_index = std::nullopt,
+           int                             mp_cores       = 1) {
+            inplace_beam_sample_correction(
+                wci, per_beam_offset, per_sample_offset, min_beam_index, max_beam_index, mp_cores);
+        },
+        DOC_functions(inplace_beam_sample_correction),
+        py::arg("wci"),
+        py::arg("per_beam_offset"),
+        py::arg("per_sample_offset"),
+        py::arg("min_beam_index") = std::nullopt,
+        py::arg("max_beam_index") = std::nullopt,
+        py::arg("mp_cores")       = 1);
+    m.def(
+        "inplace_beam_sample_correction2",
+        // &inplace_beam_sample_correction2<xt::pytensor<t_float, 2>, xt::pytensor<t_float,1 >> ,
+        // use lambda here because for some reason xt::pytensor is seen as reference from python on
+        // xt::pytensor& is not seen as reference
+        [](xt::pytensor<t_float, 2>        wci,
+           const xt::pytensor<t_float, 1>& per_beam_offset,
+           const xt::pytensor<t_float, 1>& per_sample_offset,
+           std::optional<size_t>           min_beam_index = std::nullopt,
+           std::optional<size_t>           max_beam_index = std::nullopt,
+           int                             mp_cores       = 1) {
+            inplace_beam_sample_correction2(
+                wci, per_beam_offset, per_sample_offset, min_beam_index, max_beam_index, mp_cores);
+        },
+        DOC_functions(inplace_beam_sample_correction2),
+        py::arg("wci"),
+        py::arg("per_beam_offset"),
+        py::arg("per_sample_offset"),
+        py::arg("min_beam_index") = std::nullopt,
+        py::arg("max_beam_index") = std::nullopt,
+        py::arg("mp_cores")       = 1);
+
+    m.def(
+        "inplace_beam_correction",
+        //&inplace_beam_correction<xt::pytensor<t_float, 2>, xt::pytensor<t_float, 1>>,
+        // use lambda here because for some reason xt::pytensor is seen as reference from python on
+        // xt::pytensor& is not seen as reference
+        [](xt::pytensor<t_float, 2>        wci,
+           const xt::pytensor<t_float, 1>& per_beam_offset,
+           std::optional<size_t>           min_beam_index = std::nullopt,
+           std::optional<size_t>           max_beam_index = std::nullopt,
+           int                             mp_cores       = 1) {
+            inplace_beam_correction(wci, per_beam_offset, min_beam_index, max_beam_index, mp_cores);
+        },
+        DOC_functions(inplace_beam_correction),
+        py::arg("wci"),
+        py::arg("per_beam_offset"),
+        py::arg("min_beam_index") = std::nullopt,
+        py::arg("max_beam_index") = std::nullopt,
+        py::arg("mp_cores")       = 1);
+
+    m.def(
+        "inplace_sample_correction",
+        //&inplace_sample_correction<xt::pytensor<t_float, 2>, xt::pytensor<t_float, 1>>,
+        // use lambda here because for some reason xt::pytensor is seen as reference from python on
+        // xt::pytensor& is not seen as reference
+        [](xt::pytensor<t_float, 2>        wci,
+           const xt::pytensor<t_float, 1>& per_sample_offset,
+           std::optional<size_t>           min_beam_index = std::nullopt,
+           std::optional<size_t>           max_beam_index = std::nullopt,
+           int                             mp_cores       = 1) {
+            inplace_sample_correction(
+                wci, per_sample_offset, min_beam_index, max_beam_index, mp_cores);
+        },
+        DOC_functions(inplace_sample_correction),
+        py::arg("wci"),
+        py::arg("per_sample_offset"),
+        py::arg("min_beam_index") = std::nullopt,
+        py::arg("max_beam_index") = std::nullopt,
+        py::arg("mp_cores")       = 1);
+
+    m.def(
+        "inplace_system_offset",
+        //&inplace_system_offset<xt::pytensor<t_float, 2>>,
+        // use lambda here because for some reason xt::pytensor is seen as reference from python on
+        // xt::pytensor& is not seen as reference
+        [](xt::pytensor<t_float, 2> wci,
+           t_float                  system_offset,
+           std::optional<size_t>    min_beam_index = std::nullopt,
+           std::optional<size_t>    max_beam_index = std::nullopt,
+           int                      mp_cores       = 1) {
+            inplace_system_offset(wci, system_offset, min_beam_index, max_beam_index, mp_cores);
+        },
+        DOC_functions(inplace_system_offset),
+        py::arg("wci"),
+        py::arg("system_offset"),
+        py::arg("min_beam_index") = std::nullopt,
+        py::arg("max_beam_index") = std::nullopt,
+        py::arg("mp_cores")       = 1);
 
     m.def("apply_beam_sample_correction_loop",
           &apply_beam_sample_correction_loop<xt::pytensor<t_float, 2>, xt::pytensor<t_float, 1>>,

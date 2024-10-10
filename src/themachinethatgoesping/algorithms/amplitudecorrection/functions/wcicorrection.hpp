@@ -11,6 +11,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <fmt/core.h>
+#include <optional>
 #include <xsimd/xsimd.hpp>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xarray.hpp>
@@ -27,36 +28,171 @@ namespace algorithms {
 namespace amplitudecorrection {
 namespace functions {
 
-// --- assertations ---
+// --- assertions ---
 
-template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
-inline void assert_wci_axis_shape(const t_xtensor_2d& wci,
-                                  const t_xtensor_1d& per_beam_offset,
-                                  size_t              axis,
-                                  std::string_view    axis_name)
+template<size_t axis, tools::helper::c_xtensor t_xtensor_2d>
+inline void assert_wci_axis_shape_0(const t_xtensor_2d&   wci,
+                                    std::string_view      axis_name,
+                                    std::optional<size_t> min_element_index = std::nullopt,
+                                    std::optional<size_t> max_element_index = std::nullopt)
+{
+    static_assert(tools::helper::c_xtensor_2d<t_xtensor_2d>,
+                  "Template parameter must be a 2D tensor");
+
+    if (min_element_index.has_value())
+    {
+        if (max_element_index.has_value())
+        {
+            if (min_element_index.value() > max_element_index.value())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}/{}]: min_element_index [{}] > max_element_index [{}]",
+                                __func__,
+                                axis_name,
+                                min_element_index.value(),
+                                max_element_index.value()));
+
+            if (wci.shape(0) <= max_element_index.value())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}/{}]: wci.shape(0) [{}] <= max_element_index [{}]",
+                                __func__,
+                                axis_name,
+                                wci.shape(0),
+                                max_element_index.value()));
+        }
+        else
+        {
+            if (wci.shape(0) <= min_element_index.value())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}]: wci.shape(0) [{}] <= min_element_index [{}]",
+                                __func__,
+                                wci.shape(0),
+                                min_element_index.value()));
+        }
+    }
+    else if (max_element_index.has_value())
+    {
+        if (wci.shape(0) <= max_element_index.value())
+            throw std::invalid_argument(
+                fmt::format("ERROR[{}]: wci.shape(0) [{}] <= max_element_index [{}]",
+                            __func__,
+                            wci.shape(0),
+                            max_element_index.value()));
+    }
+}
+
+template<size_t axis, tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline void assert_wci_axis_shape(const t_xtensor_2d&   wci,
+                                  const t_xtensor_1d&   per_element_offset,
+                                  std::string_view      axis_name,
+                                  std::optional<size_t> min_element_index = std::nullopt,
+                                  std::optional<size_t> max_element_index = std::nullopt)
 {
     static_assert(tools::helper::c_xtensor_2d<t_xtensor_2d>,
                   "Template parameter must be a 2D tensor");
     static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
                   "Template parameter must be a 1D tensor");
 
-    // assert that beam_offset has the same shape as wci.shape(axis)
-    if (wci.shape(axis) != per_beam_offset.size())
-        throw std::invalid_argument(fmt::format("ERROR[{}]: wci.shape({}) [{}] != {}.size() [{}]",
-                                                __func__,
-                                                axis,
-                                                wci.shape(axis),
-                                                axis_name,
-                                                per_beam_offset.size()));
+    if (axis >= wci.dimension())
+        throw std::invalid_argument(fmt::format("ERROR[{}]: axis {} out of range", __func__, axis));
+
+    if (min_element_index.has_value())
+    {
+        if (max_element_index.has_value())
+        {
+            // --- min and max index is set ---
+            if (min_element_index.value() > max_element_index.value())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}]: min_element_index [{}] > max_element_index [{}]",
+                                __func__,
+                                min_element_index.value(),
+                                max_element_index.value()));
+
+            if (wci.shape(axis) <= max_element_index.value())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}]: wci.shape({}) [{}] <= max_element_index [{}]",
+                                __func__,
+                                axis,
+                                wci.shape(axis),
+                                max_element_index.value()));
+
+            if (per_element_offset.size() !=
+                max_element_index.value() - min_element_index.value() + 1)
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}]: {}.size() [{}] != "
+                                "max_element_index-min_element_index+1 [{}]",
+                                __func__,
+                                axis_name,
+                                per_element_offset.size(),
+                                max_element_index.value() - min_element_index.value() + 1));
+        }
+        else
+        {
+            // --- only min index is set ---
+            if (wci.shape(axis) <= min_element_index.value())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}]: wci.shape({}) [{}] <= min_element_index [{}]",
+                                __func__,
+                                axis,
+                                wci.shape(axis),
+                                min_element_index.value()));
+
+            if (per_element_offset.size() != wci.shape(axis) - min_element_index.value())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}]: {}.size() [{}] != "
+                                "wci.shape(axis)-min_element_index [{}]",
+                                __func__,
+                                axis_name,
+                                per_element_offset.size(),
+                                wci.shape(axis) - min_element_index.value()));
+        }
+    }
+    else
+    {
+        if (max_element_index.has_value())
+        {
+            // --- only max index is set ---
+            if (wci.shape(axis) <= max_element_index.value())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}]: wci.shape({}) [{}] <= max_element_index [{}]",
+                                __func__,
+                                axis,
+                                wci.shape(axis),
+                                max_element_index.value()));
+
+            if (per_element_offset.size() != max_element_index.value() + 1)
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}]: {}.size() [{}] != max_element_index+1 [{}]",
+                                __func__,
+                                axis_name,
+                                per_element_offset.size(),
+                                max_element_index.value() + 1));
+        }
+        else
+        {
+            // --- no index is set ---
+            if (wci.shape(axis) != per_element_offset.size())
+                throw std::invalid_argument(
+                    fmt::format("ERROR[{}/{}]: wci.shape({}) [{}] != {}.size() [{}]",
+                                __func__,
+                                axis_name,
+                                axis,
+                                wci.shape(axis),
+                                axis_name,
+                                per_element_offset.size()));
+        }
+    }
 }
 
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
-inline void assert_wci_beam_sample_shape(const t_xtensor_2d& wci,
-                                         const t_xtensor_1d& per_beam_offset,
-                                         const t_xtensor_1d& per_sample_offset)
+inline void assert_wci_beam_sample_shape(const t_xtensor_2d&   wci,
+                                         const t_xtensor_1d&   per_beam_offset,
+                                         const t_xtensor_1d&   per_sample_offset,
+                                         std::optional<size_t> min_beam_index = std::nullopt,
+                                         std::optional<size_t> max_beam_index = std::nullopt)
 {
-    assert_wci_axis_shape(wci, per_beam_offset, 0, "per_beam_offset");
-    assert_wci_axis_shape(wci, per_sample_offset, 1, "per_sample_offset");
+    assert_wci_axis_shape<0>(
+        wci, per_beam_offset, "per_beam_offset", min_beam_index, max_beam_index);
+    assert_wci_axis_shape<1>(wci, per_sample_offset, "per_sample_offset");
 }
 
 // --- apply corrections ---
@@ -84,15 +220,39 @@ template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtens
 inline void inplace_beam_sample_correction([[maybe_unused]] t_xtensor_2d& wci,
                                            const t_xtensor_1d&            per_beam_offset,
                                            const t_xtensor_1d&            per_sample_offset,
-                                           int                            mp_cores = 1)
+                                           std::optional<size_t> min_beam_index = std::nullopt,
+                                           std::optional<size_t> max_beam_index = std::nullopt,
+                                           int                   mp_cores       = 1)
 {
-    assert_wci_beam_sample_shape(wci, per_beam_offset, per_sample_offset);
+    assert_wci_beam_sample_shape(
+        wci, per_beam_offset, per_sample_offset, min_beam_index, max_beam_index);
 
     // Apply the range correction to each sample
 #pragma omp parallel for num_threads(mp_cores)
-    for (unsigned int bi = 0; bi < per_beam_offset.size(); ++bi)
-        xt::row(wci, bi) =
-            xt::eval(xt::row(wci, bi) + (per_beam_offset.unchecked(bi) + per_sample_offset));
+    for (unsigned int bi = min_beam_index.value_or(0);
+         bi <= max_beam_index.value_or(per_beam_offset.size() - 1);
+         ++bi)
+        xt::row(wci, bi) += (per_beam_offset.unchecked(bi) + per_sample_offset);
+
+    // wci = xt::eval(wci);
+}
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline void inplace_beam_sample_correction2([[maybe_unused]] t_xtensor_2d& wci,
+                                            const t_xtensor_1d&            per_beam_offset,
+                                            const t_xtensor_1d&            per_sample_offset,
+                                            std::optional<size_t> min_beam_index = std::nullopt,
+                                            std::optional<size_t> max_beam_index = std::nullopt,
+                                            int                   mp_cores       = 1)
+{
+    assert_wci_beam_sample_shape(
+        wci, per_beam_offset, per_sample_offset, min_beam_index, max_beam_index);
+
+    // Apply the range correction to each sample
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = min_beam_index.value_or(0);
+         bi <= max_beam_index.value_or(per_beam_offset.size() - 1);
+         ++bi)
+        xt::row(wci, bi) += (per_beam_offset.unchecked(bi) + per_sample_offset);
 }
 
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
@@ -100,7 +260,7 @@ inline t_xtensor_2d apply_beam_correction(const t_xtensor_2d& wci,
                                           const t_xtensor_1d& per_beam_offset,
                                           int                 mp_cores = 1)
 {
-    assert_wci_axis_shape(wci, per_beam_offset, 0, "per_beam_offset");
+    assert_wci_axis_shape<0>(wci, per_beam_offset, "per_beam_offset");
 
     t_xtensor_2d result = xt::empty_like(wci);
 
@@ -112,46 +272,108 @@ inline t_xtensor_2d apply_beam_correction(const t_xtensor_2d& wci,
 }
 
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
-inline t_xtensor_2d inplace_beam_correction([[maybe_unused]] t_xtensor_2d& wci,
-                                            const t_xtensor_1d&            per_beam_offset,
-                                            int                            mp_cores = 1)
+inline void inplace_beam_correction([[maybe_unused]] t_xtensor_2d& wci,
+                                    const t_xtensor_1d&            per_beam_offset,
+                                    std::optional<size_t>          min_beam_index = std::nullopt,
+                                    std::optional<size_t>          max_beam_index = std::nullopt,
+                                    int                            mp_cores       = 1)
 {
-    assert_wci_axis_shape(wci, per_beam_offset, 0, "per_beam_offset");
+    assert_wci_axis_shape<0>(
+        wci, per_beam_offset, "per_beam_offset", min_beam_index, max_beam_index);
 
 #pragma omp parallel for num_threads(mp_cores)
-    for (unsigned int bi = 0; bi < per_beam_offset.size(); ++bi)
-        xt::row(wci, bi) = xt::eval(xt::row(wci, bi) + per_beam_offset.unchecked(bi));
+    for (unsigned int bi = min_beam_index.value_or(0);
+         bi <= max_beam_index.value_or(per_beam_offset.size() - 1);
+         ++bi)
+        xt::row(wci, bi) += per_beam_offset.unchecked(bi);
+
+    // wci = xt::eval(wci);
 }
 
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
-inline t_xtensor_2d apply_sample_correction(const t_xtensor_2d&  wci,
-                                            const t_xtensor_1d&  per_sample_offset,
-                                            [[maybe_unused]] int mp_cores = 1)
+inline t_xtensor_2d apply_sample_correction(const t_xtensor_2d& wci,
+                                            const t_xtensor_1d& per_sample_offset,
+                                            int                 mp_cores = 1)
 {
-    assert_wci_axis_shape(wci, per_sample_offset, 1, "per_sample_offset");
+    assert_wci_axis_shape<1>(wci, per_sample_offset, "per_sample_offset");
 
-    return wci + xt::view(per_sample_offset, xt::newaxis(), xt::all());
+    if (mp_cores == 1)
+        return wci + xt::view(per_sample_offset, xt::newaxis(), xt::all());
+
+    auto result = xt::empty_like(wci);
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = 0; bi < wci.shape(0); ++bi)
+        xt::row(result, bi) = xt::row(wci, bi) + per_sample_offset;
+    return result;
 }
 
-/**
- * @brief
- *
- * @tparam t_xtensor_2d
- * @tparam t_xtensor_1d
- * @param wci
- * @param per_sample_offset
- * @param mp_cores
- */
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
-void inplace_sample_correction(
-    [[maybe_unused]] t_xtensor_2d& wci, //[[maybe_unused]] is used here because pybind11-mkdoc fails
-                                        // of no specifier is used for this template type
-    const t_xtensor_1d&  per_sample_offset,
-    [[maybe_unused]] int mp_cores = 1)
+inline void inplace_sample_correction([[maybe_unused]] t_xtensor_2d& wci,
+                                      const t_xtensor_1d&            per_sample_offset,
+                                      std::optional<size_t>          min_beam_index = std::nullopt,
+                                      std::optional<size_t>          max_beam_index = std::nullopt,
+                                      [[maybe_unused]] int           mp_cores       = 1)
 {
-    assert_wci_axis_shape(wci, per_sample_offset, 1, "per_sample_offset");
+    assert_wci_axis_shape_0<0>(wci, "per_beam", min_beam_index, max_beam_index);
+    assert_wci_axis_shape<1>(wci, per_sample_offset, "per_sample_offset");
 
-    wci = xt::eval(wci + xt::view(per_sample_offset, xt::newaxis(), xt::all()));
+    if (mp_cores == 1)
+    {
+        wci += xt::view(per_sample_offset, xt::newaxis(), xt::all());
+        return;
+    }
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = min_beam_index.value_or(0);
+         bi <= max_beam_index.value_or(wci.shape(0) - 1);
+         ++bi)
+        xt::row(wci, bi) += per_sample_offset;
+
+    // wci = xt::eval(wci);
+}
+
+template<tools::helper::c_xtensor t_xtensor_2d>
+inline t_xtensor_2d apply_system_offset(
+    const t_xtensor_2d&                                          wci,
+    typename tools::helper::xtensor_datatype<t_xtensor_2d>::type system_offset,
+    int                                                          mp_cores = 1)
+{
+    if (mp_cores == 1)
+        return wci + system_offset;
+
+    auto result = xt::empty_like(wci);
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = 0; bi < wci.shape(0); ++bi)
+        xt::row(result, bi) = xt::row(wci, bi) + system_offset;
+    return result;
+}
+
+template<tools::helper::c_xtensor t_xtensor_2d>
+inline void inplace_system_offset(
+    [[maybe_unused]] t_xtensor_2d&                               wci,
+    typename tools::helper::xtensor_datatype<t_xtensor_2d>::type system_offset,
+    std::optional<size_t>                                        min_beam_index = std::nullopt,
+    std::optional<size_t>                                        max_beam_index = std::nullopt,
+    int                                                          mp_cores       = 1)
+{
+    assert_wci_axis_shape_0<0>(wci, "per_beam", min_beam_index, max_beam_index);
+
+    if (mp_cores == 1)
+    {
+        wci += system_offset;
+        return;
+    }
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = min_beam_index.value_or(0);
+         bi <= max_beam_index.value_or(wci.shape(0) - 1);
+         ++bi)
+        xt::row(wci, bi) += system_offset;
+
+    // wci = xt::eval(wci);
+    return;
 }
 
 //--- these functions are for benchmarking purposes ---
@@ -197,10 +419,10 @@ inline t_xtensor_2d apply_beam_sample_correction_xtensor2(const t_xtensor_2d& wc
 }
 
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
-inline t_xtensor_2d apply_beam_sample_correction_xtensor3(const t_xtensor_2d& wci,
-                                                          const t_xtensor_1d& per_beam_offset,
-                                                          const t_xtensor_1d& per_sample_offset,
-                                                          int                 mp_cores = 1)
+inline t_xtensor_2d apply_beam_sample_correction_xtensor3(const t_xtensor_2d&  wci,
+                                                          const t_xtensor_1d&  per_beam_offset,
+                                                          const t_xtensor_1d&  per_sample_offset,
+                                                          [[maybe_unused]] int mp_cores = 1)
 {
     assert_wci_beam_sample_shape(wci, per_beam_offset, per_sample_offset);
 
