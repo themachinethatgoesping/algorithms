@@ -14,6 +14,7 @@ headers = [
   'helloping.hpp',
   'amplitudecorrection/functions.hpp',
   'amplitudecorrection/.docstrings/functions.doc.hpp',
+  'amplitudecorrection/functions/_shape_assertations.hpp',
   'amplitudecorrection/functions/absorption.hpp',
   'amplitudecorrection/functions/rangecorrection.hpp',
   'amplitudecorrection/functions/wcicorrection.hpp',

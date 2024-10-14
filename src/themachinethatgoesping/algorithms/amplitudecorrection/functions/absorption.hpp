@@ -23,7 +23,8 @@ namespace functions {
  * @param T90
  * @return double
  */
-inline double its90_to_its68(double T90)
+template<typename t_float>
+inline t_float its90_to_its68(t_float T90)
 {
     // return (T90*T90)/gsw_t90_from_t68(T90);
     return T90 * 1.00024;
