@@ -1,4 +1,4 @@
-//sourcehash: ac07a37fcf08e556461524a3ee96694d20786614afa37e2f9d34b5e4be76c671
+//sourcehash: 95a453fd6a55fe697a7d06e626b3f2e6f49a5bddac04c4b9d51319dbb7e753b1
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,15 +38,147 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_range_factor = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_range_factor =
+R"doc(Approximates the range factor based on the sample interval and a
+single sound velocity.
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges = R"doc()doc";
+This function calculates the range factor using the given sample
+interval and sound velocity. The formula used is: range_factor =
+sample_interval_s * sound_velocity_m_s * 0.5
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges_2 = R"doc()doc";
+Template parameter ``t_float``:
+    The floating-point type used for the calculations.
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_compute_cw_range_correction = R"doc()doc";
+Parameter ``sample_interval_s``:
+    The sample interval in seconds.
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_get_sample_numbers_plus_half = R"doc()doc";
+Parameter ``sound_velocity_m_s``:
+    The sound velocity in meters per second.
+
+Returns:
+    The approximated range factor.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges =
+R"doc(Approximates the ranges based on the provided sample interval and a
+single sound velocity.
+
+This function calculates the approximate ranges for a given set of
+sample numbers by multiplying the sample numbers (plus half) with the
+approximate range factor.
+
+Template parameter ``t_xtensor_1d``:
+    A 1D tensor type that satisfies the c_xtensor_1d concept.
+
+Template parameter ``t_int``:
+    An integer type for sample numbers.
+
+Parameter ``sample_interval_s``:
+    The sample interval in seconds.
+
+Parameter ``sound_velocity_m_s``:
+    The sound velocity in meters per second.
+
+Parameter ``first_sample_nr``:
+    The first sample number.
+
+Parameter ``last_sample_nr``:
+    The last sample number.
+
+Parameter ``step``:
+    The step size between sample numbers (default is 1).
+
+Returns:
+    A 1D tensor containing the approximated ranges.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges_2 =
+R"doc(Approximates the ranges based on sample interval, a single sound
+velocity, and sample numbers.
+
+This function calculates the approximate ranges by using the provided
+sample interval, sound velocity, and sample numbers. The calculation
+is performed by adding 0.5 to each sample number and then multiplying
+by the approximate range factor.
+
+Template parameter ``t_xtensor_1d``:
+    A 1D tensor type that satisfies the tools::helper::c_xtensor
+    concept.
+
+Template parameter ``t_xtensor_1d_int``:
+    A 1D tensor type for integers that satisfies the
+    tools::helper::c_xtensor concept.
+
+Parameter ``sample_interval_s``:
+    The interval between samples in seconds.
+
+Parameter ``sound_velocity_m_s``:
+    The velocity of sound in meters per second.
+
+Parameter ``sample_numbers``:
+    A 1D tensor containing the sample numbers.
+
+Returns:
+    A 1D tensor containing the approximated ranges.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_compute_cw_range_correction =
+R"doc(Computes the continuous wave (CW) range correction.
+
+This function calculates the range correction based on the provided
+ranges, absorption coefficient, and time-varying gain (TVG) factor.
+The range correction is computed using the formula:
+
+\f[ \text{range correction} = 2 \cdot \text{absorption\_db\_m} \cdot
+\text{ranges\_m} + \text{tvg\_factor} \cdot
+\log_{10}(\text{ranges\_m}) \f]
+
+If the absorption coefficient is finite and non-zero, it is used in
+the calculation. If the TVG factor is finite and non-zero, it is also
+included in the calculation. If neither the absorption coefficient nor
+the TVG factor are finite and non-zero, the function returns a tensor
+of zeros with the same shape as the input ranges.
+
+Template parameter ``t_xtensor_1d``:
+    A 1D tensor type that satisfies the tools::helper::c_xtensor_1d
+    concept.
+
+Parameter ``ranges_m``:
+    A 1D tensor representing the ranges in meters.
+
+Parameter ``absorption_db_m``:
+    The absorption coefficient in decibels per meter.
+
+Parameter ``tvg_factor``:
+    The time-varying gain factor.
+
+Returns:
+    A 1D tensor representing the computed range correction.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_get_sample_numbers_plus_half =
+R"doc(Generates a 1D tensor of sample numbers incremented by half. (used for
+range compuation)
+
+This function calculates a range of sample numbers starting from
+`first_sample_nr + 0.5` to `last_sample_nr + 1.5` with a specified
+step.
+
+Template parameter ``t_xtensor_1d``:
+    A 1D tensor type that satisfies the `tools::helper::c_xtensor`
+    concept.
+
+Template parameter ``t_int``:
+    An integer type for the sample numbers.
+
+Parameter ``first_sample_nr``:
+    The starting sample number.
+
+Parameter ``last_sample_nr``:
+    The ending sample number.
+
+Parameter ``step``:
+    The step size for the range (default is 1).
+
+Returns:
+    A 1D tensor of sample numbers incremented by half. @note The
+    template parameter must be a 1D tensor.)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

@@ -1,4 +1,4 @@
-//sourcehash: 74cc20afed09c424822f5f20f0e76ab9dd2d949f43487fcf56bb7ce19d4fc5ab
+//sourcehash: 08faf1ecb5292411c6b77cb76116b765edd214e9e57cf2beb259bec1fa3328e4
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -40,7 +40,33 @@
 
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_correction = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction =
+R"doc(Applies beam and sample corrections to the given 2D tensor.
+
+Apply beam and sample corrections to the input 2D tensor. per_beam
+correction is applied to each sample in a beam, per_sample correction
+to each sample nr for each beam
+
+Template parameter ``t_xtensor_2d``:
+    Type of the 2D tensor.
+
+Template parameter ``t_xtensor_1d``:
+    Type of the 1D tensor.
+
+Parameter ``wci``:
+    The input 2D tensor to which corrections will be applied.
+
+Parameter ``per_beam_offset``:
+    A 1D tensor containing the per-beam offsets.
+
+Parameter ``per_sample_offset``:
+    A 1D tensor containing the per-sample offsets.
+
+Parameter ``mp_cores``:
+    The number of cores to use for parallel processing (default is 1).
+
+Returns:
+    A 2D tensor with the applied beam and sample corrections.)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_loop = R"doc()doc";
 
@@ -54,17 +80,9 @@ static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_f
 
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_system_offset = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_axis_shape = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_axis_shape_0 = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_beam_sample_shape = R"doc()doc";
-
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_beam_correction = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_beam_sample_correction = R"doc()doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_beam_sample_correction2 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_sample_correction = R"doc()doc";
 

@@ -10,6 +10,9 @@
 
 #pragma once
 
+/* generated doc strings */
+#include ".docstrings/_shape_assertations.doc.hpp"
+
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <fmt/core.h>

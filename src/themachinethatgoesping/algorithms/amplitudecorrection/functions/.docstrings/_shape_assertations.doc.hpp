@@ -1,4 +1,4 @@
-//sourcehash: 19d855f4b32912e8d1bcf4f095813225f4cff8d1cadf936071d75c435684376c
+//sourcehash: 3d75623baa823bce891424d7bf0f91b17a13bbec95afccb52c15f153793e8f99
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,53 +38,9 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_calc_absorption_coefficient_db_m =
-R"doc(Compute the logarithmic absorption coefficient in dB/m based on
-Francois and Garrison (1982) [taken from Fisheries Acoustics Theory
-and Practice, 2nd Edition, Simmonds and MacLennan, 2005]
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_axis_shape = R"doc()doc";
 
-Parameter ``frequency_hz``:
-    // Frequency_hz in Hz
-
-Parameter ``depth_m``:
-    // Depth_m in m
-
-Parameter ``sound_velocity_m_s``:
-    // Speed of sound in m/s
-
-Parameter ``temperature_c``:
-    // ITS-90 temperature_c in degrees Celsius
-
-Parameter ``salinity_psu``:
-    // Salinity in PSU
-
-Parameter ``pH``:
-    // pH
-
-Returns:
-    double)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_calc_sound_velocity =
-R"doc(Compute the speed of sound in seawater using the TEOS-10 library
-
-Parameter ``depth_m``:
-    $Parameter ``temperature_c``:
-
-Parameter ``salinity_psu``:
-    $Parameter ``latitude``:
-
-Parameter ``longitude``:
-    $Returns:
-
-double)doc";
-
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_its90_to_its68 =
-R"doc(Convert temperature_c from ITS-68 to ITS-90
-
-Parameter ``T90``:
-    $Returns:
-
-double)doc";
+static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_assert_wci_beam_sample_shape = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

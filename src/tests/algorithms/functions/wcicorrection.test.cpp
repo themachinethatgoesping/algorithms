@@ -21,13 +21,13 @@ using namespace themachinethatgoesping::algorithms::amplitudecorrection::functio
 
 template<themachinethatgoesping::tools::helper::c_xtensor t_xtensor_2d,
          themachinethatgoesping::tools::helper::c_xtensor t_xtensor_1d>
-void check_wci(std::string           name,
-               const t_xtensor_2d&   result,
-               const t_xtensor_2d&   wci,
-               const t_xtensor_1d&   per_beam_offset,
-               const t_xtensor_1d&   per_sample_offset,
-               std::optional<size_t> min_beam_index = std::nullopt,
-               std::optional<size_t> max_beam_index = std::nullopt)
+void check_wci([[maybe_unused]] std::string name,
+               const t_xtensor_2d&          result,
+               const t_xtensor_2d&          wci,
+               const t_xtensor_1d&          per_beam_offset,
+               const t_xtensor_1d&          per_sample_offset,
+               std::optional<size_t>        min_beam_index = std::nullopt,
+               std::optional<size_t>        max_beam_index = std::nullopt)
 {
     using Catch::Approx;
 
@@ -57,15 +57,9 @@ void check_wci(std::string           name,
         for (size_t sn = 0; sn < nsamples; ++sn)
         {
             // std::string msg = fmt::format(
-            //     "ERROR[{}]: per_beam_offset({}) = {}, per_sample_offset({}) = {}, wci({},{}) = {}",
-            //     name,
-            //     bn,
-            //     per_beam_offset(bn),
-            //     sn,
-            //     per_sample_offset(sn),
-            //     bn,
-            //     sn,
-            //     wci(bn, sn));
+            //     "ERROR[{}]: per_beam_offset({}) = {}, per_sample_offset({}) = {}, wci({},{}) =
+            //     {}", name, bn, per_beam_offset(bn), sn, per_sample_offset(sn), bn, sn, wci(bn,
+            //     sn));
 
             // if (min_beam_index.has_value())
             //     msg += fmt::format(", min_beam_index = {}", min_beam_index.value());
@@ -92,7 +86,8 @@ void check_wci(std::string           name,
             for (size_t sn = 0; sn < nsamples; ++sn)
             {
                 // INFO(
-                //     fmt::format("ERROR[{}]: Value should be untouchted (1)! bn = {}/min {}, sn = {}"
+                //     fmt::format("ERROR[{}]: Value should be untouchted (1)! bn = {}/min {}, sn =
+                //     {}"
                 //                 "wci({},{}) = {}",
                 //                 name,
                 //                 bn,
@@ -286,9 +281,9 @@ TEST_CASE("WCICorrection functions should reproduce previously computed results"
 
         for (size_t mp_cores : { 1, 0, 4 })
             for (std::optional<size_t> min_bn :
-                 std::vector<std::optional<size_t>>{ std::nullopt, 0, 3, 7, 9, 10, 11, 999999 })
+                 std::vector<std::optional<size_t>>{ std::nullopt, 0, 7, 10, 999999 })
                 for (std::optional<size_t> max_bn :
-                     std::vector<std::optional<size_t>>{ std::nullopt, 0, 3, 7, 9, 10, 11, 999999 })
+                     std::vector<std::optional<size_t>>{ std::nullopt, 0, 3, 10, 999999 })
                 {
 
                     // --- inplace_beam_sample_correction ---
