@@ -18,6 +18,7 @@ headers = [
   'amplitudecorrection/functions/absorption.hpp',
   'amplitudecorrection/functions/rangecorrection.hpp',
   'amplitudecorrection/functions/wcicorrection.hpp',
+  'amplitudecorrection/functions/.docstrings/_shape_assertations.doc.hpp',
   'amplitudecorrection/functions/.docstrings/absorption.doc.hpp',
   'amplitudecorrection/functions/.docstrings/rangecorrection.doc.hpp',
   'amplitudecorrection/functions/.docstrings/wcicorrection.doc.hpp',
