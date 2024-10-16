@@ -57,7 +57,7 @@ TEST_CASE("I_Backtracer should support common functions", TESTTAG)
     REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch, 0.0001));
     REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));
 
-    // test hash
+    // test hash (should be stable if class is not changed)
     REQUIRE(backtracer.binary_hash() == 11759859546874707158ull);
     REQUIRE(backtracer.binary_hash() == I_Backtracer(backtracer).binary_hash());
     REQUIRE(backtracer.binary_hash() ==

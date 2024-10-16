@@ -49,7 +49,7 @@ TEST_CASE("GenericSignalParameters should support common functions", TESTTAG)
     REQUIRE(txs.get_effective_pulse_duration() == Approx(0.0023f));
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::UNKNOWN);
 
-    // test hash
+    // test hash (should be stable if class is not changed)
     REQUIRE(txs.binary_hash() == 10730480407014384156ULL);
     REQUIRE(txs.binary_hash() == GenericSignalParameters(txs).binary_hash());
     REQUIRE(txs.binary_hash() ==

@@ -39,7 +39,7 @@ TEST_CASE("XYZ should support common functions", TESTTAG)
     // test print does not crash
     REQUIRE(location.info_string().size() != 0);
 
-    // test hash
+    // test hash (should be stable if class is not changed)
     REQUIRE(location.binary_hash() == 1848392524124629315);
     REQUIRE(location.binary_hash() == XYZ(location).binary_hash());
     REQUIRE(location.binary_hash() ==

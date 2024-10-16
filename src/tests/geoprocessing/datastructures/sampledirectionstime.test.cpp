@@ -39,7 +39,7 @@ TEST_CASE("SampleDirectionsTime should support common functions", TESTTAG)
     // test print does not crash
     REQUIRE(location.info_string().size() != 0);
 
-    // test hash
+    // test hash (should be stable if class is not changed)
     REQUIRE(location.binary_hash() == 15106317722440586394ULL);
     REQUIRE(location.binary_hash() == SampleDirectionsTime(location).binary_hash());
     REQUIRE(location.binary_hash() ==

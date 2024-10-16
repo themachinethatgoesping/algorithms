@@ -40,7 +40,7 @@ TEST_CASE("RaytraceResults should support common functions", TESTTAG)
     // test print does not crash
     REQUIRE(location.info_string().size() != 0);
 
-    // test hash
+    // test hash (should be stable if class is not changed)
     REQUIRE(location.binary_hash() == 4496877549998357265);
     REQUIRE(location.binary_hash() == RaytraceResults(location).binary_hash());
     REQUIRE(location.binary_hash() ==

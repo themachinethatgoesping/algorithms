@@ -58,7 +58,7 @@ TEST_CASE("BacktracedWCI should support common functions", TESTTAG)
     CHECK(S[1].binary_hash() == 10310803827488579691ULL); 
 
 
-    // test hash
+    // test hash (should be stable if class is not changed)
     REQUIRE(BWCI.binary_hash() == 10221334945506934621ULL); 
     REQUIRE(BWCI.binary_hash() == BacktracedWCI(BWCI).binary_hash());
     REQUIRE(BWCI.binary_hash() == BacktracedWCI(BWCI.from_binary(BWCI.to_binary())).binary_hash());

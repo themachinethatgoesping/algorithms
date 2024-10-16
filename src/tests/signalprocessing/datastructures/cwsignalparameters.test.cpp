@@ -47,7 +47,7 @@ TEST_CASE("CWSignalParameters should support common functions", TESTTAG)
     REQUIRE(txs.get_effective_pulse_duration() == Approx(0.00234f));
     REQUIRE(txs.get_tx_signal_type() == t_TxSignalType::CW);
 
-    // test hash
+    // test hash (should be stable if class is not changed)
     REQUIRE(txs.binary_hash() == 6748335302485371792);
     REQUIRE(txs.binary_hash() == CWSignalParameters(txs).binary_hash());
     REQUIRE(txs.binary_hash() ==

@@ -73,7 +73,7 @@ TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
 
     REQUIRE_THAT(raytracer.get_sound_velocity(), Catch::Matchers::WithinAbs(c, 0.0001));
 
-    // test hash
+    // test hash (should be stable if class is not changed)
     REQUIRE(raytracer.binary_hash() == 16667922773826043259llu);
     REQUIRE(raytracer.binary_hash() == RTConstantSVP(raytracer).binary_hash());
     REQUIRE(raytracer.binary_hash() ==
