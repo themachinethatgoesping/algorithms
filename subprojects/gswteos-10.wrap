@@ -4,8 +4,8 @@
 
 [wrap-git]
 url = https://github.com/peter-urban/GSW-C-meson.git
-revision = master
-directory = gswteos-10-meson-master
+revision = add_meson_build
+directory = gswteos-10-meson
 
 [provide]
 gswteos_10 = gswteos_10_dep
