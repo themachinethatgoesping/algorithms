@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [wrap-git]
-url = https://github.com/peter-urban/GSW-C-meson.git
-revision = add_meson_build
-directory = gswteos-10-meson
+url = https://github.com/TEOS-10/GSW-C
+revision = main
+directory = gswteos-10
 
 [provide]
 gswteos_10 = gswteos_10_dep
