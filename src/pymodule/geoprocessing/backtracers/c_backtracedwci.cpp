@@ -47,11 +47,6 @@ void init_c_backtracedwci(py::module& m)
              DOC_BacktracedWCI(lookup),
              py::arg("beam_angle"),
              py::arg("range"))
-        .def("lookup_const",
-             &BacktracedWCI::lookup_const,
-             DOC_BacktracedWCI(lookup_const),
-             py::arg("beam_angle"),
-             py::arg("range"))
         .def("size", &BacktracedWCI::size, DOC_BacktracedWCI(size))
         .def("shape", &BacktracedWCI::shape, DOC_BacktracedWCI(shape))
         .def("get_wci", &BacktracedWCI::get_wci, DOC_BacktracedWCI(get_wci))

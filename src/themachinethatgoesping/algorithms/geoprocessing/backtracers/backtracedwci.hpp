@@ -119,20 +119,6 @@ class BacktracedWCI
         return _wci.unchecked(bn, sn);
     }
 
-    float lookup_const(float beam_angle, float range) const
-    {
-        if (beam_angle < _min_angle || beam_angle > _max_angle)
-            return std::numeric_limits<float>::quiet_NaN();
-
-        uint16_t bn = _angle_beamnumber_interpolator.get_y_const(beam_angle);
-        int      sn = int(_range_samplenumber_interpolators[bn].get_y_const(range));
-
-        if (sn < 0 || sn >= int(_wci.shape()[1]))
-            return std::numeric_limits<float>::quiet_NaN();
-
-        return _wci.unchecked(bn, sn);
-    }
-
     bool operator==(const BacktracedWCI& rhs) const = default;
 
     size_t size() const { return _wci.size(); }
@@ -224,10 +210,10 @@ class BacktracedWCI
     {
         // compare shape
         if (_wci.shape()[0] != _range_samplenumber_interpolators.size() ||
-            //_angle_beamnumber_interpolator.get_y_const(_min_angle) < 0 ||
-            uint16_t(_angle_beamnumber_interpolator.get_y_const(_min_angle)) >= _wci.shape()[0] ||
-            //_angle_beamnumber_interpolator.get_y_const(_max_angle) < 0 ||
-            uint16_t(_angle_beamnumber_interpolator.get_y_const(_max_angle)) >= _wci.shape()[0])
+            //_angle_beamnumber_interpolator.get_y(_min_angle) < 0 ||
+            uint16_t(_angle_beamnumber_interpolator.get_y(_min_angle)) >= _wci.shape()[0] ||
+            //_angle_beamnumber_interpolator.get_y(_max_angle) < 0 ||
+            uint16_t(_angle_beamnumber_interpolator.get_y(_max_angle)) >= _wci.shape()[0])
         {
             throw std::runtime_error(
                 fmt::format("BacktraceWCI: shape missmatch!\n-wci.shape() = [{},{}]"
@@ -237,8 +223,8 @@ class BacktracedWCI
                             _wci.shape()[0],
                             _wci.shape()[1],
                             _range_samplenumber_interpolators.size(),
-                            _angle_beamnumber_interpolator.get_y_const(_min_angle),
-                            _angle_beamnumber_interpolator.get_y_const(_max_angle)));
+                            _angle_beamnumber_interpolator.get_y(_min_angle),
+                            _angle_beamnumber_interpolator.get_y(_max_angle)));
         }
     }
 };

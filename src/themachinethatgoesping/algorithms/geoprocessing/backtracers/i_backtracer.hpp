@@ -184,20 +184,12 @@ class I_Backtracer
         auto output_image = xt::xtensor<float, 2>::from_shape(target_directions.shape());
         auto BWCI = BacktracedWCI(wci, beam_reference_directions, beam_reference_sample_numbers);
 
-        if (mp_cores != 1)
 #pragma omp parallel for num_threads(mp_cores)
-            for (size_t ti = 0; ti < target_directions.size(); ++ti)
-            {
-                output_image.data()[ti] =
-                    BWCI.lookup_const(target_directions.crosstrack_angle.data()[ti],
-                                      target_directions.range.data()[ti]);
-            }
-        else
-            for (size_t ti = 0; ti < target_directions.size(); ++ti)
-            {
-                output_image.data()[ti] = BWCI.lookup(target_directions.crosstrack_angle.data()[ti],
-                                                      target_directions.range.data()[ti]);
-            }
+        for (size_t ti = 0; ti < target_directions.size(); ++ti)
+        {
+            output_image.data()[ti] = BWCI.lookup(target_directions.crosstrack_angle.data()[ti],
+                                                  target_directions.range.data()[ti]);
+        }
 
         return output_image;
     }
@@ -247,9 +239,11 @@ class I_Backtracer
   public:
     // __printer__ function is necessary to support print() info_string() etc (defined by
     // __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__ macro below)
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision,
+                                                  bool         superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer(this->class_name(), float_precision, superscript_exponents);
+        tools::classhelper::ObjectPrinter printer(
+            this->class_name(), float_precision, superscript_exponents);
 
         printer.register_section("Sensor location", '*');
         printer.append(_sensor_location.__printer__(float_precision, superscript_exponents));
