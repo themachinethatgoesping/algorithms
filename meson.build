@@ -9,7 +9,7 @@ project(
   'cpp',
   license: 'MPL-2.0',
 
-  version: '0.8.3',
+  version: '0.8.4',
   default_options: ['warning_level=2', 'buildtype=release', 'cpp_std=c++20'],
   meson_version: '>=1.3.2' #first version with  clang-cl openmp support
 )
@@ -22,7 +22,7 @@ projectnamespace = 'themachinethatgoesping'
 boost_dep = dependency('boost', static: get_option('dynamic_boost').disabled())
 
 # ext libraries
-gswteos_10_dep = dependency('gswteos_10', required: true)
+gswteos_10_dep = dependency('gswteos_10', required: true, default_options : ['warning_level=0'])
 
 
 # themachinethatgoesping

@@ -3,7 +3,7 @@
 /* generated doc strings */
 #include ".docstrings/types.doc.hpp"
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <variant>
 
 namespace themachinethatgoesping {
