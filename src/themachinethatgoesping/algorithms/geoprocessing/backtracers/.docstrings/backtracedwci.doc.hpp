@@ -1,4 +1,4 @@
-//sourcehash: 4831d6555e4eef893966ccc0b485810dc8b5a6954a5d3d9ad6cf8aeeacd7dea2
+//sourcehash: 56775ee5c7af6d95ee8dbef8015874eb4ab9905f7f631793489d3cefebb09083
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -48,8 +48,13 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtra
 R"doc(Construct a new sample location object (initialize all tensors using
 the specified shape (empty))
 
-Parameter ``shape``:
-    shape of the internal tensors)doc";
+Parameter ``wci``:
+    Water column image, shape: len(beam_reference_directions) x does
+    not matter
+
+Parameter ``beam_reference_directions``:
+    beam reference directions: reference points that describe beam
+    angle and reference range for each beam)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_angle_beamnumber_interpolator = R"doc()doc";
 
@@ -64,6 +69,17 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtra
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_range_samplenumber_interpolators = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_wci = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_wci_first_sample_number = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_wci_first_sample_number_internal =
+R"doc(Get the internally saved wci first sample number. Internally: the
+first_sample_number of the image is divided by sample_number_step
+
+Returns:
+    uint16_t)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_wci_sample_number_step = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_lookup = R"doc()doc";
 
@@ -84,6 +100,10 @@ static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtra
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_to_stream = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_wci = R"doc(< water column image)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_wci_first_sample_number = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_wci_sample_number_step = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

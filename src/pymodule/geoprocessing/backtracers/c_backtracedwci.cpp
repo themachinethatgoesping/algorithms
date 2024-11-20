@@ -36,11 +36,15 @@ void init_c_backtracedwci(py::module& m)
         //.def(py::init<>(), DOC_BacktracedWCI(BacktracedWCI))
         .def(py::init<const xt::xtensor<float, 2>&,
                       const SampleDirectionsRange<1>&,
-                      const std::vector<uint16_t>&>(),
+                      const std::vector<uint16_t>&,
+                      uint16_t,
+                      uint16_t>(),
              DOC_BacktracedWCI(BacktracedWCI_2),
              py::arg("wci"),
              py::arg("beam_reference_directions"),
-             py::arg("beam_reference_sample_numbers"))
+             py::arg("beam_reference_sample_numbers"),
+             py::arg("wci_first_sample_number"),
+             py::arg("wci_sample_number_step") = 1)
         .def("__eq__", &BacktracedWCI::operator==, DOC_BacktracedWCI(operator_eq), py::arg("other"))
         .def("lookup",
              &BacktracedWCI::lookup,
@@ -58,6 +62,15 @@ void init_c_backtracedwci(py::module& m)
              DOC_BacktracedWCI(get_range_samplenumber_interpolators))
         .def("get_min_angle", &BacktracedWCI::get_min_angle, DOC_BacktracedWCI(get_min_angle))
         .def("get_max_angle", &BacktracedWCI::get_max_angle, DOC_BacktracedWCI(get_max_angle))
+        .def("get_wci_first_sample_number",
+             &BacktracedWCI::get_wci_first_sample_number,
+             DOC_BacktracedWCI(get_wci_first_sample_number))
+        .def("get_wci_first_sample_number_internal",
+             &BacktracedWCI::get_wci_first_sample_number_internal,
+             DOC_BacktracedWCI(get_wci_first_sample_number_internal))
+        .def("get_wci_sample_number_step",
+             &BacktracedWCI::get_wci_sample_number_step,
+             DOC_BacktracedWCI(get_wci_sample_number_step))
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(BacktracedWCI)

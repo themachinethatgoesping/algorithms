@@ -30,7 +30,7 @@ TEST_CASE("BacktracedWCI should support common functions", TESTTAG)
     std::vector<uint16_t> beam_reference_sample_numbers = { 29, 30 };
 
     // initialize location
-    auto BWCI = BacktracedWCI(wci, beam_reference_directions, beam_reference_sample_numbers);
+    auto BWCI = BacktracedWCI(wci, beam_reference_directions, beam_reference_sample_numbers, 10, 2);
 
     // test inequalitySampleDirections
     // REQUIRE(BacktracedWCI<2>() != location);
@@ -46,6 +46,11 @@ TEST_CASE("BacktracedWCI should support common functions", TESTTAG)
     BWCI.to_stream(buffer);
     REQUIRE(BWCI == BacktracedWCI(BWCI.from_stream(buffer)));
 
+    // test sample number conversion
+    REQUIRE(BWCI.get_wci_first_sample_number() == 10);
+    REQUIRE(BWCI.get_wci_first_sample_number_internal() == 5);
+    REQUIRE(BWCI.get_wci_sample_number_step() == 2);
+
     // test print does not crash
     REQUIRE(BWCI.info_string().size() != 0);
 
@@ -54,12 +59,12 @@ TEST_CASE("BacktracedWCI should support common functions", TESTTAG)
 
     CHECK(B.binary_hash() == 16542792567673540722ULL);
     REQUIRE(S.size() == 2); 
-    CHECK(S[0].binary_hash() == 17516376884828913569ULL);
-    CHECK(S[1].binary_hash() == 10310803827488579691ULL); 
+    CHECK(S[0].binary_hash() == 1645176183659276605ULL);
+    CHECK(S[1].binary_hash() == 9086582777076030084ULL); 
 
 
     // test hash (should be stable if class is not changed)
-    REQUIRE(BWCI.binary_hash() == 10221334945506934621ULL); 
+    REQUIRE(BWCI.binary_hash() == 17236312442682017805ULL); 
     REQUIRE(BWCI.binary_hash() == BacktracedWCI(BWCI).binary_hash());
     REQUIRE(BWCI.binary_hash() == BacktracedWCI(BWCI.from_binary(BWCI.to_binary())).binary_hash());
 }

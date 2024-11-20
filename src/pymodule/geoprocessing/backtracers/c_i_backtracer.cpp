@@ -65,15 +65,6 @@ void init_i_backtracer(py::module& m)
              py::arg("z_coordinates"),
              py::arg("mp_cores") = 1)
 
-        .def("lookup_indices",
-             &I_Backtracer::lookup_indices,
-             DOC_I_Backtracer(lookup_indices),
-             py::arg("beam_reference_directions"),
-             py::arg("beam_reference_sample_numbers"),
-             py::arg("beam_reference_max_sample_numbers"),
-             py::arg("target_directions"),
-             py::arg("mp_cores") = 1)
-
         .def("lookup",
              &I_Backtracer::lookup,
              DOC_I_Backtracer(lookup),
@@ -81,7 +72,9 @@ void init_i_backtracer(py::module& m)
              py::arg("beam_reference_directions"),
              py::arg("beam_reference_sample_numbers"),
              py::arg("target_directions"),
-             py::arg("mp_cores") = 1)
+             py::arg("wci_first_sample_number"),
+             py::arg("wci_sample_number_step") = 1,
+             py::arg("mp_cores")               = 1)
 
         .def("set_sensor_location",
              &I_Backtracer::set_sensor_location,

@@ -39,8 +39,10 @@ class BacktracedWCI
     NearestInterpolatorFI             _angle_beamnumber_interpolator;
     std::vector<LinearInterpolatorFF> _range_samplenumber_interpolators;
 
-    float _min_angle;
-    float _max_angle;
+    float    _min_angle;
+    float    _max_angle;
+    uint16_t _wci_first_sample_number;
+    uint16_t _wci_sample_number_step;
 
     BacktracedWCI() = default;
 
@@ -49,13 +51,20 @@ class BacktracedWCI
      * @brief Construct a new sample location object (initialize all tensors using the specified
      * shape (empty))
      *
-     * @param shape shape of the internal tensors
+     * @param wci Water column image, shape: len(beam_reference_directions) x does not matter
+     * @param beam_reference_directions beam reference directions: reference points that describe
+     * beam angle and reference range for each beam
      *
      */
     BacktracedWCI(const xt::xtensor<float, 2>&                    wci,
                   const datastructures::SampleDirectionsRange<1>& beam_reference_directions,
-                  const std::vector<uint16_t>&                    beam_reference_sample_numbers)
+                  const std::vector<uint16_t>&                    beam_reference_sample_numbers,
+                  uint16_t                                        wci_first_sample_number,
+                  uint16_t                                        wci_sample_number_step = 1)
         : _wci(wci)
+        , _wci_first_sample_number(
+              std::roundf(float(wci_first_sample_number) / wci_sample_number_step))
+        , _wci_sample_number_step(wci_sample_number_step)
     {
         using tools::vectorinterpolators::LinearInterpolator;
         using tools::vectorinterpolators::NearestInterpolator;
@@ -64,16 +73,14 @@ class BacktracedWCI
             throw std::runtime_error("lookup: beam_reference_directions is empty");
 
         if (_wci.shape()[0] < beam_reference_directions.size() ||
-            _wci.shape()[1] < *std::max_element(beam_reference_sample_numbers.begin(),
-                                                beam_reference_sample_numbers.end()))
+            _wci.shape()[0] < beam_reference_sample_numbers.size())
             throw std::runtime_error(
-                fmt::format("lookup: wci shape ({}, {}) is smaller then beam_reference shape ({}, "
-                            "{}), or beam_reference_sample_numbers",
+                fmt::format("lookup: wci.shape() = [{},{}], beam_reference_directions.size() = {}, "
+                            "beam_reference_sample_numbers.size() = {}",
                             _wci.shape()[0],
                             _wci.shape()[1],
                             beam_reference_directions.size(),
-                            *std::max_element(beam_reference_sample_numbers.begin(),
-                                              beam_reference_sample_numbers.end())));
+                            beam_reference_sample_numbers.size()));
 
         // sort the beam indices by angle and add them to a nearest interpolator
         auto sorted_beam_index = xt::argsort(beam_reference_directions.crosstrack_angle);
@@ -99,7 +106,9 @@ class BacktracedWCI
         {
             _range_samplenumber_interpolators.emplace_back(
                 std::vector<float>{ 0.f, float(beam_reference_directions.range[bn]) },
-                std::vector<float>{ 0.f, float(beam_reference_sample_numbers[bn]) });
+                std::vector<float>{
+                    0.f,
+                    std::roundf(float(beam_reference_sample_numbers[bn]) / wci_sample_number_step) });
         }
 
         check_shape();
@@ -111,7 +120,7 @@ class BacktracedWCI
             return std::numeric_limits<float>::quiet_NaN();
 
         uint16_t bn = _angle_beamnumber_interpolator(beam_angle);
-        int      sn = int(_range_samplenumber_interpolators[bn](range));
+        int      sn = int(_range_samplenumber_interpolators[bn](range)) - _wci_first_sample_number;
 
         if (sn < 0 || sn >= int(_wci.shape()[1]))
             return std::numeric_limits<float>::quiet_NaN();
@@ -136,8 +145,20 @@ class BacktracedWCI
     {
         return _range_samplenumber_interpolators;
     }
-    float get_min_angle() const { return _min_angle; }
-    float get_max_angle() const { return _max_angle; }
+    float    get_min_angle() const { return _min_angle; }
+    float    get_max_angle() const { return _max_angle; }
+    uint16_t get_wci_first_sample_number() const
+    {
+        return _wci_first_sample_number * _wci_sample_number_step;
+    }
+    /**
+     * @brief Get the internally saved wci first sample number.
+     *        Internally: the first_sample_number of the image is divided by sample_number_step
+     * 
+     * @return uint16_t 
+     */
+    uint16_t get_wci_first_sample_number_internal() const { return _wci_first_sample_number; }
+    uint16_t get_wci_sample_number_step() const { return _wci_sample_number_step; }
 
   public:
     // ----- file I/O -----
@@ -158,7 +179,8 @@ class BacktracedWCI
             data._range_samplenumber_interpolators.push_back(LinearInterpolatorFF::from_stream(is));
 
         is.read(reinterpret_cast<char*>(&data._min_angle),
-                sizeof(data._min_angle) + sizeof(data._max_angle));
+                sizeof(data._min_angle) + sizeof(data._max_angle) +
+                    sizeof(data._wci_first_sample_number) + sizeof(data._wci_sample_number_step));
 
         data.check_shape();
 
@@ -180,20 +202,29 @@ class BacktracedWCI
             _range_samplenumber_interpolators[i].to_stream(os);
 
         os.write(reinterpret_cast<const char*>(&_min_angle),
-                 sizeof(_min_angle) + sizeof(_max_angle));
+                 sizeof(_min_angle) + sizeof(_max_angle) + sizeof(_wci_first_sample_number) +
+                     sizeof(_wci_sample_number_step));
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision,
+                                                  bool         superscript_exponents) const
     {
-        tools::classhelper::ObjectPrinter printer("BacktracedWCI", float_precision, superscript_exponents);
+        tools::classhelper::ObjectPrinter printer(
+            "BacktracedWCI", float_precision, superscript_exponents);
 
         printer.register_container("wci", _wci, "°");
         printer.register_value("min_angle", _min_angle, "°");
         printer.register_value("max_angle", _max_angle, "°");
-        printer.append(_angle_beamnumber_interpolator.__printer__(float_precision, superscript_exponents));
+        printer.register_value("wci_first_sample_number",
+                               _wci_first_sample_number * _wci_sample_number_step,
+                               std::to_string(_wci_first_sample_number));
+        printer.register_value("wci_sample_number_step", _wci_sample_number_step, "");
+        printer.append(
+            _angle_beamnumber_interpolator.__printer__(float_precision, superscript_exponents));
         for (size_t i = 0; i < _range_samplenumber_interpolators.size(); ++i)
-            printer.append(_range_samplenumber_interpolators[i].__printer__(float_precision, superscript_exponents));
+            printer.append(_range_samplenumber_interpolators[i].__printer__(float_precision,
+                                                                            superscript_exponents));
 
         return printer;
     }
