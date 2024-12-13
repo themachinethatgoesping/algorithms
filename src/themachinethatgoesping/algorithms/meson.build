@@ -50,7 +50,6 @@ headers = [
   'geoprocessing/datastructures/.docstrings/sampledirectionsrange.doc.hpp',
   'geoprocessing/datastructures/.docstrings/sampledirectionstime.doc.hpp',
   'geoprocessing/datastructures/.docstrings/sampleindices.doc.hpp',
-  'geoprocessing/datastructures/.docstrings/watercolumnimage.doc.hpp',
   'geoprocessing/datastructures/.docstrings/xyz.doc.hpp',
   'geoprocessing/.docstrings/datastructures.doc.hpp',
   'geoprocessing/.docstrings/raytracers.doc.hpp',
