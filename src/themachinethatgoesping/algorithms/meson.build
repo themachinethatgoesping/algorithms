@@ -81,32 +81,32 @@ headers = [
 
 # -- targets --
 # for now force static linking on windows
-if build_machine.system() != 'linux'
-  algorithms_lib = static_library(
-    libname,
-    sources,
-    dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
-    override_options: ['b_lundef=false'],
-    # cpp_pch : 'pch/pch.hpp',
-    install: true,
-    install_tag: 'library',
-  )
-else
-  algorithms_lib = library(
-    libname,
-    sources,
-    dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
-    override_options: ['b_lundef=false'],
-    # cpp_pch : 'pch/pch.hpp',
-    install: true,
-    install_tag: 'library',
-  )
-endif
+# if build_machine.system() != 'linux'
+#   algorithms_lib = static_library(
+#     libname,
+#     sources,
+#     dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
+#     override_options: ['b_lundef=false'],
+#     # cpp_pch : 'pch/pch.hpp',
+#     install: true,
+#     install_tag: 'library',
+#   )
+# else
+#   algorithms_lib = library(
+#     libname,
+#     sources,
+#     dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
+#     override_options: ['b_lundef=false'],
+#     # cpp_pch : 'pch/pch.hpp',
+#     install: true,
+#     install_tag: 'library',
+#   )
+# endif
 
 # -- internal dependency --
 algorithms_dep = declare_dependency(
   dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
-  link_with: [algorithms_lib],
+  #link_with: [algorithms_lib],
   include_directories: ['../../'],
 )
 
@@ -117,10 +117,10 @@ if headers != ['']
   install_headers(headers, subdir: headerdir + '/', preserve_path: true)
 endif
 
-# create pkgconfig file
-pkg = import('pkgconfig')
-pkg.generate(
-  algorithms_lib,
-  description: 'Library for processing themachinethatgoesping pings',
-  url: 'https://github.com/themachinethatgoesping/algorithms',
-)
+# # create pkgconfig file
+# pkg = import('pkgconfig')
+# pkg.generate(
+#   algorithms_lib,
+#   description: 'Library for processing themachinethatgoesping pings',
+#   url: 'https://github.com/themachinethatgoesping/algorithms',
+# )
