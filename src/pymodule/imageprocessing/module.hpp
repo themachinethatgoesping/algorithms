@@ -8,23 +8,22 @@
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace pymodule {
-namespace py_amplitudecorrection {
+namespace py_imageprocessing {
 
 namespace py_functions {
 void init_m_functions(pybind11::module& m); // defined in functions/functions.cpp
 }
 
-void init_m_amplitudecorrection(pybind11::module& m)
+void init_m_imageprocessing(pybind11::module& m)
 {
-    pybind11::module submodule = m.def_submodule("amplitudecorrection");
+    pybind11::module submodule = m.def_submodule("imageprocessing");
 
-    submodule.doc() =
-        "Submodule for amplitudecorrection (absorption, tvg, calibration factors, etc.)";
+    submodule.doc() = "Submodule for imageprocessing (absorption, tvg, calibration factors, etc.)";
 
     py_functions::init_m_functions(submodule);
 }
 
-} // namespace py_amplitudecorrection
+} // namespace py_imageprocessing
 } // namespace pymodule
 } // namespace algorithms
 } // namespace themachinethatgoesping

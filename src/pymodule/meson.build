@@ -8,9 +8,11 @@ module_name = 'algorithms'
 # -- sources
 sources = [
   'module.cpp',
+  'amplitudecorrection/functions/functions.cpp',
   'signalprocessing/datastructures/c_cwsignalparameters.cpp',
   'signalprocessing/datastructures/c_fmsignalparameters.cpp',
   'signalprocessing/datastructures/c_genericsignalparameters.cpp',
+  'imageprocessing/functions/functions.cpp',
   'geoprocessing/datastructures/c_beamsampleparameters.cpp',
   'geoprocessing/datastructures/c_raytraceresult.cpp',
   'geoprocessing/datastructures/c_raytraceresults.cpp',

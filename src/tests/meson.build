@@ -11,6 +11,7 @@ sources = [
   'signalprocessing/datastructures/cwsignalparameters.test.cpp',
   'signalprocessing/datastructures/fmsignalparameters.test.cpp',
   'signalprocessing/datastructures/genericsignalparameters.test.cpp',
+  'imageprocessing/find_local_maxima.test.cpp',
   'algorithms/functions/absorption.test.cpp',
   'algorithms/functions/rangecorrection.test.cpp',
   'algorithms/functions/wcicorrection.test.cpp',
