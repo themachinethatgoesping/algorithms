@@ -38,7 +38,7 @@ headers = [
   'imageprocessing/functions/find_local_maxima.hpp',
   'imageprocessing/functions/weighted_median.hpp',
   'imageprocessing/functions/.docstrings/find_local_maxima.doc.hpp',
-  'imageprocessing/functions/.docstrings/local_maxima.doc.hpp',
+  'imageprocessing/functions/.docstrings/weighted_median.doc.hpp',
   'geoprocessing/datastructures.hpp',
   'geoprocessing/raytracers.hpp',
   'geoprocessing/datastructures/beamsampleparameters.hpp',
