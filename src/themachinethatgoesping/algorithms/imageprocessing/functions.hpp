@@ -9,4 +9,5 @@
 #include ".docstrings/functions.doc.hpp"
 
 
+#include "functions/weighted_median.hpp"
 #include "functions/find_local_maxima.hpp"

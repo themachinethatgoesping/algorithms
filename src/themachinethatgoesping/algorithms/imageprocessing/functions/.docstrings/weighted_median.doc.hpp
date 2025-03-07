@@ -1,4 +1,4 @@
-//sourcehash: 9f1ac15877d3954798b40740da1b1107e7ff684f1549bd24f0dfd93810534234
+//sourcehash: a1628688e4d30156c99abd8fa8009c2a1c6dff52921aa768e113e58c008e8a04
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,7 +38,31 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_find_local_maxima = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_weighted_median =
+R"doc(Computes the weighted median of a 1D xtensor without using Boost.
+
+The weighted median is defined as the smallest value for which the
+cumulative weight is >= 50% of the total weight.
+
+Template parameter ``t_xtensor_val``:
+    The type of the 1D xtensor for values.
+
+Template parameter ``t_xtensor_weight``:
+    The type of the 1D xtensor for weights.
+
+Parameter ``values``:
+    1D xtensor of numerical values.
+
+Parameter ``weights``:
+    1D xtensor of corresponding weights (same shape as values).
+    Weights must be positive!
+
+Returns:
+    The weighted median as a single scalar value.)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_weighted_median_2 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_weighted_median_3 = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

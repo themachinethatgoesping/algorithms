@@ -36,6 +36,7 @@ headers = [
   'imageprocessing/functions.hpp',
   'imageprocessing/.docstrings/functions.doc.hpp',
   'imageprocessing/functions/find_local_maxima.hpp',
+  'imageprocessing/functions/weighted_median.hpp',
   'imageprocessing/functions/.docstrings/find_local_maxima.doc.hpp',
   'imageprocessing/functions/.docstrings/local_maxima.doc.hpp',
   'geoprocessing/datastructures.hpp',
