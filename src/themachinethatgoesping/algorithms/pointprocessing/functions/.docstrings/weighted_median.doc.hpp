@@ -1,4 +1,4 @@
-//sourcehash: a1628688e4d30156c99abd8fa8009c2a1c6dff52921aa768e113e58c008e8a04
+//sourcehash: e16be223c26350c8a9125af0d503349639938116f574705a5e64938fb546ff5d
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,7 +38,7 @@
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_weighted_median =
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_functions_weighted_median =
 R"doc(Computes the weighted median of a 1D xtensor without using Boost.
 
 The weighted median is defined as the smallest value for which the
@@ -60,9 +60,9 @@ Parameter ``weights``:
 Returns:
     The weighted median as a single scalar value.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_weighted_median_2 = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_functions_weighted_median_2 = R"doc()doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_weighted_median_3 = R"doc()doc";
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_functions_weighted_median_3 = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

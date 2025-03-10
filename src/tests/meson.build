@@ -8,11 +8,11 @@ testcomponent = 'algorithms'
 
 sources = [
   'tutorial.test.cpp',
+  'pointprocessing/weighted_median.cpp',
   'signalprocessing/datastructures/cwsignalparameters.test.cpp',
   'signalprocessing/datastructures/fmsignalparameters.test.cpp',
   'signalprocessing/datastructures/genericsignalparameters.test.cpp',
   'imageprocessing/find_local_maxima.test.cpp',
-  'imageprocessing/weighted_median.cpp',
   'algorithms/functions/absorption.test.cpp',
   'algorithms/functions/rangecorrection.test.cpp',
   'algorithms/functions/wcicorrection.test.cpp',

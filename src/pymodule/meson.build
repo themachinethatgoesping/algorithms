@@ -9,6 +9,7 @@ module_name = 'algorithms'
 sources = [
   'module.cpp',
   'amplitudecorrection/functions/functions.cpp',
+  'pointprocessing/functions/functions.cpp',
   'signalprocessing/datastructures/c_cwsignalparameters.cpp',
   'signalprocessing/datastructures/c_fmsignalparameters.cpp',
   'signalprocessing/datastructures/c_genericsignalparameters.cpp',

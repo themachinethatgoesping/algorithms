@@ -49,43 +49,6 @@ void init_find_local_maxima(pybind11::module& m)
           py::arg("mp_cores")    = 1);
 }
 
-template<typename t_float_val, typename t_float_weight>
-void init_weighted_median(pybind11::module& m)
-{
-    namespace py = pybind11;
-    using namespace imageprocessing::functions;
-
-    // weighted_median
-    m.def("weighted_median",
-          py::overload_cast<const xt::pytensor<t_float_val, 1>&,
-                            const xt::pytensor<t_float_weight, 1>&>(
-              &weighted_median<xt::pytensor<t_float_val, 1>, xt::pytensor<t_float_weight, 1>>),
-          DOC_functions(weighted_median),
-          py::arg("values"),
-          py::arg("weights"));
-
-    m.def("weighted_median",
-          py::overload_cast<const xt::pytensor<t_float_val, 1>&,
-                            const xt::pytensor<t_float_val, 1>&,
-                            const xt::pytensor<t_float_weight, 1>&>(
-              &weighted_median<xt::pytensor<t_float_val, 1>, xt::pytensor<t_float_weight, 1>>),
-          DOC_functions(weighted_median_2),
-          py::arg("values_x"),
-          py::arg("values_y"),
-          py::arg("weights"));
-
-    m.def("weighted_median",
-          py::overload_cast<const xt::pytensor<t_float_val, 1>&,
-                            const xt::pytensor<t_float_val, 1>&,
-                            const xt::pytensor<t_float_val, 1>&,
-                            const xt::pytensor<t_float_weight, 1>&>(
-              &weighted_median<xt::pytensor<t_float_val, 1>, xt::pytensor<t_float_weight, 1>>),
-          DOC_functions(weighted_median_3),
-          py::arg("values_x"),
-          py::arg("values_y"),
-          py::arg("values_z"),
-          py::arg("weights"));
-}
 
 void init_m_functions(pybind11::module& m)
 {
@@ -95,10 +58,6 @@ void init_m_functions(pybind11::module& m)
 
     init_find_local_maxima<float>(submodule);
     init_find_local_maxima<double>(submodule);
-    init_weighted_median<float, float>(submodule);
-    init_weighted_median<double, double>(submodule);
-    init_weighted_median<float, double>(submodule);
-    init_weighted_median<double, float>(submodule);
 }
 
 } // namespace py_functions

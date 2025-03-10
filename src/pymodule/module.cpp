@@ -9,6 +9,7 @@
 #include <pybind11/pybind11.h>
 
 #include "imageprocessing/module.hpp"
+#include "pointprocessing/module.hpp"
 #include "amplitudecorrection/module.hpp"
 #include "geoprocessing/module.hpp"
 #include "signalprocessing/module.hpp"
@@ -29,6 +30,7 @@ PYBIND11_MODULE(MODULE_NAME, m)
     m.attr("__version__") = MODULE_VERSION;
 
     py_imageprocessing::init_m_imageprocessing(m);
+    py_pointprocessing::init_m_pointprocessing(m);
     py_amplitudecorrection::init_m_amplitudecorrection(m);
     py_geoprocessing::init_m_geoprocessing(m);
     py_signalprocessing::init_m_signalprocessing(m);

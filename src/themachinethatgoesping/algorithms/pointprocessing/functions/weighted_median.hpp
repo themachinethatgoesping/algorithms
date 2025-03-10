@@ -18,7 +18,7 @@
 
 namespace themachinethatgoesping {
 namespace algorithms {
-namespace imageprocessing {
+namespace pointprocessing {
 namespace functions {
 
 /**
@@ -116,6 +116,6 @@ weighted_median(const t_xtensor_val&    values_x,
 
 
 } // namespace functions
-} // namespace imageprocessing
+} // namespace pointprocessing
 } // namespace algorithms
 } // namespace themachinethatgoesping

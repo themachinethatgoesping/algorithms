@@ -8,4 +8,4 @@
 /* generated doc strings */
 #include ".docstrings/functions.doc.hpp"
 
-#include "functions/find_local_maxima.hpp"
+#include "functions/weighted_median.hpp"

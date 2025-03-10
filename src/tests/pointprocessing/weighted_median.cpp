@@ -10,12 +10,12 @@
 #include <xtensor/xsort.hpp>
 #include <xtensor/xtensor.hpp>
 
-#include <themachinethatgoesping/algorithms/imageprocessing/functions/weighted_median.hpp>
+#include <themachinethatgoesping/algorithms/pointprocessing/functions/weighted_median.hpp>
 #include <themachinethatgoesping/tools/helper.hpp>
 
 // using namespace testing;
 using namespace std;
-using namespace themachinethatgoesping::algorithms::imageprocessing::functions;
+using namespace themachinethatgoesping::algorithms::pointprocessing::functions;
 
 #define TESTTAG "[weighted_median]"
 
