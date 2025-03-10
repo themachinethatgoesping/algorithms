@@ -26,6 +26,8 @@ namespace functions {
  *
  * The weighted median is defined as the smallest value for which the
  * cumulative weight is >= 50% of the total weight.
+ * Note: Edge case with inbalanced partial weights is handled by returning the weighted mean of the
+ * two closest values.
  *
  * @tparam t_xtensor_val The type of the 1D xtensor for values.
  * @tparam t_xtensor_weight The type of the 1D xtensor for weights.
@@ -57,7 +59,7 @@ typename t_xtensor_val::value_type weighted_median(const t_xtensor_val&    value
     auto sorted_wts  = xt::index_view(weights, idx);
 
     // 2) Cumulative sum of weights
-    auto cumsum_wts = xt::cumsum(sorted_wts);
+    auto cumsum_wts = xt::nancumsum(sorted_wts);
 
     // 3) Total weight
     value_type total_weight = cumsum_wts(cumsum_wts.size() - 1);
@@ -68,23 +70,23 @@ typename t_xtensor_val::value_type weighted_median(const t_xtensor_val&    value
 
     // 4) Find the point where cumulative weight >= 50% of total
     value_type half = total_weight / value_type(2);
-    for (std::size_t i = 0; i < cumsum_wts.shape()[0]; ++i)
+    auto       it   = std::lower_bound(cumsum_wts.begin(), cumsum_wts.end(), half);
+    if (it != cumsum_wts.end())
     {
-        if (cumsum_wts(i) > half)
+        std::size_t idx = std::distance(cumsum_wts.begin(), it);
+
+        // If the cumulative weight is exactly 50% of total, return the weighted mean of the two
+        // closest values
+        if (cumsum_wts.unchecked(idx) == half)
         {
-            // Weighted median found
-            return sorted_vals(i);
+            value_type val1 = sorted_vals.unchecked(idx);
+            value_type val2 = sorted_vals.unchecked(idx + 1);
+            value_type wt1  = sorted_wts.unchecked(idx);
+            value_type wt2  = sorted_wts.unchecked(idx + 1);
+            return (val1 * wt1 + val2 * wt2) / (wt1 + wt2);
         }
-        else if (cumsum_wts(i) == half)
-        {
-            // If exactly half, return average of this and the next value
-            if (i + 1 < cumsum_wts.shape()[0])
-            {
-                return (sorted_vals(i) + sorted_vals(i + 1)) / value_type(2);
-            }
-            // If there's no "next value," just return this one
-            return sorted_vals(i);
-        }
+
+        return sorted_vals(idx);
     }
 
     // Fallback: if we never returned, pick the final value
@@ -113,7 +115,6 @@ weighted_median(const t_xtensor_val&    values_x,
              weighted_median(values_y, weights),
              weighted_median(values_z, weights) };
 }
-
 
 } // namespace functions
 } // namespace pointprocessing

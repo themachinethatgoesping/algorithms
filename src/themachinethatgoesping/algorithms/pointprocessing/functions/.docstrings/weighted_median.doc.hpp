@@ -1,4 +1,4 @@
-//sourcehash: e16be223c26350c8a9125af0d503349639938116f574705a5e64938fb546ff5d
+//sourcehash: 0a185160de140e4b1071d8b527616c964389fcd189009b18595b1ef487b55fb9
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -42,7 +42,9 @@ static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_funct
 R"doc(Computes the weighted median of a 1D xtensor without using Boost.
 
 The weighted median is defined as the smallest value for which the
-cumulative weight is >= 50% of the total weight.
+cumulative weight is >= 50% of the total weight. Note: Edge case with
+inbalanced partial weights is handled by returning the weighted mean
+of the two closest values.
 
 Template parameter ``t_xtensor_val``:
     The type of the 1D xtensor for values.
