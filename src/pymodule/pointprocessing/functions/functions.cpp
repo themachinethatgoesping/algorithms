@@ -17,7 +17,6 @@ namespace py_functions {
 
 #define DOC_functions(ARG) DOC(themachinethatgoesping, algorithms, pointprocessing, functions, ARG)
 
-
 template<typename t_float_val, typename t_float_weight>
 void init_weighted_median(pybind11::module& m)
 {
@@ -54,6 +53,25 @@ void init_weighted_median(pybind11::module& m)
           py::arg("values_y"),
           py::arg("values_z"),
           py::arg("weights"));
+
+    // weighted_median
+    m.def("weighted_median",
+          py::overload_cast<const xt::pytensor<t_float_val, 1>&,
+                            const xt::pytensor<t_float_weight, 1>&>(
+              &weighted_median<xt::pytensor<t_float_val, 1>, xt::pytensor<t_float_weight, 1>>),
+          DOC_functions(weighted_median),
+          py::arg("values"),
+          py::arg("weights"));
+
+    // weighted_median
+    m.def("segment_in_weighted_quantiles",
+          &segment_in_weighted_quantiles<xt::pytensor<t_float_val, 1>,
+                                         xt::pytensor<t_float_weight, 1>>,
+          DOC_functions(segment_in_weighted_quantiles),
+          py::arg("values"),
+          py::arg("weights"),
+          py::arg("n_quantiles"),
+          py::arg("return_empty_segments") = false);
 }
 
 void init_m_functions(pybind11::module& m)

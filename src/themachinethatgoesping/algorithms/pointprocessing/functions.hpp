@@ -8,4 +8,5 @@
 /* generated doc strings */
 #include ".docstrings/functions.doc.hpp"
 
+#include "functions/segment_in_weighted_quantiles.hpp"
 #include "functions/weighted_median.hpp"

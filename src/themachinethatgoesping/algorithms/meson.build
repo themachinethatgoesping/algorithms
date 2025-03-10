@@ -24,6 +24,7 @@ headers = [
   'amplitudecorrection/functions/.docstrings/wcicorrection.doc.hpp',
   'pointprocessing/functions.hpp',
   'pointprocessing/.docstrings/functions.doc.hpp',
+  'pointprocessing/functions/segment_in_weighted_quantiles.hpp',
   'pointprocessing/functions/weighted_median.hpp',
   'pointprocessing/functions/.docstrings/weighted_median.doc.hpp',
   'signalprocessing/datastructures.hpp',

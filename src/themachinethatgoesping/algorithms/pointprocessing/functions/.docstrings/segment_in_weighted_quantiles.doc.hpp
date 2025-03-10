@@ -1,4 +1,4 @@
-//sourcehash: 2ec8dbd90e9f6388bf37a50e3e906f62b437f4e1c56687998f54c6ffc3afa64b
+//sourcehash: 415b75660d70895cb220b7e72077576eb201e29768cf01022a19d7cf69962a73
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,8 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_functions_segment_in_weighted_quantiles = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

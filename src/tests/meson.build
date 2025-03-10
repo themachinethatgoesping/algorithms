@@ -8,6 +8,7 @@ testcomponent = 'algorithms'
 
 sources = [
   'tutorial.test.cpp',
+  'pointprocessing/segment_in_weighted_quantiles.cpp',
   'pointprocessing/weighted_median.cpp',
   'signalprocessing/datastructures/cwsignalparameters.test.cpp',
   'signalprocessing/datastructures/fmsignalparameters.test.cpp',
