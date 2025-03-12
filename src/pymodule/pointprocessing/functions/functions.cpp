@@ -65,8 +65,12 @@ void init_weighted_median(pybind11::module& m)
 
     // weighted_median
     m.def("segment_in_weighted_quantiles",
-          &segment_in_weighted_quantiles<xt::pytensor<t_float_val, 1>,
-                                         xt::pytensor<t_float_weight, 1>>,
+          py::overload_cast<const xt::pytensor<t_float_val, 1>&,
+                            const xt::pytensor<t_float_weight, 1>&,
+                            const int64_t,
+                            const bool>(
+              &segment_in_weighted_quantiles<xt::pytensor<t_float_val, 1>,
+                                             xt::pytensor<t_float_weight, 1>>),
           DOC_functions(segment_in_weighted_quantiles),
           py::arg("values"),
           py::arg("weights"),
@@ -80,10 +84,10 @@ void init_m_functions(pybind11::module& m)
 
     submodule.doc() = "M that holds functions used for amplitude corrections";
 
-    init_weighted_median<float, float>(submodule);
     init_weighted_median<double, double>(submodule);
-    init_weighted_median<float, double>(submodule);
     init_weighted_median<double, float>(submodule);
+    init_weighted_median<float, double>(submodule);
+    init_weighted_median<float, float>(submodule);
 }
 
 } // namespace py_functions

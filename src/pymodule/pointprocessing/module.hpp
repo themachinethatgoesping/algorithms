@@ -5,6 +5,8 @@
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 
+#include "bubblestreams/module.hpp"
+
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace pymodule {
@@ -21,6 +23,8 @@ void init_m_pointprocessing(pybind11::module& m)
     submodule.doc() = "Submodule for pointprocessing (weighted_median, bubble_displacement, ...)";
 
     py_functions::init_m_functions(submodule);
+
+    py_bubblestreams::init_m_bubblestreams(submodule);
 }
 
 } // namespace py_pointprocessing

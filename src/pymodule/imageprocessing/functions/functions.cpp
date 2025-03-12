@@ -25,7 +25,10 @@ void init_find_local_maxima(pybind11::module& m)
 
     // find_local_maxima
     m.def("find_local_maxima",
-          &find_local_maxima<xt::pytensor<t_float, 3>>,
+          py::overload_cast<const xt::pytensor<t_float, 3>&,
+                            const std::optional<t_float>,
+                            const bool,
+                            const int>(&find_local_maxima<xt::pytensor<t_float, 3>>),
           DOC_functions(find_local_maxima),
           py::arg("data"),
           py::arg("threshold")   = std::nullopt,
@@ -33,7 +36,10 @@ void init_find_local_maxima(pybind11::module& m)
           py::arg("mp_cores")    = 1);
 
     m.def("find_local_maxima",
-          &find_local_maxima<xt::pytensor<t_float, 2>>,
+          py::overload_cast<const xt::pytensor<t_float, 2>&,
+                            const std::optional<t_float>,
+                            const bool,
+                            const int>(&find_local_maxima<xt::pytensor<t_float, 2>>),
           DOC_functions(find_local_maxima_2),
           py::arg("data"),
           py::arg("threshold")   = std::nullopt,
@@ -41,7 +47,10 @@ void init_find_local_maxima(pybind11::module& m)
           py::arg("mp_cores")    = 1);
 
     m.def("find_local_maxima",
-          &find_local_maxima<xt::pytensor<t_float, 1>>,
+          py::overload_cast<const xt::pytensor<t_float, 1>&,
+                            const std::optional<t_float>,
+                            const bool,
+                            const int>(&find_local_maxima<xt::pytensor<t_float, 1>>),
           DOC_functions(find_local_maxima_3),
           py::arg("data"),
           py::arg("threshold")   = std::nullopt,
@@ -49,15 +58,14 @@ void init_find_local_maxima(pybind11::module& m)
           py::arg("mp_cores")    = 1);
 }
 
-
 void init_m_functions(pybind11::module& m)
 {
     pybind11::module submodule = m.def_submodule("functions");
 
     submodule.doc() = "M that holds functions used for amplitude corrections";
 
-    init_find_local_maxima<float>(submodule);
     init_find_local_maxima<double>(submodule);
+    init_find_local_maxima<float>(submodule);
 }
 
 } // namespace py_functions
