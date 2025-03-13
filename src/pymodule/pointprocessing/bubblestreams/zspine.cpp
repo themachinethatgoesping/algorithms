@@ -26,20 +26,22 @@ void add_template_overloads_2(auto& c_zspine)
     using namespace pointprocessing::bubblestreams;
 
     // factory functions
-    c_zspine.def_static("from_point_cloud",
-                        py::overload_cast<const xt::pytensor<t_float_coord, 1>&,
-                                          const xt::pytensor<t_float_coord, 1>&,
-                                          const xt::pytensor<t_float_coord, 1>&,
-                                          const xt::pytensor<t_float_weight, 1>&,
-                                          const int64_t>(
-                            &ZSpine::from_point_cloud<xt::pytensor<t_float_coord, 1>,
-                                                      xt::pytensor<t_float_weight, 1>>),
-                        DOC_ZSpine(from_point_cloud),
-                        py::arg("x"),
-                        py::arg("y"),
-                        py::arg("z"),
-                        py::arg("weights"),
-                        py::arg("n_quantiles"));
+    c_zspine.def_static(
+        "from_point_cloud",
+        py::overload_cast<const xt::pytensor<t_float_coord, 1>&,
+                          const xt::pytensor<t_float_coord, 1>&,
+                          const xt::pytensor<t_float_coord, 1>&,
+                          const xt::pytensor<t_float_weight, 1>&,
+                          const int64_t,
+                          bool>(&ZSpine::from_point_cloud<xt::pytensor<t_float_coord, 1>,
+                                                          xt::pytensor<t_float_weight, 1>>),
+        DOC_ZSpine(from_point_cloud),
+        py::arg("x"),
+        py::arg("y"),
+        py::arg("z"),
+        py::arg("weights"),
+        py::arg("n_quantiles"),
+        py::arg("is_altitude") = false);
 }
 
 template<typename t_float>
@@ -49,10 +51,10 @@ void add_template_overloads_1(auto& c_zspine)
     using namespace pointprocessing::bubblestreams;
 
     // factory functions
-    c_zspine.def("get_xy",
+    c_zspine.def("get_xy_vec",
                  py::overload_cast<const xt::pytensor<t_float, 1>&>(
-                     &ZSpine::get_xy<xt::pytensor<t_float, 1>>, py::const_),
-                 DOC_ZSpine(get_xy),
+                     &ZSpine::get_xy_vec<xt::pytensor<t_float, 1>>, py::const_),
+                 DOC_ZSpine(get_xy_vec),
                  py::arg("z"));
 }
 
@@ -66,18 +68,58 @@ void init_c_zspine(pybind11::module& m)
             m,
             "ZSpine",
             DOC(themachinethatgoesping, algorithms, pointprocessing, bubblestreams, ZSpine))
-            .def(py::init<>(), DOC_ZSpine(ZSpine))
+            .def(py::init<bool>(), DOC_ZSpine(ZSpine), py::arg("is_altitude") = false)
             .def(py::init<std::vector<ZSpine::coord_type>,
                           std::vector<ZSpine::coord_type>,
-                          std::vector<ZSpine::coord_type>>(),
+                          std::vector<ZSpine::coord_type>,
+                          bool>(),
                  DOC_ZSpine(ZSpine_2),
                  py::arg("x"),
                  py::arg("y"),
-                 py::arg("z"))
+                 py::arg("z"),
+                 py::arg("is_altitude") = false)
             .def("__eq__", &ZSpine::operator==, DOC_ZSpine(operator_eq), py::arg("other"))
 
-            .def("get_spine_points", &ZSpine::get_spine_points, DOC_ZSpine(get_spine_points))
-            .def("get_spine", &ZSpine::get_spine, DOC_ZSpine(get_spine), py::arg("n_points"))
+            .def("add_point",
+                 &ZSpine::add_point,
+                 DOC_ZSpine(add_point),
+                 py::arg("x"),
+                 py::arg("y"),
+                 py::arg("z"))
+            .def("add_points",
+                 &ZSpine::add_points,
+                 DOC_ZSpine(add_points),
+                 py::arg("x"),
+                 py::arg("y"),
+                 py::arg("z"))
+
+            // origin functions
+            .def("reset_origin", &ZSpine::reset_origin, DOC_ZSpine(reset_origin))
+            .def("set_origin",
+                 &ZSpine::set_origin,
+                 DOC_ZSpine(set_origin),
+                 py::arg("x"),
+                 py::arg("y"),
+                 py::arg("z"))
+            .def("estimate_origin",
+                 &ZSpine::estimate_origin,
+                 DOC_ZSpine(estimate_origin),
+                 py::arg("bottom_z"),
+                 py::arg("slope_modifier") = 1.0)
+
+            // get functions
+            .def("get_spine_points",
+                 &ZSpine::get_spine_points,
+                 DOC_ZSpine(get_spine_points),
+                 py::arg("with_origin") = true)
+            .def("get_spine",
+                 &ZSpine::get_spine,
+                 DOC_ZSpine(get_spine),
+                 py::arg("n_points"),
+                 py::arg("with_origin") = true)
+            .def("get_origin", &ZSpine::get_origin, DOC_ZSpine(get_origin))
+            .def("get_is_altitude", &ZSpine::get_is_altitude, DOC_ZSpine(get_is_altitude))
+            .def("get_xy", &ZSpine::get_xy, DOC_ZSpine(get_xy), py::arg("z"))
 
             .def("get_x_interpolator", &ZSpine::get_x_interpolator, DOC_ZSpine(get_x_interpolator))
             .def("get_y_interpolator", &ZSpine::get_y_interpolator, DOC_ZSpine(get_y_interpolator))

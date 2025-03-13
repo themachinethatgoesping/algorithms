@@ -1,4 +1,4 @@
-//sourcehash: b8ff573cb8c78e4b2526f53786342e6af2b5994da3c9d6af6ce7669ad75f4ebf
+//sourcehash: 42c70ffef6c2fcd945d303014b08d8e75e1117311794ee5bcd4ba28819ff1978
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -44,9 +44,19 @@ static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubbl
 
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_ZSpine_2 = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_add_point = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_add_points = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_estimate_origin = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_from_point_cloud = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_from_stream = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_get_is_altitude = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_get_origin = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_get_spine = R"doc()doc";
 
@@ -56,17 +66,33 @@ static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubbl
 
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_get_xy = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_get_xy_vec = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_get_y_interpolator = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_is_altitude = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_operator_eq = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_origin = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_printer = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_reset_origin = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_set_origin = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_to_stream = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_x = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_x_interpolator = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_y = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_y_interpolator = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_z = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

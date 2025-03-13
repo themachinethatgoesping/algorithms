@@ -51,7 +51,7 @@ TEST_CASE("ZSpine from_point_cloud and interpolation", TESTTAG)
     {
         // Interpolate at a few new points
         xt::xtensor<double, 1> query_z   = { 6.0, 7.5, 9.0 };
-        auto                   result_xy = spine.get_xy(query_z);
+        auto                   result_xy = spine.get_xy_vec(query_z);
 
         // result_xy has shape [3,2], i.e. [ (x,y), (x,y), (x,y) ]
         REQUIRE(result_xy.shape(0) == 3);
@@ -81,6 +81,36 @@ TEST_CASE("ZSpine from_point_cloud and interpolation", TESTTAG)
         REQUIRE(sampled_xyz(0, 4) == Catch::Approx(2.0).margin(0.6));
     }
 
+    SECTION("Check origin setting and resetting")
+    {
+        // Set an origin
+        spine.set_origin(1.0, 1.0, 1.0);
+
+        // Check the origin
+        auto [x, y, z] = spine.get_origin().value();
+        CHECK(x == Catch::Approx(1.0).margin(0.1));
+        CHECK(y == Catch::Approx(1.0).margin(0.1));
+        CHECK(z == Catch::Approx(1.0).margin(0.1));
+        CHECK(spine.get_is_altitude() == false);
+
+        // Reset the origin
+        spine.reset_origin();
+        CHECK_FALSE(spine.get_origin().has_value());
+    }
+
+    SECTION("CHECK origin estimation")
+    {
+        // Estimate origin from the spine
+        spine.estimate_origin(12, 0.9);
+
+        // Check the origin
+        auto [x, y, z] = spine.get_origin().value();
+        CHECK(x == Catch::Approx(2.9).margin(0.05));
+        CHECK(y == Catch::Approx(0.4).margin(0.05));
+        CHECK(z == Catch::Approx(12.0).margin(0.05));
+        CHECK(spine.get_is_altitude() == false);
+    }
+
     SECTION("Check basic i/o")
     {
         // test inequality
@@ -101,7 +131,7 @@ TEST_CASE("ZSpine from_point_cloud and interpolation", TESTTAG)
         REQUIRE(spine.info_string().size() != 0);
 
         // test hash (should be stable if class is not changed)
-        REQUIRE(spine.binary_hash() == 15300216807141022852ULL);
+        REQUIRE(spine.binary_hash() == 2126609994950921350ULL);
         REQUIRE(spine.binary_hash() == ZSpine(spine).binary_hash());
         REQUIRE(spine.binary_hash() == ZSpine(spine.from_binary(spine.to_binary())).binary_hash());
     }
