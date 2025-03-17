@@ -1,4 +1,4 @@
-//sourcehash: 42c70ffef6c2fcd945d303014b08d8e75e1117311794ee5bcd4ba28819ff1978
+//sourcehash: d143b84e15e1cb335d50868a31a48e210460127af5a776e1032eb8ae28a5e400
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -47,6 +47,14 @@ static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubbl
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_add_point = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_add_points = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_displace_points = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_displace_points_inplace = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_displace_points_x = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_displace_points_y = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_pointprocessing_bubblestreams_ZSpine_estimate_origin = R"doc()doc";
 

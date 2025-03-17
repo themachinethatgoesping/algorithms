@@ -56,6 +56,65 @@ void add_template_overloads_1(auto& c_zspine)
                      &ZSpine::get_xy_vec<xt::pytensor<t_float, 1>>, py::const_),
                  DOC_ZSpine(get_xy_vec),
                  py::arg("z"));
+
+    // displacement functions
+    c_zspine
+        .def("displace_points_inplace",
+             py::overload_cast<xt::pytensor<t_float, 1>&,
+                               xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               std::optional<ZSpine::coord_type>,
+                               const bool,
+                               const int>(
+                 &ZSpine::displace_points_inplace<xt::pytensor<t_float, 1>>, py::const_),
+             DOC_ZSpine(displace_points_inplace),
+             py::arg("x"),
+             py::arg("y"),
+             py::arg("z"),
+             py::arg("bottom_z") = std::nullopt,
+             py::arg("inverse")  = false,
+             py::arg("mp_cores") = 1)
+        .def("displace_points",
+             py::overload_cast<const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               std::optional<ZSpine::coord_type>,
+                               const bool,
+                               const int>(&ZSpine::displace_points<xt::pytensor<t_float, 1>>,
+                                          py::const_),
+             DOC_ZSpine(displace_points),
+             py::arg("x"),
+             py::arg("y"),
+             py::arg("z"),
+             py::arg("bottom_z") = std::nullopt,
+             py::arg("inverse")  = false,
+             py::arg("mp_cores") = 1)
+        .def("displace_points_x",
+             py::overload_cast<const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               std::optional<ZSpine::coord_type>,
+                               const bool,
+                               const int>(&ZSpine::displace_points_x<xt::pytensor<t_float, 1>>,
+                                          py::const_),
+             DOC_ZSpine(displace_points_x),
+             py::arg("x"),
+             py::arg("z"),
+             py::arg("bottom_z") = std::nullopt,
+             py::arg("inverse")  = false,
+             py::arg("mp_cores") = 1)
+        .def("displace_points_y",
+             py::overload_cast<const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               std::optional<ZSpine::coord_type>,
+                               const bool,
+                               const int>(&ZSpine::displace_points_y<xt::pytensor<t_float, 1>>,
+                                          py::const_),
+             DOC_ZSpine(displace_points_y),
+             py::arg("y"),
+             py::arg("z"),
+             py::arg("bottom_z") = std::nullopt,
+             py::arg("inverse")  = false,
+             py::arg("mp_cores") = 1);
 }
 
 void init_c_zspine(pybind11::module& m)
@@ -117,6 +176,7 @@ void init_c_zspine(pybind11::module& m)
                  DOC_ZSpine(get_spine),
                  py::arg("n_points"),
                  py::arg("with_origin") = true)
+
             .def("get_origin", &ZSpine::get_origin, DOC_ZSpine(get_origin))
             .def("get_is_altitude", &ZSpine::get_is_altitude, DOC_ZSpine(get_is_altitude))
             .def("get_xy", &ZSpine::get_xy, DOC_ZSpine(get_xy), py::arg("z"))

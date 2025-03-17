@@ -181,7 +181,7 @@ class ZSpine
         _origin = std::make_tuple(x, y, z);
         rebuild_interpolators();
     }
-    void estimate_origin(coord_type bottom_z, coord_type slope_modifier = 1.0)
+    void estimate_origin(coord_type bottom_z, coord_type slope_modifier = 0.95)
     {
         if (_z.empty())
             throw std::runtime_error("Cannot estimate origin from empty spine");
@@ -327,6 +327,111 @@ class ZSpine
 
         sort_by_z();
         rebuild_interpolators();
+    }
+
+    template<tools::helper::c_xtensor_1d t_xtensor_coord>
+    void displace_points_inplace(t_xtensor_coord&          x,
+                                 t_xtensor_coord&          y,
+                                 const t_xtensor_coord&    z,
+                                 std::optional<coord_type> bottom_z = std::nullopt,
+                                 const bool                inverse  = false,
+                                 const int                 mp_cores = 1) const
+    {
+        if (x.size() != y.size() || x.size() != z.size())
+            throw std::runtime_error("x, y and z must have the same size");
+
+        if (!(bottom_z.has_value() || _origin.has_value()))
+            throw std::runtime_error("Either bottom_z or spine origin must be set!");
+
+        const auto [origin_x, origin_y] = get_xy(bottom_z.value_or(std::get<2>(*_origin)));
+
+#pragma omp parallel for num_threads(mp_cores)
+        for (size_t i = 0; i < z.size(); ++i)
+        {
+            if (inverse)
+            {
+                x[i] -= origin_x - _x_interpolator(z[i]);
+                y[i] -= origin_y - _y_interpolator(z[i]);
+            }
+            else
+            {
+                x[i] += origin_x - _x_interpolator(z[i]);
+                y[i] += origin_y - _y_interpolator(z[i]);
+            }
+        }
+    }
+
+    template<tools::helper::c_xtensor_1d t_xtensor_coord>
+    std::pair<t_xtensor_coord, t_xtensor_coord> displace_points(
+        const t_xtensor_coord&    x,
+        const t_xtensor_coord&    y,
+        const t_xtensor_coord&    z,
+        std::optional<coord_type> bottom_z = std::nullopt,
+        const bool                inverse  = false,
+        const int                 mp_cores = 1) const
+    {
+        std::pair<t_xtensor_coord, t_xtensor_coord> xy = { x, y };
+
+        displace_points_inplace(xy.first, xy.second, z, bottom_z, inverse, mp_cores);
+        return xy;
+    }
+
+    template<tools::helper::c_xtensor_1d t_xtensor_coord>
+    t_xtensor_coord displace_points_x(const t_xtensor_coord&    x,
+                                      const t_xtensor_coord&    z,
+                                      std::optional<coord_type> bottom_z = std::nullopt,
+                                      const bool                inverse  = false,
+                                      const int                 mp_cores = 1) const
+    {
+        if (x.size() != z.size())
+            throw std::runtime_error("x, and z must have the same size");
+
+        if (!(bottom_z.has_value() || _origin.has_value()))
+            throw std::runtime_error("Either bottom_z or spine origin must be set!");
+
+        const auto origin_x = _x_interpolator((bottom_z.value_or(std::get<2>(*_origin))));
+
+        t_xtensor_coord x_r = x;
+
+#pragma omp parallel for num_threads(mp_cores)
+        for (size_t i = 0; i < z.size(); ++i)
+        {
+            if (inverse)
+                x_r[i] -= origin_x - _x_interpolator(z[i]);
+            else
+                x_r[i] += origin_x - _x_interpolator(z[i]);
+        }
+
+        return x_r;
+    }
+
+    template<tools::helper::c_xtensor_1d t_xtensor_coord>
+    t_xtensor_coord displace_points_y(const t_xtensor_coord&    y,
+                                      const t_xtensor_coord&    z,
+                                      std::optional<coord_type> bottom_z = std::nullopt,
+                                      const bool                inverse  = false,
+                                      const int                 mp_cores = 1) const
+    {
+        if (y.size() != z.size())
+            throw std::runtime_error("y, and z must have the same size");
+
+        if (!(bottom_z.has_value() || _origin.has_value()))
+            throw std::runtime_error("Either bottom_z or spine origin must be set!");
+
+        const auto origin_y = _y_interpolator((bottom_z.value_or(std::get<2>(*_origin))));
+
+        auto y_r = xt::empty_like(y);
+
+#pragma omp parallel for num_threads(mp_cores)
+        for (size_t i = 0; i < z.size(); ++i)
+        {
+            if (inverse)
+                y_r[i] = y[i] - origin_y + _y_interpolator(z[i]);
+            else
+                y_r[i] = y[i] + origin_y - _y_interpolator(z[i]);
+        }
+
+        return y_r;
     }
 
   public:
