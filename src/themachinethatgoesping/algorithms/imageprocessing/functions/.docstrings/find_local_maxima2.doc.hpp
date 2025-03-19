@@ -1,4 +1,4 @@
-//sourcehash: bb9c7e0adf0bd3cc5247579870743dbac5cff53282205a946c9fb0eb26fabece
+//sourcehash: 657b2c5e655cd342b7730b20d2479e05ac3d46bca2475637695b588e6f8f4e33
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,12 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_find_local_maxima2 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_find_local_maxima2_2 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_find_local_maxima2_3 = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

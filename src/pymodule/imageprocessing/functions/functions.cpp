@@ -56,6 +56,31 @@ void init_find_local_maxima(pybind11::module& m)
           py::arg("threshold")   = std::nullopt,
           py::arg("accept_nans") = true,
           py::arg("mp_cores")    = 1);
+
+          // find_local_maxima2
+    m.def("find_local_maxima2",
+      &find_local_maxima2<xt::pytensor<t_float, 3>>,
+      DOC_functions(find_local_maxima2),
+      py::arg("data"),
+      py::arg("threshold")   = std::nullopt,
+      py::arg("accept_nans") = true,
+      py::arg("mp_cores")    = 1);
+
+m.def("find_local_maxima2",
+      &find_local_maxima2<xt::pytensor<t_float, 2>>,
+      DOC_functions(find_local_maxima2_2),
+      py::arg("data"),
+      py::arg("threshold")   = std::nullopt,
+      py::arg("accept_nans") = true,
+      py::arg("mp_cores")    = 1);
+
+m.def("find_local_maxima2",
+      &find_local_maxima2<xt::pytensor<t_float, 1>>,
+      DOC_functions(find_local_maxima2_3),
+      py::arg("data"),
+      py::arg("threshold")   = std::nullopt,
+      py::arg("accept_nans") = true,
+      py::arg("mp_cores")    = 1);
 }
 
 void init_m_functions(pybind11::module& m)

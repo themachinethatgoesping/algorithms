@@ -1,4 +1,4 @@
-//sourcehash: bb9c7e0adf0bd3cc5247579870743dbac5cff53282205a946c9fb0eb26fabece
+//sourcehash: c7e161e59bc7e5cb21d72ebd745796aae5615a5167f0b99987100b03b7b65f44
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,8 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_grow_regions = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
