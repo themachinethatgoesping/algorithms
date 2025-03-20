@@ -57,9 +57,9 @@ auto find_local_maxima2(
     static_assert(tools::helper::c_xtensor_3d<t_xtensor_3d>,
                   "Template parameter must be a 3D tensor");
 
-    int64_t max_z = data.shape()[2] - 1;
-    int64_t max_y = data.shape()[1] - 1;
-    int64_t max_x = data.shape()[0] - 1;
+    const int64_t max_z = data.shape()[2] - 1;
+    const int64_t max_y = data.shape()[1] - 1;
+    const int64_t max_x = data.shape()[0] - 1;
 
     std::vector<xt::xtensor_fixed<int64_t, xt::xshape<3>>> XYZ;
 
@@ -75,7 +75,7 @@ auto find_local_maxima2(
             {
                 for (int64_t z = 1; z < max_z; ++z)
                 {
-                    const value_type val = data(x, y, z);
+                    const value_type val = data.unchecked(x, y, z);
 
                     if (!(val > threshold_val))
                         continue;
@@ -141,10 +141,10 @@ auto find_local_maxima2(
     static_assert(tools::helper::c_xtensor_2d<t_xtensor_2d>,
                   "Template parameter must be a 2D tensor");
 
-    int64_t max_y = data.shape()[1] - 1;
-    int64_t max_x = data.shape()[0] - 1;
+    const int64_t max_y = data.shape()[1] - 1;
+    const int64_t max_x = data.shape()[0] - 1;
 
-    std::vector < xt::xtensor_fixed<int64_t, xt::xshape<2>>> XY;
+    std::vector<xt::xtensor_fixed<int64_t, xt::xshape<2>>> XY;
 
     // preprocess threshold
     const auto threshold_val = threshold.value_or(std::numeric_limits<value_type>::lowest());
@@ -156,7 +156,7 @@ auto find_local_maxima2(
         {
             for (int64_t y = 1; y < max_y; ++y)
             {
-                const value_type val = data(x, y);
+                const value_type val = data.unchecked(x, y);
 
                 if (!(val > threshold_val))
                     continue;
@@ -219,7 +219,7 @@ auto find_local_maxima2(
     static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
                   "Template parameter must be a 1D tensor");
 
-    int64_t max_x = data.shape()[0] - 1;
+    const int64_t max_x = data.shape()[0] - 1;
 
     std::vector<int64_t> X;
 
@@ -231,7 +231,7 @@ auto find_local_maxima2(
 #pragma omp for schedule(guided)
         for (int64_t x = 1; x < max_x; ++x)
         {
-            const value_type val = data(x);
+            const value_type val = data.unchecked(x);
 
             if (!(val > threshold_val))
                 continue;

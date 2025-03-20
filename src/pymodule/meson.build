@@ -8,13 +8,13 @@ module_name = 'algorithms'
 # -- sources
 sources = [
   'module.cpp',
+  'amplitudecorrection/functions/functions.cpp',
+  'pointprocessing/bubblestreams/zspine.cpp',
+  'pointprocessing/functions/functions.cpp',
   'signalprocessing/datastructures/c_cwsignalparameters.cpp',
   'signalprocessing/datastructures/c_fmsignalparameters.cpp',
   'signalprocessing/datastructures/c_genericsignalparameters.cpp',
   'imageprocessing/functions/functions.cpp',
-  'pointprocessing/bubblestreams/zspine.cpp',
-  'pointprocessing/functions/functions.cpp',
-  'amplitudecorrection/functions/functions.cpp',
   'geoprocessing/datastructures/c_beamsampleparameters.cpp',
   'geoprocessing/datastructures/c_raytraceresult.cpp',
   'geoprocessing/datastructures/c_raytraceresults.cpp',
@@ -23,11 +23,11 @@ sources = [
   'geoprocessing/datastructures/c_sampledirectionstime.cpp',
   'geoprocessing/datastructures/c_sampleindices.cpp',
   'geoprocessing/datastructures/c_xyz.cpp',
+  'geoprocessing/raytracers/c_i_raytracer.cpp',
+  'geoprocessing/raytracers/c_rtconstantsvp.cpp',
   'geoprocessing/backtracers/c_backtracedwci.cpp',
   'geoprocessing/backtracers/c_btconstantsvp.cpp',
   'geoprocessing/backtracers/c_i_backtracer.cpp',
-  'geoprocessing/raytracers/c_i_raytracer.cpp',
-  'geoprocessing/raytracers/c_rtconstantsvp.cpp',
 ]
 
 # define python module

@@ -1,4 +1,4 @@
-//sourcehash: c7e161e59bc7e5cb21d72ebd745796aae5615a5167f0b99987100b03b7b65f44
+//sourcehash: f171d0e38d6378f2f92ee62d1f3fe16bf89c658c0471bfd3378b14a9df37b1c3
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,7 +38,15 @@
 #endif
 
 
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_get_non_null_mask = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_grow_regions = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_grow_regions_2 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_grow_regions_3 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_is_null_region = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

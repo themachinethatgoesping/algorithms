@@ -57,9 +57,9 @@ auto find_local_maxima(
     static_assert(tools::helper::c_xtensor_3d<t_xtensor_3d>,
                   "Template parameter must be a 3D tensor");
 
-    int64_t max_z = data.shape()[2] - 1;
-    int64_t max_y = data.shape()[1] - 1;
-    int64_t max_x = data.shape()[0] - 1;
+    const int64_t max_z = data.shape()[2] - 1;
+    const int64_t max_y = data.shape()[1] - 1;
+    const int64_t max_x = data.shape()[0] - 1;
 
     std::vector<int64_t>    X;
     std::vector<int64_t>    Y;
@@ -78,7 +78,7 @@ auto find_local_maxima(
             {
                 for (int64_t z = 1; z < max_z; ++z)
                 {
-                    const value_type val = data(x, y, z);
+                    const value_type val = data.unchecked(x, y, z);
 
                     if (!(val > threshold_val))
                         continue;
@@ -147,8 +147,8 @@ auto find_local_maxima(
     static_assert(tools::helper::c_xtensor_2d<t_xtensor_2d>,
                   "Template parameter must be a 2D tensor");
 
-    int64_t max_y = data.shape()[1] - 1;
-    int64_t max_x = data.shape()[0] - 1;
+    const int64_t max_y = data.shape()[1] - 1;
+    const int64_t max_x = data.shape()[0] - 1;
 
     std::vector<int64_t>    X;
     std::vector<int64_t>    Y;
@@ -164,14 +164,13 @@ auto find_local_maxima(
         {
             for (int64_t y = 1; y < max_y; ++y)
             {
-                const value_type val = data(x, y);
+                const value_type val = data.unchecked(x, y);
 
                 if (!(val > threshold_val))
                     continue;
 
-                auto neighborhood = xt::view(data,
-                                             xt::range(x - 1, x + 2),
-                                             xt::range(y - 1, y + 2));
+                auto neighborhood =
+                    xt::view(data, xt::range(x - 1, x + 2), xt::range(y - 1, y + 2));
 
                 value_type max_val;
                 if (accept_nans)
@@ -230,7 +229,7 @@ auto find_local_maxima(
     static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
                   "Template parameter must be a 1D tensor");
 
-    int64_t max_x = data.shape()[0] - 1;
+    const int64_t max_x = data.shape()[0] - 1;
 
     std::vector<int64_t>    X;
     std::vector<value_type> V;
@@ -243,13 +242,12 @@ auto find_local_maxima(
 #pragma omp for schedule(guided)
         for (int64_t x = 1; x < max_x; ++x)
         {
-            const value_type val = data(x);
+            const value_type val = data.unchecked(x);
 
             if (!(val > threshold_val))
                 continue;
 
-            auto neighborhood = xt::view(data,
-                                         xt::range(x - 1, x + 2));
+            auto neighborhood = xt::view(data, xt::range(x - 1, x + 2));
 
             value_type max_val;
             if (accept_nans)

@@ -68,8 +68,8 @@ void add_template_overloads_1(auto& c_zspine)
                                const int>(
                  &ZSpine::displace_points_inplace<xt::pytensor<t_float, 1>>, py::const_),
              DOC_ZSpine(displace_points_inplace),
-             py::arg("x"),
-             py::arg("y"),
+             py::arg("x").noconvert(),
+             py::arg("y").noconvert(),
              py::arg("z"),
              py::arg("bottom_z") = std::nullopt,
              py::arg("inverse")  = false,
