@@ -26,6 +26,20 @@ namespace algorithms {
 namespace imageprocessing {
 namespace functions {
 
+template<typename T>
+inline auto get_max_val2(const T& a, const bool& accept_nans)
+{
+    if constexpr (std::is_floating_point_v<T>)
+    {
+        if (accept_nans)
+        {
+            return xt::nanmax(a)();
+        }
+    }
+
+    return xt::amax(a)();
+}
+
 template<tools::helper::c_xtensor_3d t_xtensor_3d>
 /**
  * @brief Finds the local maxima in a 3D tensor.
@@ -85,17 +99,7 @@ auto find_local_maxima2(
                                                  xt::range(y - 1, y + 2),
                                                  xt::range(z - 1, z + 2));
 
-                    value_type max_val;
-                    if (accept_nans)
-                    {
-                        max_val = xt::nanmax(neighborhood)();
-                    }
-                    else
-                    {
-                        max_val = xt::amax(neighborhood)();
-                    }
-
-                    if (val == max_val)
+                    if (val == get_max_val2(neighborhood, accept_nans))
                     {
 #pragma omp critical
                         {
@@ -164,17 +168,7 @@ auto find_local_maxima2(
                 auto neighborhood =
                     xt::view(data, xt::range(x - 1, x + 2), xt::range(y - 1, y + 2));
 
-                value_type max_val;
-                if (accept_nans)
-                {
-                    max_val = xt::nanmax(neighborhood)();
-                }
-                else
-                {
-                    max_val = xt::amax(neighborhood)();
-                }
-
-                if (val == max_val)
+                if (val == get_max_val2(neighborhood, accept_nans))
                 {
 #pragma omp critical
                     {
@@ -238,17 +232,7 @@ auto find_local_maxima2(
 
             auto neighborhood = xt::view(data, xt::range(x - 1, x + 2));
 
-            value_type max_val;
-            if (accept_nans)
-            {
-                max_val = xt::nanmax(neighborhood)();
-            }
-            else
-            {
-                max_val = xt::amax(neighborhood)();
-            }
-
-            if (val == max_val)
+            if (val == get_max_val2(neighborhood, accept_nans))
             {
 #pragma omp critical
                 {
