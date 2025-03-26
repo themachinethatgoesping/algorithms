@@ -1,4 +1,4 @@
-//sourcehash: 9d55661e81df88b8ef7b22af45d9e0796bd558f1bdc6b0695db1eb5102e1d677
+//sourcehash: b12f4f733ae4194c074fc0abc0bc8cd0776d6452bb8bd9b3aa2bf9dd0f3a980a
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -43,6 +43,8 @@ static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_funct
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_find_local_maxima2_2 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_find_local_maxima2_3 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_get_max_val2 = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
