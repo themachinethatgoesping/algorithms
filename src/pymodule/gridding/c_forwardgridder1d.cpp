@@ -66,7 +66,7 @@ void init_ForwardGridder1D_float(pybind11::module& m, const std::string& suffix)
              DOC_ForwardGridder1D(interpolate_block_mean),
              py::arg("sx"),
              py::arg("s_val"))
-             
+
         // Interpolation functions - block mean inplace (modifies existing arrays)
         .def("interpolate_block_mean_inplace",
              py::overload_cast<const xt::pytensor<t_float, 1>&,
@@ -85,8 +85,7 @@ void init_ForwardGridder1D_float(pybind11::module& m, const std::string& suffix)
 
         // Weighted mean interpolation (returns new arrays)
         .def("interpolate_weighted_mean",
-             py::overload_cast<const xt::pytensor<t_float, 1>&,
-                               const xt::pytensor<t_float, 1>&>(
+             py::overload_cast<const xt::pytensor<t_float, 1>&, const xt::pytensor<t_float, 1>&>(
                  &T_ForwardGridder1D::template interpolate_weighted_mean<xt::pytensor<t_float, 1>,
                                                                          xt::pytensor<t_float, 1>>,
                  py::const_),

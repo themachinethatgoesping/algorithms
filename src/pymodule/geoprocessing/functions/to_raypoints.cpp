@@ -43,8 +43,8 @@ void init_to_raypoints(pybind11::module& m)
 
 void init_f_to_raypoints(pybind11::module& m)
 {
-    init_to_raypoints<float>(m);
     init_to_raypoints<double>(m);
+    init_to_raypoints<float>(m);
 }
 
 } // namespace py_functions
