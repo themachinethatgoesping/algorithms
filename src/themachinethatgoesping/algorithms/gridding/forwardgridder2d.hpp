@@ -50,9 +50,7 @@ class ForwardGridder2D
      * @return ForwardGridder2D object
      */
     template<typename T_vector>
-    static ForwardGridder2D from_data(t_float         res,
-                                     const T_vector& sx,
-                                     const T_vector& sy)
+    static ForwardGridder2D from_data(t_float res, const T_vector& sx, const T_vector& sy)
     {
         auto [min_x, max_x, min_y, max_y] = functions::get_minmax(sx, sy);
         return from_res(res, min_x, max_x, min_y, max_y);
@@ -69,10 +67,10 @@ class ForwardGridder2D
      * @return ForwardGridder2D object
      */
     static ForwardGridder2D from_res(t_float res,
-                                    t_float min_x,
-                                    t_float max_x,
-                                    t_float min_y,
-                                    t_float max_y)
+                                     t_float min_x,
+                                     t_float max_x,
+                                     t_float min_y,
+                                     t_float max_y)
     {
         return ForwardGridder2D(res, res, min_x, max_x, min_y, max_y);
     }
@@ -90,13 +88,13 @@ class ForwardGridder2D
      * @param ybase y base position of the grid, by default 0.0
      */
     ForwardGridder2D(t_float xres,
-                    t_float yres,
-                    t_float min_x,
-                    t_float max_x,
-                    t_float min_y,
-                    t_float max_y,
-                    t_float xbase = 0,
-                    t_float ybase = 0)
+                     t_float yres,
+                     t_float min_x,
+                     t_float max_x,
+                     t_float min_y,
+                     t_float max_y,
+                     t_float xbase = 0,
+                     t_float ybase = 0)
         : _xres(xres)
         , _yres(yres)
         , _xbase(xbase)
@@ -130,10 +128,10 @@ class ForwardGridder2D
     template<tools::helper::c_xtensor_2d t_xtensor_2d>
     std::tuple<t_xtensor_2d, t_xtensor_2d> get_empty_grd_images() const
     {
-        xt::xtensor<t_float, 2> image_values = xt::zeros<t_float>(
-            { static_cast<size_t>(_nx), static_cast<size_t>(_ny) });
-        xt::xtensor<t_float, 2> image_weights = xt::zeros<t_float>(
-            { static_cast<size_t>(_nx), static_cast<size_t>(_ny) });
+        t_xtensor_2d image_values =
+            xt::zeros<t_float>({ static_cast<size_t>(_nx), static_cast<size_t>(_ny) });
+        t_xtensor_2d image_weights =
+            xt::zeros<t_float>({ static_cast<size_t>(_nx), static_cast<size_t>(_ny) });
 
         return std::make_tuple(image_values, image_weights);
     }
@@ -145,8 +143,6 @@ class ForwardGridder2D
      * @param sx x values
      * @param sy y values
      * @param s_val amplitudes / volume backscattering coefficients
-     * @param image_values Image with values. If empty a new image will be created.
-     * @param image_weights Image with weights. If empty a new image will be created.
      * @return std::tuple<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 2>> image_values,
      * image_weights
      */
@@ -154,41 +150,44 @@ class ForwardGridder2D
     std::tuple<t_xtensor_2d, t_xtensor_2d> interpolate_block_mean(
         const T_vector& sx,
         const T_vector& sy,
-        const T_vector& s_val,
-        t_xtensor_2d    image_values  = t_xtensor_2d(),
-        t_xtensor_2d    image_weights = t_xtensor_2d()) const
+        const T_vector& s_val) const
     {
-        if (image_values.size() == 0 || image_weights.size() == 0)
-        {
-            auto [val, weight] = get_empty_grd_images<t_xtensor_2d>();
-            image_values       = val;
-            image_weights      = weight;
-        }
-        else
-        {
-            if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx) ||
-                static_cast<size_t>(image_values.shape()[1]) != static_cast<size_t>(_ny))
-                throw std::runtime_error(
-                    "ERROR: image_values dimensions do not fit ForwardGridder2D dimensions!");
-            if (static_cast<size_t>(image_weights.shape()[0]) != static_cast<size_t>(_nx) ||
-                static_cast<size_t>(image_weights.shape()[1]) != static_cast<size_t>(_ny))
-                throw std::runtime_error(
-                    "ERROR: image_weight dimensions do not fit ForwardGridder2D dimensions!");
-        }
+        auto image_values_weights = get_empty_grd_images<t_xtensor_2d>();
 
-        functions::grd_block_mean(sx,
-                                  sy,
-                                  s_val,
-                                  _xmin,
-                                  _xres,
-                                  _nx,
-                                  _ymin,
-                                  _yres,
-                                  _ny,
-                                  image_values,
-                                  image_weights);
+        interpolate_block_mean_inplace(
+            sx, sy, s_val, std::get<0>(image_values_weights), std::get<1>(image_values_weights));
 
-        return std::make_tuple(image_values, image_weights);
+        return image_values_weights;
+    }
+
+    /**
+     * @brief Interpolate 2D points onto 2d images using block mean interpolation (inplace version)
+     *
+     * @tparam T_vector
+     * @param sx x values
+     * @param sy y values
+     * @param s_val amplitudes / volume backscattering coefficients
+     * @param image_values Image with values will be edited inplace
+     * @param image_weights Image with weights will be edited inplace
+     */
+    template<tools::helper::c_xtensor_2d t_xtensor_2d, typename T_vector>
+    void interpolate_block_mean_inplace(const T_vector& sx,
+                                        const T_vector& sy,
+                                        const T_vector& s_val,
+                                        t_xtensor_2d&   image_values,
+                                        t_xtensor_2d&   image_weights) const
+    {
+        if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx) ||
+            static_cast<size_t>(image_values.shape()[1]) != static_cast<size_t>(_ny))
+            throw std::runtime_error(
+                "ERROR: image_values dimensions do not fit ForwardGridder2D dimensions!");
+        if (static_cast<size_t>(image_weights.shape()[0]) != static_cast<size_t>(_nx) ||
+            static_cast<size_t>(image_weights.shape()[1]) != static_cast<size_t>(_ny))
+            throw std::runtime_error(
+                "ERROR: image_weight dimensions do not fit ForwardGridder2D dimensions!");
+
+        functions::grd_block_mean(
+            sx, sy, s_val, _xmin, _xres, _nx, _ymin, _yres, _ny, image_values, image_weights);
     }
 
     /**
@@ -198,8 +197,6 @@ class ForwardGridder2D
      * @param sx x values
      * @param sy y values
      * @param s_val amplitudes / volume backscattering coefficients
-     * @param image_values Image with values. If empty a new image will be created.
-     * @param image_weights Image with weights. If empty a new image will be created.
      * @return std::tuple<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 2>> image_values,
      * image_weights
      */
@@ -207,41 +204,44 @@ class ForwardGridder2D
     std::tuple<t_xtensor_2d, t_xtensor_2d> interpolate_weighted_mean(
         const T_vector& sx,
         const T_vector& sy,
-        const T_vector& s_val,
-        t_xtensor_2d    image_values  = t_xtensor_2d(),
-        t_xtensor_2d    image_weights = t_xtensor_2d()) const
+        const T_vector& s_val) const
     {
-        if (image_values.size() == 0 || image_weights.size() == 0)
-        {
-            auto [val, weight] = get_empty_grd_images<t_xtensor_2d>();
-            image_values       = val;
-            image_weights      = weight;
-        }
-        else
-        {
-            if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx) ||
-                static_cast<size_t>(image_values.shape()[1]) != static_cast<size_t>(_ny))
-                throw std::runtime_error(
-                    "ERROR: image_values dimensions do not fit ForwardGridder2D dimensions!");
-            if (static_cast<size_t>(image_weights.shape()[0]) != static_cast<size_t>(_nx) ||
-                static_cast<size_t>(image_weights.shape()[1]) != static_cast<size_t>(_ny))
-                throw std::runtime_error(
-                    "ERROR: image_weight dimensions do not fit ForwardGridder2D dimensions!");
-        }
+        auto image_values_weights = get_empty_grd_images<t_xtensor_2d>();
 
-        functions::grd_weighted_mean(sx,
-                                     sy,
-                                     s_val,
-                                     _xmin,
-                                     _xres,
-                                     _nx,
-                                     _ymin,
-                                     _yres,
-                                     _ny,
-                                     image_values,
-                                     image_weights);
+        interpolate_weighted_mean_inplace(
+            sx, sy, s_val, std::get<0>(image_values_weights), std::get<1>(image_values_weights));
 
-        return std::make_tuple(image_values, image_weights);
+        return image_values_weights;
+    }
+
+    /**
+     * @brief Interpolate 2D points onto 2d images using weighted mean interpolation (inplace version)
+     *
+     * @tparam T_vector
+     * @param sx x values
+     * @param sy y values
+     * @param s_val amplitudes / volume backscattering coefficients
+     * @param image_values Image with values will be edited inplace
+     * @param image_weights Image with weights will be edited inplace
+     */
+    template<tools::helper::c_xtensor_2d t_xtensor_2d, typename T_vector>
+    void interpolate_weighted_mean_inplace(const T_vector& sx,
+                                           const T_vector& sy,
+                                           const T_vector& s_val,
+                                           t_xtensor_2d&   image_values,
+                                           t_xtensor_2d&   image_weights) const
+    {
+        if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx) ||
+            static_cast<size_t>(image_values.shape()[1]) != static_cast<size_t>(_ny))
+            throw std::runtime_error(
+                "ERROR: image_values dimensions do not fit ForwardGridder2D dimensions!");
+        if (static_cast<size_t>(image_weights.shape()[0]) != static_cast<size_t>(_nx) ||
+            static_cast<size_t>(image_weights.shape()[1]) != static_cast<size_t>(_ny))
+            throw std::runtime_error(
+                "ERROR: image_weight dimensions do not fit ForwardGridder2D dimensions!");
+
+        functions::grd_weighted_mean(
+            sx, sy, s_val, _xmin, _xres, _nx, _ymin, _yres, _ny, image_values, image_weights);
     }
 
     /**
@@ -253,8 +253,8 @@ class ForwardGridder2D
      * @return std::tuple<t_float, t_float, t_float, t_float> (xmin,xmax,ymin,ymax)
      */
     template<typename T_vector>
-    static std::tuple<t_float, t_float, t_float, t_float>
-    get_minmax(const T_vector& sx, const T_vector& sy)
+    static std::tuple<t_float, t_float, t_float, t_float> get_minmax(const T_vector& sx,
+                                                                     const T_vector& sy)
     {
         return functions::get_minmax(sx, sy);
     }
@@ -416,8 +416,7 @@ class ForwardGridder2D
     int     _nx, _ny;
 
     // Helper method
-    std::tuple<t_float, t_float, int, t_float, t_float, int>
-    _get_min_and_offset() const
+    std::tuple<t_float, t_float, int, t_float, t_float, int> _get_min_and_offset() const
     {
         return std::make_tuple(_xmin, _xres, _nx, _ymin, _yres, _ny);
     }

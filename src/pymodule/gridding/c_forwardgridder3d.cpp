@@ -15,7 +15,7 @@ namespace algorithms {
 namespace pymodule {
 namespace py_gridding {
 
-#define DOC_ForwardGridder3D(ARG)                                                                    \
+#define DOC_ForwardGridder3D(ARG)                                                                  \
     DOC(themachinethatgoesping, algorithms, gridding, ForwardGridder3D, ARG)
 
 template<typename t_float>
@@ -25,7 +25,7 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
     using namespace gridding;
 
     // Create the ForwardGridder3D class
-    using T_ForwardGridder3D       = ForwardGridder3D<t_float>;
+    using T_ForwardGridder3D     = ForwardGridder3D<t_float>;
     const std::string class_name = std::string("ForwardGridder3D") + suffix;
 
     py::class_<T_ForwardGridder3D>(
@@ -58,80 +58,106 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
              py::arg("zbase") = 0.0)
 
         // Factory methods
-        .def_static("from_res",
-                    &T_ForwardGridder3D::from_res,
-                    DOC_ForwardGridder3D(from_res),
-                    py::arg("res"),
-                    py::arg("min_x"),
-                    py::arg("max_x"),
-                    py::arg("min_y"),
-                    py::arg("max_y"),
-                    py::arg("min_z"),
-                    py::arg("max_z"))
+        .def_static(
+            "from_res",
+            py::overload_cast<t_float, t_float, t_float, t_float, t_float, t_float, t_float>(
+                &T_ForwardGridder3D::from_res),
+            DOC_ForwardGridder3D(from_res),
+            py::arg("res"),
+            py::arg("min_x"),
+            py::arg("max_x"),
+            py::arg("min_y"),
+            py::arg("max_y"),
+            py::arg("min_z"),
+            py::arg("max_z"))
+
+        // from_data with t_float
         .def_static(
             "from_data",
-            [](t_float                         res,
-               const xt::pytensor<t_float, 1>& sx,
-               const xt::pytensor<t_float, 1>& sy,
-               const xt::pytensor<t_float, 1>& sz) {
-                return T_ForwardGridder3D::from_data(res, sx, sy, sz);
-            },
+            py::overload_cast<t_float,
+                              const xt::pytensor<t_float, 1>&,
+                              const xt::pytensor<t_float, 1>&,
+                              const xt::pytensor<t_float, 1>&>(
+                &T_ForwardGridder3D::template from_data<xt::pytensor<t_float, 1>>),
             DOC_ForwardGridder3D(from_data),
             py::arg("res"),
-            py::arg("sx").noconvert(),
-            py::arg("sy").noconvert(),
-            py::arg("sz").noconvert())
+            py::arg("sx"),
+            py::arg("sy"),
+            py::arg("sz"))
 
-        // Grid functions
-        .def(
-            "get_empty_grd_images",
-            [](const T_ForwardGridder3D& self) {
-                return self.template get_empty_grd_images<xt::pytensor<t_float, 3>>();
-            },
-            DOC_ForwardGridder3D(get_empty_grd_images))
 
-        // Interpolation functions
-        .def(
-            "interpolate_block_mean",
-            [](const T_ForwardGridder3D&         self,
-               const xt::pytensor<t_float, 1>& sx,
-               const xt::pytensor<t_float, 1>& sy,
-               const xt::pytensor<t_float, 1>& sz,
-               const xt::pytensor<t_float, 1>& s_val,
-               xt::pytensor<t_float, 3>        image_values,
-               xt::pytensor<t_float, 3>        image_weights) {
-                return self.template interpolate_block_mean<xt::pytensor<t_float, 3>,
-                                                            xt::pytensor<t_float, 1>>(
-                    sx, sy, sz, s_val, image_values, image_weights);
-            },
-            DOC_ForwardGridder3D(interpolate_block_mean),
-            py::arg("sx").noconvert(),
-            py::arg("sy").noconvert(),
-            py::arg("sz").noconvert(),
-            py::arg("s_val").noconvert(),
-            py::arg("image_values")  = xt::pytensor<t_float, 3>(),
-            py::arg("image_weights") = xt::pytensor<t_float, 3>())
+        // Grid functions with t_float and double variants
+        .def("get_empty_grd_images",
+             &T_ForwardGridder3D::template get_empty_grd_images<xt::pytensor<t_float, 3>>,
+             DOC_ForwardGridder3D(get_empty_grd_images))
 
-        .def(
-            "interpolate_weighted_mean",
-            [](const T_ForwardGridder3D&         self,
-               const xt::pytensor<t_float, 1>& sx,
-               const xt::pytensor<t_float, 1>& sy,
-               const xt::pytensor<t_float, 1>& sz,
-               const xt::pytensor<t_float, 1>& s_val,
-               xt::pytensor<t_float, 3>        image_values,
-               xt::pytensor<t_float, 3>        image_weights) {
-                return self.template interpolate_weighted_mean<xt::pytensor<t_float, 3>,
-                                                               xt::pytensor<t_float, 1>>(
-                    sx, sy, sz, s_val, image_values, image_weights);
-            },
-            DOC_ForwardGridder3D(interpolate_weighted_mean),
-            py::arg("sx").noconvert(),
-            py::arg("sy").noconvert(),
-            py::arg("sz").noconvert(),
-            py::arg("s_val").noconvert(),
-            py::arg("image_values")  = xt::pytensor<t_float, 3>(),
-            py::arg("image_weights") = xt::pytensor<t_float, 3>())
+        // Interpolation functions - block mean (returns new arrays)
+        .def("interpolate_block_mean",
+             py::overload_cast<const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&>(
+                 &T_ForwardGridder3D::template interpolate_block_mean<xt::pytensor<t_float, 3>,
+                                                                      xt::pytensor<t_float, 1>>,
+                 py::const_),
+             DOC_ForwardGridder3D(interpolate_block_mean),
+             py::arg("sx"),
+             py::arg("sy"),
+             py::arg("sz"),
+             py::arg("s_val"))
+
+        // Interpolation functions - block mean inplace (modifies existing arrays)
+        .def("interpolate_block_mean_inplace",
+             py::overload_cast<const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               xt::pytensor<t_float, 3>&,
+                               xt::pytensor<t_float, 3>&>(
+                 &T_ForwardGridder3D::template interpolate_block_mean_inplace<xt::pytensor<t_float, 3>,
+                                                                            xt::pytensor<t_float, 1>>,
+                 py::const_),
+             DOC_ForwardGridder3D(interpolate_block_mean_inplace),
+             py::arg("sx"),
+             py::arg("sy"),
+             py::arg("sz"),
+             py::arg("s_val"),
+             py::arg("image_values").noconvert(),
+             py::arg("image_weights").noconvert())
+
+        // Weighted mean interpolation (returns new arrays)
+        .def("interpolate_weighted_mean",
+             py::overload_cast<const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&>(
+                 &T_ForwardGridder3D::template interpolate_weighted_mean<xt::pytensor<t_float, 3>,
+                                                                         xt::pytensor<t_float, 1>>,
+                 py::const_),
+             DOC_ForwardGridder3D(interpolate_weighted_mean),
+             py::arg("sx"),
+             py::arg("sy"),
+             py::arg("sz"),
+             py::arg("s_val"))
+
+        // Weighted mean interpolation inplace (modifies existing arrays)
+        .def("interpolate_weighted_mean_inplace",
+             py::overload_cast<const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               xt::pytensor<t_float, 3>&,
+                               xt::pytensor<t_float, 3>&>(
+                 &T_ForwardGridder3D::template interpolate_weighted_mean_inplace<xt::pytensor<t_float, 3>,
+                                                                               xt::pytensor<t_float, 1>>,
+                 py::const_),
+             DOC_ForwardGridder3D(interpolate_weighted_mean_inplace),
+             py::arg("sx"),
+             py::arg("sy"),
+             py::arg("sz"),
+             py::arg("s_val"),
+             py::arg("image_values").noconvert(),
+             py::arg("image_weights").noconvert())
 
         // Various utility methods
         .def("get_xres", &T_ForwardGridder3D::get_xres, DOC_ForwardGridder3D(xres))
@@ -149,12 +175,24 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
         .def("get_nx", &T_ForwardGridder3D::get_nx, DOC_ForwardGridder3D(nx))
         .def("get_ny", &T_ForwardGridder3D::get_ny, DOC_ForwardGridder3D(ny))
         .def("get_nz", &T_ForwardGridder3D::get_nz, DOC_ForwardGridder3D(nz))
-        .def("get_border_xmin", &T_ForwardGridder3D::get_border_xmin, DOC_ForwardGridder3D(border_xmin))
-        .def("get_border_xmax", &T_ForwardGridder3D::get_border_xmax, DOC_ForwardGridder3D(border_xmax))
-        .def("get_border_ymin", &T_ForwardGridder3D::get_border_ymin, DOC_ForwardGridder3D(border_ymin))
-        .def("get_border_ymax", &T_ForwardGridder3D::get_border_ymax, DOC_ForwardGridder3D(border_ymax))
-        .def("get_border_zmin", &T_ForwardGridder3D::get_border_zmin, DOC_ForwardGridder3D(border_zmin))
-        .def("get_border_zmax", &T_ForwardGridder3D::get_border_zmax, DOC_ForwardGridder3D(border_zmax))
+        .def("get_border_xmin",
+             &T_ForwardGridder3D::get_border_xmin,
+             DOC_ForwardGridder3D(border_xmin))
+        .def("get_border_xmax",
+             &T_ForwardGridder3D::get_border_xmax,
+             DOC_ForwardGridder3D(border_xmax))
+        .def("get_border_ymin",
+             &T_ForwardGridder3D::get_border_ymin,
+             DOC_ForwardGridder3D(border_ymin))
+        .def("get_border_ymax",
+             &T_ForwardGridder3D::get_border_ymax,
+             DOC_ForwardGridder3D(border_ymax))
+        .def("get_border_zmin",
+             &T_ForwardGridder3D::get_border_zmin,
+             DOC_ForwardGridder3D(border_zmin))
+        .def("get_border_zmax",
+             &T_ForwardGridder3D::get_border_zmax,
+             DOC_ForwardGridder3D(border_zmax))
 
         .def("get_x_index",
              &T_ForwardGridder3D::get_x_index,
@@ -226,18 +264,16 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
              &T_ForwardGridder3D::get_z_coordinates,
              DOC_ForwardGridder3D(get_z_coordinates))
 
-        // Static utility methods
-        .def_static(
-            "get_minmax",
-            [](const xt::pytensor<t_float, 1>& sx,
-               const xt::pytensor<t_float, 1>& sy,
-               const xt::pytensor<t_float, 1>& sz) {
-                return T_ForwardGridder3D::get_minmax(sx, sy, sz);
-            },
-            DOC_ForwardGridder3D(get_minmax),
-            py::arg("sx").noconvert(),
-            py::arg("sy").noconvert(),
-            py::arg("sz").noconvert())
+        // Static utility methods - t_float version
+        .def_static("get_minmax",
+                    py::overload_cast<const xt::pytensor<t_float, 1>&, 
+                                      const xt::pytensor<t_float, 1>&,
+                                      const xt::pytensor<t_float, 1>&>(
+                        &T_ForwardGridder3D::template get_minmax<xt::pytensor<t_float, 1>>),
+                    DOC_ForwardGridder3D(get_minmax),
+                    py::arg("sx"),
+                    py::arg("sy"),
+                    py::arg("sz"))
 
         // Basic string representation
         .def("__repr__",

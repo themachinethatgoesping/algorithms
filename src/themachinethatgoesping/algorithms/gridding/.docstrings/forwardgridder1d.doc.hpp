@@ -1,4 +1,4 @@
-//sourcehash: cfba040022ecbc70fb646e0fd852e56e7f7cc6e5bf9c2532faa3de79f398c5c4
+//sourcehash: f0d6e9039c1c1d2ad3a944640e0846ab0fd77ee98881608e99d242248015e2e4
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -163,7 +163,44 @@ Returns:
     std::tuple<xt::xtensor<t_float, 1>, xt::xtensor<t_float, 1>>
     image_values, image_weights)doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder1D_interpolate_block_mean_inplace =
+R"doc(Interpolate 1D points onto 1d images using block mean interpolation
+(inplace version)
+
+Template parameter ``T_vector``:
+    $Parameter ``sx``:
+
+x values
+
+Parameter ``s_val``:
+    amplitudes / volume backscattering coefficients
+
+Parameter ``image_values``:
+    Image with values will be edited inplace
+
+Parameter ``image_weights``:
+    Image with weights will be edited inplace
+
+Returns:
+    std::tuple<xt::xtensor<t_float, 1>, xt::xtensor<t_float, 1>>
+    image_values, image_weights)doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder1D_interpolate_weighted_mean =
+R"doc(Interpolate 1D points onto 1d images using weighted mean interpolation
+
+Template parameter ``T_vector``:
+    $Parameter ``sx``:
+
+x values
+
+Parameter ``s_val``:
+    amplitudes / volume backscattering coefficients
+
+Returns:
+    std::tuple<xt::xtensor<t_float, 1>, xt::xtensor<t_float, 1>>
+    image_values, image_weights)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder1D_interpolate_weighted_mean_inplace =
 R"doc(Interpolate 1D points onto 1d images using weighted mean interpolation
 
 Template parameter ``T_vector``:

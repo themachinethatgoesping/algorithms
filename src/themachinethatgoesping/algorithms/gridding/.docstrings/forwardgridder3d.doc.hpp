@@ -1,4 +1,4 @@
-//sourcehash: fd17d4ab1d0eefdfa37aaac3e0b9f92ff87283984213c83698302b7bd7bf41ab
+//sourcehash: 5abcafbe3b8ea655155536e78caff62f05850533503ee4f4acce15b28a321128
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -268,15 +268,33 @@ Parameter ``sz``:
 Parameter ``s_val``:
     amplitudes / volume backscattering coefficients
 
-Parameter ``image_values``:
-    Image with values. If empty a new image will be created.
-
-Parameter ``image_weights``:
-    Image with weights. If empty a new image will be created.
-
 Returns:
     std::tuple<xt::xtensor<t_float, 3>, xt::xtensor<t_float, 3>>
     image_values, image_weights)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder3D_interpolate_block_mean_inplace =
+R"doc(Interpolate 3D points onto 3d images using block mean interpolation
+(inplace version)
+
+Template parameter ``T_vector``:
+    $Parameter ``sx``:
+
+x values
+
+Parameter ``sy``:
+    y values
+
+Parameter ``sz``:
+    z values
+
+Parameter ``s_val``:
+    amplitudes / volume backscattering coefficients
+
+Parameter ``image_values``:
+    Image with values will be edited inplace
+
+Parameter ``image_weights``:
+    Image with weights will be edited inplace)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder3D_interpolate_weighted_mean =
 R"doc(Interpolate 3D points onto 3d images using weighted mean interpolation
@@ -295,15 +313,33 @@ Parameter ``sz``:
 Parameter ``s_val``:
     amplitudes / volume backscattering coefficients
 
-Parameter ``image_values``:
-    Image with values. If empty a new image will be created.
-
-Parameter ``image_weights``:
-    Image with weights. If empty a new image will be created.
-
 Returns:
     std::tuple<xt::xtensor<t_float, 3>, xt::xtensor<t_float, 3>>
     image_values, image_weights)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder3D_interpolate_weighted_mean_inplace =
+R"doc(Interpolate 3D points onto 3d images using weighted mean interpolation
+(inplace version)
+
+Template parameter ``T_vector``:
+    $Parameter ``sx``:
+
+x values
+
+Parameter ``sy``:
+    y values
+
+Parameter ``sz``:
+    z values
+
+Parameter ``s_val``:
+    amplitudes / volume backscattering coefficients
+
+Parameter ``image_values``:
+    Image with values will be edited inplace
+
+Parameter ``image_weights``:
+    Image with weights will be edited inplace)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder3D_nx = R"doc()doc";
 

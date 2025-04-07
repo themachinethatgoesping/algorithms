@@ -102,8 +102,8 @@ class ForwardGridder1D
     template<tools::helper::c_xtensor_1d t_xtensor_1d>
     std::tuple<t_xtensor_1d, t_xtensor_1d> get_empty_grd_images() const
     {
-        xt::xtensor<t_float, 1> image_values = xt::zeros<t_float>({ static_cast<size_t>(_nx) });
-        xt::xtensor<t_float, 1> image_weights = xt::zeros<t_float>({ static_cast<size_t>(_nx) });
+        t_xtensor_1d image_values  = xt::zeros<t_float>({ static_cast<size_t>(_nx) });
+        t_xtensor_1d image_weights = xt::zeros<t_float>({ static_cast<size_t>(_nx) });
 
         return std::make_tuple(image_values, image_weights);
     }
@@ -120,31 +120,63 @@ class ForwardGridder1D
      * image_weights
      */
     template<tools::helper::c_xtensor_1d t_xtensor_1d, typename T_vector>
-    std::tuple<t_xtensor_1d, t_xtensor_1d> interpolate_block_mean(
-        const T_vector& sx,
-        const T_vector& s_val,
-        t_xtensor_1d    image_values  = t_xtensor_1d(),
-        t_xtensor_1d    image_weights = t_xtensor_1d()) const
+    std::tuple<t_xtensor_1d, t_xtensor_1d> interpolate_block_mean(const T_vector& sx,
+                                                                  const T_vector& s_val) const
     {
-        if (image_values.size() == 0 || image_weights.size() == 0)
-        {
-            auto [val, weight] = get_empty_grd_images<t_xtensor_1d>();
-            image_values       = val;
-            image_weights      = weight;
-        }
-        else
-        {
-            if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx))
-                throw std::runtime_error(
-                    "ERROR: image_values dimensions do not fit ForwardGridder1D dimensions!");
-            if (static_cast<size_t>(image_weights.shape()[0]) != static_cast<size_t>(_nx))
-                throw std::runtime_error(
-                    "ERROR: image_weight dimensions do not fit ForwardGridder1D dimensions!");
-        }
+        auto image_values_weights = get_empty_grd_images<t_xtensor_1d>();
+
+        interpolate_block_mean_inplace(
+            sx, s_val, std::get<0>(image_values_weights), std::get<1>(image_values_weights));
+
+        return image_values_weights;
+    }
+
+    /**
+     * @brief Interpolate 1D points onto 1d images using block mean interpolation (inplace version)
+     *
+     * @tparam T_vector
+     * @param sx x values
+     * @param s_val amplitudes / volume backscattering coefficients
+     * @param image_values Image with values will be edited inplace
+     * @param image_weights Image with weights will be edited inplace
+     * @return std::tuple<xt::xtensor<t_float, 1>, xt::xtensor<t_float, 1>> image_values,
+     * image_weights
+     */
+    template<tools::helper::c_xtensor_1d t_xtensor_1d, typename T_vector>
+    void interpolate_block_mean_inplace(const T_vector& sx,
+                                        const T_vector& s_val,
+                                        t_xtensor_1d&   image_values,
+                                        t_xtensor_1d&   image_weights) const
+    {
+        if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx))
+            throw std::runtime_error(
+                "ERROR: image_values dimensions do not fit ForwardGridder1D dimensions!");
+        if (static_cast<size_t>(image_weights.shape()[0]) != static_cast<size_t>(_nx))
+            throw std::runtime_error(
+                "ERROR: image_weight dimensions do not fit ForwardGridder1D dimensions!");
 
         functions::grd_block_mean(sx, s_val, _xmin, _xres, _nx, image_values, image_weights);
+    }
 
-        return std::make_tuple(image_values, image_weights);
+    /**
+     * @brief Interpolate 1D points onto 1d images using weighted mean interpolation
+     *
+     * @tparam T_vector
+     * @param sx x values
+     * @param s_val amplitudes / volume backscattering coefficients
+     * @return std::tuple<xt::xtensor<t_float, 1>, xt::xtensor<t_float, 1>> image_values,
+     * image_weights
+     */
+    template<tools::helper::c_xtensor_1d t_xtensor_1d, typename T_vector>
+    std::tuple<t_xtensor_1d, t_xtensor_1d> interpolate_weighted_mean(const T_vector& sx,
+                                                                     const T_vector& s_val) const
+    {
+        auto image_values_weights = get_empty_grd_images<t_xtensor_1d>();
+
+        interpolate_weighted_mean_inplace(
+            sx, s_val, std::get<0>(image_values_weights), std::get<1>(image_values_weights));
+
+        return image_values_weights;
     }
 
     /**
@@ -159,31 +191,20 @@ class ForwardGridder1D
      * image_weights
      */
     template<tools::helper::c_xtensor_1d t_xtensor_1d, typename T_vector>
-    std::tuple<t_xtensor_1d, t_xtensor_1d> interpolate_weighted_mean(
+    void interpolate_weighted_mean_inplace(
         const T_vector& sx,
         const T_vector& s_val,
-        t_xtensor_1d    image_values  = t_xtensor_1d(),
-        t_xtensor_1d    image_weights = t_xtensor_1d()) const
+        t_xtensor_1d&   image_values,
+        t_xtensor_1d&   image_weights) const
     {
-        if (image_values.size() == 0 || image_weights.size() == 0)
-        {
-            auto [val, weight] = get_empty_grd_images<t_xtensor_1d>();
-            image_values       = val;
-            image_weights      = weight;
-        }
-        else
-        {
-            if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx))
-                throw std::runtime_error(
-                    "ERROR: image_values dimensions do not fit ForwardGridder1D dimensions!");
-            if (static_cast<size_t>(image_weights.shape()[0]) != static_cast<size_t>(_nx))
-                throw std::runtime_error(
-                    "ERROR: image_weight dimensions do not fit ForwardGridder1D dimensions!");
-        }
+        if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx))
+            throw std::runtime_error(
+                "ERROR: image_values dimensions do not fit ForwardGridder1D dimensions!");
+        if (static_cast<size_t>(image_weights.shape()[0]) != static_cast<size_t>(_nx))
+            throw std::runtime_error(
+                "ERROR: image_weight dimensions do not fit ForwardGridder1D dimensions!");
 
         functions::grd_weighted_mean(sx, s_val, _xmin, _xres, _nx, image_values, image_weights);
-
-        return std::make_tuple(image_values, image_weights);
     }
 
     /**
