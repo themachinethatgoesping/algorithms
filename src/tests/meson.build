@@ -8,6 +8,8 @@ testcomponent = 'algorithms'
 
 sources = [
   'tutorial.test.cpp',
+  'gridding/forwardgridder3d.test.cpp',
+  'gridding/functions/gridfunctions.test.cpp',
   'pointprocessing/bubblestreams/zspine.test.cpp',
   'pointprocessing/functions/segment_in_weighted_quantiles.cpp',
   'pointprocessing/functions/weighted_median.cpp',
@@ -34,6 +36,7 @@ sources = [
   'geoprocessing/backtracers/btconstantsvp.test.cpp',
   'geoprocessing/backtracers/i_backtracer.test.cpp',
   'geoprocessing/sparsemaps/sparsemap.test.cpp',
+  'geoprocessing/functions/to_raypoints.test.cpp',
 ]
 
 foreach source : sources

@@ -8,6 +8,8 @@ module_name = 'algorithms'
 # -- sources
 sources = [
   'module.cpp',
+  'gridding/c_forwardgridder3d.cpp',
+  'gridding/functions/f_gridfunctions.cpp',
   'amplitudecorrection/functions/functions.cpp',
   'pointprocessing/bubblestreams/zspine.cpp',
   'pointprocessing/functions/functions.cpp',
@@ -28,6 +30,7 @@ sources = [
   'geoprocessing/backtracers/c_backtracedwci.cpp',
   'geoprocessing/backtracers/c_btconstantsvp.cpp',
   'geoprocessing/backtracers/c_i_backtracer.cpp',
+  'geoprocessing/functions/to_raypoints.cpp',
 ]
 
 # define python module

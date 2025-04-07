@@ -128,7 +128,7 @@ void init_functions(pybind11::module& m)
                 wci, per_beam_offset, per_sample_offset, min_beam_index, max_beam_index, mp_cores);
         },
         DOC_functions(inplace_beam_sample_correction),
-        py::arg("wci"),
+        py::arg("wci").noconvert(),
         py::arg("per_beam_offset"),
         py::arg("per_sample_offset"),
         py::arg("min_beam_index") = std::nullopt,
@@ -148,7 +148,7 @@ void init_functions(pybind11::module& m)
             inplace_beam_correction(wci, per_beam_offset, min_beam_index, max_beam_index, mp_cores);
         },
         DOC_functions(inplace_beam_correction),
-        py::arg("wci"),
+        py::arg("wci").noconvert(),
         py::arg("per_beam_offset"),
         py::arg("min_beam_index") = std::nullopt,
         py::arg("max_beam_index") = std::nullopt,
@@ -168,7 +168,7 @@ void init_functions(pybind11::module& m)
                 wci, per_sample_offset, min_beam_index, max_beam_index, mp_cores);
         },
         DOC_functions(inplace_sample_correction),
-        py::arg("wci"),
+        py::arg("wci").noconvert(),
         py::arg("per_sample_offset"),
         py::arg("min_beam_index") = std::nullopt,
         py::arg("max_beam_index") = std::nullopt,
@@ -187,7 +187,7 @@ void init_functions(pybind11::module& m)
             inplace_system_offset(wci, system_offset, min_beam_index, max_beam_index, mp_cores);
         },
         DOC_functions(inplace_system_offset),
-        py::arg("wci"),
+        py::arg("wci").noconvert(),
         py::arg("system_offset"),
         py::arg("min_beam_index") = std::nullopt,
         py::arg("max_beam_index") = std::nullopt,

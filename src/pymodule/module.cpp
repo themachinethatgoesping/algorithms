@@ -8,10 +8,11 @@
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 
-#include "imageprocessing/module.hpp"
-#include "pointprocessing/module.hpp"
 #include "amplitudecorrection/module.hpp"
 #include "geoprocessing/module.hpp"
+#include "gridding/module.hpp"
+#include "imageprocessing/module.hpp"
+#include "pointprocessing/module.hpp"
 #include "signalprocessing/module.hpp"
 
 namespace themachinethatgoesping {
@@ -34,6 +35,7 @@ PYBIND11_MODULE(MODULE_NAME, m)
     py_amplitudecorrection::init_m_amplitudecorrection(m);
     py_geoprocessing::init_m_geoprocessing(m);
     py_signalprocessing::init_m_signalprocessing(m);
+    py_gridding::init_m_gridding(m);
 }
 
 } // namespace pymodule

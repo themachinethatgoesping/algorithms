@@ -12,6 +12,10 @@ sources = [
 
 headers = [
   'helloping.hpp',
+  'gridding/forwardgridder3d.hpp',
+  'gridding/.docstrings/forwardgridder.doc.hpp',
+  'gridding/functions/gridfunctions.hpp',
+  'gridding/functions/.docstrings/gridfunctions.doc.hpp',
   'amplitudecorrection/functions.hpp',
   'amplitudecorrection/.docstrings/functions.doc.hpp',
   'amplitudecorrection/functions/_shape_assertations.hpp',
@@ -93,6 +97,8 @@ headers = [
   'geoprocessing/georeferencers/i_backtracer.hpp',
   'geoprocessing/georeferencers/.docstrings/btconstantsvp.doc.hpp',
   'geoprocessing/georeferencers/.docstrings/i_backtracer.doc.hpp',
+  'geoprocessing/functions/to_raypoints.hpp',
+  'geoprocessing/functions/.docstrings/to_raypoints.doc.hpp',
 ]
 
 # -- targets --
