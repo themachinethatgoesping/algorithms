@@ -8,6 +8,9 @@ testcomponent = 'algorithms'
 
 sources = [
   'tutorial.test.cpp',
+  'gridding/forwardgridder.test.cpp',
+  'gridding/forwardgridder1d.test.cpp',
+  'gridding/forwardgridder2d.test.cpp',
   'gridding/forwardgridder3d.test.cpp',
   'gridding/functions/gridfunctions.test.cpp',
   'pointprocessing/bubblestreams/zspine.test.cpp',

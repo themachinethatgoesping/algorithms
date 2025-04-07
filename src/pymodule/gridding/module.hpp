@@ -12,6 +12,8 @@ namespace algorithms {
 namespace pymodule {
 namespace py_gridding {
 
+void init_c_forwardgridder1d(pybind11::module& m); // c_forwardgridder1d.cpp
+void init_c_forwardgridder2d(pybind11::module& m); // c_forwardgridder2d.cpp
 void init_c_forwardgridder3d(pybind11::module& m); // c_forwardgridder3d.cpp
 
 void init_m_gridding(pybind11::module& m)
@@ -22,6 +24,8 @@ void init_m_gridding(pybind11::module& m)
                       "georefencing) echosounder samples";
 
     py_functions::init_m_functions(submodule);
+    init_c_forwardgridder1d(submodule);
+    init_c_forwardgridder2d(submodule);
     init_c_forwardgridder3d(submodule);
 }
 

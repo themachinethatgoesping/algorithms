@@ -12,8 +12,13 @@ sources = [
 
 headers = [
   'helloping.hpp',
+  'gridding/forwardgridder1d.hpp',
+  'gridding/forwardgridder2d.hpp',
   'gridding/forwardgridder3d.hpp',
   'gridding/.docstrings/forwardgridder.doc.hpp',
+  'gridding/.docstrings/forwardgridder1d.doc.hpp',
+  'gridding/.docstrings/forwardgridder2d.doc.hpp',
+  'gridding/.docstrings/forwardgridder3d.doc.hpp',
   'gridding/functions/gridfunctions.hpp',
   'gridding/functions/.docstrings/gridfunctions.doc.hpp',
   'amplitudecorrection/functions.hpp',

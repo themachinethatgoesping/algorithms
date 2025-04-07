@@ -8,6 +8,8 @@ module_name = 'algorithms'
 # -- sources
 sources = [
   'module.cpp',
+  'gridding/c_forwardgridder1d.cpp',
+  'gridding/c_forwardgridder2d.cpp',
   'gridding/c_forwardgridder3d.cpp',
   'gridding/functions/f_gridfunctions.cpp',
   'amplitudecorrection/functions/functions.cpp',
