@@ -18,6 +18,20 @@ namespace py_gridding {
 #define DOC_ForwardGridder1D(ARG)                                                                  \
     DOC(themachinethatgoesping, algorithms, gridding, ForwardGridder1D, ARG)
 
+#define VECTORIZE_1D_MEMBER(NAME, FUNCTION, ARG, VTYPE)                                                   \
+    .def(                                                                                          \
+        NAME,                                                                                      \
+        [](const T_ForwardGridder1D& self, const xt::pytensor<VTYPE, 1>& x) {                    \
+            xt::pytensor<VTYPE, 1> result = xt::empty<VTYPE>({ x.size() });                    \
+            for (size_t i = 0; i < x.size(); ++i)                                                  \
+            {                                                                                      \
+                result.unchecked(i) = self.FUNCTION(x.unchecked(i));                               \
+            }                                                                                      \
+            return result;                                                                         \
+        },                                                                                         \
+        DOC_ForwardGridder1D(FUNCTION),                                                            \
+        py::arg(ARG))
+
 template<typename t_float>
 void init_ForwardGridder1D_float(pybind11::module& m, const std::string& suffix)
 {
@@ -125,22 +139,22 @@ void init_ForwardGridder1D_float(pybind11::module& m, const std::string& suffix)
         .def("get_x_index",
              &T_ForwardGridder1D::get_x_index,
              DOC_ForwardGridder1D(get_x_index),
-             py::arg("x"))
+             py::arg("x")) VECTORIZE_1D_MEMBER("get_x_index", get_x_index, "x", int)
 
         .def("get_x_index_fraction",
              &T_ForwardGridder1D::get_x_index_fraction,
              DOC_ForwardGridder1D(get_x_index_fraction),
-             py::arg("x"))
+             py::arg("x")) VECTORIZE_1D_MEMBER("get_x_index_fraction", get_x_index_fraction, "x", t_float)
 
         .def("get_x_value",
              &T_ForwardGridder1D::get_x_value,
              DOC_ForwardGridder1D(get_x_value),
-             py::arg("x_index"))
+             py::arg("x_index")) VECTORIZE_1D_MEMBER("get_x_value", get_x_value, "x_index", t_float)
 
         .def("get_x_grd_value",
              &T_ForwardGridder1D::get_x_grd_value,
              DOC_ForwardGridder1D(get_x_grd_value),
-             py::arg("x"))
+             py::arg("x")) VECTORIZE_1D_MEMBER("get_x_grd_value", get_x_grd_value, "x", t_float)
 
         .def("get_extent_x", &T_ForwardGridder1D::get_extent_x, DOC_ForwardGridder1D(get_extent_x))
         .def("get_extent",
