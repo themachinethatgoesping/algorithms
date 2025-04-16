@@ -7,9 +7,9 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <ctime>
 
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xview.hpp>
-#include <xtensor/xadapt.hpp>
+#include <xtensor/generators/xrandom.hpp>
+#include <xtensor/views/xview.hpp>
+#include <xtensor/containers/xadapt.hpp>
 
 #include <themachinethatgoesping/algorithms/gridding/forwardgridder1d.hpp>
 #include <themachinethatgoesping/algorithms/gridding/forwardgridder2d.hpp>

@@ -13,11 +13,9 @@
 #include <fmt/core.h>
 #include <optional>
 #include <xsimd/xsimd.hpp>
-#include <xtensor/xadapt.hpp>
-#include <xtensor/xarray.hpp>
-#include <xtensor/xexpression.hpp>
-#include <xtensor/xio.hpp>
-#include <xtensor/xview.hpp>
+
+#include <xtensor/containers/xadapt.hpp>
+#include <xtensor/views/xview.hpp>
 
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 

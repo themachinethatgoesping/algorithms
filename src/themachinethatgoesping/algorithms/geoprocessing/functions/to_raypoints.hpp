@@ -6,7 +6,7 @@
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
-#include <xtensor/xfixed.hpp>
+#include <xtensor/containers/xfixed.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {

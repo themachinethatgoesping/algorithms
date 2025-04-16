@@ -7,8 +7,8 @@
 /* generated doc strings */
 #include ".docstrings/backtracedwci.doc.hpp"
 
-#include <xtensor/xsort.hpp>
-#include <xtensor/xtensor.hpp>
+#include <xtensor/misc/xsort.hpp>
+#include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
 #include <themachinethatgoesping/tools/classhelper/stream.hpp>

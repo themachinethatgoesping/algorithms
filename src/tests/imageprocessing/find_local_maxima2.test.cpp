@@ -5,8 +5,8 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include <fmt/core.h>
-#include <xtensor/xsort.hpp>
-#include <xtensor/xtensor.hpp>
+#include <xtensor/misc/xsort.hpp>
+#include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/algorithms/imageprocessing/functions/find_local_maxima2.hpp>
 #include <themachinethatgoesping/tools/helper.hpp>

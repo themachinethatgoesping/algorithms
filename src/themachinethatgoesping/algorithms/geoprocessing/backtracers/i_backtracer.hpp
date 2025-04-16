@@ -12,8 +12,8 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
-#include <xtensor/xsort.hpp>
-#include <xtensor/xview.hpp>
+#include <xtensor/misc/xsort.hpp>
+#include <xtensor/views/xview.hpp>
 
 #include <themachinethatgoesping/navigation/datastructures.hpp>
 #include <themachinethatgoesping/tools/helper.hpp>

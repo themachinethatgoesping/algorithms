@@ -4,9 +4,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include <xtensor/xsort.hpp>
-#include <xtensor/xtensor.hpp>
-#include <xtensor/xview.hpp>
+#include <xtensor/misc/xsort.hpp>
+#include <xtensor/containers/xtensor.hpp>
+#include <xtensor/views/xview.hpp>
 
 #include <themachinethatgoesping/algorithms/pointprocessing/bubblestreams/zspine.hpp>
 

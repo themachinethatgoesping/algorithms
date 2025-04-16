@@ -15,7 +15,6 @@ headers = [
   'gridding/forwardgridder1d.hpp',
   'gridding/forwardgridder2d.hpp',
   'gridding/forwardgridder3d.hpp',
-  'gridding/.docstrings/forwardgridder.doc.hpp',
   'gridding/.docstrings/forwardgridder1d.doc.hpp',
   'gridding/.docstrings/forwardgridder2d.doc.hpp',
   'gridding/.docstrings/forwardgridder3d.doc.hpp',

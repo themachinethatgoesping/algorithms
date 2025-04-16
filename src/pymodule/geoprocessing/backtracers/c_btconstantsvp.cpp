@@ -15,7 +15,7 @@
 #include <xtensor-python/pytensor.hpp>  // Numpy bindings
 #include <xtensor-python/pytensor.hpp> // Numpy bindings
 
-#include <xtensor/xadapt.hpp> // Numpy bindings
+#include <xtensor/containers/xadapt.hpp> // Numpy bindings
 
 namespace themachinethatgoesping {
 namespace algorithms {

@@ -7,7 +7,7 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <ctime>
 
-#include <xtensor/xrandom.hpp>
+#include <xtensor/generators/xrandom.hpp>
 
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/raytracers/rtconstantsvp.hpp"
 

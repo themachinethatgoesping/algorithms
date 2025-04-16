@@ -13,7 +13,7 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
-#include <xtensor/xfixed.hpp>
+#include <xtensor/containers/xfixed.hpp>
 
 #include <themachinethatgoesping/navigation/datastructures.hpp>
 #include <themachinethatgoesping/tools/helper.hpp>

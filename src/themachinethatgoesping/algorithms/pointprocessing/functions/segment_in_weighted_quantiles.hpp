@@ -11,12 +11,10 @@
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <themachinethatgoesping/tools/vectorinterpolators.hpp>
 
-#include <xtensor/xindex_view.hpp>
-#include <xtensor/xmanipulation.hpp>
-#include <xtensor/xmath.hpp>
-#include <xtensor/xsort.hpp>
-#include <xtensor/xtensor.hpp>
-#include <xtensor/xview.hpp>
+#include <xtensor/views/xindex_view.hpp>
+#include <xtensor/misc/xsort.hpp>
+#include <xtensor/containers/xtensor.hpp>
+#include <xtensor/views/xview.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {

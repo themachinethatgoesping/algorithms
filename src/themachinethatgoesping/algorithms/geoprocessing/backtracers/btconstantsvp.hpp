@@ -18,8 +18,8 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
-#include <xtensor/xfixed.hpp>
-#include <xtensor/xvectorize.hpp>
+#include <xtensor/containers/xfixed.hpp>
+#include <xtensor/core/xvectorize.hpp>
 
 #include <themachinethatgoesping/navigation/datastructures.hpp>
 #include <themachinethatgoesping/tools/helper.hpp>

@@ -11,7 +11,7 @@
 #include <optional>
 #include <Eigen/Core>
 #include <Eigen/Dense>
-#include <xtensor/xtensor.hpp>
+#include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/tools/helper.hpp>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>

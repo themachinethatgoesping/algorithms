@@ -7,8 +7,8 @@
 /* generated doc strings */
 #include ".docstrings/raytraceresults.doc.hpp"
 
-#include <xtensor/xadapt.hpp>
-#include <xtensor/xtensor.hpp>
+#include <xtensor/containers/xadapt.hpp>
+#include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
 #include <themachinethatgoesping/tools/classhelper/stream.hpp>

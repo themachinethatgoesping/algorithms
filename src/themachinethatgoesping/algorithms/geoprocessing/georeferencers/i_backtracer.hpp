@@ -12,7 +12,7 @@
 #include <Eigen/Eigen>
 #include <Eigen/Geometry>
 
-#include <xtensor/xview.hpp>
+#include <xtensor/views/xview.hpp>
 
 #include <themachinethatgoesping/navigation/datastructures.hpp>
 #include <themachinethatgoesping/tools/helper.hpp>
