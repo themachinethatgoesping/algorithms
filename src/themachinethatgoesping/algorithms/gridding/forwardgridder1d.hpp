@@ -106,6 +106,12 @@ class ForwardGridder1D
         return std::make_tuple(image_values, image_weights);
     }
 
+    template<typename T_vector>
+    auto group_blocks(const T_vector& sx, const T_vector& s_val) const
+    {
+        return functions::group_blocks(sx, s_val, _xmin, _xres, _nx);
+    }
+
     /**
      * @brief Interpolate 1D points onto 1d images using block mean interpolation
      *
@@ -189,11 +195,10 @@ class ForwardGridder1D
      * image_weights
      */
     template<tools::helper::c_xtensor_1d t_xtensor_1d, typename T_vector>
-    void interpolate_weighted_mean_inplace(
-        const T_vector& sx,
-        const T_vector& s_val,
-        t_xtensor_1d&   image_values,
-        t_xtensor_1d&   image_weights) const
+    void interpolate_weighted_mean_inplace(const T_vector& sx,
+                                           const T_vector& s_val,
+                                           t_xtensor_1d&   image_values,
+                                           t_xtensor_1d&   image_weights) const
     {
         if (static_cast<size_t>(image_values.shape()[0]) != static_cast<size_t>(_nx))
             throw std::runtime_error(

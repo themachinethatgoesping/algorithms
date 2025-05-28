@@ -15,8 +15,6 @@
 #include <tuple>
 #include <vector>
 
-
-
 #include <xtensor/containers/xtensor.hpp>
 #include <xtensor/views/xview.hpp>
 
@@ -136,6 +134,12 @@ class ForwardGridder2D
         return std::make_tuple(image_values, image_weights);
     }
 
+    template<typename T_vector>
+    auto group_blocks(const T_vector& sx, const T_vector& sy, const T_vector& s_val) const
+    {
+        return functions::group_blocks(sx, sy, s_val, _xmin, _xres, _nx, _ymin, _yres, _ny);
+    }
+
     /**
      * @brief Interpolate 2D points onto 2d images using block mean interpolation
      *
@@ -147,10 +151,9 @@ class ForwardGridder2D
      * image_weights
      */
     template<tools::helper::c_xtensor_2d t_xtensor_2d, typename T_vector>
-    std::tuple<t_xtensor_2d, t_xtensor_2d> interpolate_block_mean(
-        const T_vector& sx,
-        const T_vector& sy,
-        const T_vector& s_val) const
+    std::tuple<t_xtensor_2d, t_xtensor_2d> interpolate_block_mean(const T_vector& sx,
+                                                                  const T_vector& sy,
+                                                                  const T_vector& s_val) const
     {
         auto image_values_weights = get_empty_grd_images<t_xtensor_2d>();
 
@@ -201,10 +204,9 @@ class ForwardGridder2D
      * image_weights
      */
     template<tools::helper::c_xtensor_2d t_xtensor_2d, typename T_vector>
-    std::tuple<t_xtensor_2d, t_xtensor_2d> interpolate_weighted_mean(
-        const T_vector& sx,
-        const T_vector& sy,
-        const T_vector& s_val) const
+    std::tuple<t_xtensor_2d, t_xtensor_2d> interpolate_weighted_mean(const T_vector& sx,
+                                                                     const T_vector& sy,
+                                                                     const T_vector& s_val) const
     {
         auto image_values_weights = get_empty_grd_images<t_xtensor_2d>();
 
@@ -215,7 +217,8 @@ class ForwardGridder2D
     }
 
     /**
-     * @brief Interpolate 2D points onto 2d images using weighted mean interpolation (inplace version)
+     * @brief Interpolate 2D points onto 2d images using weighted mean interpolation (inplace
+     * version)
      *
      * @tparam T_vector
      * @param sx x values

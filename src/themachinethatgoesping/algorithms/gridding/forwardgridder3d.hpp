@@ -8,15 +8,12 @@
 /* generated doc strings */
 #include ".docstrings/forwardgridder3d.doc.hpp"
 
-
 #include <cmath>
 #include <limits>
 #include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
-
-
 
 #include <xtensor/containers/xtensor.hpp>
 #include <xtensor/views/xview.hpp>
@@ -53,9 +50,9 @@ class ForwardGridder3D
      */
     template<typename T_vector>
     static ForwardGridder3D from_data(t_float         res,
-                                    const T_vector& sx,
-                                    const T_vector& sy,
-                                    const T_vector& sz)
+                                      const T_vector& sx,
+                                      const T_vector& sy,
+                                      const T_vector& sz)
     {
         auto [min_x, max_x, min_y, max_y, min_z, max_z] = functions::get_minmax(sx, sy, sz);
         return from_res(res, min_x, max_x, min_y, max_y, min_z, max_z);
@@ -74,12 +71,12 @@ class ForwardGridder3D
      * @return ForwardGridder3D object
      */
     static ForwardGridder3D from_res(t_float res,
-                                   t_float min_x,
-                                   t_float max_x,
-                                   t_float min_y,
-                                   t_float max_y,
-                                   t_float min_z,
-                                   t_float max_z)
+                                     t_float min_x,
+                                     t_float max_x,
+                                     t_float min_y,
+                                     t_float max_y,
+                                     t_float min_z,
+                                     t_float max_z)
     {
         return ForwardGridder3D(res, res, res, min_x, max_x, min_y, max_y, min_z, max_z);
     }
@@ -101,17 +98,17 @@ class ForwardGridder3D
      * @param zbase z base position of the grid, by default 0.0
      */
     ForwardGridder3D(t_float xres,
-                   t_float yres,
-                   t_float zres,
-                   t_float min_x,
-                   t_float max_x,
-                   t_float min_y,
-                   t_float max_y,
-                   t_float min_z,
-                   t_float max_z,
-                   t_float xbase = 0,
-                   t_float ybase = 0,
-                   t_float zbase = 0)
+                     t_float yres,
+                     t_float zres,
+                     t_float min_x,
+                     t_float max_x,
+                     t_float min_y,
+                     t_float max_y,
+                     t_float min_z,
+                     t_float max_z,
+                     t_float xbase = 0,
+                     t_float ybase = 0,
+                     t_float zbase = 0)
         : _xres(xres)
         , _yres(yres)
         , _zres(zres)
@@ -154,10 +151,20 @@ class ForwardGridder3D
     {
         t_xtensor_3d image_values = xt::zeros<t_float>(
             { static_cast<size_t>(_nx), static_cast<size_t>(_ny), static_cast<size_t>(_nz) });
-            t_xtensor_3d image_weights = xt::zeros<t_float>(
+        t_xtensor_3d image_weights = xt::zeros<t_float>(
             { static_cast<size_t>(_nx), static_cast<size_t>(_ny), static_cast<size_t>(_nz) });
 
         return std::make_tuple(image_values, image_weights);
+    }
+
+    template<typename T_vector>
+    auto group_blocks(const T_vector& sx,
+                      const T_vector& sy,
+                      const T_vector& sz,
+                      const T_vector& s_val) const
+    {
+        return functions::group_blocks(
+            sx, sy, sz, s_val, _xmin, _xres, _nx, _ymin, _yres, _ny, _zmin, _zres, _nz);
     }
 
     /**
@@ -172,16 +179,19 @@ class ForwardGridder3D
      * image_weights
      */
     template<tools::helper::c_xtensor_3d t_xtensor_3d, typename T_vector>
-    std::tuple<t_xtensor_3d, t_xtensor_3d> interpolate_block_mean(
-        const T_vector& sx,
-        const T_vector& sy,
-        const T_vector& sz,
-        const T_vector& s_val) const
+    std::tuple<t_xtensor_3d, t_xtensor_3d> interpolate_block_mean(const T_vector& sx,
+                                                                  const T_vector& sy,
+                                                                  const T_vector& sz,
+                                                                  const T_vector& s_val) const
     {
         auto image_values_weights = get_empty_grd_images<t_xtensor_3d>();
 
-        interpolate_block_mean_inplace(
-            sx, sy, sz, s_val, std::get<0>(image_values_weights), std::get<1>(image_values_weights));
+        interpolate_block_mean_inplace(sx,
+                                       sy,
+                                       sz,
+                                       s_val,
+                                       std::get<0>(image_values_weights),
+                                       std::get<1>(image_values_weights));
 
         return image_values_weights;
     }
@@ -245,22 +255,26 @@ class ForwardGridder3D
      * image_weights
      */
     template<tools::helper::c_xtensor_3d t_xtensor_3d, typename T_vector>
-    std::tuple<t_xtensor_3d, t_xtensor_3d> interpolate_weighted_mean(
-        const T_vector& sx,
-        const T_vector& sy,
-        const T_vector& sz,
-        const T_vector& s_val) const
+    std::tuple<t_xtensor_3d, t_xtensor_3d> interpolate_weighted_mean(const T_vector& sx,
+                                                                     const T_vector& sy,
+                                                                     const T_vector& sz,
+                                                                     const T_vector& s_val) const
     {
         auto image_values_weights = get_empty_grd_images<t_xtensor_3d>();
 
-        interpolate_weighted_mean_inplace(
-            sx, sy, sz, s_val, std::get<0>(image_values_weights), std::get<1>(image_values_weights));
+        interpolate_weighted_mean_inplace(sx,
+                                          sy,
+                                          sz,
+                                          s_val,
+                                          std::get<0>(image_values_weights),
+                                          std::get<1>(image_values_weights));
 
         return image_values_weights;
     }
 
     /**
-     * @brief Interpolate 3D points onto 3d images using weighted mean interpolation (inplace version)
+     * @brief Interpolate 3D points onto 3d images using weighted mean interpolation (inplace
+     * version)
      *
      * @tparam T_vector
      * @param sx x values

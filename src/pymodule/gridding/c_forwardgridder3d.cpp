@@ -72,24 +72,34 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
             py::arg("max_z"))
 
         // from_data with t_float
-        .def_static(
-            "from_data",
-            py::overload_cast<t_float,
-                              const xt::pytensor<t_float, 1>&,
-                              const xt::pytensor<t_float, 1>&,
-                              const xt::pytensor<t_float, 1>&>(
-                &T_ForwardGridder3D::template from_data<xt::pytensor<t_float, 1>>),
-            DOC_ForwardGridder3D(from_data),
-            py::arg("res"),
-            py::arg("sx"),
-            py::arg("sy"),
-            py::arg("sz"))
-
+        .def_static("from_data",
+                    py::overload_cast<t_float,
+                                      const xt::pytensor<t_float, 1>&,
+                                      const xt::pytensor<t_float, 1>&,
+                                      const xt::pytensor<t_float, 1>&>(
+                        &T_ForwardGridder3D::template from_data<xt::pytensor<t_float, 1>>),
+                    DOC_ForwardGridder3D(from_data),
+                    py::arg("res"),
+                    py::arg("sx"),
+                    py::arg("sy"),
+                    py::arg("sz"))
 
         // Grid functions with t_float and double variants
         .def("get_empty_grd_images",
              &T_ForwardGridder3D::template get_empty_grd_images<xt::pytensor<t_float, 3>>,
              DOC_ForwardGridder3D(get_empty_grd_images))
+
+        .def("group_blocks",
+             py::overload_cast<const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&,
+                               const xt::pytensor<t_float, 1>&>(
+                 &T_ForwardGridder3D::template group_blocks<xt::pytensor<t_float, 1>>, py::const_),
+             DOC_ForwardGridder3D(group_blocks),
+             py::arg("sx").noconvert(),
+             py::arg("sy").noconvert(),
+             py::arg("sz").noconvert(),
+             py::arg("sv").noconvert())
 
         // Interpolation functions - block mean (returns new arrays)
         .def("interpolate_block_mean",
@@ -114,8 +124,9 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
                                const xt::pytensor<t_float, 1>&,
                                xt::pytensor<t_float, 3>&,
                                xt::pytensor<t_float, 3>&>(
-                 &T_ForwardGridder3D::template interpolate_block_mean_inplace<xt::pytensor<t_float, 3>,
-                                                                            xt::pytensor<t_float, 1>>,
+                 &T_ForwardGridder3D::template interpolate_block_mean_inplace<
+                     xt::pytensor<t_float, 3>,
+                     xt::pytensor<t_float, 1>>,
                  py::const_),
              DOC_ForwardGridder3D(interpolate_block_mean_inplace),
              py::arg("sx"),
@@ -148,8 +159,9 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
                                const xt::pytensor<t_float, 1>&,
                                xt::pytensor<t_float, 3>&,
                                xt::pytensor<t_float, 3>&>(
-                 &T_ForwardGridder3D::template interpolate_weighted_mean_inplace<xt::pytensor<t_float, 3>,
-                                                                               xt::pytensor<t_float, 1>>,
+                 &T_ForwardGridder3D::template interpolate_weighted_mean_inplace<
+                     xt::pytensor<t_float, 3>,
+                     xt::pytensor<t_float, 1>>,
                  py::const_),
              DOC_ForwardGridder3D(interpolate_weighted_mean_inplace),
              py::arg("sx"),
@@ -266,7 +278,7 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
 
         // Static utility methods - t_float version
         .def_static("get_minmax",
-                    py::overload_cast<const xt::pytensor<t_float, 1>&, 
+                    py::overload_cast<const xt::pytensor<t_float, 1>&,
                                       const xt::pytensor<t_float, 1>&,
                                       const xt::pytensor<t_float, 1>&>(
                         &T_ForwardGridder3D::template get_minmax<xt::pytensor<t_float, 1>>),

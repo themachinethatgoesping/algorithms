@@ -1,4 +1,4 @@
-//sourcehash: 0629aa4fa4fadfbaed452436ce8032a873dd258f3b13614fe7a851bd579be449
+//sourcehash: 45bcfd89861ff0131675aa0aedcb95cc0dc7a8191c0c5b7e371efe6ee9e7a599
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -250,6 +250,8 @@ static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridd
 static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder3D_get_zmin = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder3D_get_zres = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder3D_group_blocks = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_gridding_ForwardGridder3D_interpolate_block_mean =
 R"doc(Interpolate 3D points onto 3d images using block mean interpolation

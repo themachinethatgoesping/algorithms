@@ -71,6 +71,13 @@ void init_ForwardGridder1D_float(pybind11::module& m, const std::string& suffix)
              &T_ForwardGridder1D::template get_empty_grd_images<xt::pytensor<t_float, 1>>,
              DOC_ForwardGridder1D(get_empty_grd_images))
 
+        .def("group_blocks",
+             py::overload_cast<const xt::pytensor<t_float, 1>&, const xt::pytensor<t_float, 1>&>(
+                 &T_ForwardGridder1D::template group_blocks<xt::pytensor<t_float, 1>>, py::const_),
+             DOC_ForwardGridder1D(group_blocks),
+             py::arg("sx").noconvert(),
+             py::arg("sv").noconvert())
+
         // Interpolation functions - block mean (returns new arrays)
         .def("interpolate_block_mean",
              py::overload_cast<const xt::pytensor<t_float, 1>&, const xt::pytensor<t_float, 1>&>(

@@ -1,4 +1,4 @@
-//sourcehash: 04aad1957ede9303cd1bf75469fc4f5544e95205e91c6ea1316ff9e29629f019
+//sourcehash: 30ca5760f70e9bbf95010358f686b7b1e35c7cdce40e7d02ba171fa1c9c0b9af
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -69,6 +69,12 @@ static const char *__doc_themachinethatgoesping_algorithms_gridding_functions_gr
 static const char *__doc_themachinethatgoesping_algorithms_gridding_functions_grd_weighted_mean_2 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_gridding_functions_grd_weighted_mean_3 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_gridding_functions_group_blocks = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_gridding_functions_group_blocks_2 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_gridding_functions_group_blocks_3 = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

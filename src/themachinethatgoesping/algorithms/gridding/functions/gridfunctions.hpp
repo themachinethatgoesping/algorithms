@@ -11,6 +11,7 @@
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <tuple>
 #include <vector>
+#include <map>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -168,6 +169,112 @@ inline T get_grd_value(const T value, const T grd_val_min, const T grd_res)
     return get_value(static_cast<T>(get_index(value, grd_val_min, grd_res)), grd_val_min, grd_res);
 }
 
+template<typename t_vector, std::floating_point t_float, std::integral t_int>
+inline auto group_blocks(const t_vector& sx,
+                         const t_vector& sy,
+                         const t_vector& sz,
+                         const t_vector& sv,
+                         const t_float   xmin,
+                         const t_float   xres,
+                         const t_int     nx,
+                         const t_float   ymin,
+                         const t_float   yres,
+                         const t_int     ny,
+                         const t_float   zmin,
+                         const t_float   zres,
+                         const t_int     nz)
+{
+    std::map<size_t,std::vector<typename t_vector::value_type>> blocks;
+
+    const auto x_stride = ny;
+    const auto y_stride = nx * ny;
+
+    for (size_t i = 0; i < sx.size(); ++i)
+    {
+        const auto x = sx[i], y = sy[i], z = sz[i], v = sv[i];
+
+        if (std::isfinite(v))
+        {
+            const int ix = get_index(x, xmin, xres);
+            const int iy = get_index(y, ymin, yres);
+            const int iz = get_index(z, zmin, zres);
+
+            if (ix < 0 || iy < 0 || iz < 0)
+                continue;
+            if (ix >= nx || iy >= ny || iz >= nz)
+                continue;
+
+            blocks[iz + iy * y_stride + ix * x_stride].push_back(v);
+        }
+    }
+
+    return blocks;
+}
+
+template<typename t_vector, std::floating_point t_float, std::integral t_int>
+inline auto group_blocks(const t_vector& sx,
+                         const t_vector& sy,
+                         const t_vector& sv,
+                         const t_float   xmin,
+                         const t_float   xres,
+                         const t_int     nx,
+                         const t_float   ymin,
+                         const t_float   yres,
+                         const t_int     ny)
+{
+    std::map<size_t,std::vector<typename t_vector::value_type>> blocks;
+
+    const auto x_stride = ny;
+
+    for (size_t i = 0; i < sx.size(); ++i)
+    {
+        const auto x = sx[i], y = sy[i], v = sv[i];
+
+        if (std::isfinite(v))
+        {
+            const int ix = get_index(x, xmin, xres);
+            const int iy = get_index(y, ymin, yres);
+
+            if (ix < 0 || iy < 0)
+                continue;
+            if (ix >= nx || iy >= ny)
+                continue;
+
+            blocks[iy + ix * x_stride].push_back(v);
+        }
+    }
+
+    return blocks;
+}
+
+template<typename t_vector, std::floating_point t_float, std::integral t_int>
+inline auto group_blocks(const t_vector& sx,
+                         const t_vector& sv,
+                         const t_float   xmin,
+                         const t_float   xres,
+                         const t_int     nx)
+{
+    std::map<size_t,std::vector<typename t_vector::value_type>> blocks;
+
+    for (size_t i = 0; i < sx.size(); ++i)
+    {
+        const auto x = sx[i], v = sv[i];
+
+        if (std::isfinite(v))
+        {
+            const int ix = get_index(x, xmin, xres);
+
+            if (ix < 0)
+                continue;
+            if (ix >= nx)
+                continue;
+
+            blocks[ix].push_back(v);
+        }
+    }
+
+    return blocks;
+}
 
 template<std::floating_point t_float>
 inline auto get_index_weights(const t_float frac_x, const t_float frac_y, const t_float frac_z)
@@ -200,10 +307,9 @@ inline auto get_index_weights(const t_float frac_x, const t_float frac_y, const 
     t_float vixy  = vix * fraction_y;
     t_float vixiy = vix * ifraction_y;
 
-    std::array<t_float, 8> WEIGHT = {
-        vxy * fraction_z,   vxy * ifraction_z,  vxiy * fraction_z,   vxiy * ifraction_z,
-        vixy * fraction_z,  vixy * ifraction_z, vixiy * fraction_z,  vixiy * ifraction_z
-    };
+    std::array<t_float, 8> WEIGHT = { vxy * fraction_z,   vxy * ifraction_z,  vxiy * fraction_z,
+                                      vxiy * ifraction_z, vixy * fraction_z,  vixy * ifraction_z,
+                                      vixiy * fraction_z, vixiy * ifraction_z };
 
     return { X, Y, Z, WEIGHT };
 }
@@ -317,10 +423,10 @@ inline auto get_index_weights(const t_float frac_x, const t_float frac_y)
     std::array<int, 4> X = { ix1, ix1, ix2, ix2 };
     std::array<int, 4> Y = { iy1, iy2, iy1, iy2 };
 
-    std::array<t_float, 4> W = {
-        fraction_x * fraction_y, fraction_x * ifraction_y, 
-        ifraction_x * fraction_y, ifraction_x * ifraction_y
-    };
+    std::array<t_float, 4> W = { fraction_x * fraction_y,
+                                 fraction_x * ifraction_y,
+                                 ifraction_x * fraction_y,
+                                 ifraction_x * ifraction_y };
 
     return { X, Y, W };
 }
@@ -408,8 +514,8 @@ inline auto get_index_weights(const t_float frac_x)
     const int ix1 = static_cast<int>(std::floor(frac_x));
     const int ix2 = static_cast<int>(std::ceil(frac_x));
 
-    std::array<int, 2> X      = { ix1, ix2 };
-    std::array<t_float, 2> W  = { fraction_x, ifraction_x };
+    std::array<int, 2>     X = { ix1, ix2 };
+    std::array<t_float, 2> W = { fraction_x, ifraction_x };
 
     return { X, W };
 }
