@@ -343,7 +343,11 @@ class ZSpine
         if (!(bottom_z.has_value() || _origin.has_value()))
             throw std::runtime_error("Either bottom_z or spine origin must be set!");
 
-        const auto [origin_x, origin_y] = get_xy(bottom_z.value_or(std::get<2>(*_origin)));
+        // not using structured bindings here because not yet supported by openmp on clang
+        //const auto [origin_x, origin_y] = get_xy(bottom_z.value_or(std::get<2>(*_origin)));
+        const auto origin_values = get_xy(bottom_z.value_or(std::get<2>(*_origin)));
+        const auto origin_x = origin_values.first;
+        const auto origin_y = origin_values.second;
 
 #pragma omp parallel for num_threads(mp_cores)
         for (size_t i = 0; i < z.size(); ++i)
