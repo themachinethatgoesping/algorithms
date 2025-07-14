@@ -7,7 +7,7 @@
 #include ".docstrings/zspine.doc.hpp"
 
 #include <stdexcept>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <themachinethatgoesping/tools/vectorinterpolators.hpp>
 

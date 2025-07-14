@@ -10,7 +10,7 @@
 #include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/algorithms/amplitudecorrection/functions/wcicorrection.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 
 // using namespace testing;

@@ -9,7 +9,7 @@
 #include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/algorithms/imageprocessing/functions/find_local_maxima2.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 
 using namespace std;
 using namespace themachinethatgoesping::algorithms::imageprocessing::functions;

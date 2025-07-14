@@ -13,7 +13,7 @@
 
 #include <vector>
 
-#include <themachinethatgoesping/tools/helper.hpp>
+
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <xtensor/containers/xadapt.hpp>
 

@@ -15,7 +15,7 @@
 #include <xtensor/views/xview.hpp>
 
 #include <themachinethatgoesping/navigation/datastructures.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 
 namespace themachinethatgoesping {

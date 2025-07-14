@@ -7,11 +7,12 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
-#include <themachinethatgoesping/tools/helper.hpp>
+
+#include <fmt/core.h>
+#include <map>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <tuple>
 #include <vector>
-#include <map>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -184,7 +185,7 @@ inline auto group_blocks(const t_vector& sx,
                          const t_float   zres,
                          const t_int     nz)
 {
-    std::map<size_t,std::vector<typename t_vector::value_type>> blocks;
+    std::map<size_t, std::vector<typename t_vector::value_type>> blocks;
 
     const auto x_stride = ny;
     const auto y_stride = nx * ny;
@@ -222,7 +223,7 @@ inline auto group_blocks(const t_vector& sx,
                          const t_float   yres,
                          const t_int     ny)
 {
-    std::map<size_t,std::vector<typename t_vector::value_type>> blocks;
+    std::map<size_t, std::vector<typename t_vector::value_type>> blocks;
 
     const auto x_stride = ny;
 
@@ -254,7 +255,7 @@ inline auto group_blocks(const t_vector& sx,
                          const t_float   xres,
                          const t_int     nx)
 {
-    std::map<size_t,std::vector<typename t_vector::value_type>> blocks;
+    std::map<size_t, std::vector<typename t_vector::value_type>> blocks;
 
     for (size_t i = 0; i < sx.size(); ++i)
     {

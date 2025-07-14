@@ -10,7 +10,7 @@
 #include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/algorithms/amplitudecorrection/functions/rangecorrection.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 
 // using namespace testing;
 using namespace std;

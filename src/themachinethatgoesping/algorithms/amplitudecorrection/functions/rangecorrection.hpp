@@ -13,7 +13,7 @@
 #include <Eigen/Dense>
 #include <xtensor/containers/xtensor.hpp>
 
-#include <themachinethatgoesping/tools/helper.hpp>
+
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 
 namespace themachinethatgoesping {

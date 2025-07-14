@@ -3,7 +3,7 @@
 /* generated doc strings */
 #include ".docstrings/to_raypoints.doc.hpp"
 
-#include <themachinethatgoesping/tools/helper.hpp>
+#include <fmt/core.h>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 #include <xtensor/containers/xfixed.hpp>
@@ -38,7 +38,9 @@ inline t_xtensor_out to_raypoints(
 
     if (end_scale_values.size() != end_locations.size())
         throw std::runtime_error(
-            fmt::format("to_raypoints: end_scale_values ({}) and end_locations ({}) must have size", end_scale_values.size(),end_locations.size()));
+            fmt::format("to_raypoints: end_scale_values ({}) and end_locations ({}) must have size",
+                        end_scale_values.size(),
+                        end_locations.size()));
 
     std::array<size_t, 2> shape = { end_locations.size(), ray_scale_values.size() };
 

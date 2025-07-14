@@ -7,7 +7,7 @@
 #include ".docstrings/weighted_median.doc.hpp"
 
 #include <stdexcept>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <xtensor/views/xindex_view.hpp>
 

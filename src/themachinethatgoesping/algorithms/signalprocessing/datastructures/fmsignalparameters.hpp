@@ -10,7 +10,7 @@
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
 #include <themachinethatgoesping/tools/classhelper/stream.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 
 #include "../types.hpp"
 
@@ -186,7 +186,7 @@ class FMSignalParameters
     __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__
 };
 
-// IGNORE_DOC: __doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_hash_value
+// IGNORE_DOC:__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_hash_value
 /**
  * @brief Boost hash function
  *

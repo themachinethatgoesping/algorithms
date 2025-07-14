@@ -53,7 +53,8 @@ py_algorithms = pymod.extension_module(
     cpp_args : ['-DMODULE_NAME='+module_name, '-DMODULE_VERSION=' + '"' + meson.project_version() + '"'],
     install : true,
     subdir : projectnamespace,
-    install_tag : 'python-runtime'
+    install_tag : 'python-runtime',
+    override_options: ['unity=off']
 )
 
 

@@ -15,7 +15,7 @@ namespace pymodule {
 namespace py_geoprocessing {
 namespace py_functions {
 
-#define DOC_functions(ARG)                                                                         \
+#define DOC_raypoint_functions(ARG)                                                                         \
     DOC(themachinethatgoesping, algorithms, geoprocessing, functions, ARG)
 
 template<typename t_float>
@@ -32,7 +32,7 @@ void init_to_raypoints(pybind11::module& m)
                             const xt::pytensor<t_float, 1>&,
                             int>(
               &to_raypoints<xt::pytensor<t_float, 2>, xt::pytensor<t_float, 1>, t_float>),
-          DOC_functions(to_raypoints),
+          DOC_raypoint_functions(to_raypoints),
           py::arg("base_location"),
           py::arg("end_locations").noconvert(),
           py::arg("base_scale_value"),

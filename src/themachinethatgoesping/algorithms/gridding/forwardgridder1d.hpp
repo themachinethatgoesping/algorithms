@@ -19,7 +19,7 @@
 #include <xtensor/views/xview.hpp>
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 
 #include "functions/gridfunctions.hpp"

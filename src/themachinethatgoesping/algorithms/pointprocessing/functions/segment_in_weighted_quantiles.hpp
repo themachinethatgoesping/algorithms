@@ -7,7 +7,7 @@
 #include ".docstrings/segment_in_weighted_quantiles.doc.hpp"
 
 #include <stdexcept>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <themachinethatgoesping/tools/vectorinterpolators.hpp>
 

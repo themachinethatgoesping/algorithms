@@ -15,7 +15,7 @@ namespace pymodule {
 namespace py_pointprocessing {
 namespace py_functions {
 
-#define DOC_functions(ARG) DOC(themachinethatgoesping, algorithms, pointprocessing, functions, ARG)
+#define DOC_pointprocessing_functions(ARG) DOC(themachinethatgoesping, algorithms, pointprocessing, functions, ARG)
 
 template<typename t_float_val, typename t_float_weight>
 void init_weighted_median(pybind11::module& m)
@@ -28,7 +28,7 @@ void init_weighted_median(pybind11::module& m)
           py::overload_cast<const xt::pytensor<t_float_val, 1>&,
                             const xt::pytensor<t_float_weight, 1>&>(
               &weighted_median<xt::pytensor<t_float_val, 1>, xt::pytensor<t_float_weight, 1>>),
-          DOC_functions(weighted_median),
+          DOC_pointprocessing_functions(weighted_median),
           py::arg("values"),
           py::arg("weights"));
 
@@ -37,7 +37,7 @@ void init_weighted_median(pybind11::module& m)
                             const xt::pytensor<t_float_val, 1>&,
                             const xt::pytensor<t_float_weight, 1>&>(
               &weighted_median<xt::pytensor<t_float_val, 1>, xt::pytensor<t_float_weight, 1>>),
-          DOC_functions(weighted_median_2),
+          DOC_pointprocessing_functions(weighted_median_2),
           py::arg("values_x"),
           py::arg("values_y"),
           py::arg("weights"));
@@ -48,7 +48,7 @@ void init_weighted_median(pybind11::module& m)
                             const xt::pytensor<t_float_val, 1>&,
                             const xt::pytensor<t_float_weight, 1>&>(
               &weighted_median<xt::pytensor<t_float_val, 1>, xt::pytensor<t_float_weight, 1>>),
-          DOC_functions(weighted_median_3),
+          DOC_pointprocessing_functions(weighted_median_3),
           py::arg("values_x"),
           py::arg("values_y"),
           py::arg("values_z"),
@@ -59,7 +59,7 @@ void init_weighted_median(pybind11::module& m)
           py::overload_cast<const xt::pytensor<t_float_val, 1>&,
                             const xt::pytensor<t_float_weight, 1>&>(
               &weighted_median<xt::pytensor<t_float_val, 1>, xt::pytensor<t_float_weight, 1>>),
-          DOC_functions(weighted_median),
+          DOC_pointprocessing_functions(weighted_median),
           py::arg("values"),
           py::arg("weights"));
 
@@ -71,7 +71,7 @@ void init_weighted_median(pybind11::module& m)
                             const bool>(
               &segment_in_weighted_quantiles<xt::pytensor<t_float_val, 1>,
                                              xt::pytensor<t_float_weight, 1>>),
-          DOC_functions(segment_in_weighted_quantiles),
+          DOC_pointprocessing_functions(segment_in_weighted_quantiles),
           py::arg("values"),
           py::arg("weights"),
           py::arg("n_quantiles"),

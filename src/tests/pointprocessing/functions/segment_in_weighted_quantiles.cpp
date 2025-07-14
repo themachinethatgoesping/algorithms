@@ -9,7 +9,7 @@
 #include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/algorithms/pointprocessing/functions/segment_in_weighted_quantiles.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 
 using namespace std;
 using namespace themachinethatgoesping::algorithms::pointprocessing::functions;

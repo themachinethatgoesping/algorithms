@@ -15,7 +15,7 @@ namespace pymodule {
 namespace py_imageprocessing {
 namespace py_functions {
 
-#define DOC_functions(ARG) DOC(themachinethatgoesping, algorithms, imageprocessing, functions, ARG)
+#define DOC_imageprocessing_functions(ARG) DOC(themachinethatgoesping, algorithms, imageprocessing, functions, ARG)
 
 template<typename t_float>
 void init_find_local_maxima(pybind11::module& m)
@@ -29,7 +29,7 @@ void init_find_local_maxima(pybind11::module& m)
                             const std::optional<t_float>,
                             const bool,
                             const int>(&find_local_maxima<xt::pytensor<t_float, 3>>),
-          DOC_functions(find_local_maxima),
+          DOC_imageprocessing_functions(find_local_maxima),
           py::arg("data").noconvert(),
           py::arg("threshold")   = std::nullopt,
           py::arg("accept_nans") = true,
@@ -40,7 +40,7 @@ void init_find_local_maxima(pybind11::module& m)
                             const std::optional<t_float>,
                             const bool,
                             const int>(&find_local_maxima<xt::pytensor<t_float, 2>>),
-          DOC_functions(find_local_maxima_2),
+          DOC_imageprocessing_functions(find_local_maxima_2),
           py::arg("data").noconvert(),
           py::arg("threshold")   = std::nullopt,
           py::arg("accept_nans") = true,
@@ -51,7 +51,7 @@ void init_find_local_maxima(pybind11::module& m)
                             const std::optional<t_float>,
                             const bool,
                             const int>(&find_local_maxima<xt::pytensor<t_float, 1>>),
-          DOC_functions(find_local_maxima_3),
+          DOC_imageprocessing_functions(find_local_maxima_3),
           py::arg("data").noconvert(),
           py::arg("threshold")   = std::nullopt,
           py::arg("accept_nans") = true,
@@ -63,7 +63,7 @@ void init_find_local_maxima(pybind11::module& m)
                             const std::optional<t_float>,
                             const bool,
                             const int>(&find_local_maxima2<xt::pytensor<t_float, 3>>),
-          DOC_functions(find_local_maxima2),
+          DOC_imageprocessing_functions(find_local_maxima2),
           py::arg("data").noconvert(),
           py::arg("threshold")   = std::nullopt,
           py::arg("accept_nans") = true,
@@ -74,7 +74,7 @@ void init_find_local_maxima(pybind11::module& m)
                             const std::optional<t_float>,
                             const bool,
                             const int>(&find_local_maxima2<xt::pytensor<t_float, 2>>),
-          DOC_functions(find_local_maxima2_2),
+          DOC_imageprocessing_functions(find_local_maxima2_2),
           py::arg("data").noconvert(),
           py::arg("threshold")   = std::nullopt,
           py::arg("accept_nans") = true,
@@ -85,7 +85,7 @@ void init_find_local_maxima(pybind11::module& m)
                             const std::optional<t_float>,
                             const bool,
                             const int>(&find_local_maxima2<xt::pytensor<t_float, 1>>),
-          DOC_functions(find_local_maxima2_3),
+          DOC_imageprocessing_functions(find_local_maxima2_3),
           py::arg("data").noconvert(),
           py::arg("threshold")   = std::nullopt,
           py::arg("accept_nans") = true,
@@ -106,7 +106,7 @@ void init_grow_regions(pybind11::module& m)
                             const bool,
                             const int>(
               &grow_regions<xt::pytensor<t_region, 3>, xt::pytensor<t_value, 3>>),
-          DOC_functions(grow_regions),
+          DOC_imageprocessing_functions(grow_regions),
           py::arg("region_volume").noconvert(),
           py::arg("data_volume").noconvert(),
           py::arg("null_region")             = 0,
@@ -122,7 +122,7 @@ void init_grow_regions(pybind11::module& m)
                             const bool,
                             const int>(
               &grow_regions<xt::pytensor<t_region, 2>, xt::pytensor<t_value, 2>>),
-          DOC_functions(grow_regions_2),
+          DOC_imageprocessing_functions(grow_regions_2),
           py::arg("region_volume").noconvert(),
           py::arg("data_volume").noconvert(),
           py::arg("null_region")             = 0,
@@ -138,7 +138,7 @@ void init_grow_regions(pybind11::module& m)
                             const bool,
                             const int>(
               &grow_regions<xt::pytensor<t_region, 1>, xt::pytensor<t_value, 1>>),
-          DOC_functions(grow_regions_3),
+          DOC_imageprocessing_functions(grow_regions_3),
           py::arg("region_volume").noconvert(),
           py::arg("data_volume").noconvert(),
           py::arg("null_region")             = 0,

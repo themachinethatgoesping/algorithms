@@ -11,7 +11,7 @@
 #include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/algorithms/imageprocessing/functions/find_local_maxima.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 
 // using namespace testing;
 using namespace std;

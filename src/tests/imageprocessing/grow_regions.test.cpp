@@ -10,7 +10,7 @@
 
 
 #include <themachinethatgoesping/algorithms/imageprocessing/functions/grow_regions.hpp>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 
 using namespace std;
 using namespace themachinethatgoesping::algorithms::imageprocessing::functions;

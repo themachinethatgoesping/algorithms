@@ -9,7 +9,7 @@
 #include ".docstrings/absorption.doc.hpp"
 
 #include <gswteos-10.h>
-#include <themachinethatgoesping/tools/helper.hpp>
+
 
 namespace themachinethatgoesping {
 namespace algorithms {
