@@ -11,15 +11,12 @@
 /* generated doc strings */
 #include ".docstrings/find_local_maxima.doc.hpp"
 
+#include <optional>
 #include <vector>
-
 
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <xtensor/containers/xadapt.hpp>
 
-
-
-#include <xtensor/misc/xsort.hpp>
 #include <xtensor/containers/xtensor.hpp>
 #include <xtensor/views/xview.hpp>
 
