@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
-#include <themachinethatgoesping/tools/vectorinterpolators.hpp>
+#include <themachinethatgoesping/tools/vectorinterpolators/akimainterpolator.hpp>
 
 #include "../functions/segment_in_weighted_quantiles.hpp"
 #include "../functions/weighted_median.hpp"

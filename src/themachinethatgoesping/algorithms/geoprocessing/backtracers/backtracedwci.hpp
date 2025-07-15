@@ -13,8 +13,11 @@
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
 #include <themachinethatgoesping/tools/classhelper/stream.hpp>
 
+#include <themachinethatgoesping/tools/vectorinterpolators/linearinterpolator.hpp>
+#include <themachinethatgoesping/tools/vectorinterpolators/nearestinterpolator.hpp>
+
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
-#include <themachinethatgoesping/tools/vectorinterpolators.hpp>
+
 
 #include "../datastructures.hpp"
 

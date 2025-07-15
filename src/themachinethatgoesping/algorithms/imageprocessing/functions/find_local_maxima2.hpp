@@ -10,6 +10,7 @@
 
 #include <omp.h>
 #include <vector>
+#include <optional>
 
 #include <xtensor/containers/xadapt.hpp>
 #include <xtensor/misc/xsort.hpp>
