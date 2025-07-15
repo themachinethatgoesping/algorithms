@@ -62,7 +62,7 @@ struct XYZ
     }
 
     // return shape of the internal tensors
-    // type is: std::array<long unsigned int, Dim>
+    // type is: std::array<int64_t4_t unsigned int, Dim>
     const auto& shape() const { return x.shape(); }
 
     /**

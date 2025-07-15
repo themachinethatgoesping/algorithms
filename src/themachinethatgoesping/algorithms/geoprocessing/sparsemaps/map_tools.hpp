@@ -67,7 +67,7 @@ void increment_with_default(C<K, V, Args...>& m,
 template<template<class, class, class...> class C, typename K, typename V, typename... Args>
 void write_map(const C<K, V, Args...>& m, std::ostream& os)
 {
-    unsigned long num = m.size();
+    uint64_t num = m.size();
     os.write((char*)&num, sizeof(num));
     for (auto& kv : m)
     {
@@ -80,7 +80,7 @@ void write_map(const C<K, V, Args...>& m, std::ostream& os)
 template<template<class, class, class...> class C, typename K, typename V, typename... Args>
 void read_map(C<K, V, Args...>& m, std::istream& is)
 {
-    unsigned long num;
+    uint64_t num;
     is.read((char*)&num, sizeof(num));
     for (unsigned int i = 0; i < num; ++i)
     {

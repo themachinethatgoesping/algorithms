@@ -129,14 +129,14 @@ class xMap : public std::unordered_map<uint64_t, gridValueType>
     //    const gridValueType& c_at_x(double x) const
     //    {
     //        return get_ref_with_default(
-    //                    (std::unordered_map<long
-    //                    long,gridValueType>&)*this,get_gridPos(x),_initValue);
+    //                    (std::unordered_map<int64_t4_t
+    //                    int64_t,gridValueType>&)*this,get_gridPos(x),_initValue);
     //    }
     //    const  gridValueType& c_at_x(double x, const gridValueType& defaultValue) const
     //    {
     //        return get_ref_with_default(
-    //                    (std::unordered_map<long
-    //                    long,gridValueType>&)*this,get_gridPos(x),defaultValue);
+    //                    (std::unordered_map<int64_t
+    //                    int64_t,gridValueType>&)*this,get_gridPos(x),defaultValue);
     //    }
     //    const gridValueType& c_at_gridPos(uint64_t gridPos) const
     //    {
