@@ -165,38 +165,38 @@ void init_ForwardGridder2D_float(pybind11::module& m, const std::string& suffix)
              DOC_ForwardGridder2D(border_ymax))
 
         .def("get_x_index",
-             &T_ForwardGridder2D::get_x_index,
+             py::vectorize(&T_ForwardGridder2D::get_x_index),
              DOC_ForwardGridder2D(get_x_index),
              py::arg("x"))
         .def("get_y_index",
-             &T_ForwardGridder2D::get_y_index,
+             py::vectorize(&T_ForwardGridder2D::get_y_index),
              DOC_ForwardGridder2D(get_y_index),
              py::arg("y"))
 
         .def("get_x_index_fraction",
-             &T_ForwardGridder2D::get_x_index_fraction,
+             py::vectorize(&T_ForwardGridder2D::get_x_index_fraction),
              DOC_ForwardGridder2D(get_x_index_fraction),
              py::arg("x"))
         .def("get_y_index_fraction",
-             &T_ForwardGridder2D::get_y_index_fraction,
+             py::vectorize(&T_ForwardGridder2D::get_y_index_fraction),
              DOC_ForwardGridder2D(get_y_index_fraction),
              py::arg("y"))
 
         .def("get_x_value",
-             &T_ForwardGridder2D::get_x_value,
+             py::vectorize(&T_ForwardGridder2D::get_x_value),
              DOC_ForwardGridder2D(get_x_value),
              py::arg("x_index"))
         .def("get_y_value",
-             &T_ForwardGridder2D::get_y_value,
+             py::vectorize(&T_ForwardGridder2D::get_y_value),
              DOC_ForwardGridder2D(get_y_value),
              py::arg("y_index"))
 
         .def("get_x_grd_value",
-             &T_ForwardGridder2D::get_x_grd_value,
+             py::vectorize(&T_ForwardGridder2D::get_x_grd_value),
              DOC_ForwardGridder2D(get_x_grd_value),
              py::arg("x"))
         .def("get_y_grd_value",
-             &T_ForwardGridder2D::get_y_grd_value,
+             py::vectorize(&T_ForwardGridder2D::get_y_grd_value),
              DOC_ForwardGridder2D(get_y_grd_value),
              py::arg("y"))
 

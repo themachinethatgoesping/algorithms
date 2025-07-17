@@ -70,6 +70,7 @@ template<tools::helper::c_xtensor_3d t_xtensor_regions, tools::helper::c_xtensor
  * @param force_negative_gradient If true, only grow regions where the neighbor's data value
  *                                is less than the current cell's value (enforcing a negative
  * gradient)
+ * @param eat_neighbor_regions If true, the function will also consider neighboring regions
  * @param mp_cores Number of cores to use for parallel processing
  *
  * @return true if at least one cell was assigned to a region, false otherwise
@@ -86,6 +87,7 @@ bool grow_regions(
     const typename t_xtensor_regions::value_type             null_region,
     const std::optional<typename t_xtensor_data::value_type> threshold               = std::nullopt,
     const bool                                               force_negative_gradient = true,
+    const bool                                               eat_neighbor_regions    = false,
     const int                                                mp_cores                = 1)
 {
     using value_type  = typename t_xtensor_data::value_type;
@@ -129,7 +131,8 @@ bool grow_regions(
                     // test if current neighbor is null
                     const region_type region = regions_volume.unchecked(x, y, z);
 
-                    if (!is_null_region(region, null_region))
+                    const bool region_is_null = is_null_region(region, null_region);
+                    if (!region_is_null && !eat_neighbor_regions)
                         continue;
 
                     // test if current value exceeds threshold
@@ -145,7 +148,13 @@ bool grow_regions(
                                                          xt::range(start_z, end_z));
 
                     // Create a boolean mask for non-null regions
-                    auto non_null_mask = get_non_null_mask(regions_neighborhood, null_region);
+                    auto non_null_mask =
+                        xt::eval(get_non_null_mask(regions_neighborhood, null_region));
+
+                    // Filter out same region (if the center pixel belongs to a region)
+                    if (eat_neighbor_regions && !region_is_null)
+                        non_null_mask =
+                            non_null_mask && xt::not_equal(regions_neighborhood, region);
 
                     // Filter regions values based on non-null mask
                     auto neighbor_regions = xt::filter(regions_neighborhood, non_null_mask);
@@ -166,7 +175,8 @@ bool grow_regions(
                     auto max_index = xt::argmax(non_null_data)();
 
                     // test gradient
-                    if (force_negative_gradient && non_null_data.unchecked(max_index) < val)
+                    if ((force_negative_gradient || !region_is_null) &&
+                        non_null_data.unchecked(max_index) < val)
                         continue;
 
 #pragma omp critical
@@ -204,6 +214,7 @@ template<tools::helper::c_xtensor_2d t_xtensor_regions, tools::helper::c_xtensor
  * @param force_negative_gradient If true, only grow regions where the neighbor's data value
  *                                is less than the current cell's value (enforcing a negative
  * gradient)
+ * @param eat_neighbor_regions If true, the function will also consider neighboring regions
  * @param mp_cores Number of cores to use for parallel processing
  *
  * @return true if at least one cell was assigned to a region, false otherwise
@@ -218,6 +229,7 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
                   const typename t_xtensor_regions::value_type             null_region,
                   const std::optional<typename t_xtensor_data::value_type> threshold = std::nullopt,
                   const bool force_negative_gradient                                 = true,
+                  const bool eat_neighbor_regions                                    = false,
                   const int  mp_cores                                                = 1)
 {
     using value_type  = typename t_xtensor_data::value_type;
@@ -256,7 +268,8 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
                 // test if current neighbor is null
                 const region_type region = regions_image.unchecked(x, y);
 
-                if (!is_null_region(region, null_region))
+                const bool region_is_null = is_null_region(region, null_region);
+                if (!region_is_null && !eat_neighbor_regions)
                     continue;
 
                 // test if current value exceeds threshold
@@ -270,7 +283,11 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
                     xt::view(regions_image, xt::range(start_x, end_x), xt::range(start_y, end_y));
 
                 // Create a boolean mask for non-null regions
-                auto non_null_mask = get_non_null_mask(regions_neighborhood, null_region);
+                auto non_null_mask = xt::eval(get_non_null_mask(regions_neighborhood, null_region));
+
+                // Filter out same region (if the center pixel belongs to a region)
+                if (eat_neighbor_regions && !region_is_null)
+                    non_null_mask = non_null_mask && xt::not_equal(regions_neighborhood, region);
 
                 // Filter regions values based on non-null mask
                 auto neighbor_regions = xt::filter(regions_neighborhood, non_null_mask);
@@ -289,7 +306,8 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
                 auto max_index = xt::argmax(non_null_data)();
 
                 // test gradient
-                if (force_negative_gradient && non_null_data.unchecked(max_index) < val)
+                if ((force_negative_gradient || !region_is_null) &&
+                    non_null_data.unchecked(max_index) < val)
                     continue;
 
 #pragma omp critical
@@ -326,6 +344,7 @@ template<tools::helper::c_xtensor_1d t_xtensor_regions, tools::helper::c_xtensor
  * @param force_negative_gradient If true, only grow regions where the neighbor's data value
  *                                is less than the current cell's value (enforcing a negative
  * gradient)
+ * @param eat_neighbor_regions If true, the function will also consider neighboring regions
  * @param mp_cores Number of cores to use for parallel processing
  *
  * @return true if at least one cell was assigned to a region, false otherwise
@@ -340,6 +359,7 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
                   const typename t_xtensor_regions::value_type             null_region,
                   const std::optional<typename t_xtensor_data::value_type> threshold = std::nullopt,
                   const bool force_negative_gradient                                 = true,
+                  const bool eat_neighbor_regions                                    = false,
                   const int  mp_cores                                                = 1)
 {
     using value_type  = typename t_xtensor_data::value_type;
@@ -373,7 +393,8 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
             // test if current neighbor is null
             const region_type region = regions_array.unchecked(x);
 
-            if (!is_null_region(region, null_region))
+            const bool region_is_null = is_null_region(region, null_region);
+            if (!region_is_null && !eat_neighbor_regions)
                 continue;
 
             // test if current value exceeds threshold
@@ -386,7 +407,11 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
             auto regions_neighborhood = xt::view(regions_array, xt::range(start_x, end_x));
 
             // Create a boolean mask for non-null regions
-            auto non_null_mask = get_non_null_mask(regions_neighborhood, null_region);
+            auto non_null_mask = xt::eval(get_non_null_mask(regions_neighborhood, null_region));
+
+            // Filter out same region (if the center pixel belongs to a region)
+            if (eat_neighbor_regions && !region_is_null)
+                non_null_mask = non_null_mask && xt::not_equal(regions_neighborhood, region);
 
             // Filter regions values based on non-null mask
             auto neighbor_regions = xt::filter(regions_neighborhood, non_null_mask);
@@ -404,7 +429,8 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
             auto max_index = xt::argmax(non_null_data)();
 
             // test gradient
-            if (force_negative_gradient && non_null_data.unchecked(max_index) < val)
+            if ((force_negative_gradient || !region_is_null) &&
+                non_null_data.unchecked(max_index) < val)
                 continue;
 
 #pragma omp critical

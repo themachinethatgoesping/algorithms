@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 #include <pybind11/iostream.h>
+#include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <xtensor-python/pytensor.hpp>
@@ -207,54 +208,54 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
              DOC_ForwardGridder3D(border_zmax))
 
         .def("get_x_index",
-             &T_ForwardGridder3D::get_x_index,
+             py::vectorize(&T_ForwardGridder3D::get_x_index),
              DOC_ForwardGridder3D(get_x_index),
              py::arg("x"))
         .def("get_y_index",
-             &T_ForwardGridder3D::get_y_index,
+             py::vectorize(&T_ForwardGridder3D::get_y_index),
              DOC_ForwardGridder3D(get_y_index),
              py::arg("y"))
         .def("get_z_index",
-             &T_ForwardGridder3D::get_z_index,
+             py::vectorize(&T_ForwardGridder3D::get_z_index),
              DOC_ForwardGridder3D(get_z_index),
              py::arg("z"))
 
         .def("get_x_index_fraction",
-             &T_ForwardGridder3D::get_x_index_fraction,
+             py::vectorize(&T_ForwardGridder3D::get_x_index_fraction),
              DOC_ForwardGridder3D(get_x_index_fraction),
              py::arg("x"))
         .def("get_y_index_fraction",
-             &T_ForwardGridder3D::get_y_index_fraction,
+             py::vectorize(&T_ForwardGridder3D::get_y_index_fraction),
              DOC_ForwardGridder3D(get_y_index_fraction),
              py::arg("y"))
         .def("get_z_index_fraction",
-             &T_ForwardGridder3D::get_z_index_fraction,
+             py::vectorize(&T_ForwardGridder3D::get_z_index_fraction),
              DOC_ForwardGridder3D(get_z_index_fraction),
              py::arg("z"))
 
         .def("get_x_value",
-             &T_ForwardGridder3D::get_x_value,
+             py::vectorize(&T_ForwardGridder3D::get_x_value),
              DOC_ForwardGridder3D(get_x_value),
              py::arg("x_index"))
         .def("get_y_value",
-             &T_ForwardGridder3D::get_y_value,
+             py::vectorize(&T_ForwardGridder3D::get_y_value),
              DOC_ForwardGridder3D(get_y_value),
              py::arg("y_index"))
         .def("get_z_value",
-             &T_ForwardGridder3D::get_z_value,
+             py::vectorize(&T_ForwardGridder3D::get_z_value),
              DOC_ForwardGridder3D(get_z_value),
              py::arg("z_index"))
 
         .def("get_x_grd_value",
-             &T_ForwardGridder3D::get_x_grd_value,
+             py::vectorize(&T_ForwardGridder3D::get_x_grd_value),
              DOC_ForwardGridder3D(get_x_grd_value),
              py::arg("x"))
         .def("get_y_grd_value",
-             &T_ForwardGridder3D::get_y_grd_value,
+             py::vectorize(&T_ForwardGridder3D::get_y_grd_value),
              DOC_ForwardGridder3D(get_y_grd_value),
              py::arg("y"))
         .def("get_z_grd_value",
-             &T_ForwardGridder3D::get_z_grd_value,
+             py::vectorize(&T_ForwardGridder3D::get_z_grd_value),
              DOC_ForwardGridder3D(get_z_grd_value),
              py::arg("z"))
 

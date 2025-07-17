@@ -15,7 +15,8 @@ namespace pymodule {
 namespace py_imageprocessing {
 namespace py_functions {
 
-#define DOC_imageprocessing_functions(ARG) DOC(themachinethatgoesping, algorithms, imageprocessing, functions, ARG)
+#define DOC_imageprocessing_functions(ARG)                                                         \
+    DOC(themachinethatgoesping, algorithms, imageprocessing, functions, ARG)
 
 template<typename t_float>
 void init_find_local_maxima(pybind11::module& m)
@@ -104,6 +105,7 @@ void init_grow_regions(pybind11::module& m)
                             const t_region,
                             const std::optional<t_value>,
                             const bool,
+                            const bool,
                             const int>(
               &grow_regions<xt::pytensor<t_region, 3>, xt::pytensor<t_value, 3>>),
           DOC_imageprocessing_functions(grow_regions),
@@ -112,6 +114,7 @@ void init_grow_regions(pybind11::module& m)
           py::arg("null_region")             = 0,
           py::arg("threshold")               = std::nullopt,
           py::arg("force_negative_gradient") = true,
+          py::arg("eat_neighbor_regions")    = false,
           py::arg("mp_cores")                = 1);
 
     m.def("grow_regions",
@@ -119,6 +122,7 @@ void init_grow_regions(pybind11::module& m)
                             const xt::pytensor<t_value, 2>&,
                             const t_region,
                             const std::optional<t_value>,
+                            const bool,
                             const bool,
                             const int>(
               &grow_regions<xt::pytensor<t_region, 2>, xt::pytensor<t_value, 2>>),
@@ -128,6 +132,7 @@ void init_grow_regions(pybind11::module& m)
           py::arg("null_region")             = 0,
           py::arg("threshold")               = std::nullopt,
           py::arg("force_negative_gradient") = true,
+          py::arg("eat_neighbor_regions")    = false,
           py::arg("mp_cores")                = 1);
 
     m.def("grow_regions",
@@ -135,6 +140,7 @@ void init_grow_regions(pybind11::module& m)
                             const xt::pytensor<t_value, 1>&,
                             const t_region,
                             const std::optional<t_value>,
+                            const bool,
                             const bool,
                             const int>(
               &grow_regions<xt::pytensor<t_region, 1>, xt::pytensor<t_value, 1>>),
@@ -144,6 +150,7 @@ void init_grow_regions(pybind11::module& m)
           py::arg("null_region")             = 0,
           py::arg("threshold")               = std::nullopt,
           py::arg("force_negative_gradient") = true,
+          py::arg("eat_neighbor_regions")    = false,
           py::arg("mp_cores")                = 1);
 }
 

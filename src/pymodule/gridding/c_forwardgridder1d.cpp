@@ -144,24 +144,24 @@ void init_ForwardGridder1D_float(pybind11::module& m, const std::string& suffix)
              DOC_ForwardGridder1D(border_xmax))
 
         .def("get_x_index",
-             &T_ForwardGridder1D::get_x_index,
+             py::vectorize(&T_ForwardGridder1D::get_x_index),
              DOC_ForwardGridder1D(get_x_index),
              py::arg("x")) VECTORIZE_1D_MEMBER("get_x_index", get_x_index, "x", t_float, int)
 
         .def("get_x_index_fraction",
-             &T_ForwardGridder1D::get_x_index_fraction,
+             py::vectorize(&T_ForwardGridder1D::get_x_index_fraction),
              DOC_ForwardGridder1D(get_x_index_fraction),
              py::arg("x"))
             VECTORIZE_1D_MEMBER("get_x_index_fraction", get_x_index_fraction, "x", t_float, t_float)
 
         .def("get_x_value",
-             &T_ForwardGridder1D::get_x_value,
+             py::vectorize(&T_ForwardGridder1D::get_x_value),
              DOC_ForwardGridder1D(get_x_value),
              py::arg("x_index"))
             VECTORIZE_1D_MEMBER("get_x_value", get_x_value, "x_index", int, t_float)
 
         .def("get_x_grd_value",
-             &T_ForwardGridder1D::get_x_grd_value,
+             py::vectorize(&T_ForwardGridder1D::get_x_grd_value),
              DOC_ForwardGridder1D(get_x_grd_value),
              py::arg("x"))
             VECTORIZE_1D_MEMBER("get_x_grd_value", get_x_grd_value, "x", t_float, t_float)
