@@ -16,7 +16,7 @@
 
 #include <themachinethatgoesping/navigation/datastructures.hpp>
 
-#include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+
 
 namespace themachinethatgoesping {
 namespace algorithms {

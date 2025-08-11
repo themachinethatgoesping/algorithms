@@ -16,7 +16,7 @@
 #include <themachinethatgoesping/tools/vectorinterpolators/linearinterpolator.hpp>
 #include <themachinethatgoesping/tools/vectorinterpolators/nearestinterpolator.hpp>
 
-#include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+
 
 
 #include "../datastructures.hpp"

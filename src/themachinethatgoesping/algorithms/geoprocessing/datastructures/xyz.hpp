@@ -17,8 +17,6 @@
 #include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
-
-
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 
 namespace themachinethatgoesping {
@@ -231,7 +229,8 @@ struct XYZ
     }
 
   public:
-    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision, bool superscript_exponents) const
+    tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision,
+                                                  bool         superscript_exponents) const
     {
         tools::classhelper::ObjectPrinter printer("XYZ", float_precision, superscript_exponents);
 

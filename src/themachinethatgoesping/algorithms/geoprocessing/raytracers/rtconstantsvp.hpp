@@ -17,7 +17,7 @@
 
 #include <themachinethatgoesping/navigation/datastructures.hpp>
 
-#include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+
 #include <themachinethatgoesping/tools/helper/approx.hpp>
 
 namespace themachinethatgoesping {

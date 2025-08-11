@@ -5,7 +5,7 @@
 
 #include <fmt/core.h>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
-#include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+
 #include <xtensor/containers/xfixed.hpp>
 
 namespace themachinethatgoesping {
