@@ -3,3 +3,14 @@
 *.ipynb filter=lfs diff=lfs merge=lfs -text
 *.binary filter=lfs diff=lfs merge=lfs -text
 
+# Language identification for better GitHub Copilot support
+*.hpp linguist-language=C++
+*.cpp linguist-language=C++
+*.h linguist-language=C
+meson.build linguist-language=Meson
+meson_options.txt linguist-language=Meson
+
+# Documentation files
+*.md linguist-documentation
+*.rst linguist-documentation
+

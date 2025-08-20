@@ -10,7 +10,11 @@
 #build dirs
 *build/*
 *builddir/*
-*.vscode/*
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
 *conanlibs/**
 
 # Prerequisites

@@ -1,0 +1,46 @@
+{
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.intelliSenseMode": "gcc-x64",
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/src/**",
+        "${workspaceFolder}/subprojects/**"
+    ],
+    "C_Cpp.default.defines": [
+        "MESON_BUILD"
+    ],
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.clang_format_style": "file",
+    "C_Cpp.clang_format_path": "/usr/bin/clang-format",
+    "github.copilot.enable": {
+        "*": true,
+        "yaml": false,
+        "plaintext": false,
+        "markdown": true,
+        "cpp": true,
+        "c": true,
+        "python": true,
+        "meson": true
+    },
+    "github.copilot.editor.enableAutoCompletions": true,
+    "github.copilot.inlineSuggest.enable": true,
+    "files.associations": {
+        "*.hpp": "cpp",
+        "*.cpp": "cpp",
+        "*.h": "c",
+        "meson.build": "meson",
+        "meson_options.txt": "meson"
+    },
+    "files.exclude": {
+        "**/build*/**": true,
+        "**/.cache/**": true,
+        "**/builddir/**": true
+    },
+    "python.defaultInterpreterPath": "python3",
+    "python.linting.enabled": true,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "on",
+    "editor.wordBasedSuggestions": "allDocuments",
+    "editor.parameterHints.enabled": true,
+    "mesonbuild.configureOnOpen": true
+}

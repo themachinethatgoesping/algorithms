@@ -1,0 +1,40 @@
+# GitHub Copilot configuration for themachinethatgoesping/algorithms
+# This file helps GitHub Copilot understand the project structure and context
+
+# Project information
+project_name: "themachinethatgoesping_algorithms"
+language: "C++"
+build_system: "Meson"
+standard: "C++20"
+
+# Key directories and their purposes
+directories:
+  src/themachinethatgoesping/algorithms/: "Core C++ algorithms implementation"
+  src/pymodule/: "Python bindings using pybind11"
+  src/tests/: "Unit tests using Catch2"
+  subprojects/: "Meson subproject dependencies"
+
+# Coding patterns and conventions
+conventions:
+  - "Use modern C++20 features and STL"
+  - "Follow Mozilla-based clang-format style (see .clang-format)"
+  - "Use Eigen library for linear algebra operations"
+  - "Use xtensor for multi-dimensional arrays"
+  - "Python bindings follow pybind11 conventions"
+  - "Tests use Catch2 framework"
+  - "Documentation uses doxygen-style comments"
+
+# Common includes and dependencies
+dependencies:
+  - "Eigen/Eigen"
+  - "xtensor/xtensor.hpp" 
+  - "pybind11/pybind11.h"
+  - "themachinethatgoesping/tools/"
+  - "themachinethatgoesping/navigation/"
+
+# Namespace structure
+namespaces:
+  - "themachinethatgoesping::algorithms"
+  - "themachinethatgoesping::algorithms::geoprocessing"
+  - "themachinethatgoesping::algorithms::signalprocessing"
+  - "themachinethatgoesping::algorithms::pymodule"
