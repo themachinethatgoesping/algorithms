@@ -24,6 +24,7 @@ class ZSpine
   public:
     using coord_type  = double;
     using t_extr_mode = tools::vectorinterpolators::t_extr_mode;
+    using t_xyz_tuple = std::tuple<std::vector<coord_type>, std::vector<coord_type>, std::vector<coord_type>>;
 
   private:
     std::vector<coord_type> _x, _y, _z;
@@ -115,9 +116,35 @@ class ZSpine
 
     std::pair<coord_type, coord_type> get_xy(coord_type z) const;
 
-    std::tuple<std::vector<coord_type>, std::vector<coord_type>, std::vector<coord_type>> get_spine_points(const bool with_origin = true) const;
+    t_xyz_tuple get_spine_points(const bool with_origin = true) const;
 
-    auto get_spine(size_t n_values, bool with_origin = true) const;
+    auto get_spine(size_t n_values, bool with_origin = true) const
+    {
+        auto min_z = _z.front();
+        auto max_z = _z.back();
+
+        if (with_origin && _origin.has_value())
+        {
+            auto [ox, oy, oz] = _origin.value();
+            if (!_is_altitude)
+                max_z = oz;
+            else
+                min_z = oz;
+        }
+
+        auto z = xt::linspace(min_z, max_z, n_values);
+
+        auto x = xt::empty_like(z);
+        auto y = xt::empty_like(z);
+
+        for (size_t i = 0; i < z.size(); ++i)
+        {
+            x[i] = _x_interpolator(z[i]);
+            y[i] = _y_interpolator(z[i]);
+        }
+
+        return xt::eval(xt::stack(xt::xtuple(x, y, z), 0));
+    }
 
     const auto& get_origin() const { return _origin; }
     bool        get_is_altitude() const { return _is_altitude; }
@@ -153,10 +180,10 @@ class ZSpine
             throw std::runtime_error("Either bottom_z or spine origin must be set!");
 
         // not using structured bindings here because not yet supported by openmp on clang
-        //const auto [origin_x, origin_y] = get_xy(bottom_z.value_or(std::get<2>(*_origin)));
+        // const auto [origin_x, origin_y] = get_xy(bottom_z.value_or(std::get<2>(*_origin)));
         const auto origin_values = get_xy(bottom_z.value_or(std::get<2>(*_origin)));
-        const auto origin_x = origin_values.first;
-        const auto origin_y = origin_values.second;
+        const auto origin_x      = origin_values.first;
+        const auto origin_y      = origin_values.second;
 
 #pragma omp parallel for num_threads(mp_cores)
         for (size_t i = 0; i < z.size(); ++i)

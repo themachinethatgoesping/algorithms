@@ -170,7 +170,7 @@ void init_c_zspine(pybind11::module& m)
             .def("get_spine_points",
                  &ZSpine::get_spine_points,
                  DOC_ZSpine(get_spine_points),
-                 py::arg("with_origin") = true)
+               py::arg("with_origin") = true)
             .def("get_spine",
                  &ZSpine::get_spine,
                  DOC_ZSpine(get_spine),

@@ -193,33 +193,7 @@ ZSpine::get_spine_points(const bool with_origin) const
     return std::make_tuple(_x, _y, _z);
 }
 
-auto ZSpine::get_spine(size_t n_values, bool with_origin) const
-{
-    auto min_z = _z.front();
-    auto max_z = _z.back();
 
-    if (with_origin && _origin.has_value())
-    {
-        auto [ox, oy, oz] = _origin.value();
-        if (!_is_altitude)
-            max_z = oz;
-        else
-            min_z = oz;
-    }
-
-    auto z = xt::linspace(min_z, max_z, n_values);
-
-    auto x = xt::empty_like(z);
-    auto y = xt::empty_like(z);
-
-    for (size_t i = 0; i < z.size(); ++i)
-    {
-        x[i] = _x_interpolator(z[i]);
-        y[i] = _y_interpolator(z[i]);
-    }
-
-    return xt::eval(xt::stack(xt::xtuple(x, y, z), 0));
-}
 
 void ZSpine::add_point(coord_type x, coord_type y, coord_type z)
 {
