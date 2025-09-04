@@ -12,6 +12,7 @@ sources = [
   'gridding/c_forwardgridder2d.cpp',
   'gridding/c_forwardgridder3d.cpp',
   'gridding/functions/f_gridfunctions.cpp',
+  'gridding/functions/f_resamplingfunctions.cpp',
   'amplitudecorrection/functions/functions.cpp',
   'pointprocessing/bubblestreams/zspine.cpp',
   'pointprocessing/functions/functions.cpp',

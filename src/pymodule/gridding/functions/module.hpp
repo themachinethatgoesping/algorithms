@@ -11,7 +11,8 @@ namespace pymodule {
 namespace py_gridding {
 namespace py_functions {
 
-void init_f_gridfunctions(pybind11::module& m); // f_gridfunctions.cpp
+void init_f_resamplingfunctions(pybind11::module& m); // f_resamplingfunctions.cpp
+void init_f_gridfunctions(pybind11::module& m);       // f_gridfunctions.cpp
 
 void init_m_functions(pybind11::module& m)
 {
@@ -19,6 +20,7 @@ void init_m_functions(pybind11::module& m)
 
     submodule.doc() = "Submodule for gridding functions";
 
+    init_f_resamplingfunctions(submodule);
     init_f_gridfunctions(submodule);
 }
 

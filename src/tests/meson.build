@@ -13,6 +13,7 @@ sources = [
   'gridding/forwardgridder2d.test.cpp',
   'gridding/forwardgridder3d.test.cpp',
   'gridding/functions/gridfunctions.test.cpp',
+  'gridding/functions/resamplingfunctions.cpp',
   'pointprocessing/bubblestreams/zspine.test.cpp',
   'pointprocessing/functions/segment_in_weighted_quantiles.cpp',
   'pointprocessing/functions/weighted_median.cpp',
