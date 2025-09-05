@@ -20,6 +20,7 @@ sources = [
   'signalprocessing/datastructures/cwsignalparameters.test.cpp',
   'signalprocessing/datastructures/fmsignalparameters.test.cpp',
   'signalprocessing/datastructures/genericsignalparameters.test.cpp',
+  'featuremapping/nearestfeaturemapper.test.cpp',
   'imageprocessing/find_local_maxima.test.cpp',
   'imageprocessing/find_local_maxima2.test.cpp',
   'imageprocessing/grow_regions.test.cpp',

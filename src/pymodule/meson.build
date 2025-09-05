@@ -19,6 +19,8 @@ sources = [
   'signalprocessing/datastructures/c_cwsignalparameters.cpp',
   'signalprocessing/datastructures/c_fmsignalparameters.cpp',
   'signalprocessing/datastructures/c_genericsignalparameters.cpp',
+  'featuremapping/c_nearestfeaturemapper.cpp',
+  'featuremapping/module.cpp',
   'imageprocessing/functions/functions.cpp',
   'geoprocessing/datastructures/c_beamsampleparameters.cpp',
   'geoprocessing/datastructures/c_raytraceresult.cpp',

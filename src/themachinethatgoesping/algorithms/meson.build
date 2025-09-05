@@ -10,6 +10,7 @@ headerdir = projectnamespace + '/algorithms'
 sources = [
   'amplitudecorrection/functions/absorption.cpp',
   'pointprocessing/bubblestreams/zspine.cpp',
+  'featuremapping/nearestfeaturemapper.cpp',
   'geoprocessing/datastructures/beamsampleparameters.cpp',
 ]
 
@@ -53,6 +54,8 @@ headers = [
   'signalprocessing/datastructures/.docstrings/genericsignalparameters.doc.hpp',
   'signalprocessing/.docstrings/datastructures.doc.hpp',
   'signalprocessing/.docstrings/types.doc.hpp',
+  'featuremapping/nearestfeaturemapper.hpp',
+  'featuremapping/.docstrings/nearestfeaturemapper.doc.hpp',
   '.docstrings/helloping.doc.hpp',
   'imageprocessing/functions.hpp',
   'imageprocessing/.docstrings/functions.doc.hpp',

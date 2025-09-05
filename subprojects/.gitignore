@@ -24,6 +24,10 @@ fast_float*
 nlohman*
 indicators*
 geographiclib*
+sse2neon*
+frozen*
+.wraplock*
+gswteos-10*
 xxhash_cpp**
 xtl**
 date**
