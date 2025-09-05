@@ -262,6 +262,13 @@ class NearestFeatureMapper
     std::optional<std::vector<double>> get_feature_values(const std::string& feature) const;
 
     /**
+     * @brief Get the indices for a specific feature
+     * @param feature Name of the feature
+     * @return Optional vector of feature indices, nullopt if feature doesn't exist
+     */
+    std::optional<std::vector<size_t>> get_feature_indices(const std::string& feature) const;
+
+    /**
      * @brief Get all feature names
      * @return Vector of all feature names currently stored in the mapper
      */

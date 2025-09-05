@@ -109,6 +109,14 @@ std::optional<std::vector<double>> NearestFeatureMapper::get_feature_values(
     return std::nullopt;
 }
 
+std::optional<std::vector<size_t>> NearestFeatureMapper::get_feature_indices(
+    const std::string& feature) const
+{
+    if (has_feature(feature))
+        return _features.at(feature).get_index_data();
+    return std::nullopt;
+}
+
 std::vector<std::string> NearestFeatureMapper::keys() const
 {
     std::vector<std::string> keys;

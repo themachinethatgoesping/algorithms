@@ -110,6 +110,10 @@ void init_c_nearestfeaturemapper(py::module& m)
                  &NearestFeatureMapper::get_feature_values,
                  DOC_NearestFeatureMapper(get_feature_values),
                  py::arg("feature"))
+            .def("get_feature_indices",
+                 &NearestFeatureMapper::get_feature_indices,
+                 DOC_NearestFeatureMapper(get_feature_indices),
+                 py::arg("feature"))
             .def("keys", &NearestFeatureMapper::keys, DOC_NearestFeatureMapper(keys))
             // ----- operators -----
             .def("__eq__",

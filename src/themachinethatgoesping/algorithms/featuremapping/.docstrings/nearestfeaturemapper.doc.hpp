@@ -1,4 +1,4 @@
-//sourcehash: ce7a2d7fc13c6ccd229b264c9110087f88210a3d3f290c834b2339c35a5e9b5d
+//sourcehash: f30c576b62d1a9d66ee33c2e698a87138a02643c16a7b93a6dd5fb9e6a6ac284
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -150,6 +150,16 @@ Parameter ``is``:
 
 Returns:
     NearestFeatureMapper object constructed from the stream)doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_featuremapping_NearestFeatureMapper_get_feature_indices =
+R"doc(Get the indices for a specific feature
+
+Parameter ``feature``:
+    Name of the feature
+
+Returns:
+    Optional vector of feature indices, nullopt if feature doesn't
+    exist)doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_featuremapping_NearestFeatureMapper_get_feature_values =
 R"doc(Get the values for a specific feature
