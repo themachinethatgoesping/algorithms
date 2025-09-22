@@ -33,7 +33,7 @@ using namespace themachinethatgoesping::algorithms::signalprocessing::datastruct
 
 void init_c_genericsignalparameters(py::module& m)
 {
-    py::class_<GenericSignalParameters, std::shared_ptr<GenericSignalParameters>>(
+    py::classh<GenericSignalParameters>(
         m,
         "GenericSignalParameters",
         DOC(themachinethatgoesping,

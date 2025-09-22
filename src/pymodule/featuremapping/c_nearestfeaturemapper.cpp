@@ -31,7 +31,7 @@ void init_c_nearestfeaturemapper(py::module& m)
     namespace py = pybind11;
 
     auto c_nearestfeaturemapper =
-        py::class_<NearestFeatureMapper>(
+        py::classh<NearestFeatureMapper>(
             m,
             "NearestFeatureMapper",
             DOC(themachinethatgoesping, algorithms, featuremapping, NearestFeatureMapper))

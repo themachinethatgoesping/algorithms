@@ -33,7 +33,7 @@ using namespace themachinethatgoesping::algorithms::signalprocessing::datastruct
 
 void init_c_cwsignalparameters(py::module& m)
 {
-    py::class_<CWSignalParameters, std::shared_ptr<CWSignalParameters>>(m,
+    py::classh<CWSignalParameters>(m,
                                                                         "CWSignalParameters",
                                                                         DOC(themachinethatgoesping,
                                                                             algorithms,

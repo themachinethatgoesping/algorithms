@@ -29,7 +29,7 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::datastructure
 void init_c_raytraceresult(py::module& m)
 {
 
-    py::class_<RaytraceResult>(
+    py::classh<RaytraceResult>(
         m,
         "RaytraceResult",
         DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, RaytraceResult))

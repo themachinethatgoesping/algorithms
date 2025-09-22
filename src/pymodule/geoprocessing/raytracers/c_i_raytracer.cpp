@@ -29,7 +29,7 @@ using namespace themachinethatgoesping::navigation::datastructures;
 
 void init_c_i_raytracer(py::module& m)
 {
-    py::class_<I_Raytracer>(
+    py::classh<I_Raytracer>(
         m,
         "I_Raytracer",
         DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers, I_Raytracer))

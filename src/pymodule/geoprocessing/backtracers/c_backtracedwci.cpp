@@ -29,7 +29,7 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::datastructure
 void init_c_backtracedwci(py::module& m)
 {
 
-    py::class_<BacktracedWCI, std::shared_ptr<BacktracedWCI>>(
+    py::classh<BacktracedWCI>(
         m,
         "BacktracedWCI",
         DOC(themachinethatgoesping, algorithms, geoprocessing, backtracers, BacktracedWCI))

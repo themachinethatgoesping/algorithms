@@ -33,7 +33,7 @@ using namespace themachinethatgoesping::navigation::datastructures;
 
 void init_c_btconstantsvp(py::module& m)
 {
-    py::class_<BTConstantSVP, I_Backtracer>(
+    py::classh<BTConstantSVP, I_Backtracer>(
         m,
         "BTConstantSVP",
         DOC(themachinethatgoesping, algorithms, geoprocessing, backtracers, BTConstantSVP))

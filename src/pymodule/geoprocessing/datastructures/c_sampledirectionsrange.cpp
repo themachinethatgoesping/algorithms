@@ -35,15 +35,13 @@ void init_c_sampledirectionsrange_dim(py::module& m)
 {
     const std::string py_class_name = "SampleDirectionsRange_" + std::to_string(Dim);
 
-    py::class_<SampleDirectionsRange<Dim>,
-               SampleDirections<Dim>,
-               std::shared_ptr<SampleDirectionsRange<Dim>>>(m,
-                                                            py_class_name.c_str(),
-                                                            DOC(themachinethatgoesping,
-                                                                algorithms,
-                                                                geoprocessing,
-                                                                datastructures,
-                                                                SampleDirectionsRange))
+    py::classh<SampleDirectionsRange<Dim>, SampleDirections<Dim>>(m,
+                                                                  py_class_name.c_str(),
+                                                                  DOC(themachinethatgoesping,
+                                                                      algorithms,
+                                                                      geoprocessing,
+                                                                      datastructures,
+                                                                      SampleDirectionsRange))
         .def(py::init<>(), DOC_SampleDirectionsRange(SampleDirectionsRange))
         .def(py::init<const std::array<size_t, Dim>&>(),
              DOC_SampleDirectionsRange(SampleDirectionsRange_2),

@@ -30,7 +30,7 @@ void init_c_raytraceresults_dim(py::module& m)
 {
     const std::string py_class_name = "RaytraceResults_" + std::to_string(Dim);
 
-    py::class_<RaytraceResults<Dim>, XYZ<Dim>, std::shared_ptr<RaytraceResults<Dim>>>(
+    py::classh<RaytraceResults<Dim>, XYZ<Dim>>(
         m,
         py_class_name.c_str(),
         DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, RaytraceResults))

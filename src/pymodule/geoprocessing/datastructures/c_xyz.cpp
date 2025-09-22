@@ -31,7 +31,7 @@ void init_c_xyz_dim(py::module& m)
 {
     const std::string py_class_name = "XYZ_" + std::to_string(Dim);
 
-    py::class_<XYZ<Dim>, std::shared_ptr<XYZ<Dim>>>(
+    py::classh<XYZ<Dim>>(
         m,
         py_class_name.c_str(),
         DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, XYZ))

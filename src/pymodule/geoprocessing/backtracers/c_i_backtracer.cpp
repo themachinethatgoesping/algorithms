@@ -29,7 +29,7 @@ using namespace themachinethatgoesping::navigation::datastructures;
 
 void init_i_backtracer(py::module& m)
 {
-    py::class_<I_Backtracer>(
+    py::classh<I_Backtracer>(
         m,
         "I_Backtracer",
         DOC(themachinethatgoesping, algorithms, geoprocessing, backtracers, I_Backtracer))

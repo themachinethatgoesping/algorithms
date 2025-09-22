@@ -30,7 +30,7 @@ void init_c_sampledirections_dim(py::module& m)
 {
     const std::string py_class_name = "SampleDirections_" + std::to_string(Dim);
 
-    py::class_<SampleDirections<Dim>, std::shared_ptr<SampleDirections<Dim>>>(
+    py::classh<SampleDirections<Dim>>(
         m,
         py_class_name.c_str(),
         DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleDirections))

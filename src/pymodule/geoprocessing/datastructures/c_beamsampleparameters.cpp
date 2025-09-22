@@ -35,7 +35,7 @@ void init_c_beamsampleparameters(py::module& m)
 {
     const std::string py_class_name = "BeamSampleParameters";
 
-    py::class_<BeamSampleParameters>(m,
+    py::classh<BeamSampleParameters>(m,
                                      py_class_name.c_str(),
                                      DOC(themachinethatgoesping,
                                          algorithms,

@@ -29,7 +29,7 @@ void init_ForwardGridder3D_float(pybind11::module& m, const std::string& suffix)
     using T_ForwardGridder3D     = ForwardGridder3D<t_float>;
     const std::string class_name = std::string("ForwardGridder3D") + suffix;
 
-    py::class_<T_ForwardGridder3D>(
+    py::classh<T_ForwardGridder3D>(
         m, class_name.c_str(), DOC(themachinethatgoesping, algorithms, gridding, ForwardGridder3D))
         // Constructors
         .def(py::init<t_float,

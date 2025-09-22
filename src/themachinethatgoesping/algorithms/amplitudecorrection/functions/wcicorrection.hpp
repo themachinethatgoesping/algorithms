@@ -159,7 +159,10 @@ inline void inplace_sample_correction([[maybe_unused]] t_xtensor_2d& wci,
                 xt::view(per_sample_offset, xt::newaxis(), xt::all());
         }
         else
-            wci += xt::view(per_sample_offset, xt::newaxis(), xt::all());
+        {
+
+            wci = wci + xt::view(per_sample_offset, xt::newaxis(), xt::all());
+        }
 
         return;
     }
@@ -210,7 +213,7 @@ inline void inplace_system_offset(
         }
         else
         {
-            wci += system_offset;
+            wci = wci + system_offset;
             return;
         }
     }

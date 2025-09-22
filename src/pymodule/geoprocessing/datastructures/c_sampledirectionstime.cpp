@@ -22,7 +22,7 @@ namespace py_datastructures {
 namespace py = pybind11;
 using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
 
-#define DOC_SampleDirectionsTime(ARG)                                                                  \
+#define DOC_SampleDirectionsTime(ARG)                                                              \
     DOC(themachinethatgoesping,                                                                    \
         algorithms,                                                                                \
         geoprocessing,                                                                             \
@@ -35,15 +35,13 @@ void init_c_sampledirectionstime_dim(py::module& m)
 {
     const std::string py_class_name = "SampleDirectionsTime_" + std::to_string(Dim);
 
-    py::class_<SampleDirectionsTime<Dim>,
-               SampleDirections<Dim>,
-               std::shared_ptr<SampleDirectionsTime<Dim>>>(m,
-                                                           py_class_name.c_str(),
-                                                           DOC(themachinethatgoesping,
-                                                               algorithms,
-                                                               geoprocessing,
-                                                               datastructures,
-                                                               SampleDirectionsTime))
+    py::classh<SampleDirectionsTime<Dim>, SampleDirections<Dim>>(m,
+                                                                 py_class_name.c_str(),
+                                                                 DOC(themachinethatgoesping,
+                                                                     algorithms,
+                                                                     geoprocessing,
+                                                                     datastructures,
+                                                                     SampleDirectionsTime))
         .def(py::init<>(), DOC_SampleDirectionsTime(SampleDirectionsTime))
         .def(py::init<const std::array<size_t, Dim>&>(),
              DOC_SampleDirectionsTime(SampleDirectionsTime_2),

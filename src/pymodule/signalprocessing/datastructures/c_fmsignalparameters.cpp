@@ -33,7 +33,7 @@ using namespace themachinethatgoesping::algorithms::signalprocessing::datastruct
 
 void init_c_fmsignalparameters(py::module& m)
 {
-    py::class_<FMSignalParameters, std::shared_ptr<FMSignalParameters>>(m,
+    py::classh<FMSignalParameters>(m,
                                                                         "FMSignalParameters",
                                                                         DOC(themachinethatgoesping,
                                                                             algorithms,

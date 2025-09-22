@@ -36,7 +36,7 @@ using namespace themachinethatgoesping::navigation::datastructures;
 
 void init_c_rtconstantsvp(py::module& m)
 {
-    py::class_<RTConstantSVP, I_Raytracer>(
+    py::classh<RTConstantSVP, I_Raytracer>(
         m,
         "RTConstantSVP",
         DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers, RTConstantSVP))

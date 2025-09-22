@@ -30,7 +30,7 @@ void init_c_sampleindices_dim(py::module& m)
 {
     const std::string py_class_name = "SampleIndices_" + std::to_string(Dim);
 
-    py::class_<SampleIndices<Dim>, std::shared_ptr<SampleIndices<Dim>>>(
+    py::classh<SampleIndices<Dim>>(
         m,
         py_class_name.c_str(),
         DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, SampleIndices))

@@ -123,7 +123,7 @@ void init_c_zspine(pybind11::module& m)
     using namespace pointprocessing::bubblestreams;
 
     auto c_zspine =
-        py::class_<ZSpine, std::shared_ptr<ZSpine>>(
+        py::classh<ZSpine>(
             m,
             "ZSpine",
             DOC(themachinethatgoesping, algorithms, pointprocessing, bubblestreams, ZSpine))
