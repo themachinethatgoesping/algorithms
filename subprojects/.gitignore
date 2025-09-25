@@ -14,6 +14,8 @@ hinnant-date.wrap
 
 #inherited wrap and folders
 pybind11*
+nanobind*
+robin-map*
 eigen*
 fmt*
 magic_enum*

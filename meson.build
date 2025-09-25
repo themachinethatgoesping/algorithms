@@ -44,11 +44,16 @@ if get_option('build_pythonmodule').enabled()
 
   python3_dep = pymod.dependency()
   pybind11_dep = dependency('pybind11',  version : '>=3.0.1')
+  nanobind_dep = dependency('nanobind',  version : '>=2.9.1')
   
   tools_pybind_dep = dependency('themachinethatgoesping_tools_pybind', required: false)
+  tools_nanobind_dep = dependency('themachinethatgoesping_tools_nanobind', required: false)
 
   if not tools_pybind_dep.found()
       tools_pybind_dep = subproject('tools').get_variable('tools_pybind_dep')
+  endif
+  if not tools_nanobind_dep.found()
+      tools_nanobind_dep = subproject('tools').get_variable('tools_nanobind_dep')
   endif
 
   # set path where to install sources (pythonpath/site-packages/projectnamespace)

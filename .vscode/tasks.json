@@ -1,78 +1,191 @@
 {
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "configure",
-            "type": "shell",
-            "command": "meson",
-            "args": [
-                "setup",
-                "builddir",
-                "--buildtype=debug",
-                "-Dbuild_tests=enabled"
-            ],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
+            "label": "Ping: Reconfigure (pydev install)",
+            "group": {
+                "kind": "build",
+                "isDefault": false
             },
+            "type": "shell",
+            "command": "clear && rm -rvf /ssd/local/ builddir && source ~/.bash_aliases && use_dev_miniforge && mamba run meson setup builddir --default-library=static -Dwarning_level=0 -Db_lto=False -Dprefix='/ssd/local' -Dpython.install_env=auto  -Dpydev_install=enabled -Dpython_path='python'",
             "problemMatcher": []
         },
         {
-            "label": "build",
+            "label": "Ping: Reconfigure (full install)",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
             "type": "shell",
-            "command": "meson",
-            "args": [
-                "compile",
-                "-C",
-                "builddir"
-            ],
+            "command": "clear && rm -rvf /ssd/local/ builddir && source ~/.bash_aliases && use_dev_miniforge && mamba run meson setup builddir --default-library=static -Dwarning_level=0 -Db_lto=False -Dprefix='/ssd/local' -Dpython.install_env=auto  -Dpydev_install=disabled -Dpython_path='python'",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Reconfigure CLANG 18 (pydev install)",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "type": "shell",
+            "command": "clear && rm -rvf /ssd/local/ builddir-clang && source ~/.bash_aliases && use_dev_miniforge && CC='ccache clang-18' CXX='ccache clang++-18' meson setup builddir-clang --default-library=static -Ddynamic_boost=enabled -Dwarning_level=0 -Db_lto=False -Dprefix='/ssd/local' -Dpython.install_env=auto  -Dpydev_install=enabled -Dpython_path='python'",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Reconfigure CLANG 18 (full install)",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "type": "shell",
+            "command": "clear && rm -rvf /ssd/local/ builddir-clang && source ~/.bash_aliases && use_dev_miniforge && CC='ccache clang-18' CXX='ccache clang++-18' meson setup builddir-clang --default-library=static -Ddynamic_boost=enabled -Dwarning_level=0 -Db_lto=False -Dprefix='/ssd/local' -Dpython.install_env=auto  -Dpydev_install=disabled -Dpython_path='python'",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Build and Test cpp",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "dependsOn": "configure",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ]
-        },
-        {
-            "label": "test",
             "type": "shell",
-            "command": "meson",
-            "args": [
-                "test",
-                "-C",
-                "builddir",
-                "--verbose"
-            ],
-            "group": "test",
-            "dependsOn": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && mamba run meson test --print-errorlogs",
+            "options": {
+                "cwd": "${workspaceFolder}/builddir/"/ssd/opt/miniforge3
             },
             "problemMatcher": []
         },
         {
-            "label": "clean",
+            "label": "Ping: Build and Test python",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
             "type": "shell",
-            "command": "rm",
-            "args": [
-                "-rf",
-                "builddir"
-            ],
-            "group": "build"
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && cd../python && mamba run python make_pybind_doc.py && cd ../builddir && mamba run meson install && cd ../python && mamba run python make_stubs.py && cd .. && mamba run pytest",
+            "options": {
+                "cwd": "${workspaceFolder}/builddir/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Build and Test python (no doc)",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "type": "shell",
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && cd ../python && cd ../builddir && mamba run meson install  && cd ../python && cd .. && mamba run pytest",
+            "options": {
+                "cwd": "${workspaceFolder}/builddir/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Test python",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "type": "shell",
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && mamba run pytest -v",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Renew pybind doc",
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "type": "shell",
+            "command": "clear && cd python && source ~/.bash_aliases && use_dev_miniforge && mamba run python make_pybind_doc.py --renew",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: GLOB source/header files",
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "type": "shell",
+            "command": "clear && cd python && source ~/.bash_aliases && use_dev_miniforge && mamba run python glob.py",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Build and Test python",
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "type": "shell",
+            "command": "clear && cd ../python && source ~/.bash_aliases && use_dev_miniforge && mamba run python make_pybind_doc.py && cd ../builddir && mamba run meson install --tags=runtime,python-runtime && cd ../python && mamba run python make_stubs.py&& cd ../builddir  && mamba run meson test --print-errorlogs && cd .. && mamba run pytest -v",
+            "options": {
+                "cwd": "${workspaceFolder}/builddir/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Build and Test python (CLANG)",
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "type": "shell",
+            "command": "clear && cd ../python && source ~/.bash_aliases && use_dev_miniforge && mamba run python make_pybind_doc.py && cd ../builddir-clang && mamba run meson install --tags=runtime,python-runtime && cd ../python && mamba run python make_stubs.py&& cd ../builddir-clang  && mamba run meson test --print-errorlogs && cd .. && mamba run pytest -v",
+            "options": {
+                "cwd": "${workspaceFolder}/builddir-clang/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Build and Test python (verbose)",
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "type": "shell",
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && cd ../python && mamba run python make_pybind_doc.py && cd ../builddir && mamba run meson install  && cd ../python && mamba run python make_stubs.py && cd .. && mamba run pytest -v",
+            "options": {
+                "cwd": "${workspaceFolder}/builddir/"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Create python package",
+            "group": {
+                "kind": "none"
+            },
+            "type": "shell",
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && rm -rvf dist && mamba run pip wheel -w dist -v --no-deps .",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Prepare documentation",
+            "group": {
+                "kind": "none"
+            },
+            "type": "shell",
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && cd builddir && mamba run meson install  && echo $(pwd) && cd ../docs && echo $(pwd) && mamba run make clean && mamba run make html",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Prepare tutorials",
+            "group": {
+                "kind": "none"
+            },
+            "type": "shell",
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && cd ../tutorials && echo $(pwd) && mamba run python test_notebooks.py",
+            "problemMatcher": []
+        },
+        {
+            "label": "Ping: Clean tutorials",
+            "group": {
+                "kind": "none"
+            },
+            "type": "shell",
+            "command": "clear && source ~/.bash_aliases && use_dev_miniforge && cd ../tutorials && echo $(pwd) && mamba run ./clean_notebooks.xonsh",
+            "problemMatcher": []
         }
     ]
 }
