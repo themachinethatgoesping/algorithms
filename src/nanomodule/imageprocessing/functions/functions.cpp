@@ -6,11 +6,13 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/optional.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/tuple.h>
 
 #include <themachinethatgoesping/tools_nanobind/nanobind_xtensor.hpp>
+#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 #include <themachinethatgoesping/algorithms/imageprocessing/functions.hpp>
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -132,8 +134,8 @@ void init_grow_regions(nanobind::module_& m)
                             const int>(
               &grow_regions<pytensor<t_region, 2>, pytensor<t_value, 2>>),
           DOC_imageprocessing_functions(grow_regions_2),
-          nb::arg("region_volume"),
-          nb::arg("data_volume"),
+          nb::arg("region_image"),
+          nb::arg("data_image"),
           nb::arg("null_region")             = 0,
           nb::arg("threshold")               = std::nullopt,
           nb::arg("force_negative_gradient") = true,
@@ -150,8 +152,8 @@ void init_grow_regions(nanobind::module_& m)
                             const int>(
               &grow_regions<pytensor<t_region, 1>, pytensor<t_value, 1>>),
           DOC_imageprocessing_functions(grow_regions_3),
-          nb::arg("region_volume"),
-          nb::arg("data_volume"),
+          nb::arg("region_vector"),
+          nb::arg("data_vector"),
           nb::arg("null_region")             = 0,
           nb::arg("threshold")               = std::nullopt,
           nb::arg("force_negative_gradient") = true,

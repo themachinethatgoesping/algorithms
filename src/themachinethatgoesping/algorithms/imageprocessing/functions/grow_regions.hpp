@@ -190,11 +190,7 @@ bool grow_regions(
     }
 
     // update regions
-    for (std::size_t i = 0; i < grow_region_indices.size(); ++i)
-    {
-        const auto& index = grow_region_indices[i];
-        regions_volume(index[0], index[1], index[2]) = grow_region_regions[i];
-    }
+    xt::index_view(regions_volume, grow_region_indices) = xt::adapt(grow_region_regions);
 
     return grow_region_indices.size() > 0;
 }
@@ -324,11 +320,7 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
     }
 
     // update regions
-    for (std::size_t i = 0; i < grow_region_indices.size(); ++i)
-    {
-        const auto& index = grow_region_indices[i];
-        regions_image(index[0], index[1]) = grow_region_regions[i];
-    }
+    xt::index_view(regions_image, grow_region_indices) = xt::adapt(grow_region_regions);
 
     return grow_region_indices.size() > 0;
 }
@@ -450,11 +442,7 @@ bool grow_regions([[maybe_unused]] t_xtensor_regions&                      regio
     }
 
     // update regions
-    for (std::size_t i = 0; i < grow_region_indices.size(); ++i)
-    {
-        const auto& index = grow_region_indices[i];
-        regions_array(index[0]) = grow_region_regions[i];
-    }
+    xt::index_view(regions_array, grow_region_indices) = xt::adapt(grow_region_regions);
 
     return grow_region_indices.size() > 0;
 }
