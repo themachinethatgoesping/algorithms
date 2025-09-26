@@ -38,7 +38,7 @@ void init_find_local_maxima(nanobind::module_& m)
                             const bool,
                             const int>(&find_local_maxima<pytensor<t_float, 3>>),
           DOC_imageprocessing_functions(find_local_maxima),
-          nb::arg("data"),
+          nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
           nb::arg("accept_nans") = true,
           nb::arg("mp_cores")    = 1);
@@ -49,7 +49,7 @@ void init_find_local_maxima(nanobind::module_& m)
                             const bool,
                             const int>(&find_local_maxima<pytensor<t_float, 2>>),
           DOC_imageprocessing_functions(find_local_maxima_2),
-          nb::arg("data"),
+          nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
           nb::arg("accept_nans") = true,
           nb::arg("mp_cores")    = 1);
@@ -60,7 +60,7 @@ void init_find_local_maxima(nanobind::module_& m)
                             const bool,
                             const int>(&find_local_maxima<pytensor<t_float, 1>>),
           DOC_imageprocessing_functions(find_local_maxima_3),
-          nb::arg("data"),
+          nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
           nb::arg("accept_nans") = true,
           nb::arg("mp_cores")    = 1);
@@ -72,7 +72,7 @@ void init_find_local_maxima(nanobind::module_& m)
                             const bool,
                             const int>(&find_local_maxima2<pytensor<t_float, 3>>),
           DOC_imageprocessing_functions(find_local_maxima2),
-          nb::arg("data"),
+          nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
           nb::arg("accept_nans") = true,
           nb::arg("mp_cores")    = 1);
@@ -83,7 +83,7 @@ void init_find_local_maxima(nanobind::module_& m)
                             const bool,
                             const int>(&find_local_maxima2<pytensor<t_float, 2>>),
           DOC_imageprocessing_functions(find_local_maxima2_2),
-          nb::arg("data"),
+          nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
           nb::arg("accept_nans") = true,
           nb::arg("mp_cores")    = 1);
@@ -94,7 +94,7 @@ void init_find_local_maxima(nanobind::module_& m)
                             const bool,
                             const int>(&find_local_maxima2<pytensor<t_float, 1>>),
           DOC_imageprocessing_functions(find_local_maxima2_3),
-          nb::arg("data"),
+          nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
           nb::arg("accept_nans") = true,
           nb::arg("mp_cores")    = 1);
@@ -116,8 +116,8 @@ void init_grow_regions(nanobind::module_& m)
                             const int>(
               &grow_regions<pytensor<t_region, 3>, pytensor<t_value, 3>>),
           DOC_imageprocessing_functions(grow_regions),
-          nb::arg("region_volume"),
-          nb::arg("data_volume"),
+          nb::arg("region_volume").noconvert(),
+          nb::arg("data_volume").noconvert(),
           nb::arg("null_region")             = 0,
           nb::arg("threshold")               = std::nullopt,
           nb::arg("force_negative_gradient") = true,
@@ -134,8 +134,8 @@ void init_grow_regions(nanobind::module_& m)
                             const int>(
               &grow_regions<pytensor<t_region, 2>, pytensor<t_value, 2>>),
           DOC_imageprocessing_functions(grow_regions_2),
-          nb::arg("region_image"),
-          nb::arg("data_image"),
+          nb::arg("region_image").noconvert(),
+          nb::arg("data_image").noconvert(),
           nb::arg("null_region")             = 0,
           nb::arg("threshold")               = std::nullopt,
           nb::arg("force_negative_gradient") = true,
@@ -152,8 +152,8 @@ void init_grow_regions(nanobind::module_& m)
                             const int>(
               &grow_regions<pytensor<t_region, 1>, pytensor<t_value, 1>>),
           DOC_imageprocessing_functions(grow_regions_3),
-          nb::arg("region_vector"),
-          nb::arg("data_vector"),
+          nb::arg("region_vector").noconvert(),
+          nb::arg("data_vector").noconvert(),
           nb::arg("null_region")             = 0,
           nb::arg("threshold")               = std::nullopt,
           nb::arg("force_negative_gradient") = true,
