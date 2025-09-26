@@ -10,6 +10,7 @@ sources = [
   'module.cpp',
   'featuremapping/c_nearestfeaturemapper.cpp',
   'featuremapping/module.cpp',
+  'imageprocessing/functions/functions.cpp',
 ]
 
 # define python module
