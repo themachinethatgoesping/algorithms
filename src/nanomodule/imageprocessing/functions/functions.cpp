@@ -9,7 +9,6 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/tuple.h>
 
-#include <themachinethatgoesping/tools_nanobind/nanobind_xtensor.hpp>
 #include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 #include <themachinethatgoesping/algorithms/imageprocessing/functions.hpp>
