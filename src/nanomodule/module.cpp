@@ -6,13 +6,13 @@
 
 #include <nanobind/nanobind.h>
 
-// #include "amplitudecorrection/module.hpp"
+#include "amplitudecorrection/module.hpp"
 #include "featuremapping/module.hpp"
-// #include "geoprocessing/module.hpp"
-// #include "gridding/module.hpp"
+#include "geoprocessing/module.hpp"
+#include "gridding/module.hpp"
 #include "imageprocessing/module.hpp"
-// #include "pointprocessing/module.hpp"
-// #include "signalprocessing/module.hpp"
+#include "pointprocessing/module.hpp"
+#include "signalprocessing/module.hpp"
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -31,11 +31,11 @@ NB_MODULE(MODULE_NAME, m)
 
     py_featuremapping::init_m_featuremapping(m);
     py_imageprocessing::init_m_imageprocessing(m);
-    // py_pointprocessing::init_m_pointprocessing(m);
-    // py_amplitudecorrection::init_m_amplitudecorrection(m);
-    // py_geoprocessing::init_m_geoprocessing(m);
-    // py_signalprocessing::init_m_signalprocessing(m);
-    // py_gridding::init_m_gridding(m);
+    py_pointprocessing::init_m_pointprocessing(m);
+    py_amplitudecorrection::init_m_amplitudecorrection(m);
+    py_geoprocessing::init_m_geoprocessing(m);
+    py_signalprocessing::init_m_signalprocessing(m);
+    py_gridding::init_m_gridding(m);
 }
 
 } // namespace pymodule

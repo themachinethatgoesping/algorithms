@@ -1,0 +1,35 @@
+// SPDX-FileCopyrightText: 2022 - 2025 Peter Urban, Ghent University
+//
+// SPDX-License-Identifier: MPL-2.0
+
+#include <nanobind/nanobind.h>
+
+#include "datastructures/module.hpp"
+#include "raytracers/module.hpp"
+#include "backtracers/module.hpp"
+#include "functions/module.hpp"
+
+namespace nb = nanobind;
+
+namespace themachinethatgoesping {
+namespace algorithms {
+namespace pymodule {
+namespace py_geoprocessing {
+
+void init_m_geoprocessing(nb::module_& m)
+{
+    nb::module_ submodule = m.def_submodule("geoprocessing");
+
+    submodule.doc() = "Submodule for geoprocessing (raytracers and "
+                      "georefencing) echosounder samples";
+
+    py_datastructures::init_m_datastructures(submodule);
+    py_raytracers::init_m_raytracers(submodule);
+    py_backtracers::init_m_backtracers(submodule);
+    py_functions::init_m_functions(submodule);
+}
+
+} // namespace py_geoprocessing
+} // namespace pymodule
+} // namespace algorithms
+} // namespace themachinethatgoesping
