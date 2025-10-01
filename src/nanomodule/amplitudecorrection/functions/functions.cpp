@@ -119,18 +119,7 @@ void init_functions(nb::module_& m)
 
     m.def(
         "inplace_beam_sample_correction",
-        // &inplace_beam_sample_correction<xt::pytensor<t_float, 2>, xt::pytensor<t_float,1 >> ,
-        // use lambda here because for some reason xt::pytensor is seen as reference from python on
-        // xt::pytensor& is not seen as reference
-          [](xt::nanobind::pytensor<t_float, 2>        wci,
-              const xt::nanobind::pytensor<t_float, 1>& per_beam_offset,
-              const xt::nanobind::pytensor<t_float, 1>& per_sample_offset,
-           std::optional<size_t>           min_beam_index = std::nullopt,
-           std::optional<size_t>           max_beam_index = std::nullopt,
-           int                             mp_cores       = 1) {
-            inplace_beam_sample_correction(
-                wci, per_beam_offset, per_sample_offset, min_beam_index, max_beam_index, mp_cores);
-        },
+        &inplace_beam_sample_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float,1 >>,
         DOC_amplitudecorrection_functions(inplace_beam_sample_correction),
     nb::arg("wci").noconvert(),
     nb::arg("per_beam_offset"),
@@ -141,16 +130,7 @@ void init_functions(nb::module_& m)
 
     m.def(
         "inplace_beam_correction",
-        //&inplace_beam_correction<xt::pytensor<t_float, 2>, xt::pytensor<t_float, 1>>,
-        // use lambda here because for some reason xt::pytensor is seen as reference from python on
-        // xt::pytensor& is not seen as reference
-          [](xt::nanobind::pytensor<t_float, 2>        wci,
-              const xt::nanobind::pytensor<t_float, 1>& per_beam_offset,
-           std::optional<size_t>           min_beam_index = std::nullopt,
-           std::optional<size_t>           max_beam_index = std::nullopt,
-           int                             mp_cores       = 1) {
-            inplace_beam_correction(wci, per_beam_offset, min_beam_index, max_beam_index, mp_cores);
-        },
+        &inplace_beam_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
         DOC_amplitudecorrection_functions(inplace_beam_correction),
     nb::arg("wci").noconvert(),
     nb::arg("per_beam_offset"),
@@ -160,17 +140,7 @@ void init_functions(nb::module_& m)
 
     m.def(
         "inplace_sample_correction",
-        //&inplace_sample_correction<xt::pytensor<t_float, 2>, xt::pytensor<t_float, 1>>,
-        // use lambda here because for some reason xt::pytensor is seen as reference from python on
-        // xt::pytensor& is not seen as reference
-          [](xt::nanobind::pytensor<t_float, 2>        wci,
-              const xt::nanobind::pytensor<t_float, 1>& per_sample_offset,
-           std::optional<size_t>           min_beam_index = std::nullopt,
-           std::optional<size_t>           max_beam_index = std::nullopt,
-           int                             mp_cores       = 1) {
-            inplace_sample_correction(
-                wci, per_sample_offset, min_beam_index, max_beam_index, mp_cores);
-        },
+        &inplace_sample_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
         DOC_amplitudecorrection_functions(inplace_sample_correction),
     nb::arg("wci").noconvert(),
     nb::arg("per_sample_offset"),
@@ -180,16 +150,7 @@ void init_functions(nb::module_& m)
 
     m.def(
         "inplace_system_offset",
-        //&inplace_system_offset<xt::pytensor<t_float, 2>>,
-        // use lambda here because for some reason xt::pytensor is seen as reference from python on
-        // xt::pytensor& is not seen as reference
-    [](xt::nanobind::pytensor<t_float, 2> wci,
-           t_float                  system_offset,
-           std::optional<size_t>    min_beam_index = std::nullopt,
-           std::optional<size_t>    max_beam_index = std::nullopt,
-           int                      mp_cores       = 1) {
-            inplace_system_offset(wci, system_offset, min_beam_index, max_beam_index, mp_cores);
-        },
+        &inplace_system_offset<xt::xtensor<t_float, 2>>,
         DOC_amplitudecorrection_functions(inplace_system_offset),
     nb::arg("wci").noconvert(),
     nb::arg("system_offset"),
