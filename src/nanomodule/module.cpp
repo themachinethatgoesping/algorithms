@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-#define FORCE_IMPORT_ARRAY // this is needed for xtensor-python but must only be included once
-
 #include <nanobind/nanobind.h>
 
 #include "amplitudecorrection/module.hpp"

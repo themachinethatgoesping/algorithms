@@ -11,7 +11,6 @@
 #include <cstddef>
 
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
-#include <themachinethatgoesping/tools_nanobind/nanobind_xtensor.hpp>
 #include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 #include <themachinethatgoesping/algorithms/gridding/forwardgridder2d.hpp>
@@ -29,7 +28,7 @@ template<typename TClass, typename ReturnType, typename InputType>
 auto make_vectorized_member(ReturnType (TClass::*method)(InputType) const)
 {
      return [method](const TClass& self, const xtnb::pytensor<InputType, 1>& values) {
-          xt::xtensor<ReturnType, 1> result(values.shape());
+          xt::nanobind::pytensor<ReturnType, 1> result(values.shape());
           auto*                  result_data = result.data();
           const InputType*       input_data  = values.data();
           const std::size_t      count       = static_cast<std::size_t>(values.size());
@@ -83,7 +82,7 @@ void init_ForwardGridder2D_float(nb::module_& m, const std::string& suffix)
                     nb::arg("sx"),
                     nb::arg("sy"))
         .def("get_empty_grd_images",
-             &T_ForwardGridder2D::template get_empty_grd_images<xt::xtensor<t_float, 2>>,
+             &T_ForwardGridder2D::template get_empty_grd_images<xt::nanobind::pytensor<t_float, 2>>,
              DOC_ForwardGridder2D(get_empty_grd_images))
         .def("group_blocks",
              nb::overload_cast<const xtnb::pytensor<t_float, 1>&,
@@ -98,7 +97,7 @@ void init_ForwardGridder2D_float(nb::module_& m, const std::string& suffix)
              nb::overload_cast<const xtnb::pytensor<t_float, 1>&,
                                const xtnb::pytensor<t_float, 1>&,
                                const xtnb::pytensor<t_float, 1>&>(
-                 &T_ForwardGridder2D::template interpolate_block_mean<xt::xtensor<t_float, 2>,
+                 &T_ForwardGridder2D::template interpolate_block_mean<xt::nanobind::pytensor<t_float, 2>,
                                                                       xtnb::pytensor<t_float, 1>>,
                  nb::const_),
              DOC_ForwardGridder2D(interpolate_block_mean),
@@ -124,7 +123,7 @@ void init_ForwardGridder2D_float(nb::module_& m, const std::string& suffix)
              nb::overload_cast<const xtnb::pytensor<t_float, 1>&,
                                const xtnb::pytensor<t_float, 1>&,
                                const xtnb::pytensor<t_float, 1>&>(
-                 &T_ForwardGridder2D::template interpolate_weighted_mean<xt::xtensor<t_float, 2>,
+                 &T_ForwardGridder2D::template interpolate_weighted_mean<xt::nanobind::pytensor<t_float, 2>,
                                                                          xtnb::pytensor<t_float, 1>>,
                  nb::const_),
              DOC_ForwardGridder2D(interpolate_weighted_mean),

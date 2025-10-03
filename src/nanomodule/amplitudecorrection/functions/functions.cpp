@@ -6,8 +6,6 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/optional.h>
-
-#include <themachinethatgoesping/tools_nanobind/nanobind_xtensor.hpp>
 #include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 #include <themachinethatgoesping/algorithms/amplitudecorrection/functions.hpp>
@@ -20,7 +18,7 @@ namespace pymodule {
 namespace py_amplitudecorrection {
 namespace py_functions {
 
-#define DOC_amplitudecorrection_functions(ARG)                                                                         \
+#define DOC_amplitudecorrection_functions(ARG)                                                     \
     DOC(themachinethatgoesping, algorithms, amplitudecorrection, functions, ARG)
 
 template<typename t_float>
@@ -51,7 +49,7 @@ void init_functions(nb::module_& m)
 
     // range correction
     m.def("get_sample_numbers_plus_half",
-        &get_sample_numbers_plus_half<xt::xtensor<t_float, 1>, int32_t>,
+          &get_sample_numbers_plus_half<xt::nanobind::pytensor<t_float, 1>, int32_t>,
           DOC_amplitudecorrection_functions(get_sample_numbers_plus_half),
           nb::arg("first_sample_nr"),
           nb::arg("last_sample_nr"),
@@ -65,7 +63,7 @@ void init_functions(nb::module_& m)
 
     m.def("approximate_ranges",
           nb::overload_cast<t_float, t_float, int32_t, int32_t, int32_t>(
-              &approximate_ranges<xt::xtensor<t_float, 1>, int32_t>),
+              &approximate_ranges<xt::nanobind::pytensor<t_float, 1>, int32_t>),
           DOC_amplitudecorrection_functions(approximate_ranges),
           nb::arg("sample_interval_s"),
           nb::arg("sound_velocity_m_s"),
@@ -74,22 +72,24 @@ void init_functions(nb::module_& m)
           nb::arg("step") = 1);
 
     m.def("approximate_ranges",
-          nb::overload_cast<t_float, t_float, const xt::xtensor<int32_t, 1>&>(
-              &approximate_ranges<xt::xtensor<t_float, 1>, xt::xtensor<int32_t, 1>>),
+          nb::overload_cast<t_float, t_float, const xt::nanobind::pytensor<int32_t, 1>&>(
+              &approximate_ranges<xt::nanobind::pytensor<t_float, 1>,
+                                  xt::nanobind::pytensor<int32_t, 1>>),
           DOC_amplitudecorrection_functions(approximate_ranges_2),
           nb::arg("sample_interval_s"),
           nb::arg("sound_velocity_m_s"),
           nb::arg("sample_numbers"));
 
     m.def("compute_cw_range_correction",
-          &compute_cw_range_correction<xt::xtensor<t_float, 1>>,
+          &compute_cw_range_correction<xt::nanobind::pytensor<t_float, 1>>,
           DOC_amplitudecorrection_functions(compute_cw_range_correction),
           nb::arg("ranges_m"),
           nb::arg("absorption_db_m"),
           nb::arg("tvg_factor"));
 
     m.def("apply_beam_sample_correction",
-          &apply_beam_sample_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
+          &apply_beam_sample_correction<xt::nanobind::pytensor<t_float, 2>,
+                                        xt::nanobind::pytensor<t_float, 1>>,
           DOC_amplitudecorrection_functions(apply_beam_sample_correction),
           nb::arg("wci"),
           nb::arg("per_beam_offset"),
@@ -97,69 +97,71 @@ void init_functions(nb::module_& m)
           nb::arg("mp_cores") = 1);
 
     m.def("apply_beam_correction",
-          &apply_beam_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
+          &apply_beam_correction<xt::nanobind::pytensor<t_float, 2>,
+                                 xt::nanobind::pytensor<t_float, 1>>,
           DOC_amplitudecorrection_functions(apply_beam_correction),
           nb::arg("wci"),
           nb::arg("per_beam_offset"),
           nb::arg("mp_cores") = 1);
 
     m.def("apply_sample_correction",
-          &apply_sample_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
+          &apply_sample_correction<xt::nanobind::pytensor<t_float, 2>,
+                                   xt::nanobind::pytensor<t_float, 1>>,
           DOC_amplitudecorrection_functions(apply_sample_correction),
           nb::arg("wci"),
           nb::arg("per_sample_offset"),
           nb::arg("mp_cores") = 1);
 
     m.def("apply_system_offset",
-          &apply_system_offset<xt::xtensor<t_float, 2>>,
+          &apply_system_offset<xt::nanobind::pytensor<t_float, 2>>,
           DOC_amplitudecorrection_functions(apply_sample_correction),
           nb::arg("wci"),
           nb::arg("system_offset"),
           nb::arg("mp_cores") = 1);
 
-    m.def(
-        "inplace_beam_sample_correction",
-        &inplace_beam_sample_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float,1 >>,
-        DOC_amplitudecorrection_functions(inplace_beam_sample_correction),
-    nb::arg("wci").noconvert(),
-    nb::arg("per_beam_offset"),
-    nb::arg("per_sample_offset"),
-    nb::arg("min_beam_index") = std::nullopt,
-    nb::arg("max_beam_index") = std::nullopt,
-    nb::arg("mp_cores")       = 1);
+    m.def("inplace_beam_sample_correction",
+          &inplace_beam_sample_correction<xt::nanobind::pytensor<t_float, 2>,
+                                          xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(inplace_beam_sample_correction),
+          nb::arg("wci").noconvert(),
+          nb::arg("per_beam_offset"),
+          nb::arg("per_sample_offset"),
+          nb::arg("min_beam_index") = std::nullopt,
+          nb::arg("max_beam_index") = std::nullopt,
+          nb::arg("mp_cores")       = 1);
 
-    m.def(
-        "inplace_beam_correction",
-        &inplace_beam_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
-        DOC_amplitudecorrection_functions(inplace_beam_correction),
-    nb::arg("wci").noconvert(),
-    nb::arg("per_beam_offset"),
-    nb::arg("min_beam_index") = std::nullopt,
-    nb::arg("max_beam_index") = std::nullopt,
-    nb::arg("mp_cores")       = 1);
+    m.def("inplace_beam_correction",
+          &inplace_beam_correction<xt::nanobind::pytensor<t_float, 2>,
+                                   xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(inplace_beam_correction),
+          nb::arg("wci").noconvert(),
+          nb::arg("per_beam_offset"),
+          nb::arg("min_beam_index") = std::nullopt,
+          nb::arg("max_beam_index") = std::nullopt,
+          nb::arg("mp_cores")       = 1);
 
-    m.def(
-        "inplace_sample_correction",
-        &inplace_sample_correction<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
-        DOC_amplitudecorrection_functions(inplace_sample_correction),
-    nb::arg("wci").noconvert(),
-    nb::arg("per_sample_offset"),
-    nb::arg("min_beam_index") = std::nullopt,
-    nb::arg("max_beam_index") = std::nullopt,
-    nb::arg("mp_cores")       = 1);
+    m.def("inplace_sample_correction",
+          &inplace_sample_correction<xt::nanobind::pytensor<t_float, 2>,
+                                     xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(inplace_sample_correction),
+          nb::arg("wci").noconvert(),
+          nb::arg("per_sample_offset"),
+          nb::arg("min_beam_index") = std::nullopt,
+          nb::arg("max_beam_index") = std::nullopt,
+          nb::arg("mp_cores")       = 1);
 
-    m.def(
-        "inplace_system_offset",
-        &inplace_system_offset<xt::xtensor<t_float, 2>>,
-        DOC_amplitudecorrection_functions(inplace_system_offset),
-    nb::arg("wci").noconvert(),
-    nb::arg("system_offset"),
-    nb::arg("min_beam_index") = std::nullopt,
-    nb::arg("max_beam_index") = std::nullopt,
-    nb::arg("mp_cores")       = 1);
+    m.def("inplace_system_offset",
+          &inplace_system_offset<xt::nanobind::pytensor<t_float, 2>>,
+          DOC_amplitudecorrection_functions(inplace_system_offset),
+          nb::arg("wci").noconvert(),
+          nb::arg("system_offset"),
+          nb::arg("min_beam_index") = std::nullopt,
+          nb::arg("max_beam_index") = std::nullopt,
+          nb::arg("mp_cores")       = 1);
 
     m.def("apply_beam_sample_correction_loop",
-          &apply_beam_sample_correction_loop<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
+          &apply_beam_sample_correction_loop<xt::nanobind::pytensor<t_float, 2>,
+                                             xt::nanobind::pytensor<t_float, 1>>,
           DOC_amplitudecorrection_functions(apply_beam_sample_correction_loop),
           nb::arg("wci"),
           nb::arg("per_beam_offset"),
@@ -167,14 +169,16 @@ void init_functions(nb::module_& m)
           nb::arg("mp_cores") = 1);
 
     m.def("apply_beam_sample_correction_xtensor2",
-          &apply_beam_sample_correction_xtensor2<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
+          &apply_beam_sample_correction_xtensor2<xt::nanobind::pytensor<t_float, 2>,
+                                                 xt::nanobind::pytensor<t_float, 1>>,
           DOC_amplitudecorrection_functions(apply_beam_sample_correction_xtensor2),
           nb::arg("wci"),
           nb::arg("per_beam_offset"),
           nb::arg("per_sample_offset"),
           nb::arg("mp_cores") = 1);
     m.def("apply_beam_sample_correction_xtensor3",
-          &apply_beam_sample_correction_xtensor3<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
+          &apply_beam_sample_correction_xtensor3<xt::nanobind::pytensor<t_float, 2>,
+                                                 xt::nanobind::pytensor<t_float, 1>>,
           DOC_amplitudecorrection_functions(apply_beam_sample_correction_xtensor3),
           nb::arg("wci"),
           nb::arg("per_beam_offset"),
@@ -182,7 +186,8 @@ void init_functions(nb::module_& m)
           nb::arg("mp_cores") = 1);
 
     m.def("apply_beam_sample_correction_xsimd",
-          &apply_beam_sample_correction_xsimd<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>>,
+          &apply_beam_sample_correction_xsimd<xt::nanobind::pytensor<t_float, 2>,
+                                              xt::nanobind::pytensor<t_float, 1>>,
           DOC_amplitudecorrection_functions(apply_beam_sample_correction_xsimd),
           nb::arg("wci"),
           nb::arg("per_beam_offset"),

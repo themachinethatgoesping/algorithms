@@ -5,7 +5,6 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/optional.h>
 #include <nanobind/stl/vector.h>
-#include <themachinethatgoesping/tools_nanobind/nanobind_xtensor.hpp>
 #include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 #include <themachinethatgoesping/algorithms/pointprocessing/bubblestreams/zspine.hpp>

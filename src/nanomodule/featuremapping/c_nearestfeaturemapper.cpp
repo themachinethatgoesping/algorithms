@@ -14,7 +14,7 @@
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
 
 // -- include nanobind headers
-#include <themachinethatgoesping/tools_nanobind/nanobind_xtensor.hpp>
+#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 namespace nb = nanobind;
 
@@ -80,26 +80,26 @@ void init_c_nearestfeaturemapper(nb::module_& m)
                  nb::arg("value"))
             // vectorized versions
             .def("feature_to_index",
-                 static_cast<xt::xtensor<size_t, 1> (NearestFeatureMapper::*)(
-                     const std::string&, const xt::xtensor<double, 1>&, const int) const>(
+                 static_cast<xt::nanobind::pytensor<size_t, 1> (NearestFeatureMapper::*)(
+                     const std::string&, const xt::nanobind::pytensor<double, 1>&, const int) const>(
                      &NearestFeatureMapper::feature_to_index),
                  DOC_NearestFeatureMapper(feature_to_index_2),
                  nb::arg("feature"),
                  nb::arg("values"),
                  nb::arg("mp_cores") = 1)
             .def("index_to_feature",
-                 static_cast<xt::xtensor<double, 1> (NearestFeatureMapper::*)(
-                     const std::string&, const xt::xtensor<size_t, 1>&, const int) const>(
+                 static_cast<xt::nanobind::pytensor<double, 1> (NearestFeatureMapper::*)(
+                     const std::string&, const xt::nanobind::pytensor<size_t, 1>&, const int) const>(
                      &NearestFeatureMapper::index_to_feature),
                  DOC_NearestFeatureMapper(index_to_feature_2),
                  nb::arg("feature"),
                  nb::arg("indices"),
                  nb::arg("mp_cores") = 1)
             .def("feature_to_feature",
-                 static_cast<xt::xtensor<double, 1> (NearestFeatureMapper::*)(
+                 static_cast<xt::nanobind::pytensor<double, 1> (NearestFeatureMapper::*)(
                      const std::string&,
                      const std::string&,
-                     const xt::xtensor<double, 1>&,
+                     const xt::nanobind::pytensor<double, 1>&,
                      const int) const>(&NearestFeatureMapper::feature_to_feature),
                  DOC_NearestFeatureMapper(feature_to_feature_2),
                  nb::arg("feature_from"),

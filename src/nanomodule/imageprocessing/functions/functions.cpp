@@ -10,6 +10,7 @@
 #include <nanobind/stl/tuple.h>
 
 #include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+//#include <themachinethatgoesping/tools_nanobind/xtensor-nanobind/pytensor.hpp>
 
 #include <themachinethatgoesping/algorithms/imageprocessing/functions.hpp>
 
@@ -19,7 +20,6 @@ namespace pymodule {
 namespace py_imageprocessing {
 namespace py_functions {
 
-using themachinethatgoesping::tools_nanobind::pytensor;
 
 #define DOC_imageprocessing_functions(ARG)                                                         \
     DOC(themachinethatgoesping, algorithms, imageprocessing, functions, ARG)
@@ -32,10 +32,10 @@ void init_find_local_maxima(nanobind::module_& m)
 
     // find_local_maxima
     m.def("find_local_maxima",
-          nb::overload_cast<const pytensor<t_float, 3>&,
+          nb::overload_cast<const xt::nanobind::pytensor<t_float, 3>&,
                             const std::optional<t_float>,
                             const bool,
-                            const int>(&find_local_maxima<pytensor<t_float, 3>>),
+                            const int>(&find_local_maxima<xt::nanobind::pytensor<t_float, 3>>),
           DOC_imageprocessing_functions(find_local_maxima),
           nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
@@ -43,10 +43,10 @@ void init_find_local_maxima(nanobind::module_& m)
           nb::arg("mp_cores")    = 1);
 
     m.def("find_local_maxima",
-          nb::overload_cast<const pytensor<t_float, 2>&,
+          nb::overload_cast<const xt::nanobind::pytensor<t_float, 2>&,
                             const std::optional<t_float>,
                             const bool,
-                            const int>(&find_local_maxima<pytensor<t_float, 2>>),
+                            const int>(&find_local_maxima<xt::nanobind::pytensor<t_float, 2>>),
           DOC_imageprocessing_functions(find_local_maxima_2),
           nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
@@ -54,10 +54,10 @@ void init_find_local_maxima(nanobind::module_& m)
           nb::arg("mp_cores")    = 1);
 
     m.def("find_local_maxima",
-          nb::overload_cast<const pytensor<t_float, 1>&,
+          nb::overload_cast<const xt::nanobind::pytensor<t_float, 1>&,
                             const std::optional<t_float>,
                             const bool,
-                            const int>(&find_local_maxima<pytensor<t_float, 1>>),
+                            const int>(&find_local_maxima<xt::nanobind::pytensor<t_float, 1>>),
           DOC_imageprocessing_functions(find_local_maxima_3),
           nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
@@ -66,10 +66,10 @@ void init_find_local_maxima(nanobind::module_& m)
 
     // find_local_maxima2
     m.def("find_local_maxima2",
-          nb::overload_cast<const pytensor<t_float, 3>&,
+          nb::overload_cast<const xt::nanobind::pytensor<t_float, 3>&,
                             const std::optional<t_float>,
                             const bool,
-                            const int>(&find_local_maxima2<pytensor<t_float, 3>>),
+                            const int>(&find_local_maxima2<xt::nanobind::pytensor<t_float, 3>>),
           DOC_imageprocessing_functions(find_local_maxima2),
           nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
@@ -77,10 +77,10 @@ void init_find_local_maxima(nanobind::module_& m)
           nb::arg("mp_cores")    = 1);
 
     m.def("find_local_maxima2",
-          nb::overload_cast<const pytensor<t_float, 2>&,
+          nb::overload_cast<const xt::nanobind::pytensor<t_float, 2>&,
                             const std::optional<t_float>,
                             const bool,
-                            const int>(&find_local_maxima2<pytensor<t_float, 2>>),
+                            const int>(&find_local_maxima2<xt::nanobind::pytensor<t_float, 2>>),
           DOC_imageprocessing_functions(find_local_maxima2_2),
           nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
@@ -88,10 +88,10 @@ void init_find_local_maxima(nanobind::module_& m)
           nb::arg("mp_cores")    = 1);
 
     m.def("find_local_maxima2",
-          nb::overload_cast<const pytensor<t_float, 1>&,
+          nb::overload_cast<const xt::nanobind::pytensor<t_float, 1>&,
                             const std::optional<t_float>,
                             const bool,
-                            const int>(&find_local_maxima2<pytensor<t_float, 1>>),
+                            const int>(&find_local_maxima2<xt::nanobind::pytensor<t_float, 1>>),
           DOC_imageprocessing_functions(find_local_maxima2_3),
           nb::arg("data").noconvert(),
           nb::arg("threshold")   = std::nullopt,
@@ -106,14 +106,14 @@ void init_grow_regions(nanobind::module_& m)
     using namespace imageprocessing::functions;
 
     m.def("grow_regions",
-          nb::overload_cast<pytensor<t_region, 3>&,
-                            const pytensor<t_value, 3>&,
+          nb::overload_cast<xt::nanobind::pytensor<t_region, 3>&,
+                            const xt::nanobind::pytensor<t_value, 3>&,
                             const t_region,
                             const std::optional<t_value>,
                             const bool,
                             const bool,
                             const int>(
-              &grow_regions<pytensor<t_region, 3>, pytensor<t_value, 3>>),
+              &grow_regions<xt::nanobind::pytensor<t_region, 3>, xt::nanobind::pytensor<t_value, 3>>),
           DOC_imageprocessing_functions(grow_regions),
           nb::arg("region_volume").noconvert(),
           nb::arg("data_volume").noconvert(),
@@ -124,14 +124,14 @@ void init_grow_regions(nanobind::module_& m)
           nb::arg("mp_cores")                = 1);
 
     m.def("grow_regions",
-          nb::overload_cast<pytensor<t_region, 2>&,
-                            const pytensor<t_value, 2>&,
+          nb::overload_cast<xt::nanobind::pytensor<t_region, 2>&,
+                            const xt::nanobind::pytensor<t_value, 2>&,
                             const t_region,
                             const std::optional<t_value>,
                             const bool,
                             const bool,
                             const int>(
-              &grow_regions<pytensor<t_region, 2>, pytensor<t_value, 2>>),
+              &grow_regions<xt::nanobind::pytensor<t_region, 2>, xt::nanobind::pytensor<t_value, 2>>),
           DOC_imageprocessing_functions(grow_regions_2),
           nb::arg("region_image").noconvert(),
           nb::arg("data_image").noconvert(),
@@ -142,14 +142,14 @@ void init_grow_regions(nanobind::module_& m)
           nb::arg("mp_cores")                = 1);
 
     m.def("grow_regions",
-          nb::overload_cast<pytensor<t_region, 1>&,
-                            const pytensor<t_value, 1>&,
+          nb::overload_cast<xt::nanobind::pytensor<t_region, 1>&,
+                            const xt::nanobind::pytensor<t_value, 1>&,
                             const t_region,
                             const std::optional<t_value>,
                             const bool,
                             const bool,
                             const int>(
-              &grow_regions<pytensor<t_region, 1>, pytensor<t_value, 1>>),
+              &grow_regions<xt::nanobind::pytensor<t_region, 1>, xt::nanobind::pytensor<t_value, 1>>),
           DOC_imageprocessing_functions(grow_regions_3),
           nb::arg("region_vector").noconvert(),
           nb::arg("data_vector").noconvert(),
@@ -173,7 +173,7 @@ void init_m_functions(nanobind::module_& m)
 {
     nanobind::module_ submodule = m.def_submodule("functions");
 
-    submodule.doc() = "M that holds functions used for image processing functions";
+    submodule.doc() = "Module that holds functions used for image processing functions";
 
     init_find_local_maxima<double>(submodule);
     init_find_local_maxima<float>(submodule);

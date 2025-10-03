@@ -4,7 +4,6 @@
 
 #include <nanobind/nanobind.h>
 
-#include <themachinethatgoesping/tools_nanobind/nanobind_xtensor.hpp>
 #include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 #include <themachinethatgoesping/algorithms/geoprocessing/functions/to_raypoints.hpp>
@@ -33,15 +32,15 @@ void init_to_raypoints(nb::module_& m)
            const xt::nanobind::pytensor<t_float, 1>& end_scale_values,
            const xt::nanobind::pytensor<t_float, 1>& ray_scale_values,
            int                                     mp_cores) {
-            xt::xtensor<t_float, 1> end_locations_xt(end_locations.shape());
-            xt::xtensor<t_float, 1> end_scale_values_xt(end_scale_values.shape());
-            xt::xtensor<t_float, 1> ray_scale_values_xt(ray_scale_values.shape());
+            xt::nanobind::pytensor<t_float, 1> end_locations_xt(end_locations.shape());
+            xt::nanobind::pytensor<t_float, 1> end_scale_values_xt(end_scale_values.shape());
+            xt::nanobind::pytensor<t_float, 1> ray_scale_values_xt(ray_scale_values.shape());
 
             end_locations_xt    = end_locations;
             end_scale_values_xt = end_scale_values;
             ray_scale_values_xt = ray_scale_values;
 
-            return to_raypoints<xt::xtensor<t_float, 2>, xt::xtensor<t_float, 1>, t_float>(
+            return to_raypoints<xt::nanobind::pytensor<t_float, 2>, xt::nanobind::pytensor<t_float, 1>, t_float>(
                 base_location,
                 end_locations_xt,
                 base_scale_value,
