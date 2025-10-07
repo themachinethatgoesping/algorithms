@@ -190,6 +190,96 @@ xt::xtensor<typename t_xtensor_2d::value_type, 2> backward_map_bilinear(
     return output;
 }
 
+template<tools::helper::c_xtensor_2d t_xtensor_reference,
+         tools::helper::c_xtensor_1d t_xtensor_ref_x,
+         tools::helper::c_xtensor_1d t_xtensor_ref_y,
+         tools::helper::c_xtensor_2d t_xtensor_target,
+         tools::helper::c_xtensor_1d t_xtensor_target_x,
+         tools::helper::c_xtensor_1d t_xtensor_target_y>
+void backward_map_nearest_add(
+    const t_xtensor_reference&    reference,
+    const t_xtensor_ref_x&        reference_x,
+    const t_xtensor_ref_y&        reference_y,
+    t_xtensor_target&             target,
+    const t_xtensor_target_x&     target_x,
+    const t_xtensor_target_y&     target_y,
+    const int                     mp_cores = 1)
+{
+    using target_value_type = typename t_xtensor_target::value_type;
+
+    if (reference.shape()[0] != reference_x.size() || reference.shape()[1] != reference_y.size())
+        throw std::invalid_argument("Reference coordinate arrays must match reference image shape");
+
+    if (target.shape()[0] != target_x.size() || target.shape()[1] != target_y.size())
+        throw std::invalid_argument("Target coordinate arrays must match target image shape");
+
+    const int threads = std::max(1, mp_cores);
+
+#pragma omp parallel for collapse(2) if (threads > 1) num_threads(threads)
+    for (size_t ix = 0; ix < target_x.size(); ++ix)
+    {
+        for (size_t iy = 0; iy < target_y.size(); ++iy)
+        {
+            const auto ref_ix = detail::nearest_index(reference_x, target_x(ix));
+            const auto ref_iy = detail::nearest_index(reference_y, target_y(iy));
+            target(ix, iy) += static_cast<target_value_type>(reference(ref_ix, ref_iy));
+        }
+    }
+}
+
+template<tools::helper::c_xtensor_2d t_xtensor_reference,
+         tools::helper::c_xtensor_1d t_xtensor_ref_x,
+         tools::helper::c_xtensor_1d t_xtensor_ref_y,
+         tools::helper::c_xtensor_2d t_xtensor_target,
+         tools::helper::c_xtensor_1d t_xtensor_target_x,
+         tools::helper::c_xtensor_1d t_xtensor_target_y>
+void backward_map_bilinear_add(
+    const t_xtensor_reference&    reference,
+    const t_xtensor_ref_x&        reference_x,
+    const t_xtensor_ref_y&        reference_y,
+    t_xtensor_target&             target,
+    const t_xtensor_target_x&     target_x,
+    const t_xtensor_target_y&     target_y,
+    const int                     mp_cores = 1)
+{
+    using target_value_type = typename t_xtensor_target::value_type;
+
+    if (reference.shape()[0] != reference_x.size() || reference.shape()[1] != reference_y.size())
+        throw std::invalid_argument("Reference coordinate arrays must match reference image shape");
+
+    if (target.shape()[0] != target_x.size() || target.shape()[1] != target_y.size())
+        throw std::invalid_argument("Target coordinate arrays must match target image shape");
+
+    const int threads = std::max(1, mp_cores);
+
+#pragma omp parallel for collapse(2) if (threads > 1) num_threads(threads)
+    for (size_t ix = 0; ix < target_x.size(); ++ix)
+    {
+        for (size_t iy = 0; iy < target_y.size(); ++iy)
+        {
+            const auto bx = detail::bracket_indices(reference_x, target_x(ix));
+            const auto by = detail::bracket_indices(reference_y, target_y(iy));
+
+            const auto& v00 = reference(bx.lower, by.lower);
+            const auto& v01 = reference(bx.lower, by.upper);
+            const auto& v10 = reference(bx.upper, by.lower);
+            const auto& v11 = reference(bx.upper, by.upper);
+
+            const double wx0 = 1.0 - bx.weight;
+            const double wx1 = bx.weight;
+            const double wy0 = 1.0 - by.weight;
+            const double wy1 = by.weight;
+
+            const double interpolated = wx0 * (wy0 * static_cast<double>(v00) +
+                                               wy1 * static_cast<double>(v01)) +
+                                         wx1 * (wy0 * static_cast<double>(v10) +
+                                               wy1 * static_cast<double>(v11));
+
+            target(ix, iy) += static_cast<target_value_type>(interpolated);
+        }
+    }
+}
+
 } // namespace functions
 } // namespace imageprocessing
 } // namespace algorithms

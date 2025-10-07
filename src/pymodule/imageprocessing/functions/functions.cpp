@@ -122,6 +122,27 @@ void init_backward_mapping(pybind11::module& m)
             py::arg("mp_cores") = 1);
 
       m.def(
+            "backward_map_nearest_add",
+            [](const xt::pytensor<t_value, 2>&      reference,
+               const xt::pytensor<t_coordinate, 1>& reference_x,
+               const xt::pytensor<t_coordinate, 1>& reference_y,
+               xt::pytensor<t_value, 2>&            second_image,
+               const xt::pytensor<t_coordinate, 1>& second_x,
+               const xt::pytensor<t_coordinate, 1>& second_y,
+               const int                            mp_cores) {
+                  backward_map_nearest_add(
+                      reference, reference_x, reference_y, second_image, second_x, second_y, mp_cores);
+            },
+            DOC_imageprocessing_functions(backward_map_nearest_add),
+            py::arg("reference").noconvert(),
+            py::arg("reference_x").noconvert(),
+            py::arg("reference_y").noconvert(),
+            py::arg("second_image").noconvert(),
+            py::arg("second_x").noconvert(),
+            py::arg("second_y").noconvert(),
+            py::arg("mp_cores") = 1);
+
+      m.def(
             "backward_map_bilinear",
             [](const xt::pytensor<t_value, 2>&      reference,
                const xt::pytensor<t_coordinate, 1>& reference_x,
@@ -139,6 +160,27 @@ void init_backward_mapping(pybind11::module& m)
             py::arg("reference_y").noconvert(),
             py::arg("new_x").noconvert(),
             py::arg("new_y").noconvert(),
+            py::arg("mp_cores") = 1);
+
+      m.def(
+            "backward_map_bilinear_add",
+            [](const xt::pytensor<t_value, 2>&      reference,
+               const xt::pytensor<t_coordinate, 1>& reference_x,
+               const xt::pytensor<t_coordinate, 1>& reference_y,
+               xt::pytensor<t_value, 2>&            second_image,
+               const xt::pytensor<t_coordinate, 1>& second_x,
+               const xt::pytensor<t_coordinate, 1>& second_y,
+               const int                            mp_cores) {
+                  backward_map_bilinear_add(
+                      reference, reference_x, reference_y, second_image, second_x, second_y, mp_cores);
+            },
+            DOC_imageprocessing_functions(backward_map_bilinear_add),
+            py::arg("reference").noconvert(),
+            py::arg("reference_x").noconvert(),
+            py::arg("reference_y").noconvert(),
+            py::arg("second_image").noconvert(),
+            py::arg("second_x").noconvert(),
+            py::arg("second_y").noconvert(),
             py::arg("mp_cores") = 1);
 }
 

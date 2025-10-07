@@ -1,4 +1,4 @@
-//sourcehash: d31249a9d4e58de5b98671cb49c1e88923fa55561eb050092a5f9c0089b97a91
+//sourcehash: 69f87a7aa6db2ae7b8d55ad76c14533afa838a2da30f7527b13315ce3bc9c220
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -40,7 +40,11 @@
 
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_bilinear = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_bilinear_add = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_nearest = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_nearest_add = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_Bracket = R"doc()doc";
 
