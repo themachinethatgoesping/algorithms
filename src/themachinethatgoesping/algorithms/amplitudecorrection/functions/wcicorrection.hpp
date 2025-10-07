@@ -29,6 +29,8 @@ namespace functions {
 
 // --- apply corrections ---
 
+
+
 /**
  * @brief Applies beam and sample corrections to the given 2D tensor.
  *

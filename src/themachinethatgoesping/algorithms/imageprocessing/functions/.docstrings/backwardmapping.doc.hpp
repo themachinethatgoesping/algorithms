@@ -1,4 +1,4 @@
-//sourcehash: 5b1664917c6fd0f16c03ac7cebd0c467c5817a96a90cd8b9a475cd518054915a
+//sourcehash: d31249a9d4e58de5b98671cb49c1e88923fa55561eb050092a5f9c0089b97a91
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -37,6 +37,24 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_bilinear = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_nearest = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_Bracket = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_Bracket_lower = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_Bracket_upper = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_Bracket_weight = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_bracket_indices = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_lower_bound_index = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_nearest_index = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 #include <optional>
+#include <type_traits>
 
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/optional.h>
@@ -99,6 +100,62 @@ void init_find_local_maxima(nanobind::module_& m)
           nb::arg("mp_cores")    = 1);
 }
 
+template<typename t_value, typename t_coordinate>
+void init_backward_mapping(nanobind::module_& m)
+{
+      namespace nb = nanobind;
+      using namespace imageprocessing::functions;
+
+      m.def(
+            "backward_map_nearest",
+            [](const xt::nanobind::pytensor<t_value, 2>&      reference,
+               const xt::nanobind::pytensor<t_coordinate, 1>& reference_x,
+               const xt::nanobind::pytensor<t_coordinate, 1>& reference_y,
+               const xt::nanobind::pytensor<t_coordinate, 1>& new_x,
+               const xt::nanobind::pytensor<t_coordinate, 1>& new_y,
+               const int                                      mp_cores) {
+                  auto result =
+                        backward_map_nearest(reference, reference_x, reference_y, new_x, new_y, mp_cores);
+                  return xt::nanobind::pytensor<t_value, 2>(std::move(result));
+            },
+            DOC_imageprocessing_functions(backward_map_nearest),
+            nb::arg("reference").noconvert(),
+            nb::arg("reference_x").noconvert(),
+            nb::arg("reference_y").noconvert(),
+            nb::arg("new_x").noconvert(),
+            nb::arg("new_y").noconvert(),
+            nb::arg("mp_cores") = 1);
+
+      m.def(
+            "backward_map_bilinear",
+            [](const xt::nanobind::pytensor<t_value, 2>&      reference,
+               const xt::nanobind::pytensor<t_coordinate, 1>& reference_x,
+               const xt::nanobind::pytensor<t_coordinate, 1>& reference_y,
+               const xt::nanobind::pytensor<t_coordinate, 1>& new_x,
+               const xt::nanobind::pytensor<t_coordinate, 1>& new_y,
+               const int                                      mp_cores) {
+                  auto result =
+                        backward_map_bilinear(reference, reference_x, reference_y, new_x, new_y, mp_cores);
+                  return xt::nanobind::pytensor<t_value, 2>(std::move(result));
+            },
+            DOC_imageprocessing_functions(backward_map_bilinear),
+            nb::arg("reference").noconvert(),
+            nb::arg("reference_x").noconvert(),
+            nb::arg("reference_y").noconvert(),
+            nb::arg("new_x").noconvert(),
+            nb::arg("new_y").noconvert(),
+            nb::arg("mp_cores") = 1);
+}
+
+template<typename t_value>
+void init_backward_mapping_value_type(nanobind::module_& m)
+{
+      init_backward_mapping<t_value, t_value>(m);
+
+      if constexpr (!std::is_same_v<t_value, double>)
+            init_backward_mapping<t_value, double>(m);
+}
+
 template<typename t_region, typename t_value>
 void init_grow_regions(nanobind::module_& m)
 {
@@ -181,6 +238,13 @@ void init_m_functions(nanobind::module_& m)
     init_find_local_maxima<int32_t>(submodule);
     init_find_local_maxima<int16_t>(submodule);
     init_find_local_maxima<int8_t>(submodule);
+
+      init_backward_mapping_value_type<double>(submodule);
+      init_backward_mapping_value_type<float>(submodule);
+      init_backward_mapping_value_type<int64_t>(submodule);
+      init_backward_mapping_value_type<int32_t>(submodule);
+      init_backward_mapping_value_type<int16_t>(submodule);
+      init_backward_mapping_value_type<int8_t>(submodule);
 
     init_grow_regions_value_type<double>(submodule);
     init_grow_regions_value_type<float>(submodule);

@@ -7,6 +7,8 @@
 #include <pybind11/stl.h>
 #include <xtensor-python/pytensor.hpp>
 
+#include <type_traits>
+
 #include <themachinethatgoesping/algorithms/imageprocessing/functions.hpp>
 
 namespace themachinethatgoesping {
@@ -93,6 +95,60 @@ void init_find_local_maxima(pybind11::module& m)
           py::arg("mp_cores")    = 1);
 }
 
+template<typename t_value, typename t_coordinate>
+void init_backward_mapping(pybind11::module& m)
+{
+      namespace py = pybind11;
+      using namespace imageprocessing::functions;
+
+      m.def(
+            "backward_map_nearest",
+            [](const xt::pytensor<t_value, 2>&      reference,
+               const xt::pytensor<t_coordinate, 1>& reference_x,
+               const xt::pytensor<t_coordinate, 1>& reference_y,
+               const xt::pytensor<t_coordinate, 1>& new_x,
+               const xt::pytensor<t_coordinate, 1>& new_y,
+               const int                            mp_cores) {
+                  auto result =
+                        backward_map_nearest(reference, reference_x, reference_y, new_x, new_y, mp_cores);
+                  return xt::pytensor<t_value, 2>(std::move(result));
+            },
+            DOC_imageprocessing_functions(backward_map_nearest),
+            py::arg("reference").noconvert(),
+            py::arg("reference_x").noconvert(),
+            py::arg("reference_y").noconvert(),
+            py::arg("new_x").noconvert(),
+            py::arg("new_y").noconvert(),
+            py::arg("mp_cores") = 1);
+
+      m.def(
+            "backward_map_bilinear",
+            [](const xt::pytensor<t_value, 2>&      reference,
+               const xt::pytensor<t_coordinate, 1>& reference_x,
+               const xt::pytensor<t_coordinate, 1>& reference_y,
+               const xt::pytensor<t_coordinate, 1>& new_x,
+               const xt::pytensor<t_coordinate, 1>& new_y,
+               const int                            mp_cores) {
+                  auto result =
+                        backward_map_bilinear(reference, reference_x, reference_y, new_x, new_y, mp_cores);
+                  return xt::pytensor<t_value, 2>(std::move(result));
+            },
+            DOC_imageprocessing_functions(backward_map_bilinear),
+            py::arg("reference").noconvert(),
+            py::arg("reference_x").noconvert(),
+            py::arg("reference_y").noconvert(),
+            py::arg("new_x").noconvert(),
+            py::arg("new_y").noconvert(),
+            py::arg("mp_cores") = 1);
+}
+
+template<typename t_value>
+void init_backward_mapping_value_type(pybind11::module& m)
+{
+      init_backward_mapping<t_value, float>(m);
+      init_backward_mapping<t_value, double>(m);
+}
+
 template<typename t_region, typename t_value>
 void init_grow_regions(pybind11::module& m)
 {
@@ -175,6 +231,13 @@ void init_m_functions(pybind11::module& m)
     init_find_local_maxima<int32_t>(submodule);
     init_find_local_maxima<int16_t>(submodule);
     init_find_local_maxima<int8_t>(submodule);
+
+      init_backward_mapping_value_type<double>(submodule);
+      init_backward_mapping_value_type<float>(submodule);
+      init_backward_mapping_value_type<int64_t>(submodule);
+      init_backward_mapping_value_type<int32_t>(submodule);
+      init_backward_mapping_value_type<int16_t>(submodule);
+      init_backward_mapping_value_type<int8_t>(submodule);
 
     init_grow_regions_value_type<double>(submodule);
     init_grow_regions_value_type<float>(submodule);
