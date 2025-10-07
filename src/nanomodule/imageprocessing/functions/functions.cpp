@@ -100,6 +100,33 @@ void init_find_local_maxima(nanobind::module_& m)
           nb::arg("mp_cores")    = 1);
 }
 
+void init_uniform_axis(nanobind::module_& m)
+{
+      namespace nb = nanobind;
+      using imageprocessing::functions::UniformAxis;
+
+        nb::class_<UniformAxis>(m, "UniformAxis", DOC_imageprocessing_functions(UniformAxis))
+              .def(nb::init<double, double, size_t>(),
+                   nb::arg("origin"),
+                   nb::arg("spacing"),
+                   nb::arg("size"))
+                      .def(nb::init<const xt::nanobind::pytensor<double, 1>&, double>(),
+                            nb::arg("coordinates").noconvert(),
+                            nb::arg("tolerance") = 1e-9)
+                      .def(nb::init<const xt::nanobind::pytensor<float, 1>&, double>(),
+                            nb::arg("coordinates").noconvert(),
+                            nb::arg("tolerance") = 1e-9)
+          .def_rw("origin",
+                &UniformAxis::origin,
+                DOC_imageprocessing_functions(UniformAxis_origin))
+          .def_rw("spacing",
+                &UniformAxis::spacing,
+                DOC_imageprocessing_functions(UniformAxis_spacing))
+          .def_rw("size",
+                &UniformAxis::size,
+                DOC_imageprocessing_functions(UniformAxis_size));
+}
+
 template<typename t_value, typename t_coordinate>
 void init_backward_mapping(nanobind::module_& m)
 {
@@ -280,6 +307,8 @@ void init_m_functions(nanobind::module_& m)
     init_find_local_maxima<int32_t>(submodule);
     init_find_local_maxima<int16_t>(submodule);
     init_find_local_maxima<int8_t>(submodule);
+
+                  init_uniform_axis(submodule);
 
       init_backward_mapping_value_type<double>(submodule);
       init_backward_mapping_value_type<float>(submodule);

@@ -95,6 +95,33 @@ void init_find_local_maxima(pybind11::module& m)
           py::arg("mp_cores")    = 1);
 }
 
+void init_uniform_axis(pybind11::module& m)
+{
+       namespace py = pybind11;
+       using imageprocessing::functions::UniformAxis;
+
+       py::class_<UniformAxis>(m, "UniformAxis", DOC_imageprocessing_functions(UniformAxis))
+              .def(py::init<double, double, size_t>(),
+                    py::arg("origin"),
+                    py::arg("spacing"),
+                    py::arg("size"))
+              .def(py::init<const xt::pytensor<double, 1>&, double>(),
+                    py::arg("coordinates").noconvert(),
+                    py::arg("tolerance") = 1e-9)
+              .def(py::init<const xt::pytensor<float, 1>&, double>(),
+                    py::arg("coordinates").noconvert(),
+                    py::arg("tolerance") = 1e-9)
+              .def_readwrite("origin",
+                                &UniformAxis::origin,
+                                DOC_imageprocessing_functions(UniformAxis_origin))
+              .def_readwrite("spacing",
+                                &UniformAxis::spacing,
+                                DOC_imageprocessing_functions(UniformAxis_spacing))
+              .def_readwrite("size",
+                                &UniformAxis::size,
+                                DOC_imageprocessing_functions(UniformAxis_size));
+}
+
 template<typename t_value, typename t_coordinate>
 void init_backward_mapping(pybind11::module& m)
 {
@@ -273,6 +300,8 @@ void init_m_functions(pybind11::module& m)
     init_find_local_maxima<int32_t>(submodule);
     init_find_local_maxima<int16_t>(submodule);
     init_find_local_maxima<int8_t>(submodule);
+
+                  init_uniform_axis(submodule);
 
       init_backward_mapping_value_type<double>(submodule);
       init_backward_mapping_value_type<float>(submodule);

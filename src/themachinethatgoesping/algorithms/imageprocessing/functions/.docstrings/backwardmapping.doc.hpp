@@ -1,4 +1,4 @@
-//sourcehash: 69f87a7aa6db2ae7b8d55ad76c14533afa838a2da30f7527b13315ce3bc9c220
+//sourcehash: 029110302a1673e15cd14ef54a00f555297208279642daf60bace01b75be46c3
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -38,13 +38,35 @@
 #endif
 
 
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_UniformAxis = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_UniformAxis_UniformAxis = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_UniformAxis_UniformAxis_2 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_UniformAxis_UniformAxis_3 = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_UniformAxis_origin = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_UniformAxis_size = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_UniformAxis_spacing = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_bilinear = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_bilinear_2 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_bilinear_add = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_bilinear_add_2 = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_nearest = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_nearest_2 = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_nearest_add = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_backward_map_nearest_add_2 = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_Bracket = R"doc()doc";
 
@@ -56,9 +78,15 @@ static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_funct
 
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_bracket_indices = R"doc()doc";
 
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_bracket_indices_uniform = R"doc()doc";
+
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_lower_bound_index = R"doc()doc";
 
 static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_nearest_index = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_nearest_index_uniform = R"doc()doc";
+
+static const char *__doc_themachinethatgoesping_algorithms_imageprocessing_functions_detail_validate_uniform_axis = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
