@@ -9,6 +9,7 @@
 // -- c++ library headers
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures/beamsampleparameters.hpp"
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
+#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 // -- include nanobind headers
 #include <nanobind/nanobind.h>
