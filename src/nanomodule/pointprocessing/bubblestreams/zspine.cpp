@@ -4,9 +4,9 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/optional.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/tuple.h>
 #include <nanobind/stl/pair.h>
+#include <nanobind/stl/tuple.h>
+#include <nanobind/stl/vector.h>
 #include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 #include <themachinethatgoesping/algorithms/pointprocessing/bubblestreams/zspine.hpp>
@@ -24,169 +24,99 @@ namespace py_bubblestreams {
 template<typename t_float_coord, typename t_float_weight>
 void add_template_overloads_2(auto& c_zspine)
 {
-    namespace nb  = nanobind;
-    namespace xnb = xt::nanobind;
+    namespace nb = nanobind;
     using namespace pointprocessing::bubblestreams;
 
     // factory functions
-     c_zspine.def_static(
-          "from_point_cloud",
-          [](const xnb::pytensor<t_float_coord, 1>&  x,
-             const xnb::pytensor<t_float_coord, 1>&  y,
-             const xnb::pytensor<t_float_coord, 1>&  z,
-             const xnb::pytensor<t_float_weight, 1>& weights,
-             const int64_t                           n_quantiles,
-             bool                                    is_altitude) {
-               xt::xtensor<t_float_coord, 1>  x_xt(x.shape());
-               xt::xtensor<t_float_coord, 1>  y_xt(y.shape());
-               xt::xtensor<t_float_coord, 1>  z_xt(z.shape());
-               xt::xtensor<t_float_weight, 1> weights_xt(weights.shape());
-
-               x_xt        = x;
-               y_xt        = y;
-               z_xt        = z;
-               weights_xt  = weights;
-
-               return ZSpine::from_point_cloud<xt::xtensor<t_float_coord, 1>,
-                                                       xt::xtensor<t_float_weight, 1>>(
-                    x_xt, y_xt, z_xt, weights_xt, n_quantiles, is_altitude);
-          },
-          DOC_ZSpine(from_point_cloud),
-          nb::arg("x"),
-          nb::arg("y"),
-          nb::arg("z"),
-          nb::arg("weights"),
-          nb::arg("n_quantiles"),
-          nb::arg("is_altitude") = false);
+    c_zspine.def_static("from_point_cloud",
+                        nb::overload_cast<const xt::nanobind::pytensor<t_float_coord, 1>&,
+                                          const xt::nanobind::pytensor<t_float_coord, 1>&,
+                                          const xt::nanobind::pytensor<t_float_coord, 1>&,
+                                          const xt::nanobind::pytensor<t_float_weight, 1>&,
+                                          const int64_t,
+                                          bool>(
+                            &ZSpine::from_point_cloud<xt::nanobind::pytensor<t_float_coord, 1>,
+                                                      xt::nanobind::pytensor<t_float_weight, 1>>),
+                        DOC_ZSpine(from_point_cloud),
+                        nb::arg("x"),
+                        nb::arg("y"),
+                        nb::arg("z"),
+                        nb::arg("weights"),
+                        nb::arg("n_quantiles"),
+                        nb::arg("is_altitude") = false);
 }
 
 template<typename t_float>
 void add_template_overloads_1(auto& c_zspine)
 {
-    namespace nb  = nanobind;
-    namespace xnb = xt::nanobind;
+    namespace nb = nanobind;
     using namespace pointprocessing::bubblestreams;
 
     // factory functions
-     c_zspine.def(
-          "get_xy_vec",
-          [](const ZSpine& self, const xnb::pytensor<t_float, 1>& z) {
-               xt::xtensor<t_float, 1> z_xt(z.shape());
-               z_xt = z;
-               return self.get_xy_vec<xt::xtensor<t_float, 1>>(z_xt);
-          },
-          DOC_ZSpine(get_xy_vec),
-          nb::arg("z"));
+    c_zspine.def("get_xy_vec",
+                 nb::overload_cast<const xt::nanobind::pytensor<t_float, 1>&>(
+                     &ZSpine::get_xy_vec<xt::nanobind::pytensor<t_float, 1>>, nb::const_),
+                 DOC_ZSpine(get_xy_vec),
+                 nb::arg("z"));
 
     // displacement functions
     c_zspine
-          .def(
-               "displace_points_inplace",
-               [](const ZSpine&                     self,
-                  xnb::pytensor<t_float, 1>&        x,
-                  xnb::pytensor<t_float, 1>&        y,
-                  const xnb::pytensor<t_float, 1>&  z,
-                  std::optional<ZSpine::coord_type> bottom_z,
-                  const bool                        inverse,
-                  const int                         mp_cores) {
-                    xt::xtensor<t_float, 1> x_xt(x.shape());
-                    xt::xtensor<t_float, 1> y_xt(y.shape());
-                    xt::xtensor<t_float, 1> z_xt(z.shape());
-                    x_xt = x;
-                    y_xt = y;
-                    z_xt = z;
-
-                    self.displace_points_inplace<xt::xtensor<t_float, 1>>(x_xt,
-                                                                                       y_xt,
-                                                                                       z_xt,
-                                                                                       bottom_z,
-                                                                                       inverse,
-                                                                                       mp_cores);
-
-                    x = x_xt;
-                    y = y_xt;
-               },
-               DOC_ZSpine(displace_points_inplace),
-               nb::arg("x").noconvert(),
-               nb::arg("y").noconvert(),
-               nb::arg("z"),
-               nb::arg("bottom_z") = std::nullopt,
-               nb::arg("inverse")  = false,
-               nb::arg("mp_cores") = 1)
-          .def(
-               "displace_points",
-               [](const ZSpine&                     self,
-                  const xnb::pytensor<t_float, 1>&  x,
-                  const xnb::pytensor<t_float, 1>&  y,
-                  const xnb::pytensor<t_float, 1>&  z,
-                  std::optional<ZSpine::coord_type> bottom_z,
-                  const bool                        inverse,
-                  const int                         mp_cores) {
-                    xt::xtensor<t_float, 1> x_xt(x.shape());
-                    xt::xtensor<t_float, 1> y_xt(y.shape());
-                    xt::xtensor<t_float, 1> z_xt(z.shape());
-                    x_xt = x;
-                    y_xt = y;
-                    z_xt = z;
-
-                    return self.displace_points<xt::xtensor<t_float, 1>>(x_xt,
-                                                                                      y_xt,
-                                                                                      z_xt,
-                                                                                      bottom_z,
-                                                                                      inverse,
-                                                                                      mp_cores);
-               },
-               DOC_ZSpine(displace_points),
-               nb::arg("x"),
-               nb::arg("y"),
-               nb::arg("z"),
-               nb::arg("bottom_z") = std::nullopt,
-               nb::arg("inverse")  = false,
-               nb::arg("mp_cores") = 1)
-          .def(
-               "displace_points_x",
-               [](const ZSpine&                     self,
-                  const xnb::pytensor<t_float, 1>&  x,
-                  const xnb::pytensor<t_float, 1>&  z,
-                  std::optional<ZSpine::coord_type> bottom_z,
-                  const bool                        inverse,
-                  const int                         mp_cores) {
-                    xt::xtensor<t_float, 1> x_xt(x.shape());
-                    xt::xtensor<t_float, 1> z_xt(z.shape());
-                    x_xt = x;
-                    z_xt = z;
-
-                    return self.displace_points_x<xt::xtensor<t_float, 1>>(
-                         x_xt, z_xt, bottom_z, inverse, mp_cores);
-               },
-               DOC_ZSpine(displace_points_x),
-               nb::arg("x"),
-               nb::arg("z"),
-               nb::arg("bottom_z") = std::nullopt,
-               nb::arg("inverse")  = false,
-               nb::arg("mp_cores") = 1)
-          .def(
-               "displace_points_y",
-               [](const ZSpine&                     self,
-                  const xnb::pytensor<t_float, 1>&  y,
-                  const xnb::pytensor<t_float, 1>&  z,
-                  std::optional<ZSpine::coord_type> bottom_z,
-                  const bool                        inverse,
-                  const int                         mp_cores) {
-                    xt::xtensor<t_float, 1> y_xt(y.shape());
-                    xt::xtensor<t_float, 1> z_xt(z.shape());
-                    y_xt = y;
-                    z_xt = z;
-
-                    return self.displace_points_y<xt::xtensor<t_float, 1>>(
-                         y_xt, z_xt, bottom_z, inverse, mp_cores);
-               },
-               DOC_ZSpine(displace_points_y),
-               nb::arg("y"),
-               nb::arg("z"),
-               nb::arg("bottom_z") = std::nullopt,
-               nb::arg("inverse")  = false,
-               nb::arg("mp_cores") = 1);
+        .def("displace_points_inplace",
+             nb::overload_cast<xt::nanobind::pytensor<t_float, 1>&,
+                               xt::nanobind::pytensor<t_float, 1>&,
+                               const xt::nanobind::pytensor<t_float, 1>&,
+                               std::optional<ZSpine::coord_type>,
+                               const bool,
+                               const int>(
+                 &ZSpine::displace_points_inplace<xt::nanobind::pytensor<t_float, 1>>, nb::const_),
+             DOC_ZSpine(displace_points_inplace),
+             nb::arg("x").noconvert(),
+             nb::arg("y").noconvert(),
+             nb::arg("z"),
+             nb::arg("bottom_z") = std::nullopt,
+             nb::arg("inverse")  = false,
+             nb::arg("mp_cores") = 1)
+        .def("displace_points",
+             nb::overload_cast<const xt::nanobind::pytensor<t_float, 1>&,
+                               const xt::nanobind::pytensor<t_float, 1>&,
+                               const xt::nanobind::pytensor<t_float, 1>&,
+                               std::optional<ZSpine::coord_type>,
+                               const bool,
+                               const int>(
+                 &ZSpine::displace_points<xt::nanobind::pytensor<t_float, 1>>, nb::const_),
+             DOC_ZSpine(displace_points),
+             nb::arg("x"),
+             nb::arg("y"),
+             nb::arg("z"),
+             nb::arg("bottom_z") = std::nullopt,
+             nb::arg("inverse")  = false,
+             nb::arg("mp_cores") = 1)
+        .def("displace_points_x",
+             nb::overload_cast<const xt::nanobind::pytensor<t_float, 1>&,
+                               const xt::nanobind::pytensor<t_float, 1>&,
+                               std::optional<ZSpine::coord_type>,
+                               const bool,
+                               const int>(
+                 &ZSpine::displace_points_x<xt::nanobind::pytensor<t_float, 1>>, nb::const_),
+             DOC_ZSpine(displace_points_x),
+             nb::arg("x"),
+             nb::arg("z"),
+             nb::arg("bottom_z") = std::nullopt,
+             nb::arg("inverse")  = false,
+             nb::arg("mp_cores") = 1)
+        .def("displace_points_y",
+             nb::overload_cast<const xt::nanobind::pytensor<t_float, 1>&,
+                               const xt::nanobind::pytensor<t_float, 1>&,
+                               std::optional<ZSpine::coord_type>,
+                               const bool,
+                               const int>(
+                 &ZSpine::displace_points_y<xt::nanobind::pytensor<t_float, 1>>, nb::const_),
+             DOC_ZSpine(displace_points_y),
+             nb::arg("y"),
+             nb::arg("z"),
+             nb::arg("bottom_z") = std::nullopt,
+             nb::arg("inverse")  = false,
+             nb::arg("mp_cores") = 1);
 }
 
 void init_c_zspine(nanobind::module_& m)
