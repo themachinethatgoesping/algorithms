@@ -17,10 +17,10 @@ void init_m_functions(nb::module_& m); // defined in functions/functions.cpp
 
 void init_m_amplitudecorrection(nb::module_& m)
 {
-    nb::module_ submodule = m.def_submodule("amplitudecorrection");
-
-    submodule.doc() =
-        "Submodule for amplitudecorrection (absorption, tvg, calibration factors, etc.)";
+    // Create submodule - nanobind automatically registers it in sys.modules
+    // making it directly importable as "import themachinethatgoesping.algorithms.amplitudecorrection"
+    nb::module_ submodule = m.def_submodule("amplitudecorrection",
+        "Submodule for amplitudecorrection (absorption, tvg, calibration factors, etc.)");
 
     py_functions::init_m_functions(submodule);
 }

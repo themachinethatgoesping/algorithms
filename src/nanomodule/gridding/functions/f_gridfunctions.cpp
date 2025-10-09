@@ -7,6 +7,11 @@
 
 #include <themachinethatgoesping/algorithms/gridding/functions/gridfunctions.hpp>
 
+#include <nanobind/stl/tuple.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/map.h>
+#include <nanobind/stl/array.h>
+
 namespace themachinethatgoesping {
 namespace algorithms {
 namespace pymodule {

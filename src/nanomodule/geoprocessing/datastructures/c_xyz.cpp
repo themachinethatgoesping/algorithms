@@ -8,11 +8,13 @@
 // -- c++ library headers
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures/xyz.hpp"
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
+#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
 
 // -- include nanobind headers
 #include <nanobind/eigen/dense.h>
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/tuple.h>
 
 namespace themachinethatgoesping {
 namespace algorithms {

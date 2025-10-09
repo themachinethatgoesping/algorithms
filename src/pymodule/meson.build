@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 # -- module name
-module_name = 'algorithms'
+module_name = 'algorithms_cppy'
         
 # -- sources
 sources = [

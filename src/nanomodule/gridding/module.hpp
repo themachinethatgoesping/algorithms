@@ -19,9 +19,8 @@ void init_c_forwardgridder3d(nb::module_& m); // c_forwardgridder3d.cpp
 
 void init_m_gridding(nb::module_& m)
 {
-    nb::module_ submodule = m.def_submodule("gridding");
-
-    submodule.doc() = "Submodule for gridding (raytracers and georefencing) echosounder samples";
+    nb::module_ submodule = m.def_submodule(
+        "gridding", "Submodule for gridding (raytracers and georefencing) echosounder samples");
 
     py_functions::init_m_functions(submodule);
     init_c_forwardgridder1d(submodule);
