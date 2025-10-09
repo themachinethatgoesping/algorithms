@@ -218,7 +218,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, int, t_float>(
                  &T_ForwardGridder3D::get_x_index),
              DOC_ForwardGridder3D(get_x_index),
-             nb::arg("x").noconvert())
+             nb::arg("x"))
         .def("get_y_index",
              nb::overload_cast<t_float>(&T_ForwardGridder3D::get_y_index, nb::const_),
              DOC_ForwardGridder3D(get_y_index),
@@ -227,7 +227,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, int, t_float>(
                  &T_ForwardGridder3D::get_y_index),
              DOC_ForwardGridder3D(get_y_index),
-             nb::arg("y").noconvert())
+             nb::arg("y"))
         .def("get_z_index",
              nb::overload_cast<t_float>(&T_ForwardGridder3D::get_z_index, nb::const_),
              DOC_ForwardGridder3D(get_z_index),
@@ -236,7 +236,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, int, t_float>(
                  &T_ForwardGridder3D::get_z_index),
              DOC_ForwardGridder3D(get_z_index),
-             nb::arg("z").noconvert())
+             nb::arg("z"))
         .def("get_x_index_fraction",
              nb::overload_cast<t_float>(&T_ForwardGridder3D::get_x_index_fraction, nb::const_),
              DOC_ForwardGridder3D(get_x_index_fraction),
@@ -245,7 +245,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, t_float>(
                  &T_ForwardGridder3D::get_x_index_fraction),
              DOC_ForwardGridder3D(get_x_index_fraction),
-             nb::arg("x").noconvert())
+             nb::arg("x"))
         .def("get_y_index_fraction",
              nb::overload_cast<t_float>(&T_ForwardGridder3D::get_y_index_fraction, nb::const_),
              DOC_ForwardGridder3D(get_y_index_fraction),
@@ -254,7 +254,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, t_float>(
                  &T_ForwardGridder3D::get_y_index_fraction),
              DOC_ForwardGridder3D(get_y_index_fraction),
-             nb::arg("y").noconvert())
+             nb::arg("y"))
         .def("get_z_index_fraction",
              nb::overload_cast<t_float>(&T_ForwardGridder3D::get_z_index_fraction, nb::const_),
              DOC_ForwardGridder3D(get_z_index_fraction),
@@ -263,7 +263,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, t_float>(
                  &T_ForwardGridder3D::get_z_index_fraction),
              DOC_ForwardGridder3D(get_z_index_fraction),
-             nb::arg("z").noconvert())
+             nb::arg("z"))
         .def("get_x_value",
              nb::overload_cast<int>(&T_ForwardGridder3D::get_x_value, nb::const_),
              DOC_ForwardGridder3D(get_x_value),
@@ -272,7 +272,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, int>(
                  &T_ForwardGridder3D::get_x_value),
              DOC_ForwardGridder3D(get_x_value),
-             nb::arg("x_index").noconvert())
+             nb::arg("x_index"))
         .def("get_y_value",
              nb::overload_cast<int>(&T_ForwardGridder3D::get_y_value, nb::const_),
              DOC_ForwardGridder3D(get_y_value),
@@ -281,7 +281,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, int>(
                  &T_ForwardGridder3D::get_y_value),
              DOC_ForwardGridder3D(get_y_value),
-             nb::arg("y_index").noconvert())
+             nb::arg("y_index"))
         .def("get_z_value",
              nb::overload_cast<int>(&T_ForwardGridder3D::get_z_value, nb::const_),
              DOC_ForwardGridder3D(get_z_value),
@@ -290,7 +290,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, int>(
                  &T_ForwardGridder3D::get_z_value),
              DOC_ForwardGridder3D(get_z_value),
-             nb::arg("z_index").noconvert())
+             nb::arg("z_index"))
         .def("get_x_grd_value",
              nb::overload_cast<t_float>(&T_ForwardGridder3D::get_x_grd_value, nb::const_),
              DOC_ForwardGridder3D(get_x_grd_value),
@@ -299,7 +299,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, t_float>(
                  &T_ForwardGridder3D::get_x_grd_value),
              DOC_ForwardGridder3D(get_x_grd_value),
-             nb::arg("x").noconvert())
+             nb::arg("x"))
         .def("get_y_grd_value",
              nb::overload_cast<t_float>(&T_ForwardGridder3D::get_y_grd_value, nb::const_),
              DOC_ForwardGridder3D(get_y_grd_value),
@@ -308,7 +308,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, t_float>(
                  &T_ForwardGridder3D::get_y_grd_value),
              DOC_ForwardGridder3D(get_y_grd_value),
-             nb::arg("y").noconvert())
+             nb::arg("y"))
         .def("get_z_grd_value",
              nb::overload_cast<t_float>(&T_ForwardGridder3D::get_z_grd_value, nb::const_),
              DOC_ForwardGridder3D(get_z_grd_value),
@@ -317,7 +317,7 @@ void init_ForwardGridder3D_float(nb::module_& m, const std::string& suffix)
              make_vectorized_member<T_ForwardGridder3D, t_float, t_float>(
                  &T_ForwardGridder3D::get_z_grd_value),
              DOC_ForwardGridder3D(get_z_grd_value),
-             nb::arg("z").noconvert())
+             nb::arg("z"))
         .def("get_extent_x", &T_ForwardGridder3D::get_extent_x, DOC_ForwardGridder3D(get_extent_x))
         .def("get_extent_y", &T_ForwardGridder3D::get_extent_y, DOC_ForwardGridder3D(get_extent_y))
         .def("get_extent_z", &T_ForwardGridder3D::get_extent_z, DOC_ForwardGridder3D(get_extent_z))
