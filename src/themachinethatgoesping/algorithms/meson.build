@@ -123,7 +123,7 @@ algorithms_lib = library(
   sources,
   dependencies: [boost_dep, navigation_dep, tools_dep, gswteos_10_dep],
   override_options: ['b_lundef=false'],
-  # cpp_pch : 'pch/pch.hpp',
+  cpp_pch : '../../pch/algorithms_themachinethatgoesping_algorithms.hpp',
   install: true,
   install_tag: 'library',
 )

@@ -49,7 +49,7 @@ py_algorithms = pymod.extension_module(
         nanobind_dep,
         python3_dep],
     link_language : 'cpp',
-    # cpp_pch : 'pch/pch.hpp',
+    cpp_pch : '../pch/algorithms_algorithms_nanopy.hpp',
     override_options: [
         #'cpp_rtti=true',
     ],
