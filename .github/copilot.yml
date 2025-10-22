@@ -27,7 +27,7 @@ conventions:
 # Common includes and dependencies
 dependencies:
   - "Eigen/Eigen"
-  - "xtensor/xtensor.hpp" 
+  - "xtensor/containers/xtensor.hpp" 
   - "pybind11/pybind11.h"
   - "themachinethatgoesping/tools/"
   - "themachinethatgoesping/navigation/"
