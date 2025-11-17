@@ -55,7 +55,6 @@ headers = [
   'signalprocessing/.docstrings/datastructures.doc.hpp',
   'signalprocessing/.docstrings/types.doc.hpp',
   'featuremapping/nearestfeaturemapper.hpp',
-  'featuremapping/.docstrings/featuremapper.doc.hpp',
   'featuremapping/.docstrings/nearestfeaturemapper.doc.hpp',
   '.docstrings/helloping.doc.hpp',
   'imageprocessing/functions.hpp',
