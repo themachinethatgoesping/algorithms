@@ -207,7 +207,7 @@ struct XYZ
 
         std::array<size_t, Dim> shape = x.shape();
 
-        os.write(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
+        os.write(reinterpret_cast<const char*>(shape.data()), sizeof(size_t) * shape.size());
 
         os.write(reinterpret_cast<const char*>(x.data()), sizeof(float) * x.size());
         os.write(reinterpret_cast<const char*>(y.data()), sizeof(float) * y.size());

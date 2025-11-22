@@ -196,7 +196,7 @@ class BacktracedWCI
 
         std::array<size_t, 2> shape = _wci.shape();
 
-        os.write(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
+        os.write(reinterpret_cast<const char*>(shape.data()), sizeof(size_t) * shape.size());
 
         os.write(reinterpret_cast<const char*>(_wci.data()), sizeof(float) * _wci.size());
 

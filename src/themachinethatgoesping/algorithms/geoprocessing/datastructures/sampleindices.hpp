@@ -109,7 +109,7 @@ struct SampleIndices
 
         std::array<size_t, Dim> shape = beam_numbers.shape();
 
-        os.write(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
+        os.write(reinterpret_cast<const char*>(shape.data()), sizeof(size_t) * shape.size());
 
         os.write(reinterpret_cast<const char*>(beam_numbers.data()),
                  sizeof(uint16_t) * beam_numbers.size());

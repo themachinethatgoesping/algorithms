@@ -109,7 +109,7 @@ struct SampleDirections
 
         std::array<size_t, Dim> shape = alongtrack_angle.shape();
 
-        os.write(reinterpret_cast<char*>(shape.data()), sizeof(size_t) * shape.size());
+        os.write(reinterpret_cast<const char*>(shape.data()), sizeof(size_t) * shape.size());
 
         os.write(reinterpret_cast<const char*>(alongtrack_angle.data()),
                  sizeof(float) * alongtrack_angle.size());
