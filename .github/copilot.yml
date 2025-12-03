@@ -5,7 +5,7 @@
 project_name: "themachinethatgoesping_algorithms"
 language: "C++"
 build_system: "Meson"
-standard: "C++20"
+standard: "c++23"
 
 # Key directories and their purposes
 directories:
@@ -16,7 +16,7 @@ directories:
 
 # Coding patterns and conventions
 conventions:
-  - "Use modern C++20 features and STL"
+  - "Use modern c++23 features and STL"
   - "Follow Mozilla-based clang-format style (see .clang-format)"
   - "Use Eigen library for linear algebra operations"
   - "Use xtensor for multi-dimensional arrays"

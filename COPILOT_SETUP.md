@@ -5,7 +5,7 @@ This repository is now configured for optimal GitHub Copilot integration. This g
 ## What's Been Configured
 
 ### 1. VS Code Configuration (`.vscode/`)
-- **`settings.json`**: Configures C++20 standard, include paths, and enables Copilot for relevant file types
+- **`settings.json`**: Configures c++23 standard, include paths, and enables Copilot for relevant file types
 - **`extensions.json`**: Recommends essential extensions including GitHub Copilot
 - **`tasks.json`**: Provides build, test, and clean tasks using Meson
 - **`launch.json`**: Debug configuration for C++ tests
@@ -22,7 +22,7 @@ meson.build linguist-language=Meson
 ### 3. Project Context (`.github/copilot.yml`)
 Provides GitHub Copilot with project-specific information:
 - Build system: Meson
-- C++ standard: C++20
+- C++ standard: c++23
 - Key dependencies: Eigen, xtensor, pybind11
 - Namespace structure and conventions
 

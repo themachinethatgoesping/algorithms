@@ -19,7 +19,7 @@ The repository includes extension recommendations in `.vscode/extensions.json`:
 
 ### Configuration
 - **Language Detection**: Enhanced `.gitattributes` for better language identification
-- **IntelliSense**: Configured for C++20 standard with project-specific include paths
+- **IntelliSense**: Configured for c++23 standard with project-specific include paths
 - **Code Formatting**: Uses existing `.clang-format` configuration
 - **Project Context**: `.github/copilot.yml` provides project-specific context for better suggestions
 
