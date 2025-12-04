@@ -102,7 +102,7 @@ jobs:
         #           meson setup builddir -Dunity=on -Dunity_size=9999999 -Dpython.install_env=auto
 
     - name: compile project
-      run: meson compile -C builddir/
+      run: meson compile -C builddir/ 
 
     - name: test (cpp)
       run: meson test -C builddir/ --print-errorlogs
