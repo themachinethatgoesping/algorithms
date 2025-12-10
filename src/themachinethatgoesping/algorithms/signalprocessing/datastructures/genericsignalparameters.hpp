@@ -154,7 +154,7 @@ class GenericSignalParameters
     __CLASSHELPER_DEFAULT_PRINTING_FUNCTIONS__
 };
 
-// IGNORE_DOC:__doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_hash_value
+// IGNORE_DOC:mkd_doc_themachinethatgoesping_algorithms_signalprocessing_datastructures_hash_value
 /**
  * @brief Boost hash function
  *

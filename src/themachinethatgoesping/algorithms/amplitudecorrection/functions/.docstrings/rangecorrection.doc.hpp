@@ -10,35 +10,38 @@
 #pragma once
 
 #ifndef __DOCSTRINGS_HPP__
+#define __DOCSTRINGS_HPP__
 
-#define __EXPAND(x)                                                  x
-#define __COUNT(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, COUNT, ...) COUNT
-#define __VA_SIZE(...)                                               __EXPAND(__COUNT(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
-#define __CAT1(a, b)                                                 a##b
-#define __CAT2(a, b)                                                 __CAT1(a, b)
-#define __DOC1(n1)                                                   __doc_##n1
-#define __DOC2(n1, n2)                                               __doc_##n1##_##n2
-#define __DOC3(n1, n2, n3)                                           __doc_##n1##_##n2##_##n3
-#define __DOC4(n1, n2, n3, n4)                                       __doc_##n1##_##n2##_##n3##_##n4
-#define __DOC5(n1, n2, n3, n4, n5)                                   __doc_##n1##_##n2##_##n3##_##n4##_##n5
-#define __DOC6(n1, n2, n3, n4, n5, n6)                               __doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6
-#define __DOC7(n1, n2, n3, n4, n5, n6, n7)                           __doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6##_##n7
-#define __DOC8(n1, n2, n3, n4, n5, n6, n7, n8)                                                     \
-    __doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6##_##n7##_##n8
-#define __DOC9(n1, n2, n3, n4, n5, n6, n7, n8, n9)                                                 \
-    __doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6##_##n7##_##n8##_##n9
-#define __DOC10(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)                                           \
-    __doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6##_##n7##_##n8##_##n9##_##n10
-#define DOC(...) __EXPAND(__EXPAND(__CAT2(__DOC, __VA_SIZE(__VA_ARGS__)))(__VA_ARGS__))
+#define MKD_EXPAND(x)                                      x
+#define MKD_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, COUNT, ...)  COUNT
+#define MKD_VA_SIZE(...)                                   MKD_EXPAND(MKD_COUNT(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0))
+#define MKD_CAT1(a, b)                                     a ## b
+#define MKD_CAT2(a, b)                                     MKD_CAT1(a, b)
+#define MKD_DOC1(n1)                                       mkd_doc_##n1
+#define MKD_DOC2(n1, n2)                                   mkd_doc_##n1##_##n2
+#define MKD_DOC3(n1, n2, n3)                               mkd_doc_##n1##_##n2##_##n3
+#define MKD_DOC4(n1, n2, n3, n4)                           mkd_doc_##n1##_##n2##_##n3##_##n4
+#define MKD_DOC5(n1, n2, n3, n4, n5)                       mkd_doc_##n1##_##n2##_##n3##_##n4##_##n5
+#define MKD_DOC6(n1, n2, n3, n4, n5, n6)                   mkd_doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6
+#define MKD_DOC7(n1, n2, n3, n4, n5, n6, n7)               mkd_doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6##_##n7
+#define MKD_DOC8(n1, n2, n3, n4, n5, n6, n7, n8)           mkd_doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6##_##n7##_##n8
+#define MKD_DOC9(n1, n2, n3, n4, n5, n6, n7, n8, n9)       mkd_doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6##_##n7##_##n8##_##n9
+#define MKD_DOC10(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10) mkd_doc_##n1##_##n2##_##n3##_##n4##_##n5##_##n6##_##n7##_##n8##_##n9##_##n10
+#define DOC(...)                                           MKD_EXPAND(MKD_EXPAND(MKD_CAT2(MKD_DOC, MKD_VA_SIZE(__VA_ARGS__)))(__VA_ARGS__))
 
-#endif // NEW_DOC_HEADER_HPP
+#if defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
+
+#endif // __DOCSTRINGS_HPP__
 #if defined(__GNUG__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_range_factor =
+static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_range_factor =
 R"doc(Approximates the range factor based on the sample interval and a
 single sound velocity.
 
@@ -46,19 +49,17 @@ This function calculates the range factor using the given sample
 interval and sound velocity. The formula used is: range_factor =
 sample_interval_s * sound_velocity_m_s * 0.5
 
-Template parameter ``t_float``:
-    The floating-point type used for the calculations.
+Args:
+    sample_interval_s: The sample interval in seconds.
+    sound_velocity_m_s: The sound velocity in meters per second.
 
-Parameter ``sample_interval_s``:
-    The sample interval in seconds.
-
-Parameter ``sound_velocity_m_s``:
-    The sound velocity in meters per second.
+Template Args:
+    t_float: The floating-point type used for the calculations.
 
 Returns:
     The approximated range factor.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges =
+static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges =
 R"doc(Approximates the ranges based on the provided sample interval and a
 single sound velocity.
 
@@ -66,31 +67,22 @@ This function calculates the approximate ranges for a given set of
 sample numbers by multiplying the sample numbers (plus half) with the
 approximate range factor.
 
-Template parameter ``t_xtensor_1d``:
-    A 1D tensor type that satisfies the c_xtensor_1d concept.
+Args:
+    sample_interval_s: The sample interval in seconds.
+    sound_velocity_m_s: The sound velocity in meters per second.
+    first_sample_nr: The first sample number.
+    last_sample_nr: The last sample number.
+    step: The step size between sample numbers (default is 1).
 
-Template parameter ``t_int``:
-    An integer type for sample numbers.
-
-Parameter ``sample_interval_s``:
-    The sample interval in seconds.
-
-Parameter ``sound_velocity_m_s``:
-    The sound velocity in meters per second.
-
-Parameter ``first_sample_nr``:
-    The first sample number.
-
-Parameter ``last_sample_nr``:
-    The last sample number.
-
-Parameter ``step``:
-    The step size between sample numbers (default is 1).
+Template Args:
+    t_xtensor_1d: A 1D tensor type that satisfies the c_xtensor_1d
+                  concept.
+    t_int: An integer type for sample numbers.
 
 Returns:
     A 1D tensor containing the approximated ranges.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges_2 =
+static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_approximate_ranges_2 =
 R"doc(Approximates the ranges based on sample interval, a single sound
 velocity, and sample numbers.
 
@@ -99,27 +91,21 @@ sample interval, sound velocity, and sample numbers. The calculation
 is performed by adding 0.5 to each sample number and then multiplying
 by the approximate range factor.
 
-Template parameter ``t_xtensor_1d``:
-    A 1D tensor type that satisfies the tools::helper::c_xtensor
-    concept.
+Args:
+    sample_interval_s: The interval between samples in seconds.
+    sound_velocity_m_s: The velocity of sound in meters per second.
+    sample_numbers: A 1D tensor containing the sample numbers.
 
-Template parameter ``t_xtensor_1d_int``:
-    A 1D tensor type for integers that satisfies the
-    tools::helper::c_xtensor concept.
-
-Parameter ``sample_interval_s``:
-    The interval between samples in seconds.
-
-Parameter ``sound_velocity_m_s``:
-    The velocity of sound in meters per second.
-
-Parameter ``sample_numbers``:
-    A 1D tensor containing the sample numbers.
+Template Args:
+    t_xtensor_1d: A 1D tensor type that satisfies the
+                  tools::helper::c_xtensor concept.
+    t_xtensor_1d_int: A 1D tensor type for integers that satisfies the
+                      tools::helper::c_xtensor concept.
 
 Returns:
     A 1D tensor containing the approximated ranges.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_compute_cw_range_correction =
+static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_compute_cw_range_correction =
 R"doc(Computes the continuous wave (CW) range correction.
 
 This function calculates the range correction based on the provided
@@ -136,23 +122,19 @@ included in the calculation. If neither the absorption coefficient nor
 the TVG factor are finite and non-zero, the function returns a tensor
 of zeros with the same shape as the input ranges.
 
-Template parameter ``t_xtensor_1d``:
-    A 1D tensor type that satisfies the tools::helper::c_xtensor_1d
-    concept.
+Args:
+    ranges_m: A 1D tensor representing the ranges in meters.
+    absorption_db_m: The absorption coefficient in decibels per meter.
+    tvg_factor: The time-varying gain factor.
 
-Parameter ``ranges_m``:
-    A 1D tensor representing the ranges in meters.
-
-Parameter ``absorption_db_m``:
-    The absorption coefficient in decibels per meter.
-
-Parameter ``tvg_factor``:
-    The time-varying gain factor.
+Template Args:
+    t_xtensor_1d: A 1D tensor type that satisfies the
+                  tools::helper::c_xtensor_1d concept.
 
 Returns:
     A 1D tensor representing the computed range correction.)doc";
 
-static const char *__doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_get_sample_numbers_plus_half =
+static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_get_sample_numbers_plus_half =
 R"doc(Generates a 1D tensor of sample numbers incremented by half. (used for
 range compuation)
 
@@ -160,25 +142,20 @@ This function calculates a range of sample numbers starting from
 `first_sample_nr + 0.5` to `last_sample_nr + 1.5` with a specified
 step.
 
-Template parameter ``t_xtensor_1d``:
-    A 1D tensor type that satisfies the `tools::helper::c_xtensor`
-    concept.
+Args:
+    first_sample_nr: The starting sample number.
+    last_sample_nr: The ending sample number.
+    step: The step size for the range (default is 1).
 
-Template parameter ``t_int``:
-    An integer type for the sample numbers.
-
-Parameter ``first_sample_nr``:
-    The starting sample number.
-
-Parameter ``last_sample_nr``:
-    The ending sample number.
-
-Parameter ``step``:
-    The step size for the range (default is 1).
+Template Args:
+    t_xtensor_1d: A 1D tensor type that satisfies the
+                  `tools::helper::c_xtensor` concept.
+    t_int: An integer type for the sample numbers.
 
 Returns:
-    A 1D tensor of sample numbers incremented by half. @note The
-    template parameter must be a 1D tensor.)doc";
+    A 1D tensor of sample numbers incremented by half.
+
+@note The template parameter must be a 1D tensor.)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
