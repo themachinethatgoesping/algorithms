@@ -109,4 +109,51 @@ TEST_CASE("Rangecorrection functions should reproduce previously computed result
             }
         }
     }
+
+    SECTION("compute_cw_range_correction_per_beam")
+    {
+        // Test per-beam absorption correction
+        size_t n_beams   = 5;
+        size_t n_samples = 10;
+
+        auto ranges = xt::eval(xt::linspace<float>(0.5, 10.5, n_samples));
+        auto absorption_per_beam =
+            xt::eval(xt::linspace<float>(0.01f, 0.05f, n_beams)); // different absorption per beam
+
+        for (const std::optional<float>& tvg :
+             std::vector<std::optional<float>>{ std::nullopt, 0.f, 20.f })
+        {
+            auto correction = compute_cw_range_correction_per_beam<xt::xtensor<float, 2>,
+                                                                   xt::xtensor<float, 1>>(
+                ranges, absorption_per_beam, tvg);
+
+            REQUIRE(correction.shape(0) == n_beams);
+            REQUIRE(correction.shape(1) == n_samples);
+
+            // Check that each beam has the correct correction
+            for (size_t bi = 0; bi < n_beams; ++bi)
+            {
+                float expected_absorption = absorption_per_beam(bi);
+                for (size_t si = 0; si < n_samples; ++si)
+                {
+                    float expected = 2 * expected_absorption * ranges(si) +
+                                     tvg.value_or(0) * std::log10(ranges(si));
+                    INFO(fmt::format("beam = {}, sample = {}", bi, si));
+                    CHECK(correction(bi, si) == Approx(expected));
+                }
+            }
+
+            // Verify consistency with scalar version for each beam
+            for (size_t bi = 0; bi < n_beams; ++bi)
+            {
+                auto scalar_correction = compute_cw_range_correction(
+                    ranges, std::optional<float>(absorption_per_beam(bi)), tvg);
+                for (size_t si = 0; si < n_samples; ++si)
+                {
+                    INFO(fmt::format("beam = {}, sample = {}", bi, si));
+                    CHECK(correction(bi, si) == Approx(scalar_correction(si)));
+                }
+            }
+        }
+    }
 }

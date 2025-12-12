@@ -12,6 +12,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <xtensor/containers/xtensor.hpp>
+#include <xtensor/views/xview.hpp>
 
 
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
@@ -179,6 +180,65 @@ inline t_xtensor_1d compute_cw_range_correction(
 
     return xt::zeros_like(ranges_m);
     // range correction = absorption*R + tvg_factor*log10(R)
+}
+
+/**
+ * @brief Computes the per-beam continuous wave (CW) range correction for 2D water column data.
+ *
+ * This function calculates the range correction for each beam individually, allowing for
+ * per-beam absorption coefficients. This is useful for multi-sector sonars where each
+ * transmit sector may have a different absorption coefficient.
+ *
+ * The range correction for each beam is computed using the formula:
+ * \f[
+ * \text{range correction}[beam, sample] = 2 \cdot \text{absorption\_db\_m}[beam] \cdot
+ * \text{ranges\_m}[sample] + \text{tvg\_factor} \cdot \log_{10}(\text{ranges\_m}[sample]) \f]
+ *
+ * @tparam t_xtensor_2d A 2D tensor type that satisfies the tools::helper::c_xtensor_2d concept.
+ * @tparam t_xtensor_1d A 1D tensor type that satisfies the tools::helper::c_xtensor_1d concept.
+ * @param ranges_m A 1D tensor representing the ranges in meters (size = number of samples).
+ * @param absorption_db_m_per_beam A 1D tensor of absorption coefficients in dB/m per beam (size =
+ * number of beams).
+ * @param tvg_factor Optional time-varying gain factor (applied uniformly to all beams).
+ * @param mp_cores The number of cores to use for parallel processing (default is 1).
+ * @return A 2D tensor (beams x samples) representing the computed range correction per beam.
+ */
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline t_xtensor_2d compute_cw_range_correction_per_beam(
+    const t_xtensor_1d&                                                         ranges_m,
+    const t_xtensor_1d&                                                         absorption_db_m_per_beam,
+    std::optional<typename tools::helper::xtensor_datatype<t_xtensor_1d>::type> tvg_factor,
+    int                                                                         mp_cores = 1)
+{
+    static_assert(tools::helper::c_xtensor_2d<t_xtensor_2d>,
+                  "First template parameter must be a 2D tensor");
+    static_assert(tools::helper::c_xtensor_1d<t_xtensor_1d>,
+                  "Second template parameter must be a 1D tensor");
+
+    using t_float = typename tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+
+    const size_t n_beams   = absorption_db_m_per_beam.size();
+    const size_t n_samples = ranges_m.size();
+
+    t_xtensor_2d result = xt::empty<t_float>({n_beams, n_samples});
+
+    // Precompute TVG correction if needed (same for all beams)
+    t_xtensor_1d tvg_correction;
+    if (tvg_factor.has_value())
+        tvg_correction = tvg_factor.value() * xt::log10(ranges_m);
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (size_t bi = 0; bi < n_beams; ++bi)
+    {
+        t_float absorption_factor = t_float(2) * absorption_db_m_per_beam.unchecked(bi);
+
+        if (tvg_factor.has_value())
+            xt::row(result, bi) = absorption_factor * ranges_m + tvg_correction;
+        else
+            xt::row(result, bi) = absorption_factor * ranges_m;
+    }
+
+    return result;
 }
 
 }

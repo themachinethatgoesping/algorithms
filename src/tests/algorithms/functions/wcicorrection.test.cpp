@@ -338,4 +338,158 @@ TEST_CASE("WCICorrection functions should reproduce previously computed results"
                               per_sample_offset_0);
                 }
     }
+
+    SECTION("apply_beam_sample_correction_with_absorption and "
+            "inplace_beam_sample_correction_with_absorption")
+    {
+        using Catch::Approx;
+
+        size_t n_beams   = 10;
+        size_t n_samples = 20;
+
+        xt::xtensor<float, 2> wci = xt::eval(xt::ones<float>({ n_beams, n_samples }));
+        xt::xtensor<float, 1> per_beam_offset =
+            xt::eval(xt::linspace<float>(-5.5f, 10.5f, n_beams));
+        xt::xtensor<float, 1> per_sample_offset =
+            xt::eval(xt::linspace<float>(-2.5f, 35.2f, n_samples));
+        xt::xtensor<float, 1> ranges = xt::eval(xt::linspace<float>(0.5f, 30.f, n_samples));
+        xt::xtensor<float, 1> absorption_per_beam =
+            xt::eval(xt::linspace<float>(0.01f, 0.05f, n_beams));
+
+        for (size_t mp_cores : { 1, 2, 4 })
+        {
+            // --- test apply_beam_sample_correction_with_absorption ---
+            auto result = apply_beam_sample_correction_with_absorption(
+                wci, per_beam_offset, per_sample_offset, ranges, absorption_per_beam, mp_cores);
+
+            REQUIRE(result.shape(0) == n_beams);
+            REQUIRE(result.shape(1) == n_samples);
+
+            // Check correctness: result = wci + per_beam_offset + per_sample_offset + 2 *
+            // absorption * ranges
+            for (size_t bi = 0; bi < n_beams; ++bi)
+            {
+                float absorption_factor = 2.f * absorption_per_beam(bi);
+                for (size_t si = 0; si < n_samples; ++si)
+                {
+                    float expected = wci(bi, si) + per_beam_offset(bi) + per_sample_offset(si) +
+                                     absorption_factor * ranges(si);
+                    INFO(fmt::format("beam = {}, sample = {}, mp_cores = {}", bi, si, mp_cores));
+                    CHECK(result(bi, si) == Approx(expected));
+                }
+            }
+
+            // --- test inplace_beam_sample_correction_with_absorption (full array) ---
+            xt::xtensor<float, 2> result_inplace = wci;
+            inplace_beam_sample_correction_with_absorption(result_inplace,
+                                                           per_beam_offset,
+                                                           per_sample_offset,
+                                                           ranges,
+                                                           absorption_per_beam,
+                                                           std::nullopt,
+                                                           std::nullopt,
+                                                           mp_cores);
+
+            for (size_t bi = 0; bi < n_beams; ++bi)
+            {
+                for (size_t si = 0; si < n_samples; ++si)
+                {
+                    INFO(fmt::format("beam = {}, sample = {}, mp_cores = {}", bi, si, mp_cores));
+                    CHECK(result_inplace(bi, si) == Approx(result(bi, si)));
+                }
+            }
+
+            // --- test inplace_beam_sample_correction_with_absorption (partial array) ---
+            size_t min_beam = 2;
+            size_t max_beam = 7;
+
+            result_inplace = wci;
+            inplace_beam_sample_correction_with_absorption(result_inplace,
+                                                           per_beam_offset,
+                                                           per_sample_offset,
+                                                           ranges,
+                                                           absorption_per_beam,
+                                                           min_beam,
+                                                           max_beam,
+                                                           mp_cores);
+
+            // Check that only the specified range was modified
+            for (size_t bi = 0; bi < n_beams; ++bi)
+            {
+                for (size_t si = 0; si < n_samples; ++si)
+                {
+                    INFO(fmt::format("beam = {}, sample = {}, mp_cores = {}", bi, si, mp_cores));
+                    if (bi >= min_beam && bi <= max_beam)
+                    {
+                        CHECK(result_inplace(bi, si) == Approx(result(bi, si)));
+                    }
+                    else
+                    {
+                        CHECK(result_inplace(bi, si) == Approx(wci(bi, si)));
+                    }
+                }
+            }
+        }
+    }
+
+    SECTION("inplace_sample_correction_with_absorption")
+    {
+        using Catch::Approx;
+
+        size_t n_beams   = 10;
+        size_t n_samples = 20;
+
+        xt::xtensor<float, 2> wci = xt::eval(xt::ones<float>({ n_beams, n_samples }));
+        xt::xtensor<float, 1> per_sample_offset =
+            xt::eval(xt::linspace<float>(-2.5f, 35.2f, n_samples));
+        xt::xtensor<float, 1> ranges = xt::eval(xt::linspace<float>(0.5f, 30.f, n_samples));
+        xt::xtensor<float, 1> absorption_per_beam =
+            xt::eval(xt::linspace<float>(0.01f, 0.05f, n_beams));
+
+        for (size_t mp_cores : { 1, 2 })
+        {
+            // --- test inplace_sample_correction_with_absorption (full array) ---
+            xt::xtensor<float, 2> result = wci;
+            inplace_sample_correction_with_absorption(
+                result, per_sample_offset, ranges, absorption_per_beam, std::nullopt, std::nullopt, mp_cores);
+
+            // Check correctness: result = wci + per_sample_offset + 2 * absorption * ranges
+            for (size_t bi = 0; bi < n_beams; ++bi)
+            {
+                float absorption_factor = 2.f * absorption_per_beam(bi);
+                for (size_t si = 0; si < n_samples; ++si)
+                {
+                    float expected =
+                        wci(bi, si) + per_sample_offset(si) + absorption_factor * ranges(si);
+                    INFO(fmt::format("beam = {}, sample = {}, mp_cores = {}", bi, si, mp_cores));
+                    CHECK(result(bi, si) == Approx(expected));
+                }
+            }
+
+            // --- test inplace_sample_correction_with_absorption (partial array) ---
+            size_t min_beam = 3;
+            size_t max_beam = 6;
+
+            xt::xtensor<float, 2> result_partial = wci;
+            inplace_sample_correction_with_absorption(
+                result_partial, per_sample_offset, ranges, absorption_per_beam, min_beam, max_beam, mp_cores);
+
+            // Check that only the specified range was modified
+            for (size_t bi = 0; bi < n_beams; ++bi)
+            {
+                for (size_t si = 0; si < n_samples; ++si)
+                {
+                    INFO(fmt::format("beam = {}, sample = {}, mp_cores = {}", bi, si, mp_cores));
+                    if (bi >= min_beam && bi <= max_beam)
+                    {
+                        CHECK(result_partial(bi, si) == Approx(result(bi, si)));
+                    }
+                    else
+                    {
+                        CHECK(result_partial(bi, si) == Approx(wci(bi, si)));
+                    }
+                }
+            }
+        }
+    }
 }

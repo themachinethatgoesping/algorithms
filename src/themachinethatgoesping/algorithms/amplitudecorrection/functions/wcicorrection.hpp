@@ -64,6 +64,151 @@ inline t_xtensor_2d apply_beam_sample_correction(const t_xtensor_2d& wci,
     return result;
 }
 
+/**
+ * @brief Applies beam, sample, and per-beam absorption corrections to the given 2D tensor.
+ *
+ * This function applies per-beam offset, per-sample offset, and per-beam absorption correction
+ * to the input 2D tensor. The absorption correction is computed as 2 * absorption_db_m * ranges_m
+ * for each beam individually, allowing for multi-sector sonar data with different absorption
+ * coefficients per sector/beam.
+ *
+ * @tparam t_xtensor_2d Type of the 2D tensor.
+ * @tparam t_xtensor_1d Type of the 1D tensor.
+ * @param wci The input 2D tensor to which corrections will be applied.
+ * @param per_beam_offset A 1D tensor containing the per-beam offsets (size = number of beams).
+ * @param per_sample_offset A 1D tensor containing the per-sample offsets (size = number of
+ * samples).
+ * @param ranges_m A 1D tensor containing the ranges in meters (size = number of samples).
+ * @param absorption_db_m_per_beam A 1D tensor of absorption coefficients in dB/m per beam (size =
+ * number of beams).
+ * @param mp_cores The number of cores to use for parallel processing (default is 1).
+ * @return A 2D tensor with the applied corrections.
+ */
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline t_xtensor_2d apply_beam_sample_correction_with_absorption(
+    const t_xtensor_2d& wci,
+    const t_xtensor_1d& per_beam_offset,
+    const t_xtensor_1d& per_sample_offset,
+    const t_xtensor_1d& ranges_m,
+    const t_xtensor_1d& absorption_db_m_per_beam,
+    int                 mp_cores = 1)
+{
+    assert_wci_beam_sample_shape(wci, per_beam_offset, per_sample_offset);
+    assert_wci_axis_shape<0>(wci, absorption_db_m_per_beam, "absorption_db_m_per_beam");
+    assert_wci_axis_shape<1>(wci, ranges_m, "ranges_m");
+
+    using t_float = typename tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+
+    t_xtensor_2d result = xt::empty_like(wci);
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = 0; bi < per_beam_offset.size(); ++bi)
+    {
+        t_float absorption_factor = t_float(2) * absorption_db_m_per_beam.unchecked(bi);
+        xt::row(result, bi)       = xt::row(wci, bi) + per_beam_offset.unchecked(bi) +
+                              per_sample_offset + absorption_factor * ranges_m;
+    }
+
+    return result;
+}
+
+/**
+ * @brief Inplace applies beam, sample, and per-beam absorption corrections to the given 2D tensor.
+ *
+ * This function applies per-beam offset, per-sample offset, and per-beam absorption correction
+ * in-place to the input 2D tensor. The absorption correction is computed as 2 * absorption_db_m *
+ * ranges_m for each beam individually.
+ *
+ * @tparam t_xtensor_2d Type of the 2D tensor.
+ * @tparam t_xtensor_1d Type of the 1D tensor.
+ * @param wci The input 2D tensor to which corrections will be applied (modified in-place).
+ * @param per_beam_offset A 1D tensor containing the per-beam offsets (size = number of beams).
+ * @param per_sample_offset A 1D tensor containing the per-sample offsets (size = number of
+ * samples).
+ * @param ranges_m A 1D tensor containing the ranges in meters (size = number of samples).
+ * @param absorption_db_m_per_beam A 1D tensor of absorption coefficients in dB/m per beam (size =
+ * number of beams).
+ * @param min_beam_index Optional minimum beam index to start correction from.
+ * @param max_beam_index Optional maximum beam index to end correction at.
+ * @param mp_cores The number of cores to use for parallel processing (default is 1).
+ */
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline void inplace_beam_sample_correction_with_absorption(
+    [[maybe_unused]] t_xtensor_2d& wci,
+    const t_xtensor_1d&            per_beam_offset,
+    const t_xtensor_1d&            per_sample_offset,
+    const t_xtensor_1d&            ranges_m,
+    const t_xtensor_1d&            absorption_db_m_per_beam,
+    std::optional<size_t>          min_beam_index = std::nullopt,
+    std::optional<size_t>          max_beam_index = std::nullopt,
+    int                            mp_cores       = 1)
+{
+    assert_wci_beam_sample_shape(wci, per_beam_offset, per_sample_offset);
+    assert_wci_axis_shape<0>(wci, absorption_db_m_per_beam, "absorption_db_m_per_beam");
+    assert_wci_axis_shape<1>(wci, ranges_m, "ranges_m");
+
+    using t_float = typename tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+
+    size_t max_beam_nr = max_beam_index.value_or(wci.shape(0) - 1);
+    if (max_beam_nr >= wci.shape(0))
+        max_beam_nr = wci.shape(0) - 1;
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = min_beam_index.value_or(0); bi <= max_beam_nr; ++bi)
+    {
+        t_float absorption_factor = t_float(2) * absorption_db_m_per_beam.unchecked(bi);
+        xt::row(wci, bi) +=
+            (per_beam_offset.unchecked(bi) + per_sample_offset + absorption_factor * ranges_m);
+    }
+}
+
+/**
+ * @brief Inplace applies sample and per-beam absorption corrections to the given 2D tensor.
+ *
+ * This function applies per-sample offset and per-beam absorption correction in-place to the input
+ * 2D tensor (without per-beam offset). The absorption correction is computed as 2 * absorption_db_m
+ * * ranges_m for each beam individually.
+ *
+ * @tparam t_xtensor_2d Type of the 2D tensor.
+ * @tparam t_xtensor_1d Type of the 1D tensor.
+ * @param wci The input 2D tensor to which corrections will be applied (modified in-place).
+ * @param per_sample_offset A 1D tensor containing the per-sample offsets (size = number of
+ * samples).
+ * @param ranges_m A 1D tensor containing the ranges in meters (size = number of samples).
+ * @param absorption_db_m_per_beam A 1D tensor of absorption coefficients in dB/m per beam (size =
+ * number of beams).
+ * @param min_beam_index Optional minimum beam index to start correction from.
+ * @param max_beam_index Optional maximum beam index to end correction at.
+ * @param mp_cores The number of cores to use for parallel processing (default is 1).
+ */
+template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
+inline void inplace_sample_correction_with_absorption(
+    [[maybe_unused]] t_xtensor_2d& wci,
+    const t_xtensor_1d&            per_sample_offset,
+    const t_xtensor_1d&            ranges_m,
+    const t_xtensor_1d&            absorption_db_m_per_beam,
+    std::optional<size_t>          min_beam_index = std::nullopt,
+    std::optional<size_t>          max_beam_index = std::nullopt,
+    int                            mp_cores       = 1)
+{
+    assert_wci_axis_shape<1>(wci, per_sample_offset, "per_sample_offset");
+    assert_wci_axis_shape<0>(wci, absorption_db_m_per_beam, "absorption_db_m_per_beam");
+    assert_wci_axis_shape<1>(wci, ranges_m, "ranges_m");
+
+    using t_float = typename tools::helper::xtensor_datatype<t_xtensor_1d>::type;
+
+    size_t max_beam_nr = max_beam_index.value_or(wci.shape(0) - 1);
+    if (max_beam_nr >= wci.shape(0))
+        max_beam_nr = wci.shape(0) - 1;
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (unsigned int bi = min_beam_index.value_or(0); bi <= max_beam_nr; ++bi)
+    {
+        t_float absorption_factor = t_float(2) * absorption_db_m_per_beam.unchecked(bi);
+        xt::row(wci, bi) += (per_sample_offset + absorption_factor * ranges_m);
+    }
+}
+
 template<tools::helper::c_xtensor t_xtensor_2d, tools::helper::c_xtensor t_xtensor_1d>
 inline void inplace_beam_sample_correction([[maybe_unused]] t_xtensor_2d& wci,
                                            const t_xtensor_1d&            per_beam_offset,

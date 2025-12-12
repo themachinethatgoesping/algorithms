@@ -87,6 +87,15 @@ void init_functions(nb::module_& m)
           nb::arg("absorption_db_m"),
           nb::arg("tvg_factor"));
 
+    m.def("compute_cw_range_correction_per_beam",
+          &compute_cw_range_correction_per_beam<xt::nanobind::pytensor<t_float, 2>,
+                                                xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(compute_cw_range_correction_per_beam),
+          nb::arg("ranges_m"),
+          nb::arg("absorption_db_m_per_beam"),
+          nb::arg("tvg_factor"),
+          nb::arg("mp_cores") = 1);
+
     m.def("apply_beam_sample_correction",
           &apply_beam_sample_correction<xt::nanobind::pytensor<t_float, 2>,
                                         xt::nanobind::pytensor<t_float, 1>>,
@@ -94,6 +103,17 @@ void init_functions(nb::module_& m)
           nb::arg("wci"),
           nb::arg("per_beam_offset"),
           nb::arg("per_sample_offset"),
+          nb::arg("mp_cores") = 1);
+
+    m.def("apply_beam_sample_correction_with_absorption",
+          &apply_beam_sample_correction_with_absorption<xt::nanobind::pytensor<t_float, 2>,
+                                                        xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(apply_beam_sample_correction_with_absorption),
+          nb::arg("wci"),
+          nb::arg("per_beam_offset"),
+          nb::arg("per_sample_offset"),
+          nb::arg("ranges_m"),
+          nb::arg("absorption_db_m_per_beam"),
           nb::arg("mp_cores") = 1);
 
     m.def("apply_beam_correction",
@@ -126,6 +146,31 @@ void init_functions(nb::module_& m)
           nb::arg("wci").noconvert(),
           nb::arg("per_beam_offset"),
           nb::arg("per_sample_offset"),
+          nb::arg("min_beam_index") = std::nullopt,
+          nb::arg("max_beam_index") = std::nullopt,
+          nb::arg("mp_cores")       = 1);
+
+    m.def("inplace_beam_sample_correction_with_absorption",
+          &inplace_beam_sample_correction_with_absorption<xt::nanobind::pytensor<t_float, 2>,
+                                                          xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(inplace_beam_sample_correction_with_absorption),
+          nb::arg("wci").noconvert(),
+          nb::arg("per_beam_offset"),
+          nb::arg("per_sample_offset"),
+          nb::arg("ranges_m"),
+          nb::arg("absorption_db_m_per_beam"),
+          nb::arg("min_beam_index") = std::nullopt,
+          nb::arg("max_beam_index") = std::nullopt,
+          nb::arg("mp_cores")       = 1);
+
+    m.def("inplace_sample_correction_with_absorption",
+          &inplace_sample_correction_with_absorption<xt::nanobind::pytensor<t_float, 2>,
+                                                     xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(inplace_sample_correction_with_absorption),
+          nb::arg("wci").noconvert(),
+          nb::arg("per_sample_offset"),
+          nb::arg("ranges_m"),
+          nb::arg("absorption_db_m_per_beam"),
           nb::arg("min_beam_index") = std::nullopt,
           nb::arg("max_beam_index") = std::nullopt,
           nb::arg("mp_cores")       = 1);

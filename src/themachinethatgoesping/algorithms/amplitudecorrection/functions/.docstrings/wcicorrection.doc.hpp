@@ -1,4 +1,4 @@
-//sourcehash: 4541bc0b319cee3880f339f21f019ef6cf99ee996a20718ed87ebab0d97fb888
+//sourcehash: 91c06489d6352edd3327957425b1cdf5f6f9b8e3d7d25bad042b36015e673d96
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -66,6 +66,37 @@ Returns:
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_loop = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_with_absorption =
+R"doc(Applies beam, sample, and per-beam absorption corrections to the given
+2D tensor.
+
+This function applies per-beam offset, per-sample offset, and per-beam
+absorption correction to the input 2D tensor. The absorption
+correction is computed as 2 * absorption_db_m * ranges_m for each beam
+individually, allowing for multi-sector sonar data with different
+absorption coefficients per sector/beam.
+
+Args:
+    wci: The input 2D tensor to which corrections will be applied.
+    per_beam_offset: A 1D tensor containing the per-beam offsets (size
+                     = number of beams).
+    per_sample_offset: A 1D tensor containing the per-sample offsets
+                       (size = number of samples).
+    ranges_m: A 1D tensor containing the ranges in meters (size =
+              number of samples).
+    absorption_db_m_per_beam: A 1D tensor of absorption coefficients
+                              in dB/m per beam (size = number of
+                              beams).
+    mp_cores: The number of cores to use for parallel processing
+              (default is 1).
+
+Template Args:
+    t_xtensor_2d: Type of the 2D tensor.
+    t_xtensor_1d: Type of the 1D tensor.
+
+Returns:
+    A 2D tensor with the applied corrections.)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_xsimd = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_apply_beam_sample_correction_xtensor2 = R"doc()doc";
@@ -80,7 +111,67 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_beam_sample_correction = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_beam_sample_correction_with_absorption =
+R"doc(Inplace applies beam, sample, and per-beam absorption corrections to
+the given 2D tensor.
+
+This function applies per-beam offset, per-sample offset, and per-beam
+absorption correction in-place to the input 2D tensor. The absorption
+correction is computed as 2 * absorption_db_m * ranges_m for each beam
+individually.
+
+Args:
+    wci: The input 2D tensor to which corrections will be applied
+         (modified in-place).
+    per_beam_offset: A 1D tensor containing the per-beam offsets (size
+                     = number of beams).
+    per_sample_offset: A 1D tensor containing the per-sample offsets
+                       (size = number of samples).
+    ranges_m: A 1D tensor containing the ranges in meters (size =
+              number of samples).
+    absorption_db_m_per_beam: A 1D tensor of absorption coefficients
+                              in dB/m per beam (size = number of
+                              beams).
+    min_beam_index: Optional minimum beam index to start correction
+                    from.
+    max_beam_index: Optional maximum beam index to end correction at.
+    mp_cores: The number of cores to use for parallel processing
+              (default is 1).
+
+Template Args:
+    t_xtensor_2d: Type of the 2D tensor.
+    t_xtensor_1d: Type of the 1D tensor.)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_sample_correction = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_sample_correction_with_absorption =
+R"doc(Inplace applies sample and per-beam absorption corrections to the
+given 2D tensor.
+
+This function applies per-sample offset and per-beam absorption
+correction in-place to the input 2D tensor (without per-beam offset).
+The absorption correction is computed as 2 * absorption_db_m
+* ranges_m for each beam individually.
+
+Args:
+    wci: The input 2D tensor to which corrections will be applied
+         (modified in-place).
+    per_sample_offset: A 1D tensor containing the per-sample offsets
+                       (size = number of samples).
+    ranges_m: A 1D tensor containing the ranges in meters (size =
+              number of samples).
+    absorption_db_m_per_beam: A 1D tensor of absorption coefficients
+                              in dB/m per beam (size = number of
+                              beams).
+    min_beam_index: Optional minimum beam index to start correction
+                    from.
+    max_beam_index: Optional maximum beam index to end correction at.
+    mp_cores: The number of cores to use for parallel processing
+              (default is 1).
+
+Template Args:
+    t_xtensor_2d: Type of the 2D tensor.
+    t_xtensor_1d: Type of the 1D tensor.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_amplitudecorrection_functions_inplace_system_offset = R"doc()doc";
 
