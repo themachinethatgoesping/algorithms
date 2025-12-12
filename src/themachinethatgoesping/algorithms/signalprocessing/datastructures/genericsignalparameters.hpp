@@ -28,7 +28,7 @@ class GenericSignalParameters
     float _center_frequency;         ///< Center frequency of the signal in Hz.
     float _bandwidth;                ///< Bandwidth of the signal in Hz.
     float _effective_pulse_duration; ///< Effective pulse duration of the signal in seconds.
-    types::t_TxSignalType _signal_type = types::t_TxSignalType::UNKNOWN; ///< Signal type
+    types::o_TxSignalType _signal_type = types::t_TxSignalType::UNKNOWN; ///< Signal type
 
     /**
      * @brief Default constructor.
@@ -45,7 +45,7 @@ class GenericSignalParameters
     GenericSignalParameters(float                 center_frequency,
                             float                 bandwidth,
                             float                 effective_pulse_duration,
-                            types::t_TxSignalType signal_type)
+                            types::o_TxSignalType signal_type)
         : _center_frequency(center_frequency)
         , _bandwidth(bandwidth)
         , _effective_pulse_duration(effective_pulse_duration)
@@ -86,7 +86,7 @@ class GenericSignalParameters
     float                 get_center_frequency() const { return _center_frequency; }
     float                 get_bandwidth() const { return _bandwidth; }
     float                 get_effective_pulse_duration() const { return _effective_pulse_duration; }
-    types::t_TxSignalType get_tx_signal_type() const { return _signal_type; }
+    types::o_TxSignalType get_tx_signal_type() const { return _signal_type; }
 
     void set_center_frequency(float center_frequency)
     {
@@ -97,7 +97,7 @@ class GenericSignalParameters
     {
         this->_effective_pulse_duration = effective_pulse_duration;
     }
-    void set_tx_signal_type(types::t_TxSignalType signal_type) { this->_signal_type = signal_type; }
+    void set_tx_signal_type(types::o_TxSignalType signal_type) { this->_signal_type = signal_type; }
 
     // ----- file I/O -----
     static constexpr size_t binary_size()
@@ -141,7 +141,7 @@ class GenericSignalParameters
         printer.register_value("center_frequency", _center_frequency, "Hz");
         printer.register_value("bandwidth", _bandwidth, "Hz");
         printer.register_value("effective_pulse_duration", _effective_pulse_duration, "s");
-        printer.register_value("signal_type", types::to_string(get_tx_signal_type()));
+        printer.register_value("signal_type", get_tx_signal_type().name());
 
         return printer;
     }

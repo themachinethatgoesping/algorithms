@@ -3,8 +3,11 @@
 /* generated doc strings */
 #include ".docstrings/types.doc.hpp"
 
+#include <array>
+
 #include <magic_enum/magic_enum.hpp>
-#include <variant>
+
+#include <themachinethatgoesping/tools/classhelper/option_frozen.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -19,17 +22,42 @@ enum class t_TxSignalType
     UNKNOWN
 };
 
-inline std::string_view to_string(t_TxSignalType tx_signal_type)
-{
-    return magic_enum::enum_name(tx_signal_type);
-}
+inline constexpr std::array<t_TxSignalType, 4> t_TxSignalType_values = {
+    t_TxSignalType::CW,
+    t_TxSignalType::FM_UP_SWEEP,
+    t_TxSignalType::FM_DOWN_SWEEP,
+    t_TxSignalType::UNKNOWN
+};
 
-inline t_TxSignalType tx_signal_type_from_string(std::string_view tx_signal_type_string)
-{
-    return magic_enum::enum_cast<t_TxSignalType>(tx_signal_type_string).value();
-}
+inline constexpr std::array<std::string_view, 4> t_TxSignalType_names = {
+    "CW",
+    "FM_UP_SWEEP",
+    "FM_DOWN_SWEEP",
+    "UNKNOWN"
+};
+
+inline constexpr std::array<std::string_view, 4> t_TxSignalType_alt_names = {
+    "Continuous Wave",
+    "Frequency Modulated up sweep",
+    "Frequency Modulated down sweep",
+    "Unknown"
+};
+
+using o_TxSignalType = themachinethatgoesping::tools::classhelper::OptionFrozen<
+    t_TxSignalType,
+    t_TxSignalType_values.size(),
+    t_TxSignalType_values,
+    t_TxSignalType_names,
+    t_TxSignalType_alt_names>;
 
 } // namespace types
 } // namespace signalprocessing
 } // namespace algorithms
 } // namespace themachinethatgoesping
+
+extern template class themachinethatgoesping::tools::classhelper::OptionFrozen<
+    themachinethatgoesping::algorithms::signalprocessing::types::t_TxSignalType,
+    themachinethatgoesping::algorithms::signalprocessing::types::t_TxSignalType_values.size(),
+    themachinethatgoesping::algorithms::signalprocessing::types::t_TxSignalType_values,
+    themachinethatgoesping::algorithms::signalprocessing::types::t_TxSignalType_names,
+    themachinethatgoesping::algorithms::signalprocessing::types::t_TxSignalType_alt_names>;

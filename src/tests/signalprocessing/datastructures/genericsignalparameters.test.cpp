@@ -20,10 +20,10 @@ using Catch::Approx;
 TEST_CASE("GenericSignalParameters should support common functions", TESTTAG)
 {
     // initialize location
-    auto txs = GenericSignalParameters(123567.891f,            // center_frequency
-                                       0.00223f,               // bandwidth
-                                       0.0023f,                // effective_pulse_duration
-                                       t_TxSignalType::UNKNOWN // up_sweep
+    auto txs = GenericSignalParameters(123567.891f,              // center_frequency
+                                       0.00223f,                 // bandwidth
+                                       0.0023f,                  // effective_pulse_duration
+                                       o_TxSignalType("UNKNOWN") // unknown
     );
 
     // test inequality

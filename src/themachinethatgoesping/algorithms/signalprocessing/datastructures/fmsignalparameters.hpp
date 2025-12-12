@@ -62,12 +62,12 @@ class FMSignalParameters
     FMSignalParameters(float                 center_frequency,
                        float                 bandwidth,
                        float                 effective_pulse_duration,
-                       types::t_TxSignalType signal_type)
+                       types::o_TxSignalType signal_type)
         : _center_frequency(center_frequency)
         , _bandwidth(bandwidth)
         , _effective_pulse_duration(effective_pulse_duration)
     {
-        switch (signal_type)
+        switch (signal_type.value)
         {
             case types::t_TxSignalType::FM_UP_SWEEP:
                 _up_sweep = true;
@@ -114,7 +114,7 @@ class FMSignalParameters
     float                 get_bandwidth() const { return _bandwidth; }
     float                 get_effective_pulse_duration() const { return _effective_pulse_duration; }
     bool                  get_up_sweep() const { return _up_sweep; }
-    types::t_TxSignalType get_tx_signal_type() const
+    types::o_TxSignalType get_tx_signal_type() const
     {
         if (_up_sweep)
             return types::t_TxSignalType::FM_UP_SWEEP;
@@ -173,7 +173,7 @@ class FMSignalParameters
         printer.register_value("center_frequency", _center_frequency, "Hz");
         printer.register_value("bandwidth", _bandwidth, "Hz");
         printer.register_value("effective_pulse_duration", _effective_pulse_duration, "s");
-        printer.register_value("Sweep direction", types::to_string(get_tx_signal_type()));
+        printer.register_value("Sweep direction", get_tx_signal_type().name());
 
         return printer;
     }

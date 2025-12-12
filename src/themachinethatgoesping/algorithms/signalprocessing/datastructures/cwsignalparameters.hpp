@@ -81,7 +81,7 @@ class CWSignalParameters
     float                 get_center_frequency() const { return _center_frequency; }
     float                 get_bandwidth() const { return _bandwidth; }
     float                 get_effective_pulse_duration() const { return _effective_pulse_duration; }
-    types::t_TxSignalType get_tx_signal_type() const { return types::t_TxSignalType::CW; }
+    types::o_TxSignalType get_tx_signal_type() const { return types::t_TxSignalType::CW; }
 
     // ----- setters -----
     void set_center_frequency(float center_frequency)

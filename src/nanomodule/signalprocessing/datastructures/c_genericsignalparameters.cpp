@@ -43,7 +43,7 @@ void init_c_genericsignalparameters(nb::module_& m)
             datastructures,
             GenericSignalParameters))
         //.def(nb::init<>(), DOC_GenericSignalParameters(GenericSignalParameters))
-        .def(nb::init<float, float, float, signalprocessing::types::t_TxSignalType>(),
+        .def(nb::init<float, float, float, signalprocessing::types::o_TxSignalType>(),
              DOC_GenericSignalParameters(GenericSignalParameters),
              nb::arg("center_frequency"),
              nb::arg("bandwidth"),

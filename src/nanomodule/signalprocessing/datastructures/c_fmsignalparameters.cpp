@@ -48,7 +48,7 @@ void init_c_fmsignalparameters(nb::module_& m)
              nb::arg("bandwidth"),
              nb::arg("effective_pulse_duration"),
              nb::arg("up_sweep"))
-        .def(nb::init<float, float, float, signalprocessing::types::t_TxSignalType>(),
+        .def(nb::init<float, float, float, signalprocessing::types::o_TxSignalType>(),
              DOC_FMSignalParameters(FMSignalParameters),
              nb::arg("center_frequency"),
              nb::arg("bandwidth"),

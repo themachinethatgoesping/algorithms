@@ -1,4 +1,4 @@
-//sourcehash: d20c8f8f2be35c1d07529868281547a0ddc17cafa6d5ffeb1c52e35d30f58e9a
+//sourcehash: d65b908e6a62f3de6ebb80107accc6e9caa7611eb233cb3b1c09b28f5cb9d1a8
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -41,6 +41,8 @@
 #endif
 
 
+static const char *mkd_doc__unnamed_class_at_themachinethatgoesping_algorithms_signalprocessing_types_hpp_58_67 = R"doc()doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_CW = R"doc()doc";
@@ -50,10 +52,6 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_signalprocessing_ty
 static const char *mkd_doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_FM_UP_SWEEP = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_signalprocessing_types_t_TxSignalType_UNKNOWN = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_signalprocessing_types_to_string = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_signalprocessing_types_tx_signal_type_from_string = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

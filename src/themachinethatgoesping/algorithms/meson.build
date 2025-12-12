@@ -10,6 +10,7 @@ headerdir = projectnamespace + '/algorithms'
 sources = [
   'amplitudecorrection/functions/absorption.cpp',
   'pointprocessing/bubblestreams/zspine.cpp',
+  'signalprocessing/types.cpp',
   'featuremapping/nearestfeaturemapper.cpp',
   'geoprocessing/datastructures/beamsampleparameters.cpp',
 ]

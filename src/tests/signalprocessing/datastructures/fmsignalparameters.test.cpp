@@ -23,7 +23,7 @@ TEST_CASE("FMSignalParameters should support common functions", TESTTAG)
     auto txs = FMSignalParameters(123567.891f,              // center_frequency
                                   789.012f,                 // bandwidth
                                   0.00234f,                 // effective_pulse_duration
-                                  t_TxSignalType::FM_UP_SWEEP // up_sweep
+                                  "FM_UP_SWEEP" // up_sweep
     );
 
     // test inequality
