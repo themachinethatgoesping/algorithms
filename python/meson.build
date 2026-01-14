@@ -5,6 +5,11 @@
 # -- python sources --
 sources = [
   'themachinethatgoesping/algorithms/__init__.py',
+  'themachinethatgoesping/algorithms/backscattermodels/__init__.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/__init__.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/li.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/parameters.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/thuraisingham.py',
 ]
 
 init_configuration = configuration_data({

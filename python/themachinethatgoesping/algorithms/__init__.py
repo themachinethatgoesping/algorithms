@@ -9,6 +9,8 @@ from themachinethatgoesping.algorithms_nanopy import *  # flake8: noqa
 from themachinethatgoesping.tools._submodule_helper import expose_submodules
 from themachinethatgoesping import algorithms_nanopy
 
+from . import backscattermodels
+
 globals().update(expose_submodules(algorithms_nanopy, 'themachinethatgoesping.algorithms'))
 del algorithms_nanopy, expose_submodules
 
