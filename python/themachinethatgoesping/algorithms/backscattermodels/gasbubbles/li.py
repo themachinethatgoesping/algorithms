@@ -17,6 +17,7 @@ import cmath
 from math import pi
 
 from .parameters import EnvironmentalParameters
+import numpy as np
 
 
 def calculate_sigma_bs(
@@ -50,9 +51,10 @@ def calculate_sigma_bs(
     
     Notes
     -----
-    The model uses equation (5) from Li et al. (2020):
+        The model uses equation (5) from Li et al. (2020):
     
-    σ_bs = r² / [((ω₀/ω)² - 1)² + (β₀/ω + ωr/c_w)²] × [sin(kr)/(kr)]² / [1 + (kr)²]
+        σ_bs = r² / [((ω₀²/ω²) - 1 - (2β₀/ω)kr)² + ((2β₀/ω) + (ω₀²/ω²)kr)²]
+            × [sin(kr)/(kr)]² / [1 + (kr)²]
     
     where:
     - r is the bubble radius
@@ -91,13 +93,12 @@ def calculate_sigma_bs(
     D_p = params.K_gas / (rho_gas * params.Cp)
     
     # Dimensionless thermal parameter X (Eq. 10)
-    # X = r * sqrt(omega / (2 * D_p))
-    X = r * math.sqrt(omega / (2 * D_p))
+    # X = r * sqrt(2 * omega / D_p)
+    X = r * math.sqrt(2 * omega / D_p)
     
     # Complex polytropic index Gamma (Eq. 9)
-    # Gamma = gamma / [1 + (gamma - 1) * (coth(X) - 1/X) / X * (1 + 1j)]
-    # Using: coth(x*(1+1j)) for complex argument
-    X_complex = X * (1 + 1j)
+    # Gamma = gamma / [1 - ((1+i)X/2)/tanh((1+i)X/2) * (6i(γ-1)/X²)]
+    X_complex = (1 + 1j) * X / 2
     
     # Handle large X to avoid overflow in cosh/sinh
     # For large |X|, coth(X) → 1, and the thermal correction term → 0
@@ -110,30 +111,30 @@ def calculate_sigma_bs(
         Gamma = complex(1.0, 0)
     else:
         try:
-            coth_X = cmath.cosh(X_complex) / cmath.sinh(X_complex)
-            Gamma = params.gamma / (1 + (params.gamma - 1) * (coth_X - 1 / X_complex) / X_complex)
+            tanh_X = cmath.tanh(X_complex)
+            Gamma = params.gamma / (1 - (X_complex / tanh_X) * (6j * (params.gamma - 1) / (X * X)))
         except (OverflowError, ZeroDivisionError):
             # Fallback to adiabatic limit
             Gamma = complex(params.gamma, 0)
     
-    # Complex stiffness parameter Omega (Eq. 7)
-    # Omega = (1/rho_liq) * (3 * Gamma * P_gas / r² - 2 * tau / r³)
-    Omega = (1 / params.rho_liq) * (3 * Gamma * P_gas / (r * r) - 2 * params.tau / (r * r * r))
+    # Complex stiffness parameter Omega^2 (Eq. 7)
+    # Omega^2 = (1 / (rho_liq * r²)) * (3 * Gamma * P_gas - 2 * tau / r)
+    Omega2 = (1 / (params.rho_liq * r * r)) * (3 * Gamma * P_gas - 2 * params.tau / r)
     
     # Resonance angular frequency omega_0 (from Eq. 6)
-    # omega_0² = Re{Omega}
-    omega_0_sq = Omega.real
+    # omega_0² = Re{Omega^2}
+    omega_0_sq = Omega2.real
     if omega_0_sq <= 0:
         omega_0_sq = 1e-20  # Avoid negative or zero values
     omega_0 = math.sqrt(omega_0_sq)
     
     # Thermal damping coefficient (Eq. 14a)
-    # beta_th = Im{Omega} / (2 * omega)
-    beta_th = -Omega.imag / (2 * omega)  # Note: negative imag part gives positive damping
+    # beta_th = Im{Omega^2} / (2 * omega)
+    beta_th = Omega2.imag / (2 * omega)
     
     # Viscous damping coefficient (Eq. 14b)
-    # beta_vis = 4 * eta_S / (rho_liq * r²)
-    beta_vis = 4 * params.eta_s / (params.rho_liq * r * r)
+    # beta_vis = 2 * eta_S / (rho_liq * r²)
+    beta_vis = 2 * params.eta_s / (params.rho_liq * r * r)
     
     # Combined damping coefficient beta_0 (Eq. 13)
     beta_0 = beta_th + beta_vis
@@ -149,14 +150,14 @@ def calculate_sigma_bs(
         thur_factor = (sinc_kr ** 2) / (1 + kr ** 2)
     
     # Backscattering cross-section (Eq. 5)
-    # sigma_bs = r² / [((omega_0/omega)² - 1)² + (beta_0/omega + omega*r/c_w)²] × thur_factor
+    # sigma_bs = r² / [((ω₀²/ω²) - 1 - (2β₀/ω)kr)² + ((2β₀/ω) + (ω₀²/ω²)kr)²] × thur_factor
     
     omega_ratio_sq = (omega_0 / omega) ** 2
     
-    # Radiation damping is implicitly included: omega*r/c_w = kr
-    damping_term = beta_0 / omega + kr
+    term_1 = omega_ratio_sq - 1 - (2 * beta_0 / omega) * kr
+    term_2 = (2 * beta_0 / omega) + omega_ratio_sq * kr
     
-    denominator = (omega_ratio_sq - 1) ** 2 + damping_term ** 2
+    denominator = term_1 ** 2 + term_2 ** 2
     
     if denominator < 1e-30:
         denominator = 1e-30  # Avoid division by zero at resonance
@@ -237,3 +238,4 @@ def calculate_resonance_frequency(
     f_0 = (1 / (2 * pi * r)) * math.sqrt(3 * params.gamma * P_gas / params.rho_liq)
     
     return f_0
+
