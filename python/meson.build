@@ -10,6 +10,11 @@ sources = [
   'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/li.py',
   'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/parameters.py',
   'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/thuraisingham.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/bubble_dissolution/__init__.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/bubble_dissolution/bubble_shape.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/bubble_dissolution/dissolution.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/bubble_dissolution/environment.py',
+  'themachinethatgoesping/algorithms/backscattermodels/gasbubbles/bubble_dissolution/rise_velocity.py',
 ]
 
 init_configuration = configuration_data({
