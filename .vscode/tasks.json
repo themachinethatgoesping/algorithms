@@ -109,7 +109,7 @@
                 "isDefault": false
             },
             "type": "shell",
-            "command": "clear && cd python && source ~/.bash_aliases && use_dev_miniforge && mamba run python glob.py",
+            "command": "clear && cd python && source ~/.bash_aliases && use_dev_miniforge && mamba run python glob_sources.py",
             "problemMatcher": []
         },
         {
@@ -119,7 +119,7 @@
                 "isDefault": false
             },
             "type": "shell",
-            "command": "clear && cd ../python && source ~/.bash_aliases && use_dev_miniforge && mamba run python make_pybind_doc.py && cd ../builddir && mamba run meson install --tags=runtime,python-runtime && cd ../python && mamba run python make_stubs.py&& cd ../builddir  && mamba run meson test --print-errorlogs && cd .. && mamba run pytest -v",
+            "command": "clear && cd ../python && source ~/.bash_aliases && use_dev_miniforge && mamba run python make_pybind_doc.py && cd ../builddir && mamba run meson install --tags=runtime,python-runtime && cd ../python && cd ../builddir  && mamba run meson test --print-errorlogs && cd .. && mamba run pytest -v",
             "options": {
                 "cwd": "${workspaceFolder}/builddir/"
             },
@@ -132,7 +132,7 @@
                 "isDefault": false
             },
             "type": "shell",
-            "command": "clear && cd ../python && source ~/.bash_aliases && use_dev_miniforge && mamba run python make_pybind_doc.py && cd ../builddir-clang && mamba run meson install --tags=runtime,python-runtime && cd ../python && mamba run python make_stubs.py&& cd ../builddir-clang  && mamba run meson test --print-errorlogs && cd .. && mamba run pytest -v",
+            "command": "clear && cd ../python && source ~/.bash_aliases && use_dev_miniforge && mamba run python make_pybind_doc.py && cd ../builddir-clang && mamba run meson install --tags=runtime,python-runtime && cd ../python && cd ../builddir-clang  && mamba run meson test --print-errorlogs && cd .. && mamba run pytest -v",
             "options": {
                 "cwd": "${workspaceFolder}/builddir-clang/"
             },
