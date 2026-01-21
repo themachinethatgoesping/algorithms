@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2026 GEOMAR Helmholtz Centre for Ocean Research Kiel
+# SPDX-FileCopyrightText: 2026 Peter Urban, Ghent University
 #
 # SPDX-License-Identifier: MPL-2.0
 
