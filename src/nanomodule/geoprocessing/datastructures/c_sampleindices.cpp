@@ -12,7 +12,7 @@
 // -- include nanobind headers
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/array.h>
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+#include <xtensor-python/nanobind/pytensor.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {

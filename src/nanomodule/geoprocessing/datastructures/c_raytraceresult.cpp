@@ -9,7 +9,7 @@
 // -- c++ library headers
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures/raytraceresult.hpp"
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+#include <xtensor-python/nanobind/pytensor.hpp>
 
 // -- include nanobind headers
 #include <nanobind/nanobind.h>

@@ -4,7 +4,7 @@
 
 #include <nanobind/nanobind.h>
 
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+#include <xtensor-python/nanobind/pytensor.hpp>
 
 #include <themachinethatgoesping/algorithms/geoprocessing/functions/to_raypoints.hpp>
 

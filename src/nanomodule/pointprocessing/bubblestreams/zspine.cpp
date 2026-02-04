@@ -7,7 +7,7 @@
 #include <nanobind/stl/pair.h>
 #include <nanobind/stl/tuple.h>
 #include <nanobind/stl/vector.h>
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+#include <xtensor-python/nanobind/pytensor.hpp>
 
 #include <themachinethatgoesping/algorithms/pointprocessing/bubblestreams/zspine.hpp>
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>

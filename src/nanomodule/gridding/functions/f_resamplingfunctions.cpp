@@ -7,7 +7,7 @@
 #include <cstddef>
 
 #include <nanobind/nanobind.h>
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+#include <xtensor-python/nanobind/pytensor.hpp>
 
 #include <themachinethatgoesping/algorithms/gridding/functions/resamplingfunctions.hpp>
 
@@ -35,9 +35,9 @@ void init_resamplingfunctions(nanobind::module_& m)
            const t_float                      grid_min,
            const t_float                      grid_max,
            const std::size_t                  max_steps) {
-            xt::xtensor<t_float, 1> values_min_xt(values_min.shape());
-            xt::xtensor<t_float, 1> values_max_xt(values_max.shape());
-            xt::xtensor<t_float, 1> values_res_xt(values_res.shape());
+            auto values_min_xt = xt::xtensor<t_float, 1>::from_shape(values_min.shape());
+            auto values_max_xt = xt::xtensor<t_float, 1>::from_shape(values_max.shape());
+            auto values_res_xt = xt::xtensor<t_float, 1>::from_shape(values_res.shape());
 
             values_min_xt = values_min;
             values_max_xt = values_max;

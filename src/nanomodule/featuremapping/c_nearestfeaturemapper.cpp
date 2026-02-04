@@ -14,7 +14,7 @@
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
 
 // -- include nanobind headers
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+#include <xtensor-python/nanobind/pytensor.hpp>
 
 namespace nb = nanobind;
 

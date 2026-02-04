@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 #include <nanobind/nanobind.h>
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+#include <xtensor-python/nanobind/pytensor.hpp>
 
 #include <themachinethatgoesping/algorithms/gridding/functions/gridfunctions.hpp>
 

@@ -10,7 +10,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/tuple.h>
 
-#include <themachinethatgoesping/tools_nanobind/pytensor_nanobind.hpp>
+#include <xtensor-python/nanobind/pytensor.hpp>
 //#include <themachinethatgoesping/tools_nanobind/xtensor-nanobind/pytensor.hpp>
 
 #include <themachinethatgoesping/algorithms/imageprocessing/functions.hpp>
