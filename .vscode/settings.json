@@ -4,12 +4,28 @@
     "C_Cpp.default.compilerPath": "/usr/bin/gcc",
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/src/**",
-        "${workspaceFolder}/subprojects/**"
+        "${workspaceFolder}/include/**"
     ],
     "C_Cpp.default.defines": [
         "MESON_BUILD"
     ],
-    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.default.browse.path": [
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/include"
+    ],
+    "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
+    "C_Cpp.workspaceParsingPriority": "low",
+    "C_Cpp.codeAnalysis.runAutomatically": false,
+    "C_Cpp.intelliSenseEngineFallback": "Disabled",
+    "C_Cpp.loggingLevel": "Error",
+    "C_Cpp.files.exclude": {
+        "**/build*/**": true,
+        "**/builddir/**": true,
+        "**/.cache/**": true,
+        "**/subprojects/**": true
+    },
+
+    "cmake.configureOnOpen": false,
     "C_Cpp.clang_format_style": "file",
     "C_Cpp.clang_format_path": "/usr/bin/clang-format",
     "github.copilot.enable": {
@@ -36,11 +52,18 @@
         "**/.cache/**": true,
         "**/builddir/**": true
     },
+    "files.watcherExclude": {
+        "**/build*/**": true,
+        "**/builddir/**": true,
+        "**/.cache/**": true,
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true
+    },
     "python.defaultInterpreterPath": "python3",
     "python.linting.enabled": true,
     "editor.suggestSelection": "first",
     "editor.tabCompletion": "on",
     "editor.wordBasedSuggestions": "allDocuments",
     "editor.parameterHints.enabled": true,
-    "mesonbuild.configureOnOpen": true
+    "mesonbuild.configureOnOpen": false
 }

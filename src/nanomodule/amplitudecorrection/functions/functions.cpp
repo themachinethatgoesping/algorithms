@@ -204,6 +204,55 @@ void init_functions(nb::module_& m)
           nb::arg("max_beam_index") = std::nullopt,
           nb::arg("mp_cores")       = 1);
 
+    // --- sidelobe correction functions ---
+
+    m.def("compute_nanmean_across_beams",
+          &compute_nanmean_across_beams<xt::nanobind::pytensor<t_float, 2>,
+                                        xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(compute_nanmean_across_beams),
+          nb::arg("wci"),
+          nb::arg("mp_cores") = 1);
+
+    m.def("compute_nanmedian_across_beams",
+          &compute_nanmedian_across_beams<xt::nanobind::pytensor<t_float, 2>,
+                                          xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(compute_nanmedian_across_beams),
+          nb::arg("wci"),
+          nb::arg("mp_cores") = 1);
+
+    m.def("compute_reference_nanmean",
+          &compute_reference_nanmean<xt::nanobind::pytensor<t_float, 2>>,
+          DOC_amplitudecorrection_functions(compute_reference_nanmean),
+          nb::arg("wci_region"));
+
+    m.def("compute_reference_nanpercentile",
+          &compute_reference_nanpercentile<xt::nanobind::pytensor<t_float, 2>>,
+          DOC_amplitudecorrection_functions(compute_reference_nanpercentile),
+          nb::arg("wci_region"),
+          nb::arg("percentile"));
+
+    m.def("apply_wci_sidelobe_correction",
+          &apply_wci_sidelobe_correction<xt::nanobind::pytensor<t_float, 2>,
+                                         xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(apply_wci_sidelobe_correction),
+          nb::arg("wci"),
+          nb::arg("per_sample_average"),
+          nb::arg("reference_level"),
+          nb::arg("mp_cores") = 1);
+
+    m.def("inplace_wci_sidelobe_correction",
+          &inplace_wci_sidelobe_correction<xt::nanobind::pytensor<t_float, 2>,
+                                           xt::nanobind::pytensor<t_float, 1>>,
+          DOC_amplitudecorrection_functions(inplace_wci_sidelobe_correction),
+          nb::arg("wci").noconvert(),
+          nb::arg("per_sample_average"),
+          nb::arg("reference_level"),
+          nb::arg("min_beam_index") = std::nullopt,
+          nb::arg("max_beam_index") = std::nullopt,
+          nb::arg("mp_cores")       = 1);
+
+    // --- benchmarking functions ---
+
     m.def("apply_beam_sample_correction_loop",
           &apply_beam_sample_correction_loop<xt::nanobind::pytensor<t_float, 2>,
                                              xt::nanobind::pytensor<t_float, 1>>,

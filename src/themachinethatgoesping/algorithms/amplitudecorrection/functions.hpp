@@ -11,3 +11,4 @@
 #include "functions/absorption.hpp"
 #include "functions/rangecorrection.hpp"
 #include "functions/wcicorrection.hpp"
+#include "functions/wcisidelobecorrection.hpp"
