@@ -1,0 +1,81 @@
+--- a/src/themachinethatgoesping/navigation/navtools.hpp	2026-02-10 08:55:27.009341435 +0000
++++ b/src/themachinethatgoesping/navigation/navtools.hpp	2026-02-10 08:55:34.045287119 +0000
+@@ -182,9 +182,8 @@
+     // Check if container is xtensor and handle resize accordingly
+     if constexpr (requires { T_container::from_shape(std::declval<typename T_container::shape_type>()); })
+     {
+-        using index_type = typename T_container::shape_type::value_type;
+-        lat              = T_container::from_shape({ static_cast<index_type>(northing.size()) });
+-        lon              = T_container::from_shape({ static_cast<index_type>(northing.size()) });
++        lat              = T_container::from_shape({ static_cast<size_t>(northing.size()) });
++        lon              = T_container::from_shape({ static_cast<size_t>(northing.size()) });
+     }
+     else
+     {
+@@ -232,9 +231,8 @@
+     // Check if container is xtensor and handle resize accordingly
+     if constexpr (xt::is_xexpression<T_container_double>::value)
+     {
+-        using index_type = typename T_container_double::shape_type::value_type;
+-        lat = T_container_double::from_shape({ static_cast<index_type>(northing.size()) });
+-        lon = T_container_double::from_shape({ static_cast<index_type>(northing.size()) });
++        lat = T_container_double::from_shape({ static_cast<size_t>(northing.size()) });
++        lon = T_container_double::from_shape({ static_cast<size_t>(northing.size()) });
+     }
+     else
+     {
+@@ -298,9 +296,8 @@
+     // Check if container is xtensor and handle resize accordingly
+     if constexpr (xt::is_xexpression<T_container_double>::value)
+     {
+-        using index_type = typename T_container_double::shape_type::value_type;
+-        northing         = T_container_double::from_shape({ static_cast<index_type>(lat.size()) });
+-        easting          = T_container_double::from_shape({ static_cast<index_type>(lat.size()) });
++        northing         = T_container_double::from_shape({ static_cast<size_t>(lat.size()) });
++        easting          = T_container_double::from_shape({ static_cast<size_t>(lat.size()) });
+     }
+     else
+     {
+@@ -409,9 +406,8 @@
+     // else we assume it is a std::vector
+     if constexpr (xt::is_xexpression<T_return_container>::value)
+     {
+-        using index_type = typename T_return_container::shape_type::value_type;
+         distances =
+-            T_return_container::from_shape({ static_cast<index_type>(latitudes.size() - 1) });
++            T_return_container::from_shape({ static_cast<size_t>(latitudes.size() - 1) });
+     }
+     else
+         distances.resize(latitudes.size() - 1);
+@@ -452,9 +448,8 @@
+     // else we assume it is a std::vector
+     if constexpr (xt::is_xexpression<T_return_container>::value)
+     {
+-        using index_type = typename T_return_container::shape_type::value_type;
+         distances        = T_return_container::from_shape(
+-            { static_cast<index_type>(geo_locations_latlon.size() - 1) });
++            { static_cast<size_t>(geo_locations_latlon.size() - 1) });
+     }
+     else
+         distances.resize(geo_locations_latlon.size() - 1);
+@@ -510,8 +505,7 @@
+     // else we assume it is a std::vector
+     if constexpr (xt::is_xexpression<T_return_container>::value)
+     {
+-        using index_type = typename T_return_container::shape_type::value_type;
+-        distances = T_return_container::from_shape({ static_cast<index_type>(latitudes.size()) });
++        distances = T_return_container::from_shape({ static_cast<size_t>(latitudes.size()) });
+     }
+     else
+         distances.resize(latitudes.size());
+@@ -555,9 +549,8 @@
+     // else we assume it is a std::vector
+     if constexpr (xt::is_xexpression<T_return_container>::value)
+     {
+-        using index_type = typename T_return_container::shape_type::value_type;
+         distances        = T_return_container::from_shape(
+-            { static_cast<index_type>(geo_locations_latlon.size()) });
++            { static_cast<size_t>(geo_locations_latlon.size()) });
+     }
+     else
+         distances.resize(geo_locations_latlon.size());

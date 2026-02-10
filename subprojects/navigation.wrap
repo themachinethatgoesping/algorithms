@@ -6,6 +6,7 @@
 url = https://github.com/themachinethatgoesping/navigation.git
 revision = main
 directory = navigation-main
+diff_files = navtools_fix.patch
 
 [provide]
 themachinethatgoesping_navigation = navigation_dep
