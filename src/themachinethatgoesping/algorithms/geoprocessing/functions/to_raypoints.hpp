@@ -5,8 +5,10 @@
 
 #include <fmt/core.h>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
+#include <themachinethatgoesping/tools/math/simd.hpp>
 
 #include <xtensor/containers/xfixed.hpp>
+#include <xtensor/views/xview.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -48,18 +50,21 @@ inline t_xtensor_out to_raypoints(
 
     t_xtensor_1d slopes = (end_locations - base_location) / (end_scale_values - base_scale_value);
 
-#pragma omp parallel for num_threads(mp_cores) collapse(2)
+#pragma omp parallel for num_threads(mp_cores)
     for (size_t r = 0; r < shape[0]; ++r)
     {
-        for (size_t p = 0; p < shape[1]; ++p)
-        {
-            auto x                           = ray_scale_values.unchecked(p);
-            output_locations.unchecked(r, p) = base_location + (x)*slopes.unchecked(r);
-        }
+        //FMA: fused multiply-add for better precision: base_location + ray_scale_values * slope
+        tools::math::fma_dispatch(
+            xt::view(output_locations, r, xt::all()),
+            ray_scale_values.data(),
+            slopes.unchecked(r),
+            base_location);
     }
 
     return output_locations;
 }
+
+
 
 }
 }

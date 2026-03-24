@@ -166,6 +166,8 @@ struct XYZ
         }
     }
 
+
+
     // ----- some convenient math -----
     std::array<float, 2> get_minmax_x() const { return xt::minmax(x)(); }
     std::array<float, 2> get_minmax_y() const { return xt::minmax(y)(); }
