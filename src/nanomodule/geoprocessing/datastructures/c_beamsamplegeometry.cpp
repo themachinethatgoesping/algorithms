@@ -10,6 +10,7 @@
 // -- include nanobind headers
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/optional.h>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -30,6 +31,24 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::datastructure
 
 void init_c_beamsamplegeometry(nb::module_& m)
 {
+    // Register Bounds struct
+    nb::class_<BeamSampleGeometry::Bounds>(m, "BeamSampleGeometryBounds",
+                                            "Bounding box of beam/sample coordinates.")
+        .def(nb::init<>())
+        .def_rw("x_min", &BeamSampleGeometry::Bounds::x_min)
+        .def_rw("x_max", &BeamSampleGeometry::Bounds::x_max)
+        .def_rw("y_min", &BeamSampleGeometry::Bounds::y_min)
+        .def_rw("y_max", &BeamSampleGeometry::Bounds::y_max)
+        .def_rw("z_min", &BeamSampleGeometry::Bounds::z_min)
+        .def_rw("z_max", &BeamSampleGeometry::Bounds::z_max)
+        .def("__eq__", &BeamSampleGeometry::Bounds::operator==, nb::arg("other"))
+        .def("__repr__", [](const BeamSampleGeometry::Bounds& b) {
+            return fmt::format(
+                "BeamSampleGeometryBounds(x=[{}, {}], y=[{}, {}], z=[{}, {}])",
+                b.x_min, b.x_max, b.y_min, b.y_max, b.z_min, b.z_max);
+        })
+        ;
+
     nb::class_<BeamSampleGeometry>(m,
                                    "BeamSampleGeometry",
                                    DOC(themachinethatgoesping,
@@ -274,6 +293,53 @@ void init_c_beamsamplegeometry(nb::module_& m)
         .def("forward_z_flat",
              &BeamSampleGeometry::forward_z_flat,
              DOC_BeamSampleGeometry(forward_z_flat))
+
+        // --- bounds ---
+        .def("get_bounds",
+             &BeamSampleGeometry::get_bounds,
+             DOC_BeamSampleGeometry(get_bounds))
+
+        // --- backward mapping ---
+        .def("backward_nearest",
+             [](const BeamSampleGeometry& self,
+                const xt::nanobind::pytensor<float, 2>& data,
+                const xt::nanobind::pytensor<float, 1>& y_coordinates,
+                const xt::nanobind::pytensor<float, 1>& z_coordinates,
+                unsigned int supersampling,
+                int mp_cores) {
+                 return self.backward_nearest<xt::nanobind::pytensor<float, 2>>(
+                     data, y_coordinates, z_coordinates,
+                     supersampling, mp_cores);
+             },
+             "Backward-map WCI data to (y, z) image via nearest-neighbor.\n"
+             "Sample numbers use Euclidean range from the sensor to each pixel.\n"
+             "When supersampling > 1, probes S*S sub-pixel locations per pixel\n"
+             "and averages (equivalent to render-at-high-res-then-downsample).",
+             nb::arg("data"),
+             nb::arg("y_coordinates"),
+             nb::arg("z_coordinates"),
+             nb::arg("supersampling") = 1,
+             nb::arg("mp_cores") = 1)
+        .def("backward_bilinear",
+             [](const BeamSampleGeometry& self,
+                const xt::nanobind::pytensor<float, 2>& data,
+                const xt::nanobind::pytensor<float, 1>& y_coordinates,
+                const xt::nanobind::pytensor<float, 1>& z_coordinates,
+                unsigned int supersampling,
+                int mp_cores) {
+                 return self.backward_bilinear<xt::nanobind::pytensor<float, 2>>(
+                     data, y_coordinates, z_coordinates,
+                     supersampling, mp_cores);
+             },
+             "Backward-map WCI data to (y, z) image via bilinear interpolation.\n"
+             "Sample numbers use Euclidean range from the sensor to each pixel.\n"
+             "When supersampling > 1, probes S*S sub-pixel locations per pixel\n"
+             "and averages (equivalent to render-at-high-res-then-downsample).",
+             nb::arg("data"),
+             nb::arg("y_coordinates"),
+             nb::arg("z_coordinates"),
+             nb::arg("supersampling") = 1,
+             nb::arg("mp_cores") = 1)
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(BeamSampleGeometry)

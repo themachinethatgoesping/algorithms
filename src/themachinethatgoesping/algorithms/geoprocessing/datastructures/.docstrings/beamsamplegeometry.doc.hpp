@@ -1,4 +1,4 @@
-//sourcehash: 97d19657d33075163f50667baa67c3394102512c554c17c24a5f3e02651efe06
+//sourcehash: 2a84e8c19f986b614b955d391432e1228168461d4db1898ee54361b1b5cb5359
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -62,11 +62,90 @@ Args:
     first_sample_numbers: first valid sample number per beam [n_beams]
     number_of_samples: number of samples per beam [n_beams])doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds =
+R"doc(Bounding box of all beam endpoints in (x, y, z) space.
+
+Coordinates are NaN for dimensions without a set affine.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_operator_eq = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_x_max = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_x_min = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_y_max = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_y_min = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_z_max = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_z_min = R"doc()doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_x = R"doc(sample_nr → x per beam)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_y = R"doc(sample_nr → y per beam)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_z = R"doc(sample_nr → z per beam)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_backward_bilinear =
+R"doc(Backward-map WCI data into a (y, z) image via bilinear interpolation.
+
+For each output pixel, brackets the nearest two beams and the
+fractional sample number, then bilinearly interpolates. Sample numbers
+are computed from the Euclidean range to the sensor.
+
+When supersampling > 1, each pixel probes S×S sub-pixel locations and
+averages the results for anti-aliasing.
+
+Pixels outside the beam/sample coverage are NaN.
+
+Args:
+    data: WCI data [n_beams x max_samples]
+    y_coordinates: target crosstrack coordinates [n_y], must be sorted
+    z_coordinates: target depth coordinates [n_z], must be sorted
+    supersampling: sub-pixel factor per axis (default 1)
+    mp_cores: OpenMP threads (default 1)
+
+Template Args:
+    t_xtensor_out: 2D output type (e.g. xt::xtensor<float,2> or
+                   pytensor)
+    t_xtensor_2d: 2D xtensor-like input type
+    t_xtensor_1d_y: 1D xtensor-like type for y coordinates
+    t_xtensor_1d_z: 1D xtensor-like type for z coordinates
+
+Returns:
+    image [n_y x n_z], NaN where no valid data)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_backward_nearest =
+R"doc(Backward-map WCI data into a (y, z) image via nearest-neighbor.
+
+For each output pixel, finds the nearest beam via depth-invariant
+tangent matching and computes the sample number from the pixel's
+Euclidean range to the sensor (matching BTConstantSVP behaviour).
+
+When supersampling > 1, each pixel probes S×S sub-pixel locations and
+averages the results for anti-aliasing.  This is equivalent to
+rendering at S× resolution then downsampling, but uses no extra
+memory.
+
+Pixels outside the beam/sample coverage are NaN.
+
+Args:
+    data: WCI data [n_beams x max_samples]
+    y_coordinates: target crosstrack coordinates [n_y], must be sorted
+    z_coordinates: target depth coordinates [n_z], must be sorted
+    supersampling: sub-pixel factor per axis (default 1)
+    mp_cores: OpenMP threads (default 1)
+
+Template Args:
+    t_xtensor_out: 2D output type (e.g. xt::xtensor<float,2> or
+                   pytensor)
+    t_xtensor_2d: 2D xtensor-like input type
+    t_xtensor_1d_y: 1D xtensor-like type for y coordinates
+    t_xtensor_1d_z: 1D xtensor-like type for z coordinates
+
+Returns:
+    image [n_y x n_z], NaN where no valid data)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_check_affine_size = R"doc()doc";
 
@@ -226,6 +305,13 @@ Returns:
     BeamSampleGeometry with z affine set)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_stream = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_bounds =
+R"doc(Compute the bounding box of all beam/sample coordinates.
+
+Evaluates the forward transform at the first and last sample of every
+beam and takes min/max.  Only populates bounds for dimensions that
+have a set affine; others stay NaN.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_first_sample_numbers = R"doc()doc";
 
