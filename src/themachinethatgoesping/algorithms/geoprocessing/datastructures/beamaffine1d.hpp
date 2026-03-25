@@ -15,6 +15,7 @@
 #include <xtensor/views/xview.hpp>
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
+#include <themachinethatgoesping/tools/helper/xtensor.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -107,9 +108,11 @@ struct BeamAffine1D
      * @param end_sample_numbers per-beam sample number of the end values [n_beams]
      * @return BeamAffine1D
      */
-    static BeamAffine1D from_base_and_endpoints(float                         base_value,
-                                                const xt::xtensor<float, 1>&  end_values,
-                                                const xt::xtensor<float, 1>&  end_sample_numbers)
+    template<tools::helper::c_xtensor_1d t_xtensor_1d_vals,
+             tools::helper::c_xtensor_1d t_xtensor_1d_snr>
+    static BeamAffine1D from_base_and_endpoints(float                   base_value,
+                                                const t_xtensor_1d_vals& end_values,
+                                                const t_xtensor_1d_snr&  end_sample_numbers)
     {
         if (end_values.size() != end_sample_numbers.size())
             throw std::runtime_error(fmt::format(

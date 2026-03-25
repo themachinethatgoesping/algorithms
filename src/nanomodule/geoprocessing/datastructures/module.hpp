@@ -20,6 +20,8 @@ void init_c_sampledirections(nb::module_& m);      // c_sampledirections.cpp
 void init_c_sampledirectionsrange(nb::module_& m); // c_sampledirectionsrange.cpp
 void init_c_sampledirectionstime(nb::module_& m);  // c_sampledirectionstime.cpp
 void init_c_beamsampleparameters(nb::module_& m);  // c_beamsampleparameters.cpp
+void init_c_beamaffine1d(nb::module_& m);          // c_beamaffine1d.cpp
+void init_c_beamsamplegeometry(nb::module_& m);    // c_beamsamplegeometry.cpp
 
 void init_m_datastructures(nb::module_& m)
 {
@@ -36,6 +38,8 @@ void init_m_datastructures(nb::module_& m)
     init_c_raytraceresults(submodule);
     init_c_sampleindices(submodule);
     init_c_beamsampleparameters(submodule);
+    init_c_beamaffine1d(submodule);
+    init_c_beamsamplegeometry(submodule);
 }
 
 } // namespace py_datastructures

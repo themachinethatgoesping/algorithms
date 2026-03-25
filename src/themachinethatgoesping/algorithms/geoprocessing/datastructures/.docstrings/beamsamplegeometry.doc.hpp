@@ -1,4 +1,4 @@
-//sourcehash: 77dda45bf30262a5a4ddcdff1f4da8c897d110e1be805b08a3a7cf9accaff066
+//sourcehash: 97d19657d33075163f50667baa67c3394102512c554c17c24a5f3e02651efe06
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -72,6 +72,124 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_first_sample_numbers = R"doc([n_beams] first valid sample nr)doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_coord_all =
+R"doc(Compute the full flat coordinate array for all beams and samples.
+
+For each beam b, fills positions [flat_offsets[b] ..
++number_of_samples[b]-1]
+with: affine.offset[b] + affine.slope[b] * (first_sample_numbers[b] +
+      j)
+One SIMD FMA call per beam.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_coord_flat = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_coord_range = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_x =
+R"doc(Compute x coordinate for (beam_index, sample_number) pairs.
+
+When beam_indices are sorted (consecutive same-beam entries), each run
+is dispatched as a single SIMD FMA call for maximum throughput.
+
+Args:
+    beam_indices: beam index per entry [N], values in [0, n_beams)
+    sample_numbers: float sample number per entry [N]
+
+Returns:
+    xt::xtensor<float, 1> x coordinate per entry [N])doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_x_2 =
+R"doc(Compute x coordinate for sample ranges per beam.
+
+For each selected beam, generates sample numbers [first, first+step,
+..., <= last] and computes x = offset + slope * sample_nr via SIMD
+FMA. Result is 2D [n_selected_beams x max_samples]; trailing unused
+cells are NaN.
+
+Args:
+    beam_indices: per selected beam [B], values in [0, n_beams)
+    first_sample_numbers: first sample number per beam [B]
+    last_sample_numbers: last sample number per beam [B]
+    sample_step: step between consecutive samples (default 1)
+
+Returns:
+    xt::xtensor<float, 2> [B x max_samples])doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_x_flat =
+R"doc(Compute the full flat x coordinate array for all beams and samples.
+
+The result has get_total_samples() elements laid out contiguously per
+beam. Index with:
+  flat_index = get_flat_offsets()[beam] + (sample_nr -
+  first_sample_numbers[beam]))doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_y =
+R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_sn&)
+const)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_y_2 =
+R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_fs&,
+const t_xtensor_1d_ls&, uint32_t) const)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_y_flat = R"doc(@copydoc forward_x_flat)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_z =
+R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_sn&)
+const)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_z_2 =
+R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_fs&,
+const t_xtensor_1d_ls&, uint32_t) const)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_z_flat = R"doc(@copydoc forward_x_flat)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_angle_and_range =
+R"doc(Create a BeamSampleGeometry from crosstrack angles and ranges.
+
+Computes y and z affines from the crosstrack angle and range at a
+known sample number per beam (no x affine set since no alongtrack
+info):
+  y(sample_nr) = (-range * sin(crosstrack_angle)) / range_sample_nr *
+  sample_nr z(sample_nr) = ( range * cos(crosstrack_angle)) /
+  range_sample_nr * sample_nr
+
+Args:
+    crosstrack_angles: in °, positive portside up, 0 == downwards
+                       [n_beams]
+    ranges: in m, per beam [n_beams]
+    range_sample_numbers: sample number at which the range was
+                          measured [n_beams]
+    first_sample_numbers: first valid sample number per beam [n_beams]
+    number_of_samples: number of samples per beam [n_beams]
+
+Returns:
+    BeamSampleGeometry with y and z affines set)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_angles_and_range =
+R"doc(Create a BeamSampleGeometry from alongtrack angles, crosstrack angles,
+and ranges.
+
+Uses the independent / Mills Cross formulation: the TX and RX arrays
+measure angles independently in perpendicular planes, so each angle
+contributes one horizontal displacement:
+  x(sample_nr) = ( range * sin(at_angle))  / range_sample_nr *
+  sample_nr y(sample_nr) = (-range * sin(ct_angle))  / range_sample_nr
+  * sample_nr z(sample_nr) = sqrt(range² - x² - y²)    /
+  range_sample_nr * sample_nr
+
+Args:
+    alongtrack_angles: in °, positive bow up, 0 == downwards [n_beams]
+    crosstrack_angles: in °, positive portside up, 0 == downwards
+                       [n_beams]
+    ranges: in m, per beam [n_beams]
+    range_sample_numbers: sample number at which the range was
+                          measured [n_beams]
+    first_sample_numbers: first valid sample number per beam [n_beams]
+    number_of_samples: number of samples per beam [n_beams]
+
+Returns:
+    BeamSampleGeometry with x, y, z affines set)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_bottom_xyz =
 R"doc(Create a BeamSampleGeometry from a base XYZ location and per-beam
 bottom XYZ locations with their corresponding sample numbers.
@@ -111,11 +229,24 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_first_sample_numbers = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_flat_offsets =
+R"doc(Compute per-beam cumulative offsets into a flat sample array.
+
+flat_offsets[b] = sum(number_of_samples[0..b-1])
+
+Use with: flat_index = flat_offsets[beam] + (sample_nr -
+first_sample_numbers[beam])
+
+Returns:
+    xt::xtensor<unsigned int, 1> [n_beams])doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_last_sample_numbers = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_n_beams = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_number_of_samples = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_total_samples = R"doc(Total number of samples across all beams.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_x_affine = R"doc()doc";
 
