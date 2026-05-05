@@ -71,6 +71,17 @@ inline datastructures::BeamSampleGeometry with_geolocation(
     return geom;
 }
 
+/// @copydoc datastructures::BeamSampleGeometry::with_geolocation(const navigation::datastructures::GeolocationUTM&, double, double)
+inline datastructures::BeamSampleGeometry with_geolocation(
+    datastructures::BeamSampleGeometry                geom,
+    const navigation::datastructures::GeolocationUTM& g,
+    double                                            ref_northing = 0.0,
+    double                                            ref_easting  = 0.0)
+{
+    geom.with_geolocation(g, ref_northing, ref_easting);
+    return geom;
+}
+
 } // namespace functions
 } // namespace geoprocessing
 } // namespace algorithms

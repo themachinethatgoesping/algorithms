@@ -298,6 +298,39 @@ void init_c_beamsamplegeometry(nb::module_& m)
              &BeamSampleGeometry::forward_z_flat,
              DOC_BeamSampleGeometry(forward_z_flat))
 
+        // --- fused XYZ forward (allocates output as pytensor: zero-copy return) ---
+        .def("forward_xyz",
+             [](const BeamSampleGeometry& self,
+                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+                const xt::nanobind::pytensor<float, 1>&    sample_numbers) {
+                 return self.forward_xyz<xt::nanobind::pytensor<float, 1>>(
+                     beam_indices, sample_numbers);
+             },
+             "Compute (x, y, z) for (beam_index, sample_number) pairs in a single pass. "
+             "Returns a tuple (x, y, z) of shape [N]. ~3x faster than three separate calls.",
+             nb::arg("beam_indices"),
+             nb::arg("sample_numbers"))
+        .def("forward_xyz",
+             [](const BeamSampleGeometry& self,
+                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+                const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
+                const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
+                uint32_t                                   sample_step) {
+                 return self.forward_xyz<xt::nanobind::pytensor<float, 2>>(
+                     beam_indices, first_sample_numbers, last_sample_numbers, sample_step);
+             },
+             "Compute (x, y, z) for sample ranges per beam in a single pass. "
+             "Returns a tuple of three 2D arrays [B x max_samples], NaN-padded.",
+             nb::arg("beam_indices"),
+             nb::arg("first_sample_numbers"),
+             nb::arg("last_sample_numbers"),
+             nb::arg("sample_step") = 1)
+        .def("forward_xyz_flat",
+             [](const BeamSampleGeometry& self) {
+                 return self.forward_xyz_flat<xt::nanobind::pytensor<float, 1>>();
+             },
+             "Compute the full flat (x, y, z) arrays for all beams and samples in a single pass.")
+
         // --- bounds ---
         .def("get_bounds",
              &BeamSampleGeometry::get_bounds,
@@ -320,6 +353,18 @@ void init_c_beamsamplegeometry(nb::module_& m)
              nb::arg("tx") = 0.f,
              nb::arg("ty") = 0.f,
              nb::arg("tz") = 0.f,
+             nb::rv_policy::reference_internal)
+        // GeolocationUTM overload registered FIRST so exact-type match wins
+        // over the GeolocationLocal base-class overload below.
+        .def("with_geolocation",
+             nb::overload_cast<const themachinethatgoesping::navigation::datastructures::GeolocationUTM&,
+                               double,
+                               double>(
+                 &BeamSampleGeometry::with_geolocation),
+             DOC_BeamSampleGeometry(with_geolocation_3),
+             nb::arg("geolocation_utm"),
+             nb::arg("ref_northing") = 0.0,
+             nb::arg("ref_easting")  = 0.0,
              nb::rv_policy::reference_internal)
         .def("with_geolocation",
              nb::overload_cast<const themachinethatgoesping::navigation::datastructures::Geolocation&>(

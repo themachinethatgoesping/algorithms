@@ -38,6 +38,7 @@
 #include <limits>
 #include <numeric>
 #include <optional>
+#include <tuple>
 
 #include <xtensor/containers/xtensor.hpp>
 #include <xtensor/core/xmath.hpp>
@@ -51,6 +52,7 @@
 
 #include <themachinethatgoesping/navigation/datastructures/geolocation.hpp>
 #include <themachinethatgoesping/navigation/datastructures/geolocationlocal.hpp>
+#include <themachinethatgoesping/navigation/datastructures/geolocationutm.hpp>
 
 #include "beamaffine1d.hpp"
 #include "xyz.hpp"
@@ -316,6 +318,36 @@ struct BeamSampleGeometry
                                     g.roll,
                                     static_cast<float>(g.northing),
                                     static_cast<float>(g.easting),
+                                    g.z);
+    }
+
+    /**
+     * @brief Apply a GeolocationUTM (UTM northing/easting/depth + ypr) to the
+     * geometry, subtracting a float64 reference origin to preserve precision.
+     *
+     * Absolute UTM coordinates (~10^6 m) cannot be represented accurately in
+     * the float32 affines used internally — float32 only has ~0.5 m precision
+     * at that magnitude, which destroys per-sample geometry. This overload
+     * subtracts the @p ref_easting / @p ref_northing reference in double
+     * precision before casting to float, so the resulting (x, y, z) are
+     * expressed in metres relative to that reference and round-trip cleanly.
+     *
+     * The output convention matches the GeolocationLocal overload:
+     *   x ↔ northing-relative, y ↔ easting-relative, z ↔ depth.
+     *
+     * @param g                UTM pose (northing/easting in metres, ypr in deg)
+     * @param ref_northing     reference UTM northing in metres (subtracted from g.northing)
+     * @param ref_easting      reference UTM easting in metres (subtracted from g.easting)
+     */
+    BeamSampleGeometry& with_geolocation(const navigation::datastructures::GeolocationUTM& g,
+                                         double ref_northing = 0.0,
+                                         double ref_easting  = 0.0)
+    {
+        return with_rigid_transform(g.yaw,
+                                    g.pitch,
+                                    g.roll,
+                                    static_cast<float>(g.northing - ref_northing),
+                                    static_cast<float>(g.easting - ref_easting),
                                     g.z);
     }
 
@@ -645,6 +677,207 @@ struct BeamSampleGeometry
         return result;
     }
 
+    // --- fused XYZ forward helpers (templated on output type) ---
+    //
+    // Output type t_xtensor_*_out must be a 1D / 2D xtensor-compatible type
+    // (xt::xtensor or xt::nanobind::pytensor). Allocating the result as
+    // pytensor avoids a copy when returned to Python.
+
+    template<tools::helper::c_xtensor_1d t_xtensor_1d_out,
+             tools::helper::c_xtensor_1d t_xtensor_1d_bi,
+             tools::helper::c_xtensor_1d t_xtensor_1d_sn>
+    static std::tuple<t_xtensor_1d_out, t_xtensor_1d_out, t_xtensor_1d_out>
+    forward_xyz_flat_(const BeamAffine1D&    ax,
+                      const BeamAffine1D&    ay,
+                      const BeamAffine1D&    az,
+                      const t_xtensor_1d_bi& beam_indices,
+                      const t_xtensor_1d_sn& sample_numbers)
+    {
+        static_assert(
+            std::is_same_v<typename std::decay_t<t_xtensor_1d_bi>::value_type, uint32_t>,
+            "beam_indices must have uint32_t element type");
+        static_assert(
+            std::is_same_v<typename std::decay_t<t_xtensor_1d_sn>::value_type, float>,
+            "sample_numbers must have float element type");
+        static_assert(
+            std::is_same_v<typename std::decay_t<t_xtensor_1d_out>::value_type, float>,
+            "output tensor must have float element type");
+
+        const size_t n = beam_indices.size();
+        t_xtensor_1d_out rx = t_xtensor_1d_out::from_shape({ n });
+        t_xtensor_1d_out ry = t_xtensor_1d_out::from_shape({ n });
+        t_xtensor_1d_out rz = t_xtensor_1d_out::from_shape({ n });
+        if (n == 0)
+            return { std::move(rx), std::move(ry), std::move(rz) };
+
+        const auto* bi = beam_indices.data();
+        const auto* sn = sample_numbers.data();
+
+        size_t i = 0;
+        while (i < n)
+        {
+            uint32_t beam      = bi[i];
+            size_t   run_start = i;
+            while (i < n && bi[i] == beam)
+                ++i;
+            const size_t count = i - run_start;
+
+            tools::math::fma_dispatch(rx.data() + run_start,
+                                      sn + run_start,
+                                      ax.slopes.unchecked(beam),
+                                      ax.offsets.unchecked(beam),
+                                      count);
+            tools::math::fma_dispatch(ry.data() + run_start,
+                                      sn + run_start,
+                                      ay.slopes.unchecked(beam),
+                                      ay.offsets.unchecked(beam),
+                                      count);
+            tools::math::fma_dispatch(rz.data() + run_start,
+                                      sn + run_start,
+                                      az.slopes.unchecked(beam),
+                                      az.offsets.unchecked(beam),
+                                      count);
+        }
+        return { std::move(rx), std::move(ry), std::move(rz) };
+    }
+
+    template<tools::helper::c_xtensor_2d t_xtensor_2d_out,
+             tools::helper::c_xtensor_1d t_xtensor_1d_bi,
+             tools::helper::c_xtensor_1d t_xtensor_1d_fs,
+             tools::helper::c_xtensor_1d t_xtensor_1d_ls>
+    static std::tuple<t_xtensor_2d_out, t_xtensor_2d_out, t_xtensor_2d_out>
+    forward_xyz_range_(const BeamAffine1D&    ax,
+                       const BeamAffine1D&    ay,
+                       const BeamAffine1D&    az,
+                       const t_xtensor_1d_bi& beam_indices,
+                       const t_xtensor_1d_fs& first_sample_numbers,
+                       const t_xtensor_1d_ls& last_sample_numbers,
+                       uint32_t               sample_step)
+    {
+        static_assert(
+            std::is_same_v<typename std::decay_t<t_xtensor_1d_bi>::value_type, uint32_t>,
+            "beam_indices must have uint32_t element type");
+        static_assert(
+            std::is_same_v<typename std::decay_t<t_xtensor_1d_fs>::value_type, uint32_t>,
+            "first_sample_numbers must have uint32_t element type");
+        static_assert(
+            std::is_same_v<typename std::decay_t<t_xtensor_1d_ls>::value_type, uint32_t>,
+            "last_sample_numbers must have uint32_t element type");
+        static_assert(
+            std::is_same_v<typename std::decay_t<t_xtensor_2d_out>::value_type, float>,
+            "output tensor must have float element type");
+
+        const size_t n_sel = beam_indices.size();
+        const auto*  bi    = beam_indices.data();
+        const auto*  fs    = first_sample_numbers.data();
+        const auto*  ls    = last_sample_numbers.data();
+
+        size_t max_samples = 0;
+        for (size_t i = 0; i < n_sel; ++i)
+        {
+            if (ls[i] >= fs[i])
+            {
+                size_t count = size_t(ls[i] - fs[i]) / sample_step + 1;
+                max_samples  = std::max(max_samples, count);
+            }
+        }
+
+        if (max_samples == 0 || n_sel == 0)
+        {
+            return { t_xtensor_2d_out::from_shape({ n_sel, size_t(0) }),
+                     t_xtensor_2d_out::from_shape({ n_sel, size_t(0) }),
+                     t_xtensor_2d_out::from_shape({ n_sel, size_t(0) }) };
+        }
+
+        // Pre-allocate index ramp [0, 1, 2, ..., max_samples-1] (shared across axes)
+        auto ramp = xt::xtensor<float, 1>::from_shape({ max_samples });
+        for (size_t j = 0; j < max_samples; ++j)
+            ramp.unchecked(j) = static_cast<float>(j);
+
+        t_xtensor_2d_out rx = t_xtensor_2d_out::from_shape({ n_sel, max_samples });
+        t_xtensor_2d_out ry = t_xtensor_2d_out::from_shape({ n_sel, max_samples });
+        t_xtensor_2d_out rz = t_xtensor_2d_out::from_shape({ n_sel, max_samples });
+        const float      nan = std::numeric_limits<float>::quiet_NaN();
+        std::fill(rx.data(), rx.data() + rx.size(), nan);
+        std::fill(ry.data(), ry.data() + ry.size(), nan);
+        std::fill(rz.data(), rz.data() + rz.size(), nan);
+
+        for (size_t i = 0; i < n_sel; ++i)
+        {
+            uint32_t beam  = bi[i];
+            uint32_t first = fs[i];
+            uint32_t last  = ls[i];
+            if (last < first)
+                continue;
+            size_t count = size_t(last - first) / sample_step + 1;
+
+            const float ff = static_cast<float>(first);
+            const float ss = static_cast<float>(sample_step);
+
+            auto emit = [&](const BeamAffine1D& a, t_xtensor_2d_out& out) {
+                float slope_val   = a.slopes.unchecked(beam);
+                float base_prime  = a.offsets.unchecked(beam) + slope_val * ff;
+                float slope_prime = slope_val * ss;
+                tools::math::fma_dispatch(out.data() + i * max_samples,
+                                          ramp.data(),
+                                          slope_prime,
+                                          base_prime,
+                                          count);
+            };
+            emit(ax, rx);
+            emit(ay, ry);
+            emit(az, rz);
+        }
+
+        return { std::move(rx), std::move(ry), std::move(rz) };
+    }
+
+    template<tools::helper::c_xtensor_1d t_xtensor_1d_out>
+    std::tuple<t_xtensor_1d_out, t_xtensor_1d_out, t_xtensor_1d_out>
+    forward_xyz_all_(const BeamAffine1D& ax,
+                     const BeamAffine1D& ay,
+                     const BeamAffine1D& az) const
+    {
+        static_assert(
+            std::is_same_v<typename std::decay_t<t_xtensor_1d_out>::value_type, float>,
+            "output tensor must have float element type");
+
+        unsigned int     total = get_total_samples();
+        t_xtensor_1d_out rx    = t_xtensor_1d_out::from_shape({ size_t(total) });
+        t_xtensor_1d_out ry    = t_xtensor_1d_out::from_shape({ size_t(total) });
+        t_xtensor_1d_out rz    = t_xtensor_1d_out::from_shape({ size_t(total) });
+        if (total == 0)
+            return { std::move(rx), std::move(ry), std::move(rz) };
+
+        size_t max_ns = *std::max_element(_number_of_samples.data(),
+                                          _number_of_samples.data() + _n_beams);
+        auto   ramp   = xt::xtensor<float, 1>::from_shape({ max_ns });
+        for (size_t j = 0; j < max_ns; ++j)
+            ramp.unchecked(j) = static_cast<float>(j);
+
+        size_t pos = 0;
+        for (size_t b = 0; b < _n_beams; ++b)
+        {
+            unsigned int ns = _number_of_samples.unchecked(b);
+            if (ns == 0)
+                continue;
+
+            const float fsn = _first_sample_numbers.unchecked(b);
+
+            auto emit = [&](const BeamAffine1D& a, t_xtensor_1d_out& out) {
+                float slope = a.slopes.unchecked(b);
+                float base  = a.offsets.unchecked(b) + slope * fsn;
+                tools::math::fma_dispatch(out.data() + pos, ramp.data(), slope, base, ns);
+            };
+            emit(ax, rx);
+            emit(ay, ry);
+            emit(az, rz);
+
+            pos += ns;
+        }
+        return { std::move(rx), std::move(ry), std::move(rz) };
+    }
+
   public:
     // --- forward transformations using SIMD-optimized FMA ---
 
@@ -753,6 +986,71 @@ struct BeamSampleGeometry
 
     /// @copydoc forward_x_flat
     xt::xtensor<float, 1> forward_z_flat() const { return forward_coord_all_(get_z_affine()); }
+
+    // --- fused XYZ forward transformations ---
+    //
+    // Compute (x, y, z) in a single pass. Saves Python-side overhead (one call
+    // instead of three), shares run-boundary detection / ramp build across
+    // axes, and writes the three outputs in cache-friendly order.
+    //
+    // The output type is templated so Python bindings can pass
+    //   xt::nanobind::pytensor<float, N>
+    // and the kernel allocates the result buffer directly as a numpy array
+    // (no copy on return). C++ callers default to xt::xtensor<float, N>.
+
+    /**
+     * @brief Fused (x, y, z) for (beam_index, sample_number) pairs.
+     *
+     * Equivalent to (forward_x, forward_y, forward_z) but ~3x faster from
+     * Python (one call, one beam-run scan, three SIMD FMAs per run).
+     *
+     * @return std::tuple<x, y, z>, each of shape [N]
+     */
+    template<tools::helper::c_xtensor_1d t_xtensor_1d_out = xt::xtensor<float, 1>,
+             tools::helper::c_xtensor_1d t_xtensor_1d_bi,
+             tools::helper::c_xtensor_1d t_xtensor_1d_sn>
+    std::tuple<t_xtensor_1d_out, t_xtensor_1d_out, t_xtensor_1d_out>
+    forward_xyz(const t_xtensor_1d_bi& beam_indices,
+                const t_xtensor_1d_sn& sample_numbers) const
+    {
+        return forward_xyz_flat_<t_xtensor_1d_out>(
+            get_x_affine(), get_y_affine(), get_z_affine(),
+            beam_indices, sample_numbers);
+    }
+
+    /**
+     * @brief Fused (x, y, z) for sample ranges per beam.
+     *
+     * Returns three 2D arrays [B x max_samples], NaN-padded.
+     */
+    template<tools::helper::c_xtensor_2d t_xtensor_2d_out = xt::xtensor<float, 2>,
+             tools::helper::c_xtensor_1d t_xtensor_1d_bi,
+             tools::helper::c_xtensor_1d t_xtensor_1d_fs,
+             tools::helper::c_xtensor_1d t_xtensor_1d_ls>
+    std::tuple<t_xtensor_2d_out, t_xtensor_2d_out, t_xtensor_2d_out>
+    forward_xyz(const t_xtensor_1d_bi& beam_indices,
+                const t_xtensor_1d_fs& first_sample_numbers,
+                const t_xtensor_1d_ls& last_sample_numbers,
+                uint32_t               sample_step = 1) const
+    {
+        return forward_xyz_range_<t_xtensor_2d_out>(
+            get_x_affine(), get_y_affine(), get_z_affine(),
+            beam_indices, first_sample_numbers, last_sample_numbers, sample_step);
+    }
+
+    /**
+     * @brief Fused full flat (x, y, z) for all beams and samples.
+     *
+     * Each output has get_total_samples() elements (same flat layout as
+     * forward_x_flat).
+     */
+    template<tools::helper::c_xtensor_1d t_xtensor_1d_out = xt::xtensor<float, 1>>
+    std::tuple<t_xtensor_1d_out, t_xtensor_1d_out, t_xtensor_1d_out>
+    forward_xyz_flat() const
+    {
+        return forward_xyz_all_<t_xtensor_1d_out>(
+            get_x_affine(), get_y_affine(), get_z_affine());
+    }
 
     // --- bounds ---
 

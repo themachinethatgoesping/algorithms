@@ -1,4 +1,4 @@
-//sourcehash: 3e42962de2e99f6e82fd54330e025963619205bd52b12d36944218fbff5695af
+//sourcehash: 917a3aa8f65733d88619a47b22a1c17d4429e2a225470d869e5dbe7cdae19887
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -48,6 +48,10 @@ navigation::datastructures::Geolocation&))doc";
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_geolocation_2 =
 R"doc(@copydoc datastructures::BeamSampleGeometry::with_geolocation(const
 navigation::datastructures::GeolocationLocal&))doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_geolocation_3 =
+R"doc(@copydoc datastructures::BeamSampleGeometry::with_geolocation(const
+navigation::datastructures::GeolocationUTM&, double, double))doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_offset = R"doc(@copydoc datastructures::BeamSampleGeometry::with_offset)doc";
 

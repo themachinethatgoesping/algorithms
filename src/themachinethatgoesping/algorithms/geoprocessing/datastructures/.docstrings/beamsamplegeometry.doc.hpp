@@ -1,4 +1,4 @@
-//sourcehash: 300f6c038c424536c04843c20ab894127c2fd030027fbd6b595193a404d6662a
+//sourcehash: 540a7f935f00125743151d62c384cd9e17b41144ad121f52412ff2231e3f9db5
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -62,25 +62,6 @@ Args:
     first_sample_numbers: first valid sample number per beam [n_beams]
     number_of_samples: number of samples per beam [n_beams])doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds =
-R"doc(Bounding box of all beam endpoints in (x, y, z) space.
-
-Coordinates are NaN for dimensions without a set affine.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_operator_eq = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_x_max = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_x_min = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_y_max = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_y_min = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_z_max = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_z_min = R"doc()doc";
-
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_x = R"doc(sample_nr → x per beam)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_y = R"doc(sample_nr → y per beam)doc";
@@ -141,6 +122,12 @@ The result has get_total_samples() elements laid out contiguously per
 beam. Index with:
   flat_index = get_flat_offsets()[beam] + (sample_nr -
   first_sample_numbers[beam]))doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz_all = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz_flat = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz_range = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_y =
 R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_sn&)
@@ -316,6 +303,29 @@ geometry.
 The resulting (x, y, z) will be expressed as (northing, easting,
 depth).
 Note: x ↔ northing and y ↔ easting (northing-first convention).)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_geolocation_3 =
+R"doc(Apply a GeolocationUTM (UTM northing/easting/depth + ypr) to the
+geometry, subtracting a float64 reference origin to preserve
+precision.
+
+Absolute UTM coordinates (~10^6 m) cannot be represented accurately in
+the float32 affines used internally — float32 only has ~0.5 m
+precision at that magnitude, which destroys per-sample geometry. This
+overload subtracts the ``ref_easting`` / ``ref_northing`` reference in
+double precision before casting to float, so the resulting (x, y, z)
+are expressed in metres relative to that reference and round-trip
+cleanly.
+
+The output convention matches the GeolocationLocal overload:
+  x ↔ northing-relative, y ↔ easting-relative, z ↔ depth.
+
+Args:
+    g: UTM pose (northing/easting in metres, ypr in deg)
+    ref_northing: reference UTM northing in metres (subtracted from
+                  g.northing)
+    ref_easting: reference UTM easting in metres (subtracted from
+                 g.easting))doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_offset =
 R"doc(Bake a translation (dx, dy, dz) into the geometry's affines.
