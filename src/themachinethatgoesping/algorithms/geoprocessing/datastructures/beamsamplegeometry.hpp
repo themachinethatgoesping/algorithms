@@ -2,6 +2,30 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
+// -----------------------------------------------------------------------------
+// BeamSampleGeometry — per-ping beam/sample coordinate geometry
+// -----------------------------------------------------------------------------
+// Stores the geometric relationship between sample numbers and spatial
+// coordinates (x, y, z) for all beams in a single ping.
+//
+// Each axis is represented as a BeamAffine1D, a per-beam linear mapping:
+//   coord[beam](sample_nr) = offset[beam] + slope[beam] * sample_nr
+//
+// Typical usage:
+//   1. Construct via a factory (from_bottom_xyz, from_angle_and_range, etc.)
+//   2. Call forward_xyz / forward_z to evaluate coordinates for arbitrary
+//      sample selections (flat list, range, or all samples).
+//   3. Only the axes you need must be set; unset axes throw on access.
+//
+// Factory helpers:
+//   from_bottom_xyz        — full XYZ from transducer origin + bottom hit
+//   from_bottom_z          — depth-only from base depth + bottom depths
+//   from_angle_and_range   — y/z from crosstrack angle + range (2-D sonar)
+//   from_angles_and_range  — full XYZ from AT+CT angles + range (3-D sonar)
+//
+// Note: This file was generated with assistance from Claude Opus (Anthropic).
+// -----------------------------------------------------------------------------
+
 #pragma once
 
 /* generated doc strings */
@@ -23,6 +47,10 @@
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <themachinethatgoesping/tools/math/simd.hpp>
+#include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+
+#include <themachinethatgoesping/navigation/datastructures/geolocation.hpp>
+#include <themachinethatgoesping/navigation/datastructures/geolocationlocal.hpp>
 
 #include "beamaffine1d.hpp"
 #include "xyz.hpp"
@@ -179,6 +207,116 @@ struct BeamSampleGeometry
         _affine_x = std::move(affine_x);
         _affine_y = std::move(affine_y);
         _affine_z = std::move(affine_z);
+    }
+
+    // --- rigid transforms (bake into per-beam affines) ---
+    //
+    // Rationale: any rigid transform on coord(n) = offset + slope * sample_nr
+    // produces another linear function of sample_nr. The transform can be
+    // applied O(n_beams) at construction time and costs ZERO per sample in
+    // downstream forward/backward kernels.
+    //
+    // All methods return *this by reference (mutating). Use copy-then-call
+    // for non-mutating chains.
+
+    /**
+     * @brief Bake a translation (dx, dy, dz) into the geometry's affines.
+     *
+     * Only the per-beam offsets of set affines are modified; slopes are
+     * untouched. Axes whose affine is unset are ignored silently.
+     */
+    BeamSampleGeometry& with_offset(float dx = 0.f, float dy = 0.f, float dz = 0.f)
+    {
+        if (_affine_x && dx != 0.f)
+            _affine_x->offsets += dx;
+        if (_affine_y && dy != 0.f)
+            _affine_y->offsets += dy;
+        if (_affine_z && dz != 0.f)
+            _affine_z->offsets += dz;
+        return *this;
+    }
+
+    /**
+     * @brief Bake a rigid transform (yaw/pitch/roll rotation + translation)
+     * into the geometry's affines.
+     *
+     * Requires that all three (x, y, z) affines are set, since a rotation
+     * mixes the axes. After this call, evaluating the geometry at any sample
+     * number yields the rotated-then-translated coordinate of that point.
+     *
+     * @param yaw_deg      yaw in °, 0° == north, 90° == east
+     * @param pitch_deg    pitch in °, positive bow up
+     * @param roll_deg     roll in °, positive port up
+     * @param tx,ty,tz     translation applied AFTER rotation
+     */
+    BeamSampleGeometry& with_rigid_transform(float yaw_deg,
+                                             float pitch_deg,
+                                             float roll_deg,
+                                             float tx = 0.f,
+                                             float ty = 0.f,
+                                             float tz = 0.f)
+    {
+        if (!(_affine_x && _affine_y && _affine_z))
+            throw std::runtime_error(
+                "with_rigid_transform: all three (x,y,z) affines must be set "
+                "for a rotation to be applied");
+
+        const auto q = tools::rotationfunctions::quaternion_from_ypr<float>(
+            yaw_deg, pitch_deg, roll_deg, /*input_in_degrees=*/true);
+
+        auto&        ax = *_affine_x;
+        auto&        ay = *_affine_y;
+        auto&        az = *_affine_z;
+        const size_t n  = _n_beams;
+
+        for (size_t b = 0; b < n; ++b)
+        {
+            // Rotate offsets, then translate
+            auto p = tools::rotationfunctions::rotateXYZ<float>(
+                q, ax.offsets.unchecked(b), ay.offsets.unchecked(b), az.offsets.unchecked(b));
+            const float ox = p[0] + tx;
+            const float oy = p[1] + ty;
+            const float oz = p[2] + tz;
+
+            // Slopes rotate without translation
+            auto s = tools::rotationfunctions::rotateXYZ<float>(
+                q, ax.slopes.unchecked(b), ay.slopes.unchecked(b), az.slopes.unchecked(b));
+
+            ax.offsets.unchecked(b) = ox;
+            ay.offsets.unchecked(b) = oy;
+            az.offsets.unchecked(b) = oz;
+            ax.slopes.unchecked(b)  = s[0];
+            ay.slopes.unchecked(b)  = s[1];
+            az.slopes.unchecked(b)  = s[2];
+        }
+        return *this;
+    }
+
+    /**
+     * @brief Apply a Geolocation (depth + ypr) to the geometry.
+     *
+     * Equivalent to with_rigid_transform(g.yaw, g.pitch, g.roll, 0, 0, g.z).
+     */
+    BeamSampleGeometry& with_geolocation(const navigation::datastructures::Geolocation& g)
+    {
+        return with_rigid_transform(g.yaw, g.pitch, g.roll, 0.f, 0.f, g.z);
+    }
+
+    /**
+     * @brief Apply a GeolocationLocal (northing/easting/depth + ypr) to the
+     * geometry.
+     *
+     * The resulting (x, y, z) will be expressed as (northing, easting, depth).
+     * Note: x ↔ northing and y ↔ easting (northing-first convention).
+     */
+    BeamSampleGeometry& with_geolocation(const navigation::datastructures::GeolocationLocal& g)
+    {
+        return with_rigid_transform(g.yaw,
+                                    g.pitch,
+                                    g.roll,
+                                    static_cast<float>(g.northing),
+                                    static_cast<float>(g.easting),
+                                    g.z);
     }
 
     // --- factory functions ---
@@ -674,441 +812,6 @@ struct BeamSampleGeometry
         return bounds;
     }
 
-    // --- backward mapping helpers ---
-
-  private:
-  public:
-    // --- backward mapping ---
-
-    /**
-     * @brief Backward-map WCI data into a (y, z) image via nearest-neighbor.
-     *
-     * For each output pixel, finds the nearest beam via depth-invariant
-     * tangent matching and computes the sample number from the pixel's
-     * Euclidean range to the sensor (matching BTConstantSVP behaviour).
-     *
-     * When supersampling > 1, each pixel probes S×S sub-pixel locations
-     * and averages the results for anti-aliasing.  This is equivalent to
-     * rendering at S× resolution then downsampling, but uses no extra memory.
-     *
-     * Pixels outside the beam/sample coverage are NaN.
-     *
-     * @tparam t_xtensor_out  2D output type (e.g. xt::xtensor<float,2> or pytensor)
-     * @tparam t_xtensor_2d   2D xtensor-like input type
-     * @tparam t_xtensor_1d_y 1D xtensor-like type for y coordinates
-     * @tparam t_xtensor_1d_z 1D xtensor-like type for z coordinates
-     * @param data            WCI data [n_beams x max_samples]
-     * @param y_coordinates   target crosstrack coordinates [n_y], must be sorted
-     * @param z_coordinates   target depth coordinates [n_z], must be sorted
-     * @param supersampling   sub-pixel factor per axis (default 1)
-     * @param mp_cores        OpenMP threads (default 1)
-     * @return image [n_y x n_z], NaN where no valid data
-     */
-    template<tools::helper::c_xtensor_2d t_xtensor_out,
-             tools::helper::c_xtensor_2d t_xtensor_2d,
-             tools::helper::c_xtensor_1d t_xtensor_1d_y,
-             tools::helper::c_xtensor_1d t_xtensor_1d_z>
-    t_xtensor_out backward_nearest(
-        const t_xtensor_2d&  data,
-        const t_xtensor_1d_y& y_coordinates,
-        const t_xtensor_1d_z& z_coordinates,
-        unsigned int supersampling = 1,
-        int mp_cores = 1) const
-    {
-        if (!_affine_y || !_affine_z)
-            throw std::runtime_error("backward_nearest requires y and z affines");
-        if (data.shape()[0] != _n_beams)
-            throw std::invalid_argument(
-                fmt::format("backward_nearest: data has {} beams, expected {}",
-                            data.shape()[0], _n_beams));
-
-        const size_t       max_si = data.shape()[1];
-        const size_t       n_y    = y_coordinates.size();
-        const size_t       n_z    = z_coordinates.size();
-        const unsigned int S      = std::max(1u, supersampling);
-
-        auto output = t_xtensor_out::from_shape({n_y, n_z});
-        std::fill(output.data(), output.data() + output.size(),
-                  std::numeric_limits<float>::quiet_NaN());
-
-        if (_n_beams == 0 || n_y == 0 || n_z == 0)
-            return output;
-
-        const auto& y_off = _affine_y->offsets;
-        const auto& y_slp = _affine_y->slopes;
-        const auto& z_off = _affine_z->offsets;
-        const auto& z_slp = _affine_z->slopes;
-
-        // Sensor origin (assumed same for all beams)
-        const float y_sensor = y_off.unchecked(0);
-        const float z_sensor = z_off.unchecked(0);
-
-        // Per-beam: tangent (for beam selection) and 1/range_per_sample (for sample#)
-        std::vector<float> beam_tan(_n_beams);
-        std::vector<float> inv_rps(_n_beams);  // 1 / sqrt(y_slp² + z_slp²)
-
-        for (size_t b = 0; b < _n_beams; ++b)
-        {
-            float ys  = y_slp.unchecked(b);
-            float zs  = z_slp.unchecked(b);
-            float rps = std::sqrt(ys * ys + zs * zs);
-            inv_rps[b] = (rps > 1e-30f) ? 1.0f / rps : 0.0f;
-
-            float zs_safe = zs;
-            if (std::abs(zs_safe) < 1e-30f)
-                zs_safe = std::copysign(1e-30f, zs_safe >= 0.0f ? 1.0f : -1.0f);
-            beam_tan[b] = ys / zs_safe;
-        }
-
-        // Sort beams by tangent for monotonic walk
-        std::vector<size_t> beam_order(_n_beams);
-        std::iota(beam_order.begin(), beam_order.end(), size_t(0));
-        std::stable_sort(beam_order.begin(), beam_order.end(),
-            [&](size_t a, size_t b) { return beam_tan[a] < beam_tan[b]; });
-
-        std::vector<float> sorted_tan(_n_beams);
-        for (size_t i = 0; i < _n_beams; ++i)
-            sorted_tan[i] = beam_tan[beam_order[i]];
-
-        // Bounds: half tangent-spacing beyond edges
-        float tan_bound_lo = sorted_tan[0];
-        float tan_bound_hi = sorted_tan[_n_beams - 1];
-        if (_n_beams >= 2)
-        {
-            tan_bound_lo -= 0.5f * (sorted_tan[1] - sorted_tan[0]);
-            tan_bound_hi += 0.5f * (sorted_tan[_n_beams - 1] - sorted_tan[_n_beams - 2]);
-        }
-
-        // Sub-pixel spacing (only used when S > 1)
-        const float y_spacing = (n_y > 1)
-            ? static_cast<float>(y_coordinates.unchecked(1) - y_coordinates.unchecked(0))
-            : 1.0f;
-        const float z_spacing = (n_z > 1)
-            ? static_cast<float>(z_coordinates.unchecked(1) - z_coordinates.unchecked(0))
-            : 1.0f;
-
-        const int threads = std::max(1, mp_cores);
-
-#pragma omp parallel if (threads > 1) num_threads(threads)
-        {
-            std::vector<float>        accum(S > 1 ? n_y : 0, 0.0f);
-            std::vector<unsigned int> valid(S > 1 ? n_y : 0, 0u);
-
-#pragma omp for schedule(static)
-            for (size_t iz = 0; iz < n_z; ++iz)
-            {
-                if (S > 1)
-                {
-                    std::fill(accum.begin(), accum.end(), 0.0f);
-                    std::fill(valid.begin(), valid.end(), 0u);
-                }
-
-                for (unsigned int sz = 0; sz < S; ++sz)
-                {
-                    float z_f = static_cast<float>(z_coordinates.unchecked(iz))
-                        + z_spacing * ((sz + 0.5f) / S - 0.5f);
-                    float dz  = z_f - z_sensor;
-                    float dz2 = dz * dz;
-                    float inv_dz = (std::abs(dz) > 1e-30f)
-                        ? 1.0f / dz
-                        : std::copysign(1e30f, dz);
-
-                    size_t tp = 0;
-                    for (size_t iy = 0; iy < n_y; ++iy)
-                    {
-                        for (unsigned int sy = 0; sy < S; ++sy)
-                        {
-                            float y_f = static_cast<float>(y_coordinates.unchecked(iy))
-                                + y_spacing * ((sy + 0.5f) / S - 0.5f);
-                            float dy = y_f - y_sensor;
-                            float pixel_tan = dy * inv_dz;
-
-                            if (pixel_tan < tan_bound_lo || pixel_tan > tan_bound_hi)
-                                continue;
-
-                            // Advance to nearest beam in tangent space
-                            while (tp + 1 < _n_beams &&
-                                   std::abs(sorted_tan[tp + 1] - pixel_tan) <
-                                       std::abs(sorted_tan[tp] - pixel_tan))
-                                ++tp;
-
-                            size_t bp = beam_order[tp];
-
-                            // Range-based sample number
-                            float range = std::sqrt(dy * dy + dz2);
-                            float sn    = range * inv_rps[bp];
-                            float si_f  = sn - _first_sample_numbers.unchecked(bp);
-                            int   si    = static_cast<int>(si_f);
-
-                            if (si_f < -0.5f ||
-                                si_f > static_cast<float>(_number_of_samples.unchecked(bp)) - 0.5f)
-                                continue;
-
-                            if (si >= 0 &&
-                                static_cast<unsigned int>(si) < _number_of_samples.unchecked(bp) &&
-                                static_cast<size_t>(si) < max_si)
-                            {
-                                float val = static_cast<float>(
-                                    data(bp, static_cast<size_t>(si)));
-                                if (S == 1)
-                                    output(iy, iz) = val;
-                                else
-                                {
-                                    accum[iy] += val;
-                                    valid[iy]++;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (S > 1)
-                {
-                    for (size_t iy = 0; iy < n_y; ++iy)
-                        if (valid[iy] > 0)
-                            output(iy, iz) =
-                                accum[iy] / static_cast<float>(valid[iy]);
-                }
-            }
-        } // omp parallel
-
-        return output;
-    }
-
-    /**
-     * @brief Backward-map WCI data into a (y, z) image via bilinear interpolation.
-     *
-     * For each output pixel, brackets the nearest two beams and the
-     * fractional sample number, then bilinearly interpolates.
-     * Sample numbers are computed from the Euclidean range to the sensor.
-     *
-     * When supersampling > 1, each pixel probes S×S sub-pixel locations
-     * and averages the results for anti-aliasing.
-     *
-     * Pixels outside the beam/sample coverage are NaN.
-     *
-     * @tparam t_xtensor_out  2D output type (e.g. xt::xtensor<float,2> or pytensor)
-     * @tparam t_xtensor_2d   2D xtensor-like input type
-     * @tparam t_xtensor_1d_y 1D xtensor-like type for y coordinates
-     * @tparam t_xtensor_1d_z 1D xtensor-like type for z coordinates
-     * @param data            WCI data [n_beams x max_samples]
-     * @param y_coordinates   target crosstrack coordinates [n_y], must be sorted
-     * @param z_coordinates   target depth coordinates [n_z], must be sorted
-     * @param supersampling   sub-pixel factor per axis (default 1)
-     * @param mp_cores        OpenMP threads (default 1)
-     * @return image [n_y x n_z], NaN where no valid data
-     */
-    template<tools::helper::c_xtensor_2d t_xtensor_out,
-             tools::helper::c_xtensor_2d t_xtensor_2d,
-             tools::helper::c_xtensor_1d t_xtensor_1d_y,
-             tools::helper::c_xtensor_1d t_xtensor_1d_z>
-    t_xtensor_out backward_bilinear(
-        const t_xtensor_2d&  data,
-        const t_xtensor_1d_y& y_coordinates,
-        const t_xtensor_1d_z& z_coordinates,
-        unsigned int supersampling = 1,
-        int mp_cores = 1) const
-    {
-        if (!_affine_y || !_affine_z)
-            throw std::runtime_error("backward_bilinear requires y and z affines");
-        if (data.shape()[0] != _n_beams)
-            throw std::invalid_argument(
-                fmt::format("backward_bilinear: data has {} beams, expected {}",
-                            data.shape()[0], _n_beams));
-
-        const size_t       max_si = data.shape()[1];
-        const size_t       n_y    = y_coordinates.size();
-        const size_t       n_z    = z_coordinates.size();
-        const unsigned int S      = std::max(1u, supersampling);
-
-        auto output = t_xtensor_out::from_shape({n_y, n_z});
-        std::fill(output.data(), output.data() + output.size(),
-                  std::numeric_limits<float>::quiet_NaN());
-
-        if (_n_beams == 0 || n_y == 0 || n_z == 0)
-            return output;
-
-        const auto& y_off = _affine_y->offsets;
-        const auto& y_slp = _affine_y->slopes;
-        const auto& z_off = _affine_z->offsets;
-        const auto& z_slp = _affine_z->slopes;
-
-        const float y_sensor = y_off.unchecked(0);
-        const float z_sensor = z_off.unchecked(0);
-
-        std::vector<float> beam_tan(_n_beams);
-        std::vector<float> inv_rps(_n_beams);
-        std::vector<float> yz_slope(_n_beams);
-        std::vector<float> yz_intercept(_n_beams);
-
-        for (size_t b = 0; b < _n_beams; ++b)
-        {
-            float ys  = y_slp.unchecked(b);
-            float zs  = z_slp.unchecked(b);
-            float rps = std::sqrt(ys * ys + zs * zs);
-            inv_rps[b] = (rps > 1e-30f) ? 1.0f / rps : 0.0f;
-
-            float zs_safe = zs;
-            if (std::abs(zs_safe) < 1e-30f)
-                zs_safe = std::copysign(1e-30f, zs_safe >= 0.0f ? 1.0f : -1.0f);
-            float inv_zs     = 1.0f / zs_safe;
-            beam_tan[b]      = ys * inv_zs;
-            yz_slope[b]      = beam_tan[b];
-            yz_intercept[b]  = y_off.unchecked(b) - yz_slope[b] * z_off.unchecked(b);
-        }
-
-        // Sort beams by tangent
-        std::vector<size_t> beam_order(_n_beams);
-        std::iota(beam_order.begin(), beam_order.end(), size_t(0));
-        std::stable_sort(beam_order.begin(), beam_order.end(),
-            [&](size_t a, size_t b) { return beam_tan[a] < beam_tan[b]; });
-
-        std::vector<float> sorted_tan(_n_beams);
-        for (size_t i = 0; i < _n_beams; ++i)
-            sorted_tan[i] = beam_tan[beam_order[i]];
-
-        float tan_bound_lo = sorted_tan[0];
-        float tan_bound_hi = sorted_tan[_n_beams - 1];
-        if (_n_beams >= 2)
-        {
-            tan_bound_lo -= 0.5f * (sorted_tan[1] - sorted_tan[0]);
-            tan_bound_hi += 0.5f * (sorted_tan[_n_beams - 1] - sorted_tan[_n_beams - 2]);
-        }
-
-        const float y_spacing = (n_y > 1)
-            ? static_cast<float>(y_coordinates.unchecked(1) - y_coordinates.unchecked(0))
-            : 1.0f;
-        const float z_spacing = (n_z > 1)
-            ? static_cast<float>(z_coordinates.unchecked(1) - z_coordinates.unchecked(0))
-            : 1.0f;
-
-        const int threads = std::max(1, mp_cores);
-
-#pragma omp parallel if (threads > 1) num_threads(threads)
-        {
-            std::vector<float>        accum(S > 1 ? n_y : 0, 0.0f);
-            std::vector<unsigned int> valid(S > 1 ? n_y : 0, 0u);
-
-            auto fetch = [&](size_t b, int si) -> float {
-                if (si >= 0 &&
-                    static_cast<unsigned int>(si) < _number_of_samples.unchecked(b) &&
-                    static_cast<size_t>(si) < max_si)
-                    return static_cast<float>(data(b, static_cast<size_t>(si)));
-                return std::numeric_limits<float>::quiet_NaN();
-            };
-
-            auto interp_sample = [&](size_t b, float si_f) -> float {
-                if (si_f < -0.5f ||
-                    si_f > static_cast<float>(_number_of_samples.unchecked(b)) - 0.5f)
-                    return std::numeric_limits<float>::quiet_NaN();
-                int   si_lo = static_cast<int>(std::floor(si_f));
-                int   si_hi = si_lo + 1;
-                float ws    = si_f - static_cast<float>(si_lo);
-                float v0    = fetch(b, si_lo);
-                float v1    = fetch(b, si_hi);
-                if (std::isnan(v0)) return v1;
-                if (std::isnan(v1)) return v0;
-                return v0 + ws * (v1 - v0);
-            };
-
-#pragma omp for schedule(static)
-            for (size_t iz = 0; iz < n_z; ++iz)
-            {
-                if (S > 1)
-                {
-                    std::fill(accum.begin(), accum.end(), 0.0f);
-                    std::fill(valid.begin(), valid.end(), 0u);
-                }
-
-                for (unsigned int sz = 0; sz < S; ++sz)
-                {
-                    float z_f = static_cast<float>(z_coordinates.unchecked(iz))
-                        + z_spacing * ((sz + 0.5f) / S - 0.5f);
-                    float dz  = z_f - z_sensor;
-                    float dz2 = dz * dz;
-                    float inv_dz = (std::abs(dz) > 1e-30f)
-                        ? 1.0f / dz
-                        : std::copysign(1e30f, dz);
-
-                    // beam_y for bracket weights (SIMD)
-                    // We compute inline per beam-pair since we need only 2 per pixel
-                    size_t tp = 0;
-                    for (size_t iy = 0; iy < n_y; ++iy)
-                    {
-                        for (unsigned int sy = 0; sy < S; ++sy)
-                        {
-                            float y_f = static_cast<float>(y_coordinates.unchecked(iy))
-                                + y_spacing * ((sy + 0.5f) / S - 0.5f);
-                            float dy = y_f - y_sensor;
-                            float pixel_tan = dy * inv_dz;
-
-                            if (pixel_tan < tan_bound_lo || pixel_tan > tan_bound_hi)
-                                continue;
-
-                            // Advance tp so sorted_tan[tp] <= pixel_tan
-                            while (tp + 1 < _n_beams && sorted_tan[tp + 1] <= pixel_tan)
-                                ++tp;
-
-                            size_t b_lo = beam_order[tp];
-                            size_t b_hi = (tp + 1 < _n_beams) ? beam_order[tp + 1] : b_lo;
-
-                            // Range-based sample numbers
-                            float range = std::sqrt(dy * dy + dz2);
-
-                            float si_lo_f = range * inv_rps[b_lo]
-                                            - _first_sample_numbers.unchecked(b_lo);
-                            float v_lo = interp_sample(b_lo, si_lo_f);
-
-                            float val;
-                            if (b_lo == b_hi)
-                            {
-                                val = v_lo;
-                            }
-                            else
-                            {
-                                // Bracket weight from beam y-positions at this depth
-                                float by_lo = yz_intercept[b_lo] + yz_slope[b_lo] * z_f;
-                                float by_hi = yz_intercept[b_hi] + yz_slope[b_hi] * z_f;
-                                float d_by  = by_hi - by_lo;
-                                float wy = (d_by != 0.0f)
-                                    ? std::clamp((y_f - by_lo) / d_by, 0.0f, 1.0f)
-                                    : 0.0f;
-
-                                float si_hi_f = range * inv_rps[b_hi]
-                                                - _first_sample_numbers.unchecked(b_hi);
-                                float v_hi = interp_sample(b_hi, si_hi_f);
-
-                                if (std::isnan(v_lo)) val = v_hi;
-                                else if (std::isnan(v_hi)) val = v_lo;
-                                else val = v_lo + wy * (v_hi - v_lo);
-                            }
-
-                            if (!std::isnan(val))
-                            {
-                                if (S == 1)
-                                    output(iy, iz) = val;
-                                else
-                                {
-                                    accum[iy] += val;
-                                    valid[iy]++;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (S > 1)
-                {
-                    for (size_t iy = 0; iy < n_y; ++iy)
-                        if (valid[iy] > 0)
-                            output(iy, iz) =
-                                accum[iy] / static_cast<float>(valid[iy]);
-                }
-            }
-        } // omp parallel
-
-        return output;
-    }
 
   public:
     // ----- file I/O -----

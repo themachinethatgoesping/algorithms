@@ -13,6 +13,7 @@ sources = [
   'signalprocessing/types.cpp',
   'featuremapping/nearestfeaturemapper.cpp',
   'geoprocessing/datastructures/beamsampleparameters.cpp',
+  'geoprocessing/functions/backward.cpp',
 ]
 
 headers = [
@@ -119,6 +120,8 @@ headers = [
   'geoprocessing/georeferencers/.docstrings/btconstantsvp.doc.hpp',
   'geoprocessing/georeferencers/.docstrings/i_backtracer.doc.hpp',
   'geoprocessing/functions/to_raypoints.hpp',
+  'geoprocessing/functions/backward.hpp',
+  'geoprocessing/functions/transform.hpp',
   'geoprocessing/functions/.docstrings/to_raypoints.doc.hpp',
 ]
 

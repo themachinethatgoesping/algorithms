@@ -1,4 +1,4 @@
-//sourcehash: 2a84e8c19f986b614b955d391432e1228168461d4db1898ee54361b1b5cb5359
+//sourcehash: 300f6c038c424536c04843c20ab894127c2fd030027fbd6b595193a404d6662a
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -86,66 +86,6 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_y = R"doc(sample_nr → y per beam)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_z = R"doc(sample_nr → z per beam)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_backward_bilinear =
-R"doc(Backward-map WCI data into a (y, z) image via bilinear interpolation.
-
-For each output pixel, brackets the nearest two beams and the
-fractional sample number, then bilinearly interpolates. Sample numbers
-are computed from the Euclidean range to the sensor.
-
-When supersampling > 1, each pixel probes S×S sub-pixel locations and
-averages the results for anti-aliasing.
-
-Pixels outside the beam/sample coverage are NaN.
-
-Args:
-    data: WCI data [n_beams x max_samples]
-    y_coordinates: target crosstrack coordinates [n_y], must be sorted
-    z_coordinates: target depth coordinates [n_z], must be sorted
-    supersampling: sub-pixel factor per axis (default 1)
-    mp_cores: OpenMP threads (default 1)
-
-Template Args:
-    t_xtensor_out: 2D output type (e.g. xt::xtensor<float,2> or
-                   pytensor)
-    t_xtensor_2d: 2D xtensor-like input type
-    t_xtensor_1d_y: 1D xtensor-like type for y coordinates
-    t_xtensor_1d_z: 1D xtensor-like type for z coordinates
-
-Returns:
-    image [n_y x n_z], NaN where no valid data)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_backward_nearest =
-R"doc(Backward-map WCI data into a (y, z) image via nearest-neighbor.
-
-For each output pixel, finds the nearest beam via depth-invariant
-tangent matching and computes the sample number from the pixel's
-Euclidean range to the sensor (matching BTConstantSVP behaviour).
-
-When supersampling > 1, each pixel probes S×S sub-pixel locations and
-averages the results for anti-aliasing.  This is equivalent to
-rendering at S× resolution then downsampling, but uses no extra
-memory.
-
-Pixels outside the beam/sample coverage are NaN.
-
-Args:
-    data: WCI data [n_beams x max_samples]
-    y_coordinates: target crosstrack coordinates [n_y], must be sorted
-    z_coordinates: target depth coordinates [n_z], must be sorted
-    supersampling: sub-pixel factor per axis (default 1)
-    mp_cores: OpenMP threads (default 1)
-
-Template Args:
-    t_xtensor_out: 2D output type (e.g. xt::xtensor<float,2> or
-                   pytensor)
-    t_xtensor_2d: 2D xtensor-like input type
-    t_xtensor_1d_y: 1D xtensor-like type for y coordinates
-    t_xtensor_1d_z: 1D xtensor-like type for z coordinates
-
-Returns:
-    image [n_y x n_z], NaN where no valid data)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_check_affine_size = R"doc()doc";
 
@@ -363,6 +303,39 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_z_affine = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_to_stream = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_geolocation =
+R"doc(Apply a Geolocation (depth + ypr) to the geometry.
+
+Equivalent to with_rigid_transform(g.yaw, g.pitch, g.roll, 0, 0, g.z).)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_geolocation_2 =
+R"doc(Apply a GeolocationLocal (northing/easting/depth + ypr) to the
+geometry.
+
+The resulting (x, y, z) will be expressed as (northing, easting,
+depth).
+Note: x ↔ northing and y ↔ easting (northing-first convention).)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_offset =
+R"doc(Bake a translation (dx, dy, dz) into the geometry's affines.
+
+Only the per-beam offsets of set affines are modified; slopes are
+untouched. Axes whose affine is unset are ignored silently.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_rigid_transform =
+R"doc(Bake a rigid transform (yaw/pitch/roll rotation + translation) into
+the geometry's affines.
+
+Requires that all three (x, y, z) affines are set, since a rotation
+mixes the axes. After this call, evaluating the geometry at any sample
+number yields the rotated-then-translated coordinate of that point.
+
+Args:
+    yaw_deg: yaw in °, 0° == north, 90° == east
+    pitch_deg: pitch in °, positive bow up
+    roll_deg: roll in °, positive port up
+    tx: ,ty,tz     translation applied AFTER rotation)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

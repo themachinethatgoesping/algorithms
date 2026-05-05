@@ -4,6 +4,10 @@
 
 // -- c++ library headers
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/datastructures/beamsamplegeometry.hpp"
+// Pull in the full backward-kernel definitions so this TU can instantiate
+// them for nanobind's pytensor (the algorithms_lib only instantiates xtensor
+// variants in functions/backward.cpp).
+#include "../../../themachinethatgoesping/algorithms/geoprocessing/functions/backward.hpp"
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
 #include <xtensor-python/nanobind/pytensor.hpp>
 
@@ -299,6 +303,37 @@ void init_c_beamsamplegeometry(nb::module_& m)
              &BeamSampleGeometry::get_bounds,
              DOC_BeamSampleGeometry(get_bounds))
 
+        // --- rigid transforms (mutating; return self for chaining) ---
+        .def("with_offset",
+             &BeamSampleGeometry::with_offset,
+             DOC_BeamSampleGeometry(with_offset),
+             nb::arg("dx") = 0.f,
+             nb::arg("dy") = 0.f,
+             nb::arg("dz") = 0.f,
+             nb::rv_policy::reference_internal)
+        .def("with_rigid_transform",
+             &BeamSampleGeometry::with_rigid_transform,
+             DOC_BeamSampleGeometry(with_rigid_transform),
+             nb::arg("yaw_deg"),
+             nb::arg("pitch_deg"),
+             nb::arg("roll_deg"),
+             nb::arg("tx") = 0.f,
+             nb::arg("ty") = 0.f,
+             nb::arg("tz") = 0.f,
+             nb::rv_policy::reference_internal)
+        .def("with_geolocation",
+             nb::overload_cast<const themachinethatgoesping::navigation::datastructures::Geolocation&>(
+                 &BeamSampleGeometry::with_geolocation),
+             DOC_BeamSampleGeometry(with_geolocation),
+             nb::arg("geolocation"),
+             nb::rv_policy::reference_internal)
+        .def("with_geolocation",
+             nb::overload_cast<const themachinethatgoesping::navigation::datastructures::GeolocationLocal&>(
+                 &BeamSampleGeometry::with_geolocation),
+             DOC_BeamSampleGeometry(with_geolocation_2),
+             nb::arg("geolocation_local"),
+             nb::rv_policy::reference_internal)
+
         // --- backward mapping ---
         .def("backward_nearest",
              [](const BeamSampleGeometry& self,
@@ -307,9 +342,10 @@ void init_c_beamsamplegeometry(nb::module_& m)
                 const xt::nanobind::pytensor<float, 1>& z_coordinates,
                 unsigned int supersampling,
                 int mp_cores) {
-                 return self.backward_nearest<xt::nanobind::pytensor<float, 2>>(
-                     data, y_coordinates, z_coordinates,
-                     supersampling, mp_cores);
+                 return themachinethatgoesping::algorithms::geoprocessing::functions::
+                     backward_nearest<xt::nanobind::pytensor<float, 2>>(
+                         self, data, y_coordinates, z_coordinates,
+                         supersampling, mp_cores);
              },
              "Backward-map WCI data to (y, z) image via nearest-neighbor.\n"
              "Sample numbers use Euclidean range from the sensor to each pixel.\n"
@@ -327,9 +363,10 @@ void init_c_beamsamplegeometry(nb::module_& m)
                 const xt::nanobind::pytensor<float, 1>& z_coordinates,
                 unsigned int supersampling,
                 int mp_cores) {
-                 return self.backward_bilinear<xt::nanobind::pytensor<float, 2>>(
-                     data, y_coordinates, z_coordinates,
-                     supersampling, mp_cores);
+                 return themachinethatgoesping::algorithms::geoprocessing::functions::
+                     backward_bilinear<xt::nanobind::pytensor<float, 2>>(
+                         self, data, y_coordinates, z_coordinates,
+                         supersampling, mp_cores);
              },
              "Backward-map WCI data to (y, z) image via bilinear interpolation.\n"
              "Sample numbers use Euclidean range from the sensor to each pixel.\n"
