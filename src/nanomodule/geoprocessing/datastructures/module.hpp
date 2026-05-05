@@ -22,6 +22,7 @@ void init_c_sampledirectionstime(nb::module_& m);  // c_sampledirectionstime.cpp
 void init_c_beamsampleparameters(nb::module_& m);  // c_beamsampleparameters.cpp
 void init_c_beamaffine1d(nb::module_& m);          // c_beamaffine1d.cpp
 void init_c_beamsamplegeometry(nb::module_& m);    // c_beamsamplegeometry.cpp
+void init_c_beamsamplegeometrypiecewise(nb::module_& m); // c_beamsamplegeometrypiecewise.cpp
 
 void init_m_datastructures(nb::module_& m)
 {
@@ -40,6 +41,7 @@ void init_m_datastructures(nb::module_& m)
     init_c_beamsampleparameters(submodule);
     init_c_beamaffine1d(submodule);
     init_c_beamsamplegeometry(submodule);
+    init_c_beamsamplegeometrypiecewise(submodule);
 }
 
 } // namespace py_datastructures

@@ -6,6 +6,7 @@
 
 #include "datastructures/module.hpp"
 #include "raytracers/module.hpp"
+#include "raytracers2/module.hpp"
 #include "backtracers/module.hpp"
 #include "functions/module.hpp"
 
@@ -25,6 +26,7 @@ void init_m_geoprocessing(nb::module_& m)
 
     py_datastructures::init_m_datastructures(submodule);
     py_raytracers::init_m_raytracers(submodule);
+    py_raytracers2::init_m_raytracers2(submodule);
     py_backtracers::init_m_backtracers(submodule);
     py_functions::init_m_functions(submodule);
 }
