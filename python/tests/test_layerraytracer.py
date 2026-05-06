@@ -22,7 +22,7 @@ from themachinethatgoesping.navigation.datastructures import Geolocation
 class TestSoundVelocityProfile:
     def test_uniform(self):
         svp = rt2.SoundVelocityProfile.uniform(1500.0, 6000.0)
-        assert svp.get_n_layers() == 1
+        assert svp.get_number_of_layers() == 1
         assert svp.get_sound_speed(0.0) == approx(1500.0)
         assert svp.get_sound_speed(3000.0) == approx(1500.0)
 
@@ -30,7 +30,7 @@ class TestSoundVelocityProfile:
         z = np.array([0.0, 100.0, 1000.0, 5000.0], dtype=np.float32)
         c = np.array([1500.0, 1480.0, 1490.0, 1540.0], dtype=np.float32)
         svp = rt2.SoundVelocityProfile(z, c)
-        assert svp.get_n_layers() == 3
+        assert svp.get_number_of_layers() == 3
         # exact at knots
         assert svp.get_sound_speed(100.0) == approx(1480.0, abs=1e-3)
         assert svp.get_sound_speed(1000.0) == approx(1490.0, abs=1e-3)

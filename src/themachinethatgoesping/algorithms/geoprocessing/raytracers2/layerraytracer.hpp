@@ -8,6 +8,15 @@
 // Traces per-beam ray polylines through a SoundVelocityProfile and returns
 // world-frame XYZ at user-requested one-way travel times (or sample numbers).
 //
+// The SoundVelocityProfile depths are in **absolute world coordinates**
+// (e.g. metres below the sea surface). Each ray is launched at the absolute
+// depth carried by the TX pose at TX time (``tx_poses[0].z``) using the
+// SVP-interpolated sound speed at that depth as the Snell invariant
+// ``p = sin(theta) / c(launch_depth)``. The SVP must cover the launch depth
+// (otherwise the beam returns NaN). No internal rebasing of the SVP is
+// performed; if you want to use a different surface sound speed you must
+// pre-blend that into the SVP yourself before construction.
+//
 // Per-layer formulas for ray parameter p = sin(theta_i) / c_i (Snell invariant):
 //
 //   constant-gradient layer (c(z) = c_i + g_i * (z - z_i), g_i != 0):
@@ -16,8 +25,8 @@
 //                                          / (1 + cos(theta_{i+1})) )
 //
 //   iso-velocity layer (g_i ≈ 0):
-//     dx_i = (z_{i+1} - z_i) * tan(theta_i)
-//     dt_i = (z_{i+1} - z_i) / (c_i * cos(theta_i))
+//     dx_i = (z_{i+1} - z_cur) * tan(theta_i)
+//     dt_i = (z_{i+1} - z_cur) / (c_i * cos(theta_i))
 //
 // Knot anchoring is exact: at each requested travel time we close-form
 // integrate the partial layer (solving for the exit sound speed via a
@@ -127,7 +136,7 @@ class LayerRaytracer
             if (!(knot_times.unchecked(k) >= knot_times.unchecked(k - 1)))
                 throw std::runtime_error("LayerRaytracer.trace_at_times: knot_times must be monotone");
 
-        if (_svp.get_n_layers() == 0)
+        if (_svp.get_number_of_layers() == 0)
             throw std::runtime_error("LayerRaytracer.trace_at_times: SVP not initialized");
 
         auto out = xt::xtensor<float, 3>::from_shape({ K1, n_beams, size_t(3) });
@@ -137,6 +146,15 @@ class LayerRaytracer
         for (size_t k = 0; k < K1; ++k)
             tx_q[k] = tools::rotationfunctions::quaternion_from_ypr<float>(
                 tx_poses[k].yaw, tx_poses[k].pitch, tx_poses[k].roll, true);
+
+        // Absolute launch depth (m) of every ray: the TX pose's z at TX time.
+        // The SVP is in absolute world depth, so we start ray integration at
+        // this depth in whichever layer contains it.
+        const float  launch_depth = tx_poses[0].z;
+        const auto&  svp_z        = _svp.get_depths_in_meters();
+        const size_t L            = _svp.get_number_of_layers();
+        const float  z_top        = svp_z.unchecked(0);
+        const float  z_bot        = svp_z.unchecked(L);
 
         const int threads = std::max(1, mp_cores);
 
@@ -162,9 +180,21 @@ class LayerRaytracer
             dy0 /= norm;
             dz0 /= norm;
 
+            // SVP must cover the launch depth.
+            if (!(launch_depth >= z_top) || !(launch_depth <= z_bot))
+            {
+                for (size_t k = 0; k < K1; ++k)
+                {
+                    out(k, b, 0) = std::nanf("");
+                    out(k, b, 1) = std::nanf("");
+                    out(k, b, 2) = std::nanf("");
+                }
+                continue;
+            }
+
             // sin(theta) wrt vertical = sqrt(1 - dz^2)  (use horizontal magnitude)
             const float sin_theta0 = std::sqrt(std::max(0.f, 1.f - dz0 * dz0));
-            const float c0         = _svp.get_c().unchecked(0);
+            const float c0         = _svp.get_sound_speed(launch_depth);
             const float p          = sin_theta0 / c0; // Snell invariant
             // unit horizontal direction in vehicle frame
             float hx_v = 0.f, hy_v = 0.f;
@@ -174,23 +204,39 @@ class LayerRaytracer
                 hy_v = dy0 / sin_theta0;
             }
 
-            // Walk layers, accumulate (z, t, x_horizontal) starting from (z0, 0, 0)
-            const auto& zs    = _svp.get_z();
-            const auto& cs    = _svp.get_c();
-            const auto& gs    = _svp.get_g();
-            const auto& invg  = _svp.get_inv_g();
-            const auto& iso   = _svp.get_iso();
-            const size_t L    = _svp.get_n_layers();
+            // Walk layers in absolute depth, accumulate (z, t, x_horizontal)
+            // starting from (launch_depth, 0, 0).
+            const auto& zs    = _svp.get_depths_in_meters();
+            const auto& cs    = _svp.get_sound_speeds_in_meters_per_second();
+            const auto& gs    = _svp.get_sound_speed_gradients_in_per_second();
+            const auto& invg  = _svp.get_inverse_sound_speed_gradients_in_seconds();
+            const auto& iso   = _svp.get_isovelocity_flags();
 
             // current state along ray (downward integration)
             double t_cur     = 0.0;
             double x_cur     = 0.0;       // horizontal range from launch
-            double z_cur     = (double)zs.unchecked(0);
+            double z_cur     = (double)launch_depth;
             double c_cur     = (double)c0;
             double cos_cur   = std::sqrt(std::max(0.0, 1.0 - (double)p * (double)p * c_cur * c_cur));
 
+            // Find the layer index that contains launch_depth (z_cur).
+            // Layer i covers [zs[i], zs[i+1]); a depth exactly at zs[i+1] is
+            // counted as the start of layer i+1.
             size_t layer = 0;
-            // pre-compute end-of-layer (dt, dx, c_next, cos_next, z_next)
+            {
+                size_t lo = 0, hi = L;
+                while (hi - lo > 1)
+                {
+                    size_t mid = (lo + hi) / 2;
+                    (z_cur < (double)zs.unchecked(mid) ? hi : lo) = mid;
+                }
+                layer = lo;
+                // If launch_depth == z_bot exactly, we're at the bottom of the
+                // last layer with no layers left to traverse downward.
+            }
+            // pre-compute end-of-layer (dt, dx, c_next, cos_next, z_next).
+            // Uses (z_cur, c_cur, cos_cur) so it correctly handles a partial
+            // first layer where we start mid-layer at launch_depth.
             auto step_full_layer = [&](size_t i, double& dt_out, double& dx_out,
                                         double& c_next_out, double& cos_next_out,
                                         double& z_next_out) -> bool
@@ -203,7 +249,7 @@ class LayerRaytracer
                 const double z_next   = (double)zs.unchecked(i + 1);
                 if (iso.unchecked(i))
                 {
-                    const double dz = z_next - (double)zs.unchecked(i);
+                    const double dz = z_next - z_cur;
                     if (cos_cur < 1e-12) return false;
                     dt_out = dz / (c_cur * cos_cur);
                     dx_out = dz * (double)p * c_cur / cos_cur; // = dz * tan(theta)
@@ -285,12 +331,13 @@ class LayerRaytracer
                     continue;
                 }
 
-                // Vehicle-frame ray endpoint relative to TX origin.
-                // Convention: SVP z[0] is the transducer depth reference.
+                // Vehicle-frame ray endpoint relative to the TX origin.
+                // Convention: launch_depth is the absolute depth of the TX
+                // origin at TX time; lz is the depth advance below it.
                 // (hx_v, hy_v) is the unit horizontal direction in vehicle frame.
                 const float lx = (float)(hx_v * x_cur);
                 const float ly = (float)(hy_v * x_cur);
-                const float lz = (float)(z_cur - (double)zs.unchecked(0));
+                const float lz = (float)(z_cur - (double)launch_depth);
                 // Rotate vehicle-frame offset into world frame using TX pose's ypr.
                 auto rotated = tools::rotationfunctions::rotateXYZ<float>(tx_q[k], lx, ly, lz);
                 // Translation: depth = mid(tx, rx) + rotated_z. Horizontal x/y are
@@ -317,6 +364,90 @@ class LayerRaytracer
         int                                                          mp_cores = 1) const
     {
         return trace_at_times(launch_dirs, knot_times, poses, poses, mp_cores);
+    }
+
+    /**
+     * @brief Convert per-beam (tilt, crosstrack) angles in degrees to vehicle-frame
+     *        unit launch directions (forward, starboard, down).
+     *
+     *   tilt_deg:        positive bow-up about the starboard axis (i.e. positive
+     *                    tilt -> beam points forward).
+     *   crosstrack_deg:  beam pointing angle from nadir, positive towards
+     *                    starboard.
+     *
+     *   dx = sin(tilt) * cos(crosstrack)   (forward)
+     *   dy = cos(tilt) * sin(crosstrack)   (starboard)
+     *   dz = cos(tilt) * cos(crosstrack)   (down)
+     *
+     * Caller-side launch-direction maths should not be done elsewhere; route all
+     * tracing through this method or its trace_at_angles overload.
+     */
+    static xt::xtensor<float, 2> launch_dirs_from_angles(
+        const xt::xtensor<float, 1>& tilt_deg,
+        const xt::xtensor<float, 1>& crosstrack_deg)
+    {
+        if (tilt_deg.size() != crosstrack_deg.size())
+            throw std::runtime_error(fmt::format(
+                "LayerRaytracer.launch_dirs_from_angles: tilt_deg ({}) and "
+                "crosstrack_deg ({}) must have the same length",
+                tilt_deg.size(),
+                crosstrack_deg.size()));
+
+        const size_t n_beams = tilt_deg.size();
+        auto         out     = xt::xtensor<float, 2>::from_shape({ n_beams, size_t(3) });
+        constexpr float deg2rad = float(M_PI) / 180.f;
+
+        for (size_t b = 0; b < n_beams; ++b)
+        {
+            const float t  = tilt_deg.unchecked(b) * deg2rad;
+            const float c  = crosstrack_deg.unchecked(b) * deg2rad;
+            const float ct = std::cos(t);
+            const float st = std::sin(t);
+            const float cc = std::cos(c);
+            const float sc = std::sin(c);
+            out(b, 0) = st * cc; // forward
+            out(b, 1) = ct * sc; // starboard
+            out(b, 2) = ct * cc; // down
+        }
+        return out;
+    }
+
+    /**
+     * @brief Trace beams given per-beam (tilt, crosstrack) angles in degrees.
+     *        See ::launch_dirs_from_angles for the angle convention.
+     */
+    xt::xtensor<float, 3> trace_at_angles(
+        const xt::xtensor<float, 1>&                                 tilt_deg,
+        const xt::xtensor<float, 1>&                                 crosstrack_deg,
+        const xt::xtensor<float, 1>&                                 knot_times,
+        const std::vector<navigation::datastructures::Geolocation>&  tx_poses,
+        const std::vector<navigation::datastructures::Geolocation>&  rx_poses,
+        int                                                          mp_cores = 1) const
+    {
+        return trace_at_times(
+            launch_dirs_from_angles(tilt_deg, crosstrack_deg),
+            knot_times,
+            tx_poses,
+            rx_poses,
+            mp_cores);
+    }
+
+    /**
+     * @brief Convenience overload: same TX and RX pose at each knot.
+     */
+    xt::xtensor<float, 3> trace_at_angles(
+        const xt::xtensor<float, 1>&                                 tilt_deg,
+        const xt::xtensor<float, 1>&                                 crosstrack_deg,
+        const xt::xtensor<float, 1>&                                 knot_times,
+        const std::vector<navigation::datastructures::Geolocation>&  poses,
+        int                                                          mp_cores = 1) const
+    {
+        return trace_at_times(
+            launch_dirs_from_angles(tilt_deg, crosstrack_deg),
+            knot_times,
+            poses,
+            poses,
+            mp_cores);
     }
 
   public:

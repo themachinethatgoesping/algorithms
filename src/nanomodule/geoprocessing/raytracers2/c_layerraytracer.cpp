@@ -75,6 +75,55 @@ void init_c_layerraytracer(nb::module_& m)
              nb::arg("poses"),
              nb::arg("mp_cores") = 1)
 
+        .def_static("launch_dirs_from_angles",
+             [](const xt::nanobind::pytensor<float, 1>& tilt_deg,
+                const xt::nanobind::pytensor<float, 1>& crosstrack_deg) {
+                 return LayerRaytracer::launch_dirs_from_angles(tilt_deg, crosstrack_deg);
+             },
+             "Convert per-beam (tilt_deg, crosstrack_deg) into [n_beams, 3] vehicle-frame "
+             "unit launch directions (forward, starboard, down). "
+             "tilt: positive forward; crosstrack: positive starboard.",
+             nb::arg("tilt_deg"),
+             nb::arg("crosstrack_deg"))
+
+        .def("trace_at_angles",
+             [](const LayerRaytracer&                       self,
+                const xt::nanobind::pytensor<float, 1>&     tilt_deg,
+                const xt::nanobind::pytensor<float, 1>&     crosstrack_deg,
+                const xt::nanobind::pytensor<float, 1>&     knot_times,
+                const std::vector<Geolocation>&             tx_poses,
+                const std::vector<Geolocation>&             rx_poses,
+                int                                         mp_cores) {
+                 return self.trace_at_angles(
+                     tilt_deg, crosstrack_deg, knot_times, tx_poses, rx_poses, mp_cores);
+             },
+             "Trace beams given per-beam (tilt_deg, crosstrack_deg) and TX/RX poses.\n"
+             "tilt_deg, crosstrack_deg: [n_beams] floats. tilt positive forward, "
+             "crosstrack positive starboard.",
+             nb::arg("tilt_deg"),
+             nb::arg("crosstrack_deg"),
+             nb::arg("knot_times"),
+             nb::arg("tx_poses"),
+             nb::arg("rx_poses"),
+             nb::arg("mp_cores") = 1)
+
+        .def("trace_at_angles",
+             [](const LayerRaytracer&                       self,
+                const xt::nanobind::pytensor<float, 1>&     tilt_deg,
+                const xt::nanobind::pytensor<float, 1>&     crosstrack_deg,
+                const xt::nanobind::pytensor<float, 1>&     knot_times,
+                const std::vector<Geolocation>&             poses,
+                int                                         mp_cores) {
+                 return self.trace_at_angles(
+                     tilt_deg, crosstrack_deg, knot_times, poses, mp_cores);
+             },
+             "Same as trace_at_angles(tx_poses, rx_poses) but with a single per-knot pose.",
+             nb::arg("tilt_deg"),
+             nb::arg("crosstrack_deg"),
+             nb::arg("knot_times"),
+             nb::arg("poses"),
+             nb::arg("mp_cores") = 1)
+
         // default copy/binary/printing
         __PYCLASS_DEFAULT_COPY__(LayerRaytracer)
         __PYCLASS_DEFAULT_BINARY__(LayerRaytracer)

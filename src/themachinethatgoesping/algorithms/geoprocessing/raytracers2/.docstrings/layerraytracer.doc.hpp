@@ -1,4 +1,4 @@
-//sourcehash: 752b8a278ebebea29c807745a371a8830fabc429a391b63761226a155a0e16bd
+//sourcehash: cc98dc6622d9ad19fe5a2d0fd56bfb80f0af68f7d91facc86cca82a35083e9a2
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -55,6 +55,22 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_get_svp = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_launch_dirs_from_angles =
+R"doc(Convert per-beam (tilt, crosstrack) angles in degrees to vehicle-frame
+       unit launch directions (forward, starboard, down).
+
+  tilt_deg:        positive bow-up about the starboard axis (i.e.
+                   positive tilt -> beam points forward).
+  crosstrack_deg:  beam pointing angle from nadir, positive towards
+                   starboard.
+
+  dx = sin(tilt) * cos(crosstrack)   (forward) dy = cos(tilt) *
+  sin(crosstrack)   (starboard) dz = cos(tilt) * cos(crosstrack)
+  (down)
+
+Caller-side launch-direction maths should not be done elsewhere; route
+all tracing through this method or its trace_at_angles overload.)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_operator_eq = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_printer = R"doc()doc";
@@ -64,6 +80,12 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_svp = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_to_stream = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_trace_at_angles =
+R"doc(Trace beams given per-beam (tilt, crosstrack) angles in degrees.
+       See ::launch_dirs_from_angles for the angle convention.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_trace_at_angles_2 = R"doc(Convenience overload: same TX and RX pose at each knot.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_trace_at_times =
 R"doc(Trace beams to the given one-way travel times.
