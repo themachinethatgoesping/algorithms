@@ -1,4 +1,4 @@
-//sourcehash: cc98dc6622d9ad19fe5a2d0fd56bfb80f0af68f7d91facc86cca82a35083e9a2
+//sourcehash: 8f812975fc95e786c0632f1774d0c7e2b419dedc4c5036f8c4408398da5ec659
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -110,6 +110,43 @@ Returns:
     units as the poses' xyz (typically metres).)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_trace_at_times_2 = R"doc(Convenience overload: same TX and RX pose at each knot.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_trace_to_xyz =
+R"doc(Trace beams using Kongsberg-native angle inputs and dual-array mount
+geometry.
+
+Output frame: TX-body axes (forward, starboard, down) at t_tx_ping,
+origin = TX transducer face at t_tx_ping. To convert to world apply
+the world TX-face pose via BeamSampleGeometry::with_rigid_transform.
+
+Args:
+    tilt_deg: [n_beams] tilt angle re TX array (+ forward), deg
+    crosstrack_deg: [n_beams] beam pointing angle re RX array (+
+                    starboard), deg. (Kongsberg's recorded "beam
+                    crosstrack" is positive port; flip the sign before
+                    passing it in.)
+    two_way_travel_times: [n_beams] two-way travel time, s
+    tx_delays: [n_beams] per-beam sector TX delay relative to
+               t_tx_ping, s. May be all zero.
+    tx_mount: TX-array mount offsets (x,y,z + ypr in body)
+    rx_mount: RX-array mount offsets (x,y,z + ypr in body)
+    tx_face_depth_m: absolute world depth of TX face at t_tx_ping (m).
+                     Must lie inside the SVP depth range.
+    n_knots: number of knots returned per beam (>=2). Knot k
+             corresponds to one-way travel time twtt[i] * k /
+             (2*(n_knots - 1)); k = n_knots-1 is the bottom return
+             (one-way = twtt/2).
+    nav: optional NavigationInterpolatorLatLon used to look up vessel
+         attitude at t_tx_eff, t_rx_eff and t_tx_ping. May be null -
+         in that case all attitude differentials are treated as
+         identity.
+    t_tx_ping: ping wall-clock time, s. Only used if `nav != nullptr`.
+    mp_cores: OpenMP threads (1 = serial)
+
+Returns:
+    [n_knots, n_beams, 3] xyz in TX-body-at-t_tx_ping frame, origin at
+    TX transducer face. NaN where the ray turned/exited the SVP or
+    input was non-finite.)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

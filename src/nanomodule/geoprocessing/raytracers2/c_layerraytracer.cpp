@@ -21,6 +21,8 @@ namespace py_raytracers2 {
 namespace nb = nanobind;
 using namespace themachinethatgoesping::algorithms::geoprocessing::raytracers2;
 using themachinethatgoesping::navigation::datastructures::Geolocation;
+using themachinethatgoesping::navigation::datastructures::PositionalOffsets;
+using themachinethatgoesping::navigation::NavigationInterpolatorLatLon;
 
 void init_c_layerraytracer(nb::module_& m)
 {
@@ -122,6 +124,64 @@ void init_c_layerraytracer(nb::module_& m)
              nb::arg("crosstrack_deg"),
              nb::arg("knot_times"),
              nb::arg("poses"),
+             nb::arg("mp_cores") = 1)
+
+        .def("trace_to_xyz",
+             [](const LayerRaytracer&                       self,
+                const xt::nanobind::pytensor<float, 1>&     tilt_deg,
+                const xt::nanobind::pytensor<float, 1>&     crosstrack_deg,
+                const xt::nanobind::pytensor<float, 1>&     two_way_travel_times,
+                const xt::nanobind::pytensor<float, 1>&     tx_delays,
+                const PositionalOffsets&                    tx_mount,
+                const PositionalOffsets&                    rx_mount,
+                float                                       tx_face_depth_m,
+                size_t                                      n_knots,
+                const NavigationInterpolatorLatLon*         nav,
+                double                                      t_tx_ping,
+                int                                         mp_cores) {
+                 return self.trace_to_xyz(tilt_deg,
+                                          crosstrack_deg,
+                                          two_way_travel_times,
+                                          tx_delays,
+                                          tx_mount,
+                                          rx_mount,
+                                          tx_face_depth_m,
+                                          n_knots,
+                                          nav,
+                                          t_tx_ping,
+                                          mp_cores);
+             },
+             "Trace beams using Kongsberg-native dual-array inputs.\n"
+             "Output frame: TX-body axes (forward, starboard, down) at\n"
+             "t_tx_ping, origin = TX transducer face at t_tx_ping. Apply\n"
+             "BeamSampleGeometry::with_rigid_transform with the world TX-face\n"
+             "pose at t_tx_ping to obtain world coordinates.\n"
+             "\n"
+             "tilt_deg:        [N] tilt re TX array, +forward (deg)\n"
+             "crosstrack_deg:  [N] beam pointing re RX array, +starboard (deg)\n"
+             "two_way_travel_times: [N] (s)\n"
+             "tx_delays:       [N] per-beam sector TX delay re t_tx_ping (s)\n"
+             "tx_mount, rx_mount: PositionalOffsets of the TX and RX arrays\n"
+             "tx_face_depth_m: absolute world depth of TX face at t_tx_ping (m)\n"
+             "n_knots:         number of trace knots (>=2). Knot k is at\n"
+             "                 one-way time twtt[i]*k/(2*(n_knots-1));\n"
+             "                 k = n_knots-1 is the bottom return.\n"
+             "nav:             optional NavigationInterpolatorLatLon for\n"
+             "                 motion compensation (sampled at t_tx_eff,\n"
+             "                 t_rx_eff and t_tx_ping). Pass None to skip.\n"
+             "t_tx_ping:       wall-clock time of the ping (s).\n"
+             "Returns [n_knots, N, 3] xyz in TX-body-at-t_tx_ping; NaN where\n"
+             "the ray turned or input was non-finite.",
+             nb::arg("tilt_deg"),
+             nb::arg("crosstrack_deg"),
+             nb::arg("two_way_travel_times"),
+             nb::arg("tx_delays"),
+             nb::arg("tx_mount"),
+             nb::arg("rx_mount"),
+             nb::arg("tx_face_depth_m"),
+             nb::arg("n_knots") = size_t(2),
+             nb::arg("nav").none() = nb::none(),
+             nb::arg("t_tx_ping") = 0.0,
              nb::arg("mp_cores") = 1)
 
         // default copy/binary/printing

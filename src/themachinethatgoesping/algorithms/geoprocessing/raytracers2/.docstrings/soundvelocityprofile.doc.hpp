@@ -1,4 +1,4 @@
-//sourcehash: 135f93b9b66996cf457a69bd2f7a0d3061cd1af32e9d0df7790018b65c445abb
+//sourcehash: e223d66fc32898cac807803fee989bde75faad41637dd446b25dc0b0473dcb86
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -57,13 +57,9 @@ Args:
     z: depths (m), monotonically increasing (absolute coordinates)
     c: sound speeds (m/s))doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_c = R"doc([L+1] sound speeds (m/s), corresponding to _z)doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_depths = R"doc([L+1] depth knots (m), monotonically increasing, absolute)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_from_stream = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_g = R"doc(gradient (c_{i+1}-c_i)/(z_{i+1}-z_i) per layer)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_c = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_date_string =
 R"doc(Format ``_timestamp`` as a date string.
@@ -79,21 +75,25 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_depths_in_meters = R"doc(All depth knots (m), absolute coordinates.)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_g = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_inverse_sound_speed_gradients_in_seconds =
+R"doc(1 / gradient (s) per layer; 0 for iso-velocity layers (size =
+number_of_layers).)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_inv_g = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_iso = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_isovelocity_flags =
+R"doc(Per-layer iso-velocity flag: true when |gradient| < ISO_EPS (size =
+number_of_layers).)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_latitude = R"doc(Latitude (decimal degrees, +N) where the profile was measured.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_longitude = R"doc(Longitude (decimal degrees, +E) where the profile was measured.)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_n_layers = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_number_of_entries = R"doc(Number of (depth, sound speed) entries (= number of layers + 1).)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_number_of_entries = R"doc(Number of (depth, sound speed) entries.)doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_number_of_layers = R"doc(Number of layers (= number of knots − 1).)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_sound_speed = R"doc(Sound speed at depth z (linear interp inside layers, clamped at ends).)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_sound_speed_gradients_in_per_second = R"doc(Sound-speed gradient dc/dz (s⁻¹) per layer (size = number_of_layers).)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_sound_speed_in_meters_per_second = R"doc(Sound speed (m/s) at the given knot index.)doc";
 
@@ -103,15 +103,15 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 R"doc(Unix timestamp (seconds since epoch, UTC) when the profile was
 measured.)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_z = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_gradients = R"doc(sound-speed gradient dc/dz (s⁻¹) per layer)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_has_location = R"doc(True iff both latitude and longitude are set.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_has_timestamp = R"doc()doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_inv_g = R"doc(1/g per layer (0.0f for iso-velocity layers))doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_inverse_gradients = R"doc(1/gradient (s) per layer (0.0f for iso-velocity layers))doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_iso = R"doc(iso-velocity flag per layer (|g| < eps))doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_isovelocity = R"doc(iso-velocity flag per layer (|gradient| < ISO_EPS))doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_latitude = R"doc()doc";
 
@@ -135,6 +135,8 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_set_timestamp = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_sound_speeds = R"doc([L+1] sound speed knots (m/s), corresponding to _depths)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_timestamp = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_to_stream = R"doc()doc";
@@ -142,8 +144,6 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_uniform = R"doc(Convenience: constant SVP from surface to z_max.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_write_optional = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_z = R"doc([L+1] depths (m), monotonically increasing, absolute)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_hash_value =
 R"doc(boost::flyweight requires a free ``hash_value`` for the value type.
