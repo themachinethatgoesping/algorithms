@@ -261,7 +261,11 @@ class LayerRaytracer
                 {
                     const double g = (double)gs.unchecked(i);
                     dt_out = std::log((c_next / c_cur) * ((1.0 + cos_cur) / (1.0 + cos_next))) / g;
-                    dx_out = (cos_cur - cos_next) / ((double)p * g);
+                    // Use numerically-stable form: (cos_cur-cos_next)/(p*g) = p*(c_next²-c_cur²)/(g*(cos_cur+cos_next))
+                    // This evaluates to 0 when p=0 (straight-down beam) instead of 0/0 = NaN.
+                    // Denominator (cos_cur+cos_next) is always > 0: both cosines are sqrt(max(0,1-(p*c)²)),
+                    // and the pcn >= 1.0 guard above ensures cos_next > 0; cos_cur > 0 by the same invariant.
+                    dx_out = (double)p * (c_next * c_next - c_cur * c_cur) / (g * (cos_cur + cos_next));
                 }
                 c_next_out   = c_next;
                 cos_next_out = cos_next;
@@ -306,7 +310,12 @@ class LayerRaytracer
                             const double c_part = 2.0 * A / (1.0 + Ap * Ap);
                             const double pc     = (double)p * c_part;
                             const double cos_part = std::sqrt(std::max(0.0, 1.0 - pc * pc));
-                            const double dxp = (cos_cur - cos_part) / ((double)p * g);
+                            // Use numerically-stable form: (cos_cur-cos_part)/(p*g) = p*(c_part²-c_cur²)/(g*(cos_cur+cos_part))
+                            // This evaluates to 0 when p=0 (straight-down beam) instead of 0/0 = NaN.
+                            // Denominator (cos_cur+cos_part) is always > 0: both cosines are sqrt(max(0,1-(p*c)²));
+                            // since p*c_next < 1 (pcn guard) and c_part is within [c_cur,c_next] (monotone layer),
+                            // p*c_part < 1, so cos_part > 0, and cos_cur > 0 by the same invariant.
+                            const double dxp = (double)p * (c_part * c_part - c_cur * c_cur) / (g * (cos_cur + cos_part));
                             t_cur += dt_part;
                             x_cur += dxp;
                             z_cur += (c_part - c_cur) / g;
