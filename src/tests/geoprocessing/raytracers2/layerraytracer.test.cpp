@@ -95,7 +95,9 @@ TEST_CASE("LayerRaytracer multi-layer knot anchoring", TESTTAG)
         { 0.f, 0.f, 1.f },
         { 0.f, 0.5f, 0.86602540378f },
     };
-    xt::xtensor<float, 1> knot_times = { 0.5f, 1.0f, 1.5f };
+    // 1.5f would exceed the SVP range for the straight-down beam (~1.33 s),
+    // causing NaN output and a spurious WithinAbs failure.
+    xt::xtensor<float, 1> knot_times = { 0.5f, 1.0f, 1.2f };
     Geolocation pose; pose.z = 0.f;
     std::vector<Geolocation> poses(3, pose);
 
