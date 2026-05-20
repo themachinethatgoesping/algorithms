@@ -28,6 +28,7 @@ sources = [
   'algorithms/functions/absorption.test.cpp',
   'algorithms/functions/rangecorrection.test.cpp',
   'algorithms/functions/wcicorrection.test.cpp',
+  'geoprocessing/datastructures/beamsamplegeometrypiecewise.test.cpp',
   'geoprocessing/datastructures/beamsampleparameters.test.cpp',
   'geoprocessing/datastructures/raytraceresult.test.cpp',
   'geoprocessing/datastructures/raytraceresults.test.cpp',
@@ -38,14 +39,13 @@ sources = [
   'geoprocessing/datastructures/xyz.test.cpp',
   'geoprocessing/raytracers/i_raytracer.test.cpp',
   'geoprocessing/raytracers/rtconstantsvp.test.cpp',
-  'geoprocessing/raytracers2/soundvelocityprofile.test.cpp',
-  'geoprocessing/raytracers2/layerraytracer.test.cpp',
-  'geoprocessing/datastructures/beamsamplegeometrypiecewise.test.cpp',
   'geoprocessing/backtracers/backtracedwci.test.cpp',
   'geoprocessing/backtracers/btconstantsvp.test.cpp',
   'geoprocessing/backtracers/i_backtracer.test.cpp',
   'geoprocessing/sparsemaps/sparsemap.test.cpp',
   'geoprocessing/functions/to_raypoints.test.cpp',
+  'geoprocessing/raytracers2/layerraytracer.test.cpp',
+  'geoprocessing/raytracers2/soundvelocityprofile.test.cpp',
 ]
 
 foreach source : sources

@@ -101,10 +101,6 @@ headers = [
   'geoprocessing/raytracers/rtconstantsvp.hpp',
   'geoprocessing/raytracers/.docstrings/i_raytracer.doc.hpp',
   'geoprocessing/raytracers/.docstrings/rtconstantsvp.doc.hpp',
-  'geoprocessing/raytracers2/soundvelocityprofile.hpp',
-  'geoprocessing/raytracers2/layerraytracer.hpp',
-  'geoprocessing/raytracers2/.docstrings/soundvelocityprofile.doc.hpp',
-  'geoprocessing/raytracers2/.docstrings/layerraytracer.doc.hpp',
   'geoprocessing/backtracers/backtracedwci.hpp',
   'geoprocessing/backtracers/btconstantsvp.hpp',
   'geoprocessing/backtracers/i_backtracer.hpp',
@@ -125,10 +121,16 @@ headers = [
   'geoprocessing/georeferencers/i_backtracer.hpp',
   'geoprocessing/georeferencers/.docstrings/btconstantsvp.doc.hpp',
   'geoprocessing/georeferencers/.docstrings/i_backtracer.doc.hpp',
-  'geoprocessing/functions/to_raypoints.hpp',
   'geoprocessing/functions/backward.hpp',
+  'geoprocessing/functions/to_raypoints.hpp',
   'geoprocessing/functions/transform.hpp',
+  'geoprocessing/functions/.docstrings/backward.doc.hpp',
   'geoprocessing/functions/.docstrings/to_raypoints.doc.hpp',
+  'geoprocessing/functions/.docstrings/transform.doc.hpp',
+  'geoprocessing/raytracers2/layerraytracer.hpp',
+  'geoprocessing/raytracers2/soundvelocityprofile.hpp',
+  'geoprocessing/raytracers2/.docstrings/layerraytracer.doc.hpp',
+  'geoprocessing/raytracers2/.docstrings/soundvelocityprofile.doc.hpp',
 ]
 
 # -- targets --
