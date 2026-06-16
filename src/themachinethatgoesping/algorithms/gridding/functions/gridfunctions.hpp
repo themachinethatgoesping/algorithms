@@ -8,7 +8,7 @@
 #include <limits>
 #include <stdexcept>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <map>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <tuple>

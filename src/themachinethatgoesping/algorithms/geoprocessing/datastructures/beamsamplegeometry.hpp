@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <limits>
 #include <numeric>
 #include <optional>

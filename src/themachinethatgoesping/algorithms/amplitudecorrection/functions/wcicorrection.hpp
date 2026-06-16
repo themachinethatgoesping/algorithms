@@ -10,7 +10,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <optional>
 #include <xsimd/xsimd.hpp>
 

@@ -5,7 +5,7 @@
 #include "beamsampleparameters.hpp"
 
 #include <stdexcept>
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 namespace themachinethatgoesping {
 namespace algorithms {

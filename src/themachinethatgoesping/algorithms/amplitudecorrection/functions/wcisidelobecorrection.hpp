@@ -27,7 +27,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <optional>
 #include <vector>
 

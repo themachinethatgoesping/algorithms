@@ -6,7 +6,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <xtensor/containers/xtensor.hpp>
 
 #include <themachinethatgoesping/algorithms/amplitudecorrection/functions/rangecorrection.hpp>

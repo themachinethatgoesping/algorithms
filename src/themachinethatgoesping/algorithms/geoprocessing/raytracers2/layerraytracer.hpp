@@ -50,7 +50,7 @@
 #include <utility>
 #include <vector>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <xtensor/containers/xtensor.hpp>
 #include <xtensor/core/xmath.hpp>

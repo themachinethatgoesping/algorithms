@@ -7,7 +7,7 @@
 /* generated doc strings */
 #include ".docstrings/beamaffine1d.doc.hpp"
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <xtensor/containers/xtensor.hpp>
 #include <xtensor/core/xmath.hpp>

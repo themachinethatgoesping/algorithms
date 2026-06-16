@@ -3,7 +3,7 @@
 /* generated doc strings */
 #include ".docstrings/to_raypoints.doc.hpp"
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <themachinethatgoesping/tools/math/simd.hpp>
 

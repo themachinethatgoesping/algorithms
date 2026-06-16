@@ -14,7 +14,7 @@
 #include <xtensor/misc/xsort.hpp>
 #include <xtensor/views/xindex_view.hpp>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <map>
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <tuple>
