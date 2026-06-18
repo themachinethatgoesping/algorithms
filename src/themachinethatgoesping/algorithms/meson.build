@@ -14,6 +14,7 @@ sources = [
   'featuremapping/nearestfeaturemapper.cpp',
   'geoprocessing/datastructures/beamsampleparameters.cpp',
   'geoprocessing/functions/backward.cpp',
+  'echogramprocessing/functions/bottom_detection.cpp',
 ]
 
 headers = [
@@ -71,6 +72,10 @@ headers = [
   'imageprocessing/functions/.docstrings/find_local_maxima.doc.hpp',
   'imageprocessing/functions/.docstrings/find_local_maxima2.doc.hpp',
   'imageprocessing/functions/.docstrings/grow_regions.doc.hpp',
+  'echogramprocessing/functions.hpp',
+  'echogramprocessing/.docstrings/functions.doc.hpp',
+  'echogramprocessing/functions/bottom_detection.hpp',
+  'echogramprocessing/functions/.docstrings/bottom_detection.doc.hpp',
   'geoprocessing/datastructures.hpp',
   'geoprocessing/raytracers.hpp',
   'geoprocessing/datastructures/beamaffine1d.hpp',

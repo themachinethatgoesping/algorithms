@@ -23,6 +23,7 @@ sources = [
   'featuremapping/c_nearestfeaturemapper.cpp',
   'featuremapping/module.cpp',
   'imageprocessing/functions/functions.cpp',
+  'echogramprocessing/functions/functions.cpp',
   'geoprocessing/datastructures/c_beamaffine1d.cpp',
   'geoprocessing/datastructures/c_beamsamplegeometry.cpp',
   'geoprocessing/datastructures/c_beamsamplegeometrypiecewise.cpp',

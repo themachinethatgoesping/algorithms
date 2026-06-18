@@ -5,6 +5,7 @@
 #include <nanobind/nanobind.h>
 
 #include "amplitudecorrection/module.hpp"
+#include "echogramprocessing/module.hpp"
 #include "featuremapping/module.hpp"
 #include "geoprocessing/module.hpp"
 #include "gridding/module.hpp"
@@ -29,6 +30,7 @@ NB_MODULE(MODULE_NAME, m)
 
     py_featuremapping::init_m_featuremapping(m);
     py_imageprocessing::init_m_imageprocessing(m);
+    py_echogramprocessing::init_m_echogramprocessing(m);
     py_pointprocessing::init_m_pointprocessing(m);
     py_amplitudecorrection::init_m_amplitudecorrection(m);
     py_geoprocessing::init_m_geoprocessing(m);
