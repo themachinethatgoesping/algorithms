@@ -1,4 +1,4 @@
-//sourcehash: 0c765391c8a77fe1e122e970d76739d58c4561c028ecfc22802e1af56b97947a
+//sourcehash: 3dd062a3297b20389d79a5e9c28a74a06059276d2c745125f80e105425edfd8c
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -41,120 +41,39 @@
 #endif
 
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectionResult = R"doc(Result of a single-ping bottom detection.)doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_echo_length =
+R"doc(Theoretical length (m) of the bottom echo along range.
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectionResult_bottom_backscatter_db = R"doc(Surface backscatter (dB) at the detected bottom. NaN if no bottom.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectionResult_bottom_sample = R"doc(Detected bottom sample index (fractional). NaN if no bottom was found.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectionResult_operator_eq = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectionResult_printer = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectionResult_valid = R"doc(Whether a valid bottom was detected.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector =
-R"doc(Robust echogram bottom detector (ESP3 detec_bottom_algo_v4 port).
-
-Configure the public threshold/option fields (their defaults reproduce
-ESP3's defaults), then call find_bottom_in_ping or find_bottom.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_BottomDetector = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_PingContext = R"doc(Per-ping derived quantities shared by mask building and detection.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_PingContext_bs = R"doc(surface backscatter per sample (dB), NaN if invalid)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_PingContext_max_bs = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_PingContext_range = R"doc(range per sample (m))doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_PingContext_s_max = R"doc(last usable sample (inclusive))doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_PingContext_s_min = R"doc(first usable sample (inclusive))doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_PingContext_usable = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_candidate_raw =
-R"doc(Raw (unsmoothed) candidate mask: BS above ``max_bs + thr_echo`` within
-the usable range window.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_compute_ping_context = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_denoised =
-R"doc(Whether the input Sv is denoised (moves the bottom up by one sample,
-mirroring ESP3's denoised handling).)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_detect_from_mask = R"doc(Core detection given a (smoothed) candidate mask.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_find_bottom_in_ping =
-R"doc(Detect the seafloor sample in a single ping of Sv data (dB).
+Port of ESP3's ``echo_length.m``.
 
 Args:
-    sv_db: Per-sample Sv values of the ping in dB.
-    range_offset: Range (m) of sample 0 (affine offset).
-    range_resolution: Range increment per sample (m, the affine
-                      slope).
-    pulse_nsamples: Effective pulse length expressed in samples.
-    beamwidth_deg: Average beam aperture (deg) for the echo-length
-                   validation filter.
+    r_p: pulse range ``c*tau/2`` in m.
+    theta_b: beam aperture in degrees.
+    beta: incidence angle at the bottom in degrees (seafloor slope
+          plus transducer tilt).
+    r: range of the start of the echo (bottom range) in m.
 
 Returns:
-    BottomDetectionResult (sample, backscatter, validity).)doc";
+    echo length in m (``inf`` for grazing incidence).)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_incidence_angle_deg =
-R"doc(Assumed incidence angle (deg) for the theoretical echo-length filter
-(combines seafloor slope and transducer tilt). ESP3 uses 10 deg.)doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_majority_filter =
+R"doc(1D majority filter on a binary mask (range or ping direction).
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_interpolate_gaps =
-R"doc(Linearly interpolate the detected bottom across short gaps of invalid
-pings.)doc";
+A sample becomes set when at least ``fraction`` of a centered window
+of width ``window`` is set. This removes isolated detections and fills
+small holes (the separable equivalent of ESP3's ``filter2(ones(win,
+k), ...)``). Implemented with a prefix sum, O(n).
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_mask_fill_fraction =
-R"doc(Fraction (0..1) of a smoothing window that must be set for a sample to
-remain a candidate (majority filter). ESP3 default: 0.7.)doc";
+Args:
+    mask: Input binary mask (non-zero = set).
+    window: Window width (clamped to >= 1).
+    fraction: Required fraction of set samples in the window (0..1).
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_max_interpolation_gap = R"doc(Maximum gap length (in pings) that will be interpolated.)doc";
+Template Args:
+    t_xtensor_1d_in: 1D integer tensor type of the input mask.
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_n_ping_smoothing =
-R"doc(Number of neighbouring pings used by the cross-ping mask smoothing in
-batch mode. Use 1 to disable cross-ping smoothing.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_operator_eq = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_outlier_threshold = R"doc(Outlier threshold in multiples of the median absolute deviation (MAD).)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_outlier_window = R"doc(Half-width (in pings) of the median window used for outlier rejection.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_printer = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_r_max = R"doc(Maximum range (m). Samples above this range are ignored.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_r_min = R"doc(Minimum range (m). Samples below this range are ignored.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_remove_outliers =
-R"doc(Reject detections that deviate strongly from a local median (robust
-MAD-based outlier rejection across pings).)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_shift_bot_m = R"doc(Vertical shift applied to the detected bottom (m, positive = upward).)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_thr_backstep =
-R"doc(Back-step threshold (dB). While walking up the leading edge a sample
-counts as "still bottom" if its BS >= ``BS(bottom) + thr_backstep``.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_thr_bottom =
-R"doc(Absolute floor on the strongest surface-backscatter (dB) for a ping to
-contain a bottom. Pings whose maximum BS is below this yield no
-bottom.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_thr_cum_percent =
-R"doc(Cumulative-energy threshold in percent (0..100): the bottom is placed
-at the first sample where the normalized cumulative masked energy
-reaches this fraction.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetector_thr_echo =
-R"doc(Samples whose BS is within this (negative) dB offset of the per-ping
-maximum are kept as bottom candidates.)doc";
+Returns:
+    ``xt::xtensor<uint8_t, 1>`` of the same length (1 = set).)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

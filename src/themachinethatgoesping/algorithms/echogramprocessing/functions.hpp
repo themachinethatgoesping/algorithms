@@ -7,4 +7,5 @@
 /* generated doc strings */
 #include ".docstrings/functions.doc.hpp"
 
+#include "bottomdetector.hpp"
 #include "functions/bottom_detection.hpp"

@@ -14,7 +14,7 @@ sources = [
   'featuremapping/nearestfeaturemapper.cpp',
   'geoprocessing/datastructures/beamsampleparameters.cpp',
   'geoprocessing/functions/backward.cpp',
-  'echogramprocessing/functions/bottom_detection.cpp',
+  'echogramprocessing/bottomdetector.cpp',
 ]
 
 headers = [
@@ -74,6 +74,8 @@ headers = [
   'imageprocessing/functions/.docstrings/grow_regions.doc.hpp',
   'echogramprocessing/functions.hpp',
   'echogramprocessing/.docstrings/functions.doc.hpp',
+  'echogramprocessing/bottomdetector.hpp',
+  'echogramprocessing/.docstrings/bottomdetector.doc.hpp',
   'echogramprocessing/functions/bottom_detection.hpp',
   'echogramprocessing/functions/.docstrings/bottom_detection.doc.hpp',
   'geoprocessing/datastructures.hpp',

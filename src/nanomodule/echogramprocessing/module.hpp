@@ -9,9 +9,8 @@ namespace algorithms {
 namespace pymodule {
 namespace py_echogramprocessing {
 
-namespace py_functions {
-void init_m_functions(nanobind::module_& m); // defined in functions/functions.cpp
-}
+// defined in c_bottomdetector.cpp
+void init_c_bottomdetector(nanobind::module_& m);
 
 void init_m_echogramprocessing(nanobind::module_& m)
 {
@@ -20,7 +19,7 @@ void init_m_echogramprocessing(nanobind::module_& m)
     submodule.doc() =
         "Submodule for echogram processing (e.g. bottom detection on Sv echograms)";
 
-    py_functions::init_m_functions(submodule);
+    init_c_bottomdetector(submodule);
 }
 
 } // namespace py_echogramprocessing
