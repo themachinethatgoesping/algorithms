@@ -23,6 +23,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <deque>
 #include <limits>
 #include <utility>
 #include <vector>
@@ -73,6 +74,7 @@ class BottomDetector
     float outlier_threshold     = 3.0f;  ///< outlier threshold in multiples of the MAD
     bool  interpolate_gaps      = false; ///< interpolate the bottom across short invalid gaps
     int   max_interpolation_gap = 10;    ///< maximum interpolated gap length (pings)
+    int   mp_cores              = 1;     ///< OpenMP worker threads used during compile()
 
     /// Default constructor (all parameters keep their ESP3 defaults).
     BottomDetector() = default;
@@ -94,7 +96,8 @@ class BottomDetector
                    int   outlier_window,
                    float outlier_threshold,
                    bool  interpolate_gaps,
-                   int   max_interpolation_gap);
+                   int   max_interpolation_gap,
+                   int   mp_cores = 1);
 
     /// Equality compares the configuration parameters only (not the buffered pings).
     bool operator==(const BottomDetector& rhs) const
@@ -108,7 +111,8 @@ class BottomDetector
                remove_outliers == rhs.remove_outliers && outlier_window == rhs.outlier_window &&
                outlier_threshold == rhs.outlier_threshold &&
                interpolate_gaps == rhs.interpolate_gaps &&
-               max_interpolation_gap == rhs.max_interpolation_gap;
+               max_interpolation_gap == rhs.max_interpolation_gap &&
+               mp_cores == rhs.mp_cores;
     }
 
     // =========================================================================
@@ -154,8 +158,20 @@ class BottomDetector
                                 std::numeric_limits<float>::quiet_NaN());
         }
 
+        // Append to the bounded sliding window. The expensive per-ping work
+        // (gating + candidate mask) and the cross-ping detection are deferred
+        // and executed in parallel batches by advance(), so add_ping itself
+        // stays cheap: one BS materialization plus three push_backs. _ctx and
+        // _mask are kept in lock-step with _pings (filled lazily by advance()).
         _pings.push_back(std::move(ping));
+        _ctx.emplace_back();
+        _mask.emplace_back();
+        ++_n_added;
         _dirty = true;
+
+        // Trigger one parallel batch once enough un-processed pings accumulated.
+        if (_pings.size() - _n_precomputed >= batch_size())
+            advance();
     }
 
     // =========================================================================
@@ -180,52 +196,47 @@ class BottomDetector
     void reset();
 
     /// Number of pings added so far.
-    std::size_t size() const { return _pings.size(); }
+    std::size_t size() const { return _n_added; }
 
     /// Get the ObjectPrinter for BottomDetector.
     tools::classhelper::ObjectPrinter __printer__(unsigned int float_precision,
                                                   bool         superscript_exponents) const;
 
   private:
-    /// One buffered ping: the surface backscatter plus its affine range geometry.
-    struct Ping
-    {
-        xt::xtensor<float, 1> bs;                   ///< surface BS per sample (dB), NaN if invalid
-        float                 range_offset     = 0.0f;
-        float                 range_resolution = 0.0f;
-        float                 pulse_nsamples   = 0.0f;
-        float                 beamwidth_deg    = 0.0f;
-    };
-
-    /// Per-ping derived gating, computed transiently during compile().
-    struct Context
-    {
-        int   s_min  = 0;                                    ///< first usable sample (inclusive)
-        int   s_max  = -1;                                   ///< last usable sample (inclusive)
-        float max_bs = std::numeric_limits<float>::quiet_NaN();
-        bool  usable = false;
-    };
-
-    // ---- detection pipeline (non-templated, defined in bottomdetector.cpp) ----
-    Context                 analyze_ping(const Ping& ping) const;
-    xt::xtensor<uint8_t, 1> range_mask(const Ping& ping, const Context& ctx) const;
-    xt::xtensor<uint8_t, 1> cross_ping_mask(const std::vector<xt::xtensor<uint8_t, 1>>& masks,
-                                            int                                          center,
-                                            int                                          half) const;
-    std::pair<float, float> detect(const Ping&                    ping,
-                                   const Context&                 ctx,
-                                   const xt::xtensor<uint8_t, 1>& mask) const;
+    using Ping    = functions::PingRecord;
+    using Context = functions::PingContext;
 
     void compile();
-    void reject_outliers(xt::xtensor<float, 1>& bottom_sample,
-                         xt::xtensor<float, 1>& bottom_bs) const;
-    void interpolate_bottom_gaps(xt::xtensor<float, 1>& bottom_sample) const;
+    void advance();
+    functions::BottomDetectorConfig make_config() const;
+    int         smoothing_half() const;
+    std::size_t batch_size() const;
+    void        reject_outliers(xt::xtensor<float, 1>& bottom_sample,
+                                xt::xtensor<float, 1>& bottom_bs) const;
+    void        interpolate_bottom_gaps(xt::xtensor<float, 1>& bottom_sample) const;
 
-    // ---- state ----
-    std::vector<Ping>     _pings;         ///< buffered input pings (step 1)
-    xt::xtensor<float, 1> _bottom_sample; ///< cached detected bottom (step 2)
-    xt::xtensor<float, 1> _bottom_bs;     ///< cached bottom backscatter (step 2)
-    bool                  _dirty = true;  ///< whether the cached result needs rebuilding
+    // ---- bounded sliding window (heavy per-sample buffers + cached results) ----
+    // _pings / _ctx / _mask are kept in lock-step. The leading _n_precomputed
+    // entries have valid _ctx / _mask; trailing entries are raw (BS only) and
+    // are filled by the next advance(). Only a small window around the detection
+    // frontier is retained (~ smoothing window + batch), so memory stays
+    // O(window) instead of O(total pings).
+    std::deque<Ping>                    _pings;
+    std::deque<Context>                 _ctx;
+    std::deque<xt::xtensor<uint8_t, 1>> _mask;
+    std::size_t _window_front  = 0; ///< global index of _pings.front()
+    std::size_t _n_precomputed = 0; ///< # leading window entries with valid _ctx/_mask
+    std::size_t _next_finalize = 0; ///< global index of next ping to finalize
+    std::size_t _n_added       = 0; ///< total pings added so far
+
+    // ---- finalized scalar results (cheap: 2 floats per ping, full history) ----
+    std::vector<float> _finalized_bottom_sample;
+    std::vector<float> _finalized_bottom_bs;
+
+    // ---- snapshot returned by get_bottom (finalized history + on-the-fly tail) ----
+    xt::xtensor<float, 1> _bottom_sample;
+    xt::xtensor<float, 1> _bottom_bs;
+    bool                  _dirty = false;
 };
 
 } // namespace echogramprocessing

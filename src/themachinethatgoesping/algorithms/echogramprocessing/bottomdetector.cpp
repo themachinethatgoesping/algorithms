@@ -20,6 +20,43 @@ constexpr float NaN     = std::numeric_limits<float>::quiet_NaN();
 constexpr float NEG_INF = -std::numeric_limits<float>::infinity();
 } // namespace
 
+functions::BottomDetectorConfig BottomDetector::make_config() const
+{
+    functions::BottomDetectorConfig config;
+    config.thr_bottom            = thr_bottom;
+    config.thr_echo              = thr_echo;
+    config.thr_backstep          = thr_backstep;
+    config.thr_cum_percent       = thr_cum_percent;
+    config.r_min                 = r_min;
+    config.r_max                 = r_max;
+    config.shift_bot_m           = shift_bot_m;
+    config.denoised              = denoised;
+    config.incidence_angle_deg   = incidence_angle_deg;
+    config.n_ping_smoothing      = n_ping_smoothing;
+    config.mask_fill_fraction    = mask_fill_fraction;
+    config.remove_outliers       = remove_outliers;
+    config.outlier_window        = outlier_window;
+    config.outlier_threshold     = outlier_threshold;
+    config.interpolate_gaps      = interpolate_gaps;
+    config.max_interpolation_gap = max_interpolation_gap;
+    config.mp_cores              = mp_cores;
+    return config;
+}
+
+int BottomDetector::smoothing_half() const
+{
+    return std::max(n_ping_smoothing, 1) / 2;
+}
+
+std::size_t BottomDetector::batch_size() const
+{
+    // Size the parallel ingest/finalize batch so each worker gets enough
+    // independent pings to amortize OpenMP overhead. With mp_cores == 1 this is
+    // still a small batch that keeps add_ping cheap and memory bounded.
+    const std::size_t cores = static_cast<std::size_t>(std::max(1, mp_cores));
+    return std::max<std::size_t>(64, cores * 16);
+}
+
 // =============================================================================
 // Constructor
 // =============================================================================
@@ -39,7 +76,8 @@ BottomDetector::BottomDetector(float thr_bottom,
                                int   outlier_window,
                                float outlier_threshold,
                                bool  interpolate_gaps,
-                               int   max_interpolation_gap)
+                               int   max_interpolation_gap,
+                               int   mp_cores)
     : thr_bottom(thr_bottom)
     , thr_echo(thr_echo)
     , thr_backstep(thr_backstep)
@@ -56,267 +94,122 @@ BottomDetector::BottomDetector(float thr_bottom,
     , outlier_threshold(outlier_threshold)
     , interpolate_gaps(interpolate_gaps)
     , max_interpolation_gap(max_interpolation_gap)
+    , mp_cores(std::max(1, mp_cores))
 {
 }
 
 // =============================================================================
-// Per-ping gating (range window + maximum BS)
+// Streaming pipeline: parallel per-ping precompute + cross-ping detection over
+// a bounded sliding window. add_ping() only appends; the heavy work happens
+// here, batched so it parallelizes across mp_cores and each ping is touched
+// exactly once.
 // =============================================================================
 
-BottomDetector::Context BottomDetector::analyze_ping(const Ping& ping) const
+void BottomDetector::advance()
 {
-    Context   ctx;
-    const int n = static_cast<int>(ping.bs.size());
-    if (n == 0)
-        return ctx;
+    const auto        config = make_config();
+    const int         half   = smoothing_half();
+    const std::size_t size   = _pings.size();
 
-    // usable range window: near-field guard (2 pulse lengths) + r_min / r_max
-    int s_min = static_cast<int>(std::lround(2.0f * std::max(ping.pulse_nsamples, 0.0f)));
-    if (ping.range_resolution > 0.0f && std::isfinite(r_min))
-        s_min = std::max(
-            s_min,
-            static_cast<int>(std::ceil((r_min - ping.range_offset) / ping.range_resolution)));
-    s_min = std::clamp(s_min, 0, n - 1);
-
-    int s_max = n - 1;
-    if (ping.range_resolution > 0.0f && std::isfinite(r_max))
-        s_max = std::min(
-            s_max,
-            static_cast<int>(std::floor((r_max - ping.range_offset) / ping.range_resolution)));
-    s_max = std::clamp(s_max, 0, n - 1);
-
-    ctx.s_min = s_min;
-    ctx.s_max = s_max;
-    if (s_max <= s_min)
-        return ctx;
-
-    float max_bs = NEG_INF;
-    for (int i = s_min; i <= s_max; ++i)
-        if (std::isfinite(ping.bs.unchecked(i)))
-            max_bs = std::max(max_bs, ping.bs.unchecked(i));
-    if (max_bs == NEG_INF)
-        return ctx;
-
-    ctx.max_bs = max_bs;
-    ctx.usable = true;
-    return ctx;
-}
-
-// =============================================================================
-// Range-direction candidate mask (threshold + majority filter)
-// =============================================================================
-
-xt::xtensor<uint8_t, 1> BottomDetector::range_mask(const Ping& ping, const Context& ctx) const
-{
-    const int               n   = static_cast<int>(ping.bs.size());
-    xt::xtensor<uint8_t, 1> raw = xt::zeros<uint8_t>({ std::max(n, 0) });
-    if (!ctx.usable || ctx.max_bs < thr_bottom)
-        return raw;
-
-    const float level = ctx.max_bs + thr_echo;
-    for (int i = ctx.s_min; i <= ctx.s_max; ++i)
-        if (ping.bs.unchecked(i) > level) // NaN compares false -> excluded
-            raw.unchecked(i) = 1;
-
-    const int win = std::max(5, static_cast<int>(std::lround(2.0f * ping.pulse_nsamples + 1.0f)));
-    return functions::majority_filter(raw, win, mask_fill_fraction);
-}
-
-// =============================================================================
-// Cross-ping (ping-direction) majority smoothing of the candidate masks
-// =============================================================================
-
-xt::xtensor<uint8_t, 1> BottomDetector::cross_ping_mask(
-    const std::vector<xt::xtensor<uint8_t, 1>>& masks,
-    int                                         center,
-    int                                         half) const
-{
-    if (std::max(n_ping_smoothing, 1) <= 1)
-        return masks[center]; // no cross-ping smoothing
-
-    const int               n   = static_cast<int>(masks[center].size());
-    xt::xtensor<uint8_t, 1> out = xt::zeros<uint8_t>({ std::max(n, 0) });
-
-    const int lo  = std::max(center - half, 0);
-    const int hi  = std::min(center + half, static_cast<int>(masks.size()) - 1);
-    const int len = hi - lo + 1;
-    for (int s = 0; s < n; ++s)
+    // 1) Per-ping precompute (range gating + candidate mask) for the pings that
+    //    were appended since the last advance(). Each ping is independent, so
+    //    this is embarrassingly parallel and every ping is processed only once.
+    if (_n_precomputed < size)
     {
-        int sum = 0;
-        for (int q = lo; q <= hi; ++q)
+        const int lo = static_cast<int>(_n_precomputed);
+        const int hi = static_cast<int>(size);
+#pragma omp parallel for schedule(static) num_threads(mp_cores)
+        for (int p = lo; p < hi; ++p)
         {
-            const auto& mq = masks[q];
-            if (s < static_cast<int>(mq.size()))
-                sum += mq.unchecked(s);
+            const auto idx = static_cast<std::size_t>(p);
+            _ctx[idx]      = functions::analyze_ping(_pings, idx, config);
+            _mask[idx]     = functions::range_mask(_pings, idx, _ctx[idx], config);
         }
-        if (len > 0 && static_cast<float>(sum) / static_cast<float>(len) >= mask_fill_fraction)
-            out.unchecked(s) = 1;
+        _n_precomputed = size;
     }
-    return out;
+
+    // 2) Finalize every ping that already has its full right-hand smoothing
+    //    support (half neighbours to the right). Detections are independent and
+    //    run in parallel; results are appended to the finalized history in order.
+    const std::size_t q0    = _next_finalize - _window_front;
+    std::size_t       q_end = q0;
+    while (q_end < size && q_end + static_cast<std::size_t>(half) < size)
+        ++q_end;
+
+    if (q_end > q0)
+    {
+        const std::size_t  count = q_end - q0;
+        std::vector<float> out_sample(count);
+        std::vector<float> out_bs(count);
+#pragma omp parallel for schedule(static) num_threads(mp_cores)
+        for (int t = 0; t < static_cast<int>(count); ++t)
+        {
+            const std::size_t q      = q0 + static_cast<std::size_t>(t);
+            const auto        mask_s = functions::cross_ping_mask(_mask, q, half, mask_fill_fraction);
+            const auto [sample, bs]  = functions::detect(_pings, q, _ctx[q], mask_s, config);
+            out_sample[static_cast<std::size_t>(t)] = sample;
+            out_bs[static_cast<std::size_t>(t)]     = bs;
+        }
+        _finalized_bottom_sample.insert(
+            _finalized_bottom_sample.end(), out_sample.begin(), out_sample.end());
+        _finalized_bottom_bs.insert(_finalized_bottom_bs.end(), out_bs.begin(), out_bs.end());
+        _next_finalize += count;
+    }
+
+    // 3) Drop front pings that no future detection can reference any more,
+    //    retaining `half` pings behind the finalize frontier for left support.
+    const std::size_t keep_from = (_next_finalize > static_cast<std::size_t>(half))
+                                      ? _next_finalize - static_cast<std::size_t>(half)
+                                      : 0;
+    while (_window_front < keep_from)
+    {
+        _pings.pop_front();
+        _ctx.pop_front();
+        _mask.pop_front();
+        ++_window_front;
+        --_n_precomputed;
+    }
 }
-
-// =============================================================================
-// Per-ping detection from a (smoothed) candidate mask
-// =============================================================================
-
-std::pair<float, float> BottomDetector::detect(const Ping&                    ping,
-                                               const Context&                 ctx,
-                                               const xt::xtensor<uint8_t, 1>& mask) const
-{
-    const int n = static_cast<int>(ping.bs.size());
-    if (!ctx.usable || ctx.max_bs < thr_bottom || n == 0)
-        return { NaN, NaN };
-
-    const auto& bs = ping.bs;
-
-    // topmost candidate sample
-    int bot_top = -1;
-    for (int i = ctx.s_min; i <= ctx.s_max; ++i)
-        if (mask.unchecked(i))
-        {
-            bot_top = i;
-            break;
-        }
-    if (bot_top < 0)
-        return { NaN, NaN };
-
-    // cumulative-energy pick: energy = (masked linear BS)^2 = 10^(BS/5).
-    // The pow is vectorized; non-masked samples are then zeroed.
-    xt::xtensor<float, 1> energy = xt::where(xt::isfinite(bs), xt::pow(10.0f, bs * 0.2f), 0.0f);
-    float                 total  = 0.0f;
-    for (int i = 0; i < n; ++i)
-    {
-        if (!mask.unchecked(i))
-            energy.unchecked(i) = 0.0f;
-        total += energy.unchecked(i);
-    }
-
-    int         bot     = bot_top;
-    const float thr_cum = std::clamp(thr_cum_percent / 100.0f, 0.0f, 1.0f);
-    if (total > 0.0f)
-    {
-        float cum = 0.0f;
-        for (int i = 0; i < n; ++i)
-        {
-            cum += energy.unchecked(i);
-            if (cum / total >= thr_cum)
-            {
-                bot = std::max(bot_top, i);
-                break;
-            }
-        }
-    }
-
-    // back-stepping up the leading edge by one pulse length
-    const int backstep = std::max(4, static_cast<int>(std::lround(ping.pulse_nsamples)));
-    if (bot > 2 * backstep)
-    {
-        const float accept_floor = thr_bottom + thr_echo + thr_backstep;
-        while (bot > backstep)
-        {
-            int   idx_max = -1;
-            float bs_val  = NEG_INF;
-            for (int j = bot - backstep; j <= bot - 1; ++j)
-                if (std::isfinite(bs.unchecked(j)) && bs.unchecked(j) > bs_val)
-                {
-                    bs_val  = bs.unchecked(j);
-                    idx_max = j;
-                }
-            if (idx_max < 0)
-                break;
-
-            const float bs_bot = std::isfinite(bs.unchecked(bot)) ? bs.unchecked(bot) : NEG_INF;
-            if (!(bs_val >= bs_bot + thr_backstep && bs_val > accept_floor) || idx_max >= bot)
-                break;
-            bot = idx_max;
-        }
-        bot = std::max(bot - backstep, 0);
-    }
-    bot = std::max(bot, ctx.s_min);
-
-    // echo-length validation filter (moving-average amplitude in dB)
-    const float bot_range = ping.range_offset + ping.range_resolution * static_cast<float>(bot);
-    const float r_p       = std::max(ping.pulse_nsamples * ping.range_resolution, 0.0f);
-    const float el =
-        functions::echo_length(r_p, ping.beamwidth_deg, incidence_angle_deg, bot_range);
-
-    int win = 5;
-    if (std::isfinite(el) && ping.range_resolution > 0.0f)
-        win = std::max(5, static_cast<int>(std::lround(el / ping.range_resolution)));
-    const int half = win / 2;
-
-    // amplitude = 10^(BS/20), counted only where BS is finite (vectorized pow)
-    xt::xtensor<float, 1> amp = xt::where(xt::isfinite(bs), xt::pow(10.0f, bs * 0.05f), 0.0f);
-    std::vector<float>    amp_prefix(n + 1, 0.0f);
-    std::vector<float>    cnt_prefix(n + 1, 0.0f);
-    for (int i = 0; i < n; ++i)
-    {
-        amp_prefix[i + 1] = amp_prefix[i] + amp.unchecked(i);
-        cnt_prefix[i + 1] = cnt_prefix[i] + (std::isfinite(bs.unchecked(i)) ? 1.0f : 0.0f);
-    }
-
-    float bs_bottom = NEG_INF;
-    for (int i = ctx.s_min; i <= ctx.s_max; ++i)
-    {
-        if (!mask.unchecked(i))
-            continue;
-        const int   lo      = std::max(i - half, 0);
-        const int   hi      = std::min(i + half, n - 1);
-        const float amp_sum = amp_prefix[hi + 1] - amp_prefix[lo];
-        const float cnt     = cnt_prefix[hi + 1] - cnt_prefix[lo];
-        if (cnt > 0.0f)
-            bs_bottom = std::max(bs_bottom, 20.0f * std::log10(amp_sum / cnt));
-    }
-    if (bs_bottom < thr_bottom)
-        return { NaN, NaN }; // echo too weak after filtering
-
-    // shifts: range shift, denoise offset, pulse half-length
-    if (ping.range_resolution > 0.0f && shift_bot_m != 0.0f)
-        bot -= static_cast<int>(std::ceil(shift_bot_m / ping.range_resolution));
-    if (denoised)
-        bot -= 1;
-    bot = std::max(bot, 0);
-
-    const float bottom_sample = std::floor(static_cast<float>(bot) + ping.pulse_nsamples * 0.5f);
-    return { std::clamp(bottom_sample, 0.0f, static_cast<float>(n - 1)), bs_bottom };
-}
-
-// =============================================================================
-// Step 2: compile the whole sequence (cross-ping smoothing + detection)
-// =============================================================================
 
 void BottomDetector::compile()
 {
     if (!_dirty)
         return;
 
-    const int         n_pings = static_cast<int>(_pings.size());
-    const std::size_t shape   = static_cast<std::size_t>(std::max(n_pings, 0));
-    _bottom_sample            = xt::xtensor<float, 1>::from_shape({ shape });
-    _bottom_bs                = xt::xtensor<float, 1>::from_shape({ shape });
-    if (n_pings == 0)
+    // Finalize everything that can be safely finalized (parallel + dropped),
+    // then assemble the returned snapshot from the finalized history plus an
+    // on-the-fly pass over the unfinalized tail (at most `half` pings). The tail
+    // is recomputed each call but NOT persisted, so it is re-evaluated with full
+    // neighbour context once later pings arrive.
+    advance();
+
+    const auto        config         = make_config();
+    const int         half           = smoothing_half();
+    const std::size_t finalized_size = _finalized_bottom_sample.size();
+    const std::size_t total_size     = _n_added;
+
+    _bottom_sample = xt::xtensor<float, 1>::from_shape({ total_size });
+    _bottom_bs     = xt::xtensor<float, 1>::from_shape({ total_size });
+
+    for (std::size_t i = 0; i < finalized_size; ++i)
     {
-        _dirty = false;
-        return;
+        _bottom_sample.unchecked(i) = _finalized_bottom_sample[i];
+        _bottom_bs.unchecked(i)     = _finalized_bottom_bs[i];
     }
 
-    // first pass: per-ping gating + range-direction candidate masks
-    std::vector<Context>                 ctxs(n_pings);
-    std::vector<xt::xtensor<uint8_t, 1>> masks(n_pings);
-    for (int p = 0; p < n_pings; ++p)
+    const std::size_t tail = total_size - finalized_size; // unfinalized window tail
+    if (tail > 0)
     {
-        ctxs[p]  = analyze_ping(_pings[p]);
-        masks[p] = range_mask(_pings[p], ctxs[p]);
-    }
-
-    // second pass: cross-ping smoothing + per-ping detection
-    const int half = std::max(n_ping_smoothing, 1) / 2;
-    for (int p = 0; p < n_pings; ++p)
-    {
-        const auto mask         = cross_ping_mask(masks, p, half);
-        const auto [sample, bs] = detect(_pings[p], ctxs[p], mask);
-        _bottom_sample.unchecked(p) = sample;
-        _bottom_bs.unchecked(p)     = bs;
+        const std::size_t q0 = _next_finalize - _window_front; // deque pos of first tail ping
+#pragma omp parallel for schedule(static) num_threads(mp_cores)
+        for (int t = 0; t < static_cast<int>(tail); ++t)
+        {
+            const std::size_t q      = q0 + static_cast<std::size_t>(t);
+            const auto        mask_s = functions::cross_ping_mask(_mask, q, half, mask_fill_fraction);
+            const auto [sample, bs]  = functions::detect(_pings, q, _ctx[q], mask_s, config);
+            _bottom_sample.unchecked(finalized_size + static_cast<std::size_t>(t)) = sample;
+            _bottom_bs.unchecked(finalized_size + static_cast<std::size_t>(t))     = bs;
+        }
     }
 
     if (remove_outliers)
@@ -330,9 +223,17 @@ void BottomDetector::compile()
 void BottomDetector::reset()
 {
     _pings.clear();
+    _ctx.clear();
+    _mask.clear();
+    _finalized_bottom_sample.clear();
+    _finalized_bottom_bs.clear();
     _bottom_sample = xt::xtensor<float, 1>();
     _bottom_bs     = xt::xtensor<float, 1>();
-    _dirty         = true;
+    _window_front  = 0;
+    _n_precomputed = 0;
+    _next_finalize = 0;
+    _n_added       = 0;
+    _dirty         = false;
 }
 
 // =============================================================================
@@ -393,7 +294,7 @@ void BottomDetector::interpolate_bottom_gaps(xt::xtensor<float, 1>& bottom_sampl
         const int start = i;
         while (i < n && !std::isfinite(bottom_sample.unchecked(i)))
             ++i;
-        const int end  = i;       // first finite (or n)
+        const int end  = i; // first finite (or n)
         const int prev = start - 1;
         if (prev < 0 || end >= n)
             continue; // gap touches an edge
@@ -404,7 +305,7 @@ void BottomDetector::interpolate_bottom_gaps(xt::xtensor<float, 1>& bottom_sampl
         const float v1 = bottom_sample.unchecked(end);
         for (int k = start; k < end; ++k)
         {
-            const float t              = static_cast<float>(k - prev) / static_cast<float>(end - prev);
+            const float t = static_cast<float>(k - prev) / static_cast<float>(end - prev);
             bottom_sample.unchecked(k) = v0 + (v1 - v0) * t;
         }
     }
@@ -443,6 +344,9 @@ tools::classhelper::ObjectPrinter BottomDetector::__printer__(unsigned int float
     printer.register_value("outlier_threshold", outlier_threshold);
     printer.register_value("interpolate_gaps", interpolate_gaps);
     printer.register_value("max_interpolation_gap", max_interpolation_gap);
+    printer.register_value("window_pings", static_cast<int>(_pings.size()));
+    printer.register_value("finalized_pings", static_cast<int>(_next_finalize));
+    printer.register_value("total_pings", static_cast<int>(_n_added));
 
     return printer;
 }

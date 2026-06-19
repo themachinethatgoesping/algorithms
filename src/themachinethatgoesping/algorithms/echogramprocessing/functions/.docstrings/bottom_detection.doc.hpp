@@ -1,4 +1,4 @@
-//sourcehash: 3dd062a3297b20389d79a5e9c28a74a06059276d2c745125f80e105425edfd8c
+//sourcehash: f509ed05745e3c11235ac8ad49eb1bf38ae670676ffdd0e9d25c6cab57579f70
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -41,6 +41,70 @@
 #endif
 
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_denoised = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_incidence_angle_deg = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_interpolate_gaps = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_mask_fill_fraction = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_max_interpolation_gap = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_mp_cores = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_n_ping_smoothing = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_outlier_threshold = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_outlier_window = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_r_max = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_r_min = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_remove_outliers = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_shift_bot_m = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_thr_backstep = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_thr_bottom = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_thr_cum_percent = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_BottomDetectorConfig_thr_echo = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingContext = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingContext_max_bs = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingContext_s_max = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingContext_s_min = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingContext_usable = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingRecord = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingRecord_beamwidth_deg = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingRecord_bs = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingRecord_pulse_nsamples = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingRecord_range_offset = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_PingRecord_range_resolution = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_analyze_ping = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_cross_ping_mask = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_detect = R"doc()doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_echo_length =
 R"doc(Theoretical length (m) of the bottom echo along range.
 
@@ -56,7 +120,9 @@ Args:
 Returns:
     echo length in m (``inf`` for grazing incidence).)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_majority_filter =
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_majority_filter = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_majority_filter_2 =
 R"doc(1D majority filter on a binary mask (range or ping direction).
 
 A sample becomes set when at least ``fraction`` of a centered window
@@ -74,6 +140,8 @@ Template Args:
 
 Returns:
     ``xt::xtensor<uint8_t, 1>`` of the same length (1 = set).)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_functions_range_mask = R"doc()doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

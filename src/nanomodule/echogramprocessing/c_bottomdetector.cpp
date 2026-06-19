@@ -76,6 +76,7 @@ void init_c_bottomdetector(nb::module_& m)
                      int,
                      float,
                      bool,
+                     int,
                      int>(),
             nb::arg("thr_bottom")            = -35.0,
             nb::arg("thr_echo")              = -35.0,
@@ -93,6 +94,7 @@ void init_c_bottomdetector(nb::module_& m)
             nb::arg("outlier_threshold")     = 3.0,
             nb::arg("interpolate_gaps")      = false,
             nb::arg("max_interpolation_gap") = 10,
+            nb::arg("mp_cores")              = 1,
             "Construct a BottomDetector. All parameters are keyword arguments with ESP3 "
             "defaults.")
         .def_rw("thr_bottom",

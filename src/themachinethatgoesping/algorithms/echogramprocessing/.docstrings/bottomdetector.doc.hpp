@@ -1,4 +1,4 @@
-//sourcehash: d44f34fc89e70cd9ec5cd7fd6c1f0c5705ea5ffc1580d988286671f65dc57d95
+//sourcehash: 16e9ed0d6ae18c9d8028ac90836b1d991af2cb3e7826a38b827bdb16b1d0fba9
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -55,30 +55,6 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_
 R"doc(Construct a detector with explicit parameters (convenient as a Python
 named-parameter constructor since every argument has a default).)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Context = R"doc(Per-ping derived gating, computed transiently during compile().)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Context_max_bs = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Context_s_max = R"doc(last usable sample (inclusive))doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Context_s_min = R"doc(first usable sample (inclusive))doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Context_usable = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Ping =
-R"doc(One buffered ping: the surface backscatter plus its affine range
-geometry.)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Ping_beamwidth_deg = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Ping_bs = R"doc(surface BS per sample (dB), NaN if invalid)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Ping_pulse_nsamples = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Ping_range_offset = R"doc()doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_Ping_range_resolution = R"doc()doc";
-
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_add_ping =
 R"doc(Add one ping of Sv data (dB).
 
@@ -98,21 +74,25 @@ Args:
 Template Args:
     t_xtensor_1d: 1D tensor type holding the Sv samples (dB).)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_analyze_ping = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_advance = R"doc()doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_bottom_bs = R"doc(cached bottom backscatter (step 2))doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_batch_size = R"doc()doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_bottom_sample = R"doc(cached detected bottom (step 2))doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_bottom_bs = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_bottom_sample = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_compile = R"doc()doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_cross_ping_mask = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_ctx = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_denoised = R"doc(whether the input Sv is denoised (moves the bottom up 1 sample))doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_detect = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_dirty = R"doc()doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_dirty = R"doc(whether the cached result needs rebuilding)doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_finalized_bottom_bs = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_finalized_bottom_sample = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_get_bottom = R"doc(Detected bottom sample index per added ping (NaN where no bottom).)doc";
 
@@ -126,11 +106,21 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_interpolate_gaps = R"doc(interpolate the bottom across short invalid gaps)doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_make_config = R"doc()doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_mask_fill_fraction = R"doc(majority-filter fill fraction (0..1))doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_max_interpolation_gap = R"doc(maximum interpolated gap length (pings))doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_mp_cores = R"doc(OpenMP worker threads used during compile())doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_n_added = R"doc(total pings added so far)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_n_ping_smoothing = R"doc(neighbouring pings for cross-ping smoothing (1 = off))doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_n_precomputed = R"doc(# leading window entries with valid _ctx/_mask)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_next_finalize = R"doc(global index of next ping to finalize)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_operator_eq =
 R"doc(Equality compares the configuration parameters only (not the buffered
@@ -140,15 +130,13 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_outlier_window = R"doc(half-width (pings) of the outlier median window)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_pings = R"doc(buffered input pings (step 1))doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_pings = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_printer = R"doc(Get the ObjectPrinter for BottomDetector.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_r_max = R"doc(maximum range (m))doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_r_min = R"doc(minimum range (m))doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_range_mask = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_reject_outliers = R"doc()doc";
 
@@ -160,6 +148,8 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_size = R"doc(Number of pings added so far.)doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_smoothing_half = R"doc()doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_thr_backstep = R"doc(back-step threshold while walking up the leading edge)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_thr_bottom = R"doc(absolute floor on the per-ping maximum surface BS)doc";
@@ -167,6 +157,8 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_thr_cum_percent = R"doc(cumulative-energy threshold (percent, 0..100))doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_thr_echo = R"doc(candidate offset below the per-ping maximum BS)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_echogramprocessing_BottomDetector_window_front = R"doc(global index of _pings.front())doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
