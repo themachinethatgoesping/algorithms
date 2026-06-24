@@ -55,10 +55,23 @@ inline t_xtensor_1d compute_resampled_coordinates(
     using namespace xt;
     using t_value = typename t_xtensor_1d::value_type;
 
-    // Filter finite values
+    // Filter to finite extent values. Min/max define the grid span.
     const auto values_min_filtered = xt::filter(values_min, xt::isfinite(values_min));
     const auto values_max_filtered = xt::filter(values_max, xt::isfinite(values_max));
-    const auto values_res_filtered = xt::filter(values_res, xt::isfinite(values_res));
+
+    // Filter resolutions to strictly positive, finite values only. A per-element
+    // resolution of zero (or negative) represents a degenerate input - e.g. a
+    // ping whose min/max extent collapsed onto a single sample - and must not be
+    // allowed to drive the global grid resolution to zero. Including such values
+    // previously produced a zero step size and therefore an empty coordinate
+    // array (and a downstream IndexError in the consumers).
+    const auto res_valid_mask    = xt::eval(xt::isfinite(values_res) && (values_res > t_value(0)));
+    const auto values_res_filtered = xt::filter(values_res, res_valid_mask);
+
+    // Without any finite extent we cannot build a meaningful grid.
+    if (values_min_filtered.size() == 0 || values_max_filtered.size() == 0)
+        throw std::invalid_argument(
+            "compute_resampled_coordinates: values_min/values_max contain no finite values");
 
     // Calculate grid bounds using 90%-10% quantile heuristics
     t_value heuristic_min, heuristic_max;
@@ -83,25 +96,48 @@ inline t_xtensor_1d compute_resampled_coordinates(
     else
         heuristic_max = grid_max;
 
-    // Calculate min grid resoltuion using 75%-25% quantile heuristics
-    const auto quantiles =
-        xt::quantile(values_res_filtered, { t_value(0.25), t_value(0.50), t_value(0.75) });
-    const auto    iqr_res                  = quantiles.unchecked(2) - quantiles.unchecked(0);
-    const t_value heuristic_min_resolution = quantiles.unchecked(1) - iqr_res * t_value(1.5);
+    // select real or heuristic min/max
+    t_value y_min = std::max(t_value(xt::amin(values_min_filtered)()), heuristic_min);
+    t_value y_max = std::min(t_value(xt::amax(values_max_filtered)()), heuristic_max);
 
-    // select real or heuristic min/max/res
-    const t_value res   = std::max(t_value(xt::amin(values_res_filtered)()), heuristic_min_resolution);
-    const t_value y_min = std::max(t_value(xt::amin(values_min_filtered)()), heuristic_min);
-    const t_value y_max = std::min(t_value(xt::amax(values_max_filtered)()), heuristic_max);
-
-    // Generate coordinates
-    auto coordinates = xt::arange(y_min, y_max + res, res);
-
-    if (coordinates.size() > max_steps){
-        return xt::linspace(y_min, y_max, max_steps);
+    // Calculate the grid resolution from the (positive) per-element resolutions
+    // using 75%-25% quantile heuristics. The heuristic clamps away tiny outlier
+    // resolutions while the global minimum keeps the grid fine enough to not
+    // lose data.
+    t_value res = std::numeric_limits<t_value>::quiet_NaN();
+    if (values_res_filtered.size() > 0)
+    {
+        const auto quantiles =
+            xt::quantile(values_res_filtered, { t_value(0.25), t_value(0.50), t_value(0.75) });
+        const auto    iqr_res = quantiles.unchecked(2) - quantiles.unchecked(0);
+        const t_value heuristic_min_resolution = quantiles.unchecked(1) - iqr_res * t_value(1.5);
+        res = std::max(t_value(xt::amin(values_res_filtered)()), heuristic_min_resolution);
     }
 
-    return coordinates;
+    // Guarantee a finite, strictly positive resolution. When no usable resolution
+    // exists (all inputs degenerate) fall back to spanning the grid range with
+    // max_steps cells.
+    if (!std::isfinite(res) || res <= t_value(0))
+    {
+        const t_value span  = y_max - y_min;
+        const size_t  steps = max_steps > 1 ? max_steps : size_t(2);
+        res = (std::isfinite(span) && span > t_value(0)) ? span / t_value(steps) : t_value(1);
+    }
+
+    // Guarantee a non-degenerate span so at least one grid cell (two coordinates)
+    // is produced even when all extents collapsed onto a single value.
+    if (!(y_max > y_min))
+        y_max = y_min + res;
+
+    // Predict the regular-grid size (matching xt::arange's element count) so we
+    // can switch to a bounded number of steps without first materializing an
+    // oversized array.
+    const size_t n_points = static_cast<size_t>(std::ceil(((y_max + res) - y_min) / res));
+
+    if (n_points > max_steps)
+        return xt::linspace(y_min, y_max, max_steps < 2 ? size_t(2) : max_steps);
+
+    return xt::arange(y_min, y_max + res, res);
 }
 
 } // namespace functions

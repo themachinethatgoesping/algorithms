@@ -63,3 +63,53 @@ TEST_CASE("compute_resampled_coordinates: explicit bounds and max_steps", TESTTA
     }
 }
 
+TEST_CASE("compute_resampled_coordinates: degenerate (zero) resolutions", TESTTAG)
+{
+    // Real-world scenario: the vast majority of elements have a well-defined,
+    // positive resolution, but a few are degenerate (min == max -> res == 0).
+    // A single such element used to collapse the global grid resolution to zero
+    // and produce an empty coordinate array. The grid must stay valid.
+    xt::xtensor<float, 1> values_min = {10.0f, 10.0f, 10.0f, 7.0f, 7.0f};
+    xt::xtensor<float, 1> values_max = {26.0f, 26.0f, 26.0f, 7.0f, 7.0f}; // last two collapsed
+    xt::xtensor<float, 1> values_res = {0.04f, 0.04f, 0.04f, 0.0f, 0.0f}; // last two res == 0
+
+    auto coordinates = compute_resampled_coordinates(values_min, values_max, values_res);
+
+    REQUIRE(coordinates.size() >= 2);
+    // resolution must be strictly positive (no zero/negative step)
+    float spacing = coordinates(1) - coordinates(0);
+    REQUIRE(spacing > 0.0f);
+    // grid must span the real (non-degenerate) extent
+    REQUIRE(coordinates(coordinates.size() - 1) > coordinates(0));
+}
+
+TEST_CASE("compute_resampled_coordinates: negative resolutions are ignored", TESTTAG)
+{
+    // Inverted extents (max < min) yield a negative resolution which must be
+    // discarded rather than poisoning the grid step.
+    xt::xtensor<double, 1> values_min = {5.0, 5.0, 5.0, 20.0};
+    xt::xtensor<double, 1> values_max = {15.0, 15.0, 15.0, 10.0}; // last inverted
+    xt::xtensor<double, 1> values_res = {0.5, 0.5, 0.5, -10.0};   // last negative
+
+    auto coordinates = compute_resampled_coordinates(values_min, values_max, values_res);
+
+    REQUIRE(coordinates.size() >= 2);
+    double spacing = coordinates(1) - coordinates(0);
+    REQUIRE(spacing > 0.0);
+}
+
+TEST_CASE("compute_resampled_coordinates: all-degenerate input stays valid", TESTTAG)
+{
+    // Every element collapsed onto the same value: span and resolution are both
+    // zero. The function must still return a usable (>= 2 point) grid instead of
+    // an empty array.
+    xt::xtensor<float, 1> values_min = {7.0f, 7.0f, 7.0f};
+    xt::xtensor<float, 1> values_max = {7.0f, 7.0f, 7.0f};
+    xt::xtensor<float, 1> values_res = {0.0f, 0.0f, 0.0f};
+
+    auto coordinates = compute_resampled_coordinates(values_min, values_max, values_res);
+
+    REQUIRE(coordinates.size() >= 2);
+    REQUIRE(coordinates(1) - coordinates(0) > 0.0f);
+}
+
