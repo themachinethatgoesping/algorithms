@@ -25,7 +25,6 @@ sources = [
   'imageprocessing/find_local_maxima.test.cpp',
   'imageprocessing/find_local_maxima2.test.cpp',
   'imageprocessing/grow_regions.test.cpp',
-  'echogramprocessing/bottom_detection.test.cpp',
   'algorithms/functions/absorption.test.cpp',
   'algorithms/functions/rangecorrection.test.cpp',
   'algorithms/functions/wcicorrection.test.cpp',
@@ -47,6 +46,7 @@ sources = [
   'geoprocessing/functions/to_raypoints.test.cpp',
   'geoprocessing/raytracers2/layerraytracer.test.cpp',
   'geoprocessing/raytracers2/soundvelocityprofile.test.cpp',
+  'echogramprocessing/bottom_detection.test.cpp',
 ]
 
 foreach source : sources

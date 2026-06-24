@@ -23,7 +23,6 @@ sources = [
   'featuremapping/c_nearestfeaturemapper.cpp',
   'featuremapping/module.cpp',
   'imageprocessing/functions/functions.cpp',
-  'echogramprocessing/c_bottomdetector.cpp',
   'geoprocessing/datastructures/c_beamaffine1d.cpp',
   'geoprocessing/datastructures/c_beamsamplegeometry.cpp',
   'geoprocessing/datastructures/c_beamsamplegeometrypiecewise.cpp',
@@ -43,6 +42,7 @@ sources = [
   'geoprocessing/functions/to_raypoints.cpp',
   'geoprocessing/raytracers2/c_layerraytracer.cpp',
   'geoprocessing/raytracers2/c_soundvelocityprofile.cpp',
+  'echogramprocessing/c_bottomdetector.cpp',
 ]
 
 # define python module

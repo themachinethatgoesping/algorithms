@@ -72,12 +72,6 @@ headers = [
   'imageprocessing/functions/.docstrings/find_local_maxima.doc.hpp',
   'imageprocessing/functions/.docstrings/find_local_maxima2.doc.hpp',
   'imageprocessing/functions/.docstrings/grow_regions.doc.hpp',
-  'echogramprocessing/functions.hpp',
-  'echogramprocessing/.docstrings/functions.doc.hpp',
-  'echogramprocessing/bottomdetector.hpp',
-  'echogramprocessing/.docstrings/bottomdetector.doc.hpp',
-  'echogramprocessing/functions/bottom_detection.hpp',
-  'echogramprocessing/functions/.docstrings/bottom_detection.doc.hpp',
   'geoprocessing/datastructures.hpp',
   'geoprocessing/raytracers.hpp',
   'geoprocessing/datastructures/beamaffine1d.hpp',
@@ -138,6 +132,12 @@ headers = [
   'geoprocessing/raytracers2/soundvelocityprofile.hpp',
   'geoprocessing/raytracers2/.docstrings/layerraytracer.doc.hpp',
   'geoprocessing/raytracers2/.docstrings/soundvelocityprofile.doc.hpp',
+  'echogramprocessing/bottomdetector.hpp',
+  'echogramprocessing/functions.hpp',
+  'echogramprocessing/.docstrings/bottomdetector.doc.hpp',
+  'echogramprocessing/.docstrings/functions.doc.hpp',
+  'echogramprocessing/functions/bottom_detection.hpp',
+  'echogramprocessing/functions/.docstrings/bottom_detection.doc.hpp',
 ]
 
 # -- targets --
