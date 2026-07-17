@@ -14,6 +14,7 @@ namespace py_raytracers2 {
 
 void init_c_soundvelocityprofile(nb::module_& m); // c_soundvelocityprofile.cpp
 void init_c_layerraytracer(nb::module_& m);       // c_layerraytracer.cpp
+void init_c_beamtrace(nb::module_& m);            // c_beamtrace.cpp
 
 void init_m_raytracers2(nb::module_& m)
 {
@@ -24,6 +25,7 @@ void init_m_raytracers2(nb::module_& m)
 
     init_c_soundvelocityprofile(submodule);
     init_c_layerraytracer(submodule);
+    init_c_beamtrace(submodule);
 }
 
 } // namespace py_raytracers2

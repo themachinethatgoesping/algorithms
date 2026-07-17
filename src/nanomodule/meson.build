@@ -42,6 +42,7 @@ sources = [
   'geoprocessing/functions/to_raypoints.cpp',
   'geoprocessing/raytracers2/c_layerraytracer.cpp',
   'geoprocessing/raytracers2/c_soundvelocityprofile.cpp',
+  'geoprocessing/raytracers2/c_beamtrace.cpp',
   'echogramprocessing/c_bottomdetector.cpp',
 ]
 

@@ -64,35 +64,41 @@ namespace raytracers2 {
 class SoundVelocityProfile
 {
   private:
-    xt::xtensor<float, 1> _depths;              ///< [L+1] depth knots (m), monotonically increasing, absolute
-    xt::xtensor<float, 1> _sound_speeds;        ///< [L+1] sound speed knots (m/s), corresponding to _depths
+    xt::xtensor<float, 1> _depths;
+    xt::xtensor<float, 1> _sound_speeds;        // one per depth knot
 
     // Precomputed per-layer constants  (size L)
-    xt::xtensor<float, 1> _gradients;           ///< sound-speed gradient dc/dz (s⁻¹) per layer
-    xt::xtensor<float, 1> _inverse_gradients;   ///< 1/gradient (s) per layer (0.0f for iso-velocity layers)
-    xt::xtensor<bool, 1>  _isovelocity;         ///< iso-velocity flag per layer (|gradient| < ISO_EPS)
+    xt::xtensor<float, 1> _gradients;
+    xt::xtensor<float, 1> _inverse_gradients;
+    xt::xtensor<bool, 1>  _isovelocity;
 
     // Optional metadata.
     std::optional<double> _timestamp;
     std::optional<double> _latitude;
     std::optional<double> _longitude;
 
-    static constexpr float ISO_EPS = 1e-6f; ///< |dc/dz| below which a layer counts as iso-velocity
+    static constexpr float ISO_EPS = 1e-6f; // |dc/dz| threshold for iso-velocity detection
 
   public:
+    /// @brief Construct an empty SoundVelocityProfile.
     SoundVelocityProfile() = default;
 
     /**
-     * @brief Construct from depth/speed tables.
-     * @param z depths (m), monotonically increasing (absolute coordinates)
-     * @param c sound speeds (m/s)
+     * @brief Construct from depth/sound-speed tables.
+     * @param z  monotonically increasing depth knots (m, positive down).
+     * @param c  corresponding sound speeds (m/s, must be positive).
      */
     SoundVelocityProfile(xt::xtensor<float, 1> z, xt::xtensor<float, 1> c)
     {
         set(std::move(z), std::move(c));
     }
 
-    /// Convenience: constant SVP from surface to z_max.
+    /**
+     * @brief Constant-velocity profile from the surface to z_max.
+     * @param c     sound speed (m/s).
+     * @param z_max maximum depth (m); default 12 000 m.
+     * @return SoundVelocityProfile with uniform sound speed.
+     */
     static SoundVelocityProfile uniform(float c, float z_max = 12000.f)
     {
         xt::xtensor<float, 1> zs = { 0.f, z_max };
@@ -100,6 +106,7 @@ class SoundVelocityProfile
         return SoundVelocityProfile(std::move(zs), std::move(cs));
     }
 
+    /// @brief Equality comparison (metadata is ignored).
     bool operator==(const SoundVelocityProfile& other) const
     {
         return _depths == other._depths && _sound_speeds == other._sound_speeds &&
@@ -107,6 +114,12 @@ class SoundVelocityProfile
                _latitude == other._latitude && _longitude == other._longitude;
     }
 
+    /**
+     * @brief Set depth/sound-speed tables and recompute layer constants.
+     * @param z  monotonically increasing depth knots (m, positive down).
+     * @param c  corresponding sound speeds (m/s, must be positive).
+     * @throws std::runtime_error if sizes differ, fewer than 2 entries, or non-monotone depths.
+     */
     void set(xt::xtensor<float, 1> z, xt::xtensor<float, 1> c)
     {
         if (z.size() != c.size())
@@ -184,27 +197,31 @@ class SoundVelocityProfile
 
     // --- optional metadata: timestamp, lat/lon ---
 
-    /// Unix timestamp (seconds since epoch, UTC) when the profile was measured.
+    /// @brief Unix timestamp (s, UTC) when the profile was measured, or std::nullopt if unset.
     std::optional<double> get_timestamp() const { return _timestamp; }
+    /// @brief Set the unix timestamp (s, UTC); pass std::nullopt to clear.
     void                  set_timestamp(std::optional<double> timestamp) { _timestamp = timestamp; }
+    /// @brief True iff a timestamp is set.
     bool                  has_timestamp() const { return _timestamp.has_value(); }
 
-    /// Latitude (decimal degrees, +N) where the profile was measured.
+    /// @brief Latitude (decimal degrees, +N) where the profile was measured, or std::nullopt if unset.
     std::optional<double> get_latitude() const { return _latitude; }
+    /// @brief Set latitude (decimal degrees, +N); pass std::nullopt to clear.
     void                  set_latitude(std::optional<double> latitude) { _latitude = latitude; }
 
-    /// Longitude (decimal degrees, +E) where the profile was measured.
+    /// @brief Longitude (decimal degrees, +E) where the profile was measured, or std::nullopt if unset.
     std::optional<double> get_longitude() const { return _longitude; }
+    /// @brief Set longitude (decimal degrees, +E); pass std::nullopt to clear.
     void                  set_longitude(std::optional<double> longitude) { _longitude = longitude; }
 
-    /// Convenience: set both latitude and longitude at once.
+    /// @brief Set both latitude (decimal degrees, +N) and longitude (decimal degrees, +E) at once.
     void set_location(std::optional<double> latitude, std::optional<double> longitude)
     {
         _latitude  = latitude;
         _longitude = longitude;
     }
 
-    /// True iff both latitude and longitude are set.
+    /// @brief True iff both latitude and longitude are set.
     bool has_location() const { return _latitude.has_value() && _longitude.has_value(); }
 
     /**
