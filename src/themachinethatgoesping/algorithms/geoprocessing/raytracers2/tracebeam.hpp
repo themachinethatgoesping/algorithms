@@ -44,6 +44,64 @@ namespace algorithms {
 namespace geoprocessing {
 namespace raytracers2 {
 
+namespace tracebeam_detail {
+
+/**
+ * @brief Closed-form geometry of one straight ray segment in an iso-velocity layer.
+ *
+ * For a ray with Snell parameter p = sin(theta) / c in a layer of constant sound
+ * speed @p sound_speed, spanning a vertical extent @p vertical_extent (m, >= 0),
+ * returns the horizontal distance, one-way travel time and along-ray path length
+ * of that segment. The ray angle theta is constant across an iso-velocity layer.
+ * This is the shared kernel used by both trace_beam and trace_beam_to_depth.
+ */
+inline void layer_segment_iso(double  sound_speed,
+                              double  ray_parameter,
+                              double  vertical_extent,
+                              double& horizontal_distance,
+                              double& travel_time,
+                              double& path_length)
+{
+    const double sine   = ray_parameter * sound_speed;
+    const double cosine = std::sqrt(std::max(0.0, 1.0 - sine * sine));
+    path_length         = vertical_extent / cosine;
+    horizontal_distance = path_length * sine;
+    travel_time         = path_length / sound_speed;
+}
+
+/**
+ * @brief Closed-form geometry of one circular-arc ray segment in a constant-gradient layer.
+ *
+ * For a ray with Snell parameter p in a layer of gradient @p gradient (1/s, != 0),
+ * going from sound speed @p sound_speed_1 (cosine @p cosine_1) to @p sound_speed_2
+ * (cosine @p cosine_2), returns the horizontal distance (>= 0), the signed one-way
+ * travel time (positive along increasing depth) and the along-ray path length.
+ * This is the shared kernel used by both trace_beam and trace_beam_to_depth.
+ */
+inline void layer_segment_gradient(double  gradient,
+                                   double  sound_speed_1,
+                                   double  cosine_1,
+                                   double  sound_speed_2,
+                                   double  cosine_2,
+                                   double  ray_parameter,
+                                   double& horizontal_distance,
+                                   double& signed_travel_time,
+                                   double& path_length)
+{
+    horizontal_distance =
+        std::abs(ray_parameter * (sound_speed_2 * sound_speed_2 - sound_speed_1 * sound_speed_1) /
+                 (gradient * (cosine_1 + cosine_2)));
+    signed_travel_time =
+        (std::log(sound_speed_2 / (1.0 + cosine_2)) - std::log(sound_speed_1 / (1.0 + cosine_1))) /
+        gradient;
+    const double theta_1 = std::acos(std::clamp(cosine_1, -1.0, 1.0));
+    const double theta_2 = std::acos(std::clamp(cosine_2, -1.0, 1.0));
+    path_length =
+        std::abs(theta_2 - theta_1) / std::max(std::abs(ray_parameter * gradient), 1e-12);
+}
+
+} // namespace tracebeam_detail
+
 /**
  * @brief Trace a single beam through a layered sound velocity profile.
  *
@@ -104,10 +162,10 @@ inline BeamTrace trace_beam(float                       launch_depth_in_meters,
 
     // running state along the ray
     double z    = launch_depth_in_meters;
-    double t    = 0.0;
-    double h    = 0.0;
-    double c    = c0;
-    double cosm = std::sqrt(std::max(0.0, 1.0 - (p * c) * (p * c))); // |cos(theta)|
+    double t    = 0.0; // one-way travel time (s)
+    double h    = 0.0; // horizontal offset (m) from launch point, positive starboard
+    double c    = c0;  // sound speed at z (m/s)
+    double cosm = std::sqrt(std::max(0.0, 1.0 - (p * c) * (p * c))); // |cos(theta)| Theta = angle from vertical, 1 down, 0 horizontal, -1 up
 
     // vertical travel direction (+1 down, -1 up). A (near) horizontal launch
     // starts at the ray apex and curves towards decreasing sound speed.
@@ -192,10 +250,11 @@ inline BeamTrace trace_beam(float                       launch_depth_in_meters,
             target_depth = boundary_depth;
         }
 
-        // Signed travel time to the segment end; its sign fixes the branch used
-        // by the closed-form partial-step inversion below.
-        const double signed_time =
-            (std::log(target_speed / (1.0 + target_cos)) - std::log(c / (1.0 + cosm))) / gradient;
+        // Closed-form arc geometry to the segment end (shared kernel). Its signed
+        // travel time also fixes the branch used by the partial-step inversion below.
+        double seg_horizontal, signed_time, seg_path;
+        tracebeam_detail::layer_segment_gradient(
+            gradient, c, cosm, target_speed, target_cos, p, seg_horizontal, signed_time, seg_path);
         const int    segment_sign = signed_time >= 0.0 ? 1 : -1;
         const double segment_time = std::abs(signed_time);
 
@@ -212,10 +271,8 @@ inline BeamTrace trace_beam(float                       launch_depth_in_meters,
         }
 
         // advance to the segment end (turning apex or layer boundary)
-        const double offset = hsign * std::abs(p * (target_speed * target_speed - c * c) /
-                                               (gradient * (cosm + target_cos)));
         z = target_depth;
-        h += offset;
+        h += hsign * seg_horizontal;
         t += segment_time;
         c    = target_speed;
         cosm = target_cos;
@@ -245,6 +302,166 @@ inline BeamTrace trace_beam(float                       launch_depth_in_meters,
                      to_tensor(out_offsets),
                      to_tensor(out_travel_times),
                      to_tensor(out_cos_angles));
+}
+
+/**
+ * @brief Endpoint of one ray leg traced down to a target depth (fast, no polyline).
+ *
+ * Produced by trace_beam_to_depth. The horizontal offset and path length are
+ * magnitudes for the single leg between the launch depth and the target depth;
+ * the caller carries the horizontal azimuth of the leg separately.
+ */
+struct RayToDepth
+{
+    /// Horizontal distance (m, >= 0) from the launch point to the target depth.
+    float horizontal_offset_in_meters = 0.f;
+    /// One-way travel time (s) from the launch point to the target depth.
+    float one_way_travel_time_in_seconds = 0.f;
+    /// Along-ray path length (m) from the launch point to the target depth.
+    float path_length_in_meters = 0.f;
+    /// Cosine of the ray angle from straight down at the target depth (after refraction).
+    float cos_angle_at_target = 1.f;
+    /// True if the ray reached the target depth (false if it turned or left the profile first).
+    bool reached_target = true;
+};
+
+/**
+ * @brief Trace one ray leg from a launch depth/angle down to a target depth.
+ *
+ * Uses the identical layered-Snell principle as trace_beam (the same
+ * tracebeam_detail closed-form iso/gradient segment kernels), but integrates to a
+ * target depth instead of a travel-time budget and only accumulates the endpoint
+ * (no polyline). This is the fast inner step of the bistatic solver, which calls
+ * it many times per beam while searching for the seabed point; once converged,
+ * the full per-layer polyline of each leg is produced with trace_beam.
+ *
+ * The launch is downward (0 = nadir); if the ray turns (becomes horizontal) or
+ * leaves the profile before the target depth, reached_target is false.
+ *
+ * @param sound_velocity_profile          layered profile to trace through.
+ * @param launch_depth_in_meters          depth (m, positive down) of the leg origin; must be within the profile.
+ * @param launch_zenith_angle_in_radians  ray angle from straight down at the launch point (0 = nadir).
+ * @param target_depth_in_meters          depth (m, positive down) to trace to; must be > launch depth and within the profile.
+ * @return RayToDepth endpoint of the leg.
+ */
+inline RayToDepth trace_beam_to_depth(const SoundVelocityProfile& sound_velocity_profile,
+                                      double                      launch_depth_in_meters,
+                                      double                      launch_zenith_angle_in_radians,
+                                      double                      target_depth_in_meters)
+{
+    RayToDepth result;
+
+    const auto&  depths           = sound_velocity_profile.get_depths_in_meters();
+    const auto&  gradients        = sound_velocity_profile.get_sound_speed_gradients_in_per_second();
+    const auto&  isovelocity      = sound_velocity_profile.get_isovelocity_flags();
+    const size_t number_of_layers = sound_velocity_profile.get_number_of_layers();
+
+    if (number_of_layers == 0)
+        throw std::runtime_error("trace_beam_to_depth: sound velocity profile is not initialized");
+
+    const double surface_depth = depths.unchecked(0);
+    const double bottom_depth   = depths.unchecked(number_of_layers);
+
+    if (!(target_depth_in_meters > launch_depth_in_meters))
+        return result; // nothing to trace (target at or above the launch depth)
+
+    if (launch_depth_in_meters < surface_depth - 1e-3 || target_depth_in_meters > bottom_depth + 1e-3)
+    {
+        result.reached_target = false;
+        return result; // profile does not cover the requested depth range
+    }
+
+    const double launch_sound_speed =
+        sound_velocity_profile.get_sound_speed(float(launch_depth_in_meters));
+    const double ray_parameter = std::sin(launch_zenith_angle_in_radians) / launch_sound_speed;
+
+    // locate the layer containing the launch depth
+    size_t layer = 0;
+    {
+        size_t lo = 0, hi = number_of_layers;
+        while (hi - lo > 1)
+        {
+            const size_t mid = (lo + hi) / 2;
+            (launch_depth_in_meters < double(depths.unchecked(mid)) ? hi : lo) = mid;
+        }
+        layer = lo;
+    }
+
+    double depth            = launch_depth_in_meters;
+    double horizontal_range = 0.0;
+    double travel_time      = 0.0;
+    double path_length      = 0.0;
+    double cos_at_depth     = std::sqrt(std::max(
+        0.0, 1.0 - (ray_parameter * launch_sound_speed) * (ray_parameter * launch_sound_speed)));
+
+    while (depth < target_depth_in_meters - 1e-9 && layer < number_of_layers)
+    {
+        const double layer_bottom_depth = depths.unchecked(layer + 1);
+        const double segment_bottom     = std::min(target_depth_in_meters, layer_bottom_depth);
+
+        const double sound_speed_top = sound_velocity_profile.get_sound_speed(float(depth));
+        const double sin_top         = ray_parameter * sound_speed_top;
+        if (std::abs(sin_top) >= 1.0)
+        {
+            result.reached_target = false; // ray is horizontal / turning at this depth
+            break;
+        }
+        const double cos_top = std::sqrt(std::max(0.0, 1.0 - sin_top * sin_top));
+
+        double segment_horizontal, segment_time, segment_path;
+        if (isovelocity.unchecked(layer))
+        {
+            tracebeam_detail::layer_segment_iso(sound_speed_top,
+                                                ray_parameter,
+                                                segment_bottom - depth,
+                                                segment_horizontal,
+                                                segment_time,
+                                                segment_path);
+            cos_at_depth = cos_top;
+        }
+        else
+        {
+            const double gradient           = gradients.unchecked(layer);
+            const double sound_speed_bottom = sound_speed_top + gradient * (segment_bottom - depth);
+            const double sin_bottom         = ray_parameter * sound_speed_bottom;
+            if (std::abs(sin_bottom) >= 1.0)
+            {
+                result.reached_target = false; // ray turns before reaching the segment bottom
+                break;
+            }
+            const double cos_bottom = std::sqrt(std::max(0.0, 1.0 - sin_bottom * sin_bottom));
+
+            double signed_time;
+            tracebeam_detail::layer_segment_gradient(gradient,
+                                                     sound_speed_top,
+                                                     cos_top,
+                                                     sound_speed_bottom,
+                                                     cos_bottom,
+                                                     ray_parameter,
+                                                     segment_horizontal,
+                                                     signed_time,
+                                                     segment_path);
+            segment_time = std::abs(signed_time);
+            cos_at_depth = cos_bottom;
+        }
+
+        horizontal_range += segment_horizontal;
+        travel_time += segment_time;
+        path_length += segment_path;
+
+        depth = segment_bottom;
+        if (segment_bottom >= layer_bottom_depth)
+            ++layer;
+    }
+
+    if (depth < target_depth_in_meters - 1e-6)
+        result.reached_target = false;
+
+    result.horizontal_offset_in_meters     = float(horizontal_range);
+    result.one_way_travel_time_in_seconds  = float(travel_time);
+    result.path_length_in_meters           = float(path_length);
+    result.cos_angle_at_target             = float(cos_at_depth);
+    return result;
 }
 
 } // namespace raytracers2

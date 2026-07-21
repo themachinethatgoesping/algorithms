@@ -47,6 +47,8 @@ sources = [
   'geoprocessing/raytracers2/layerraytracer.test.cpp',
   'geoprocessing/raytracers2/soundvelocityprofile.test.cpp',
   'geoprocessing/raytracers2/beamtrace.test.cpp',
+  'geoprocessing/raytracers2/beamdirections.test.cpp',
+  'geoprocessing/raytracers2/bistaticraytracer.test.cpp',
   'echogramprocessing/bottom_detection.test.cpp',
 ]
 

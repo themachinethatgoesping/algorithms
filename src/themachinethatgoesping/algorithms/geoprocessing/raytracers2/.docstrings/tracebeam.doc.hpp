@@ -1,4 +1,4 @@
-//sourcehash: 7988a08868528b8be51998b475011b838653521423f38309137ec896fc33f4e9
+//sourcehash: 31f234ce42892f25f33e83b8e202e891942cbe1417c4f86cb03815aff3c59be8
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -41,6 +41,31 @@
 #endif
 
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_RayToDepth =
+R"doc(Endpoint of one ray leg traced down to a target depth (fast, no
+polyline).
+
+Produced by trace_beam_to_depth. The horizontal offset and path length
+are magnitudes for the single leg between the launch depth and the
+target depth; the caller carries the horizontal azimuth of the leg
+separately.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_RayToDepth_cos_angle_at_target =
+R"doc(Cosine of the ray angle from straight down at the target depth (after
+refraction).)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_RayToDepth_horizontal_offset_in_meters =
+R"doc(Horizontal distance (m, >= 0) from the launch point to the target
+depth.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_RayToDepth_one_way_travel_time_in_seconds = R"doc(One-way travel time (s) from the launch point to the target depth.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_RayToDepth_path_length_in_meters = R"doc(Along-ray path length (m) from the launch point to the target depth.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_RayToDepth_reached_target =
+R"doc(True if the ray reached the target depth (false if it turned or left
+the profile first).)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_trace_beam =
 R"doc(Trace a single beam through a layered sound velocity profile.
 
@@ -59,6 +84,55 @@ Args:
 Returns:
     BeamTrace with the launch point, layer crossings, turning points
     and the final point.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_trace_beam_to_depth =
+R"doc(Trace one ray leg from a launch depth/angle down to a target depth.
+
+Uses the identical layered-Snell principle as trace_beam (the same
+tracebeam_detail closed-form iso/gradient segment kernels), but
+integrates to a target depth instead of a travel-time budget and only
+accumulates the endpoint (no polyline). This is the fast inner step of
+the bistatic solver, which calls it many times per beam while
+searching for the seabed point; once converged, the full per-layer
+polyline of each leg is produced with trace_beam.
+
+The launch is downward (0 = nadir); if the ray turns (becomes
+horizontal) or leaves the profile before the target depth,
+reached_target is false.
+
+Args:
+    sound_velocity_profile: layered profile to trace through.
+    launch_depth_in_meters: depth (m, positive down) of the leg
+                            origin; must be within the profile.
+    launch_zenith_angle_in_radians: ray angle from straight down at
+                                    the launch point (0 = nadir).
+    target_depth_in_meters: depth (m, positive down) to trace to; must
+                            be > launch depth and within the profile.
+
+Returns:
+    RayToDepth endpoint of the leg.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_tracebeam_detail_layer_segment_gradient =
+R"doc(Closed-form geometry of one circular-arc ray segment in a constant-
+gradient layer.
+
+For a ray with Snell parameter p in a layer of gradient ``gradient``
+(1/s, != 0), going from sound speed ``sound_speed_1`` (cosine
+``cosine_1)`` to ``sound_speed_2`` (cosine ``cosine_2),`` returns the
+horizontal distance (>= 0), the signed one-way travel time (positive
+along increasing depth) and the along-ray path length. This is the
+shared kernel used by both trace_beam and trace_beam_to_depth.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_tracebeam_detail_layer_segment_iso =
+R"doc(Closed-form geometry of one straight ray segment in an iso-velocity
+layer.
+
+For a ray with Snell parameter p = sin(theta) / c in a layer of
+constant sound speed ``sound_speed,`` spanning a vertical extent
+``vertical_extent`` (m, >= 0), returns the horizontal distance, one-
+way travel time and along-ray path length of that segment. The ray
+angle theta is constant across an iso-velocity layer. This is the
+shared kernel used by both trace_beam and trace_beam_to_depth.)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

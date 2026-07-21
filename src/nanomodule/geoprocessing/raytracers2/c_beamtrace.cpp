@@ -24,9 +24,11 @@ using namespace themachinethatgoesping::algorithms::geoprocessing::raytracers2;
 #define DOC_BeamTrace(ARG) \
     DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers2, BeamTrace, ARG)
 
+#define DOC_RayToDepth(ARG) \
+    DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers2, RayToDepth, ARG)
+
 void init_c_beamtrace(nb::module_& m)
-{
-    nb::class_<BeamTrace>(
+{    nb::class_<BeamTrace>(
         m,
         "BeamTrace",
         DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers2, BeamTrace))
@@ -95,6 +97,33 @@ void init_c_beamtrace(nb::module_& m)
           nb::arg("launch_angle_in_degrees"),
           nb::arg("sound_velocity_profile"),
           nb::arg("two_way_travel_time_in_seconds"));
+
+    nb::class_<RayToDepth>(
+        m,
+        "RayToDepth",
+        DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers2, RayToDepth))
+        .def(nb::init<>())
+        .def_ro("horizontal_offset_in_meters",
+                &RayToDepth::horizontal_offset_in_meters,
+                DOC_RayToDepth(horizontal_offset_in_meters))
+        .def_ro("one_way_travel_time_in_seconds",
+                &RayToDepth::one_way_travel_time_in_seconds,
+                DOC_RayToDepth(one_way_travel_time_in_seconds))
+        .def_ro("path_length_in_meters",
+                &RayToDepth::path_length_in_meters,
+                DOC_RayToDepth(path_length_in_meters))
+        .def_ro("cos_angle_at_target",
+                &RayToDepth::cos_angle_at_target,
+                DOC_RayToDepth(cos_angle_at_target))
+        .def_ro("reached_target", &RayToDepth::reached_target, DOC_RayToDepth(reached_target));
+
+    m.def("trace_beam_to_depth",
+          &trace_beam_to_depth,
+          DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers2, trace_beam_to_depth),
+          nb::arg("sound_velocity_profile"),
+          nb::arg("launch_depth_in_meters"),
+          nb::arg("launch_zenith_angle_in_radians"),
+          nb::arg("target_depth_in_meters"));
 }
 
 } // namespace py_raytracers2
