@@ -84,6 +84,44 @@ TEST_CASE("trace_beam constant SVP 30 deg port", TESTTAG)
                  Catch::Matchers::WithinAbs(1500.f, 1e-1f));
 }
 
+TEST_CASE("trace_beam surface sound speed sets the ray parameter", TESTTAG)
+{
+    // Constant 1500 m/s profile -> straight rays; one-way time 1 s (two-way 2 s).
+    auto svp = SoundVelocityProfile::uniform(1500.f, 6000.f);
+
+    const float launch_angle = 45.f; // +45 deg = port (-y)
+
+    // (1) Passing the profile speed as the surface sound speed must be a no-op.
+    auto         trace_default = trace_beam(0.f, launch_angle, svp, 2.f);
+    auto         trace_same    = trace_beam(0.f, launch_angle, svp, 2.f, 1500.f);
+    const size_t last          = trace_default.get_number_of_points() - 1;
+    REQUIRE(trace_same.get_number_of_points() == trace_default.get_number_of_points());
+    REQUIRE_THAT(trace_same.get_depths_in_meters().unchecked(last),
+                 Catch::Matchers::WithinAbs(trace_default.get_depths_in_meters().unchecked(last),
+                                            1e-3f));
+    REQUIRE_THAT(trace_same.get_horizontal_offsets_in_meters().unchecked(last),
+                 Catch::Matchers::WithinAbs(
+                     trace_default.get_horizontal_offsets_in_meters().unchecked(last), 1e-3f));
+
+    // (2) A lower beam-forming SSV raises the ray parameter, so the in-water launch angle is
+    //     asin(sin(45) * c_profile / SSV): the ray is more horizontal (wider, shallower). The
+    //     path length is still c * t = 1500 m in the constant profile.
+    const float  ssv       = 1470.f;
+    auto         trace_ssv = trace_beam(0.f, launch_angle, svp, 2.f, ssv);
+    const size_t last2     = trace_ssv.get_number_of_points() - 1;
+
+    const double sin_in_water    = std::sin(M_PI_4) * 1500.0 / double(ssv);
+    const double expected_offset = -1500.0 * sin_in_water; // port (-y)
+    const double expected_depth  = 1500.0 * std::sqrt(1.0 - sin_in_water * sin_in_water);
+
+    REQUIRE_THAT(trace_ssv.get_horizontal_offsets_in_meters().unchecked(last2),
+                 Catch::Matchers::WithinAbs(float(expected_offset), 1e-1f));
+    REQUIRE_THAT(trace_ssv.get_depths_in_meters().unchecked(last2),
+                 Catch::Matchers::WithinAbs(float(expected_depth), 1e-1f));
+    // the in-water incident angle magnitude exceeds the nominal 45 deg
+    REQUIRE(std::abs(trace_ssv.get_incident_angles_in_degrees().unchecked(last2)) > 45.5f);
+}
+
 TEST_CASE("trace_beam gradient layer straight down matches analytic", TESTTAG)
 {
     // single linear-gradient layer 0..2000 m, c: 1500 -> 1700 (g = 0.1)

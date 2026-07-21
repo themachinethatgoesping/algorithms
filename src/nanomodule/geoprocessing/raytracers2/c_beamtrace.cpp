@@ -96,7 +96,8 @@ void init_c_beamtrace(nb::module_& m)
           nb::arg("launch_depth_in_meters"),
           nb::arg("launch_angle_in_degrees"),
           nb::arg("sound_velocity_profile"),
-          nb::arg("two_way_travel_time_in_seconds"));
+          nb::arg("two_way_travel_time_in_seconds"),
+          nb::arg("surface_sound_speed_in_meters_per_second") = -1.f);
 
     nb::class_<RayToDepth>(
         m,
@@ -123,7 +124,8 @@ void init_c_beamtrace(nb::module_& m)
           nb::arg("sound_velocity_profile"),
           nb::arg("launch_depth_in_meters"),
           nb::arg("launch_zenith_angle_in_radians"),
-          nb::arg("target_depth_in_meters"));
+          nb::arg("target_depth_in_meters"),
+          nb::arg("surface_sound_speed_in_meters_per_second") = -1.0);
 }
 
 } // namespace py_raytracers2

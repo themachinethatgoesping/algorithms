@@ -1,4 +1,4 @@
-//sourcehash: 31f234ce42892f25f33e83b8e202e891942cbe1417c4f86cb03815aff3c59be8
+//sourcehash: c3b065d72a7584b678e3c3cad3098947e62101a7a551a169ddc01deb58b151a4
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -73,6 +73,16 @@ Emits one point at launch, one at each layer crossing and turning
 point, and a final point at the requested travel time (or when the ray
 exits the profile).
 
+The Snell ray parameter (the invariant that governs refraction) is
+defined by the launch angle and the sound speed at which the beam was
+formed. For a multibeam that is the measured surface/transducer sound
+speed (SSV). Pass it as ``surface_sound_speed_in_meters_per_second``
+whenever it differs from the profile value at the launch depth (e.g.
+the real-time SSV differs from the archived cast); otherwise the
+profile value at the launch depth is used, and both agree exactly when
+the two speeds are equal. Using the wrong launch sound speed
+introduces an angle-dependent (outer-beam) depth bias.
+
 Args:
     launch_depth_in_meters: launch depth (m, positive down); must be
                             inside the profile range.
@@ -80,6 +90,14 @@ Args:
                              positive = port.
     sound_velocity_profile: profile to trace through.
     two_way_travel_time_in_seconds: two-way travel time budget (s).
+    surface_sound_speed_in_meters_per_second: sound speed (m/s) at
+                                              which the beam was
+                                              formed; the ray
+                                              parameter is
+                                              sin(angle)/this. <= 0
+                                              (default) falls back to
+                                              the profile value at the
+                                              launch depth.
 
 Returns:
     BeamTrace with the launch point, layer crossings, turning points
@@ -108,6 +126,16 @@ Args:
                                     the launch point (0 = nadir).
     target_depth_in_meters: depth (m, positive down) to trace to; must
                             be > launch depth and within the profile.
+    surface_sound_speed_in_meters_per_second: sound speed (m/s) at
+                                              which the beam was
+                                              formed; the ray
+                                              parameter is
+                                              sin(zenith)/this. <= 0
+                                              (default) falls back to
+                                              the profile value at the
+                                              launch depth. Must match
+                                              trace_beam so
+                                              mono/bistatic agree.
 
 Returns:
     RayToDepth endpoint of the leg.)doc";

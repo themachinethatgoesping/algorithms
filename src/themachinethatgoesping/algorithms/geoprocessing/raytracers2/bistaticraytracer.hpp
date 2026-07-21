@@ -322,8 +322,11 @@ struct SteeringCone
  * direction. Each converged leg is then re-traced with trace_beam so the returned legs
  * are identical to the monostatic model when the transmit and receive poses coincide.
  *
- * All poses are in the common x=forward, y=starboard, z=down frame; the concentric guess
- * must be in the same frame (compute_beam_directions with reference_heading = 0).
+ * All poses are in the common x=forward, y=starboard, z=down frame. The vessel attitudes may
+ * carry the full heading in their yaw component; pass that same heading as
+ * @p reference_heading_in_degrees so it is removed from both arrays (exactly like
+ * compute_beam_directions), which puts the solved seabed point in the ship frame. The
+ * concentric guess must be in that same (heading-removed) frame.
  *
  * @param transmit_installation_ypr_in_degrees (yaw, pitch, roll) mounting of the transmit array.
  * @param transmit_attitude_ypr_in_degrees     (yaw, pitch, roll) vessel attitude at transmit time.
@@ -340,6 +343,14 @@ struct SteeringCone
  * @param max_iterations                       maximum Newton iterations (default 30).
  * @param tolerance_in_percent                 convergence tolerance as a percentage of the
  *                                             nominal slant range (default 0.001).
+ * @param surface_sound_speed_in_meters_per_second sound speed (m/s) at which the beams were
+ *                                             formed (the measured surface/transducer SSV);
+ *                                             applied to both legs' ray parameters. <= 0
+ *                                             (default) uses the profile value at each array depth.
+ * @param reference_heading_in_degrees         heading (deg) removed from both vessel attitudes so
+ *                                             the result is in the ship frame; use the same value
+ *                                             passed to compute_beam_directions. 0 (default) keeps
+ *                                             the attitudes as given.
  * @return BistaticBeamTrace with both legs, azimuths, seabed point and residual.
  */
 inline BistaticBeamTrace trace_bistatic_beam(
@@ -355,7 +366,9 @@ inline BistaticBeamTrace trace_bistatic_beam(
     const SoundVelocityProfile&  sound_velocity_profile,
     const std::array<float, 3>&  concentric_beam_direction,
     int                          max_iterations       = 30,
-    float                        tolerance_in_percent = 0.001f)
+    float                        tolerance_in_percent = 0.001f,
+    double                       surface_sound_speed_in_meters_per_second = -1.0,
+    double                       reference_heading_in_degrees             = 0.0)
 {
     using tools::rotationfunctions::quaternion_from_ypr;
 
@@ -369,15 +382,21 @@ inline BistaticBeamTrace trace_bistatic_beam(
     const Eigen::Vector3d receive_position(
         receive_position_xyz[0], receive_position_xyz[1], receive_position_xyz[2]);
 
-    // World orientation of each array: world = attitude * installation (as in
-    // compute_beam_directions). Transmit long axis = forward, receive long axis = starboard.
+    // World orientation of each array: world = Rz(-reference_heading) * attitude * installation
+    // (as in compute_beam_directions). Removing the reference heading is equivalent to subtracting
+    // it from each attitude yaw and puts the solved seabed point in the ship frame.
+    // Transmit long axis = forward, receive long axis = starboard.
+    const Eigen::Quaterniond reference_heading_quaternion =
+        quaternion_from_ypr<double>(-reference_heading_in_degrees, 0.0, 0.0, true);
     const Eigen::Quaterniond transmit_quaternion =
+        reference_heading_quaternion *
         quaternion_from_ypr<double>(transmit_attitude_ypr_in_degrees[0],
                                     transmit_attitude_ypr_in_degrees[1],
                                     transmit_attitude_ypr_in_degrees[2],
                                     true) *
         quaternion_from_ypr<double>(transmit_installation_ypr_in_degrees, true);
     const Eigen::Quaterniond receive_quaternion =
+        reference_heading_quaternion *
         quaternion_from_ypr<double>(receive_attitude_ypr_in_degrees[0],
                                     receive_attitude_ypr_in_degrees[1],
                                     receive_attitude_ypr_in_degrees[2],
@@ -422,8 +441,11 @@ inline BistaticBeamTrace trace_bistatic_beam(
         for (int iteration = 0; iteration < 60 && depth_high - depth_low > 1e-4; ++iteration)
         {
             initial_depth   = 0.5 * (depth_low + depth_high);
-            const auto probe = trace_beam_to_depth(
-                sound_velocity_profile, midpoint_depth, guess_takeoff_angle, initial_depth);
+            const auto probe = trace_beam_to_depth(sound_velocity_profile,
+                                                   midpoint_depth,
+                                                   guess_takeoff_angle,
+                                                   initial_depth,
+                                                   surface_sound_speed_in_meters_per_second);
             if (!probe.reached_target ||
                 probe.one_way_travel_time_in_seconds > 0.5 * two_way_travel_time_in_seconds)
                 depth_high = initial_depth;
@@ -460,9 +482,11 @@ inline BistaticBeamTrace trace_bistatic_beam(
         receive_zenith  = std::acos(std::clamp(receive_ray.z(), -1.0, 1.0));
 
         const auto transmit_leg = trace_beam_to_depth(
-            sound_velocity_profile, transmit_position.z(), transmit_zenith, depth);
+            sound_velocity_profile, transmit_position.z(), transmit_zenith, depth,
+            surface_sound_speed_in_meters_per_second);
         const auto receive_leg = trace_beam_to_depth(
-            sound_velocity_profile, receive_position.z(), receive_zenith, depth);
+            sound_velocity_profile, receive_position.z(), receive_zenith, depth,
+            surface_sound_speed_in_meters_per_second);
         if (!transmit_leg.reached_target || !receive_leg.reached_target)
             return false;
 
@@ -559,18 +583,22 @@ inline BistaticBeamTrace trace_bistatic_beam(
             float(receive_ray.x()), float(receive_ray.y()), float(receive_ray.z()));
 
     const auto transmit_endpoint = trace_beam_to_depth(
-        sound_velocity_profile, transmit_position.z(), best_transmit_zenith, best_state[0]);
+        sound_velocity_profile, transmit_position.z(), best_transmit_zenith, best_state[0],
+        surface_sound_speed_in_meters_per_second);
     const auto receive_endpoint = trace_beam_to_depth(
-        sound_velocity_profile, receive_position.z(), best_receive_zenith, best_state[0]);
+        sound_velocity_profile, receive_position.z(), best_receive_zenith, best_state[0],
+        surface_sound_speed_in_meters_per_second);
 
     BeamTrace transmit_leg = trace_beam(float(transmit_position.z()),
                                         transmit_pointing_azimuth[0],
                                         sound_velocity_profile,
-                                        2.f * transmit_endpoint.one_way_travel_time_in_seconds);
+                                        2.f * transmit_endpoint.one_way_travel_time_in_seconds,
+                                        float(surface_sound_speed_in_meters_per_second));
     BeamTrace receive_leg  = trace_beam(float(receive_position.z()),
                                        receive_pointing_azimuth[0],
                                        sound_velocity_profile,
-                                       2.f * receive_endpoint.one_way_travel_time_in_seconds);
+                                       2.f * receive_endpoint.one_way_travel_time_in_seconds,
+                                       float(surface_sound_speed_in_meters_per_second));
 
     // seabed point from the transmit leg's last point, lifted by the transmit azimuth. This is
     // exactly the monostatic reconstruction, so with identical transmit/receive poses the

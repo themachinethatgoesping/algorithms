@@ -1,4 +1,4 @@
-//sourcehash: dfdd702b0efd331e89af0cedc67973530f2d0c751d54360ad002706cd73826c2
+//sourcehash: 66e93bff01c3b341228e0149bd30509ad419c69c589f116dfb1e9e6f9a0bca80
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -185,9 +185,12 @@ concentric beam direction. Each converged leg is then re-traced with
 trace_beam so the returned legs are identical to the monostatic model
 when the transmit and receive poses coincide.
 
-All poses are in the common x=forward, y=starboard, z=down frame; the
-concentric guess must be in the same frame (compute_beam_directions
-with reference_heading = 0).
+All poses are in the common x=forward, y=starboard, z=down frame. The
+vessel attitudes may carry the full heading in their yaw component;
+pass that same heading as ``reference_heading_in_degrees`` so it is
+removed from both arrays (exactly like compute_beam_directions), which
+puts the solved seabed point in the ship frame. The concentric guess
+must be in that same (heading-removed) frame.
 
 Args:
     transmit_installation_ypr_in_degrees: (yaw, pitch, roll) mounting
@@ -214,6 +217,21 @@ Args:
     max_iterations: maximum Newton iterations (default 30).
     tolerance_in_percent: convergence tolerance as a percentage of the
                           nominal slant range (default 0.001).
+    surface_sound_speed_in_meters_per_second: sound speed (m/s) at
+                                              which the beams were
+                                              formed (the measured
+                                              surface/transducer SSV);
+                                              applied to both legs'
+                                              ray parameters. <= 0
+                                              (default) uses the
+                                              profile value at each
+                                              array depth.
+    reference_heading_in_degrees: heading (deg) removed from both
+                                  vessel attitudes so the result is in
+                                  the ship frame; use the same value
+                                  passed to compute_beam_directions. 0
+                                  (default) keeps the attitudes as
+                                  given.
 
 Returns:
     BistaticBeamTrace with both legs, azimuths, seabed point and

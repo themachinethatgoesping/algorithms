@@ -108,16 +108,29 @@ inline void layer_segment_gradient(double  gradient,
  * Emits one point at launch, one at each layer crossing and turning point,
  * and a final point at the requested travel time (or when the ray exits the profile).
  *
+ * The Snell ray parameter (the invariant that governs refraction) is defined by the
+ * launch angle and the sound speed at which the beam was formed. For a multibeam that is
+ * the measured surface/transducer sound speed (SSV). Pass it as
+ * @p surface_sound_speed_in_meters_per_second whenever it differs from the profile value
+ * at the launch depth (e.g. the real-time SSV differs from the archived cast); otherwise
+ * the profile value at the launch depth is used, and both agree exactly when the two
+ * speeds are equal. Using the wrong launch sound speed introduces an angle-dependent
+ * (outer-beam) depth bias.
+ *
  * @param launch_depth_in_meters         launch depth (m, positive down); must be inside the profile range.
  * @param launch_angle_in_degrees        angle from straight down (deg); 0 = down, positive = port.
  * @param sound_velocity_profile         profile to trace through.
  * @param two_way_travel_time_in_seconds two-way travel time budget (s).
+ * @param surface_sound_speed_in_meters_per_second sound speed (m/s) at which the beam was
+ *        formed; the ray parameter is sin(angle)/this. <= 0 (default) falls back to the
+ *        profile value at the launch depth.
  * @return BeamTrace with the launch point, layer crossings, turning points and the final point.
  */
 inline BeamTrace trace_beam(float                       launch_depth_in_meters,
                             float                       launch_angle_in_degrees,
                             const SoundVelocityProfile& sound_velocity_profile,
-                            float                       two_way_travel_time_in_seconds)
+                            float                       two_way_travel_time_in_seconds,
+                            float surface_sound_speed_in_meters_per_second = -1.f)
 {
     const auto&  depths        = sound_velocity_profile.get_depths_in_meters();
     const auto&  sound_speeds  = sound_velocity_profile.get_sound_speeds_in_meters_per_second();
@@ -145,7 +158,14 @@ inline BeamTrace trace_beam(float                       launch_depth_in_meters,
     const double c0    = sound_velocity_profile.get_sound_speed(launch_depth_in_meters);
     const double sin_a = std::sin(angle);
     const double cos_a = std::cos(angle);
-    const double p     = std::abs(sin_a) / c0;                          // Snell invariant
+    // The Snell invariant is fixed by the sound speed at which the beam was formed (the
+    // surface/transducer SSV when provided), not necessarily the profile value at the
+    // launch depth. The ray still propagates through the profile starting at c0.
+    const double launch_reference_speed =
+        surface_sound_speed_in_meters_per_second > 0.f
+            ? double(surface_sound_speed_in_meters_per_second)
+            : c0;
+    const double p     = std::abs(sin_a) / launch_reference_speed;      // Snell invariant
     const double hsign = sin_a > 0.0 ? -1.0 : (sin_a < 0.0 ? 1.0 : 0.0); // athwartships travel sign
 
     // Locate the layer that contains the launch depth.
@@ -342,12 +362,16 @@ struct RayToDepth
  * @param launch_depth_in_meters          depth (m, positive down) of the leg origin; must be within the profile.
  * @param launch_zenith_angle_in_radians  ray angle from straight down at the launch point (0 = nadir).
  * @param target_depth_in_meters          depth (m, positive down) to trace to; must be > launch depth and within the profile.
+ * @param surface_sound_speed_in_meters_per_second sound speed (m/s) at which the beam was
+ *        formed; the ray parameter is sin(zenith)/this. <= 0 (default) falls back to the
+ *        profile value at the launch depth. Must match trace_beam so mono/bistatic agree.
  * @return RayToDepth endpoint of the leg.
  */
 inline RayToDepth trace_beam_to_depth(const SoundVelocityProfile& sound_velocity_profile,
                                       double                      launch_depth_in_meters,
                                       double                      launch_zenith_angle_in_radians,
-                                      double                      target_depth_in_meters)
+                                      double                      target_depth_in_meters,
+                                      double surface_sound_speed_in_meters_per_second = -1.0)
 {
     RayToDepth result;
 
@@ -373,7 +397,12 @@ inline RayToDepth trace_beam_to_depth(const SoundVelocityProfile& sound_velocity
 
     const double launch_sound_speed =
         sound_velocity_profile.get_sound_speed(float(launch_depth_in_meters));
-    const double ray_parameter = std::sin(launch_zenith_angle_in_radians) / launch_sound_speed;
+    // Ray parameter fixed by the beam-forming sound speed (surface/transducer SSV when
+    // provided); the leg still propagates through the profile starting at launch_sound_speed.
+    const double reference_sound_speed = surface_sound_speed_in_meters_per_second > 0.0
+                                             ? surface_sound_speed_in_meters_per_second
+                                             : launch_sound_speed;
+    const double ray_parameter = std::sin(launch_zenith_angle_in_radians) / reference_sound_speed;
 
     // locate the layer containing the launch depth
     size_t layer = 0;
