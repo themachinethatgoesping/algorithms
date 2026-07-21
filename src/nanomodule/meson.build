@@ -40,11 +40,11 @@ sources = [
   'geoprocessing/backtracers/c_btconstantsvp.cpp',
   'geoprocessing/backtracers/c_i_backtracer.cpp',
   'geoprocessing/functions/to_raypoints.cpp',
+  'geoprocessing/raytracers2/c_beamdirections.cpp',
+  'geoprocessing/raytracers2/c_beamtrace.cpp',
+  'geoprocessing/raytracers2/c_bistaticraytracer.cpp',
   'geoprocessing/raytracers2/c_layerraytracer.cpp',
   'geoprocessing/raytracers2/c_soundvelocityprofile.cpp',
-  'geoprocessing/raytracers2/c_beamtrace.cpp',
-  'geoprocessing/raytracers2/c_beamdirections.cpp',
-  'geoprocessing/raytracers2/c_bistaticraytracer.cpp',
   'echogramprocessing/c_bottomdetector.cpp',
 ]
 
