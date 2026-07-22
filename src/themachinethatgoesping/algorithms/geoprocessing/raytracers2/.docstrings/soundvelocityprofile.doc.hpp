@@ -1,4 +1,4 @@
-//sourcehash: cbdfe53f17dee14c3d72339d906b749c596a357dee088b9dc8e7d5312488a40a
+//sourcehash: fb71226b94bd8f4db2558376ca2c2de0a25a3f55fd2811cdf67d209a89aa3252
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -95,6 +95,37 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_number_of_layers = R"doc(Number of layers (= number of knots − 1).)doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_profile_with_surface_sound_speed =
+R"doc(Return a copy of this profile with a measured surface (transducer)
+sound speed
+       integrated at the transducer depth (Kongsberg "SHC=0"
+       convention).
+
+The returned profile replaces every knot at or above
+``transducer_depth_in_meters`` with an iso-velocity segment at
+``surface_sound_speed_in_meters_per_second`` (from depth 0 down to the
+transducer depth) and keeps the archived knots strictly below the
+transducer depth. This makes the sound speed at the transducer equal
+to the real-time measured surface sound speed (SSV), which is what the
+echosounder uses when forming the beams; a beam launched at the
+transducer depth is then self-consistent (the Snell launch/reference
+speed and the profile value at the launch depth agree, removing the
+angle-dependent outer-beam depth bias that appears when the archived
+profile value at the transducer differs from the measured SSV).
+
+The measured surface sound speed is also stored as metadata on the
+returned profile (get_surface_sound_speed()).
+
+Args:
+    surface_sound_speed_in_meters_per_second: measured sound speed at
+                                              the transducer (m/s,
+                                              >0).
+    transducer_depth_in_meters: transducer depth below the surface (m,
+                                >= 0).
+
+Returns:
+    SoundVelocityProfile extended with the surface sound speed.)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_sound_speed = R"doc(Sound speed at depth z (linear interp inside layers, clamped at ends).)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_sound_speed_gradients_in_per_second = R"doc(Sound-speed gradient dc/dz (s⁻¹) per layer (size = number_of_layers).)doc";
@@ -103,6 +134,10 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_sound_speeds_in_meters_per_second = R"doc(All sound speeds (m/s), one per depth knot.)doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_surface_sound_speed =
+R"doc(Measured transducer/surface sound speed (m/s), or std::nullopt if
+unset.)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_get_timestamp =
 R"doc(Unix timestamp (s, UTC) when the profile was measured, or std::nullopt
 if unset.)doc";
@@ -110,6 +145,8 @@ if unset.)doc";
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_gradients = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_has_location = R"doc(True iff both latitude and longitude are set.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_has_surface_sound_speed = R"doc(True iff a surface (transducer) sound speed is set.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_has_timestamp = R"doc(True iff a timestamp is set.)doc";
 
@@ -147,9 +184,15 @@ degrees, +E) at once.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_set_longitude = R"doc(Set longitude (decimal degrees, +E); pass std::nullopt to clear.)doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_set_surface_sound_speed =
+R"doc(Set the measured transducer/surface sound speed (m/s); pass
+std::nullopt to clear.)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_set_timestamp = R"doc(Set the unix timestamp (s, UTC); pass std::nullopt to clear.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_sound_speeds = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_surface_sound_speed = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_SoundVelocityProfile_timestamp = R"doc()doc";
 

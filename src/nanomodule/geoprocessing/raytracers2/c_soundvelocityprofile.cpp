@@ -127,6 +127,21 @@ void init_c_soundvelocityprofile(nb::module_& m)
         .def("has_location",
              &SoundVelocityProfile::has_location,
              DOC_SoundVelocityProfile(has_location))
+        .def("get_surface_sound_speed",
+             &SoundVelocityProfile::get_surface_sound_speed,
+             DOC_SoundVelocityProfile(get_surface_sound_speed))
+        .def("set_surface_sound_speed",
+             &SoundVelocityProfile::set_surface_sound_speed,
+             nb::arg("surface_sound_speed"),
+             DOC_SoundVelocityProfile(set_surface_sound_speed))
+        .def("has_surface_sound_speed",
+             &SoundVelocityProfile::has_surface_sound_speed,
+             DOC_SoundVelocityProfile(has_surface_sound_speed))
+        .def("get_profile_with_surface_sound_speed",
+             &SoundVelocityProfile::get_profile_with_surface_sound_speed,
+             nb::arg("surface_sound_speed_in_meters_per_second"),
+             nb::arg("transducer_depth_in_meters"),
+             DOC_SoundVelocityProfile(get_profile_with_surface_sound_speed))
         .def("get_date_string",
              &SoundVelocityProfile::get_date_string,
              nb::arg("fractionalSecondsDigits") = 2,

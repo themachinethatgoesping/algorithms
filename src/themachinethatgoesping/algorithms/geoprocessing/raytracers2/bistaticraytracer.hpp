@@ -113,8 +113,8 @@ class BistaticBeamTrace
     BeamTrace            _receive_leg;
     float                _transmit_azimuth_in_degrees = 0.f;
     float                _receive_azimuth_in_degrees  = 0.f;
-    std::array<float, 3> _bottom_position             = { 0.f, 0.f, 0.f }; // forward, starboard, down
-    float                _solver_residual_in_meters   = 0.f;
+    std::array<float, 3> _bottom_position           = { 0.f, 0.f, 0.f }; // forward, starboard, down
+    float                _solver_residual_in_meters = 0.f;
 
   public:
     BistaticBeamTrace() = default;
@@ -222,7 +222,8 @@ class BistaticBeamTrace
         printer.register_section("derived");
         printer.register_value(
             "transmit_launch_angle", get_transmit_launch_angle_in_degrees(), "deg");
-        printer.register_value("receive_launch_angle", get_receive_launch_angle_in_degrees(), "deg");
+        printer.register_value(
+            "receive_launch_angle", get_receive_launch_angle_in_degrees(), "deg");
         printer.register_value(
             "bottom_incidence_angle", get_bottom_incidence_angle_in_degrees(), "deg");
         printer.register_value("two_way_travel_time", get_two_way_travel_time_in_seconds(), "s");
@@ -272,10 +273,10 @@ namespace bistatic_detail {
  */
 struct SteeringCone
 {
-    Eigen::Vector3d axis;            ///< unit array long axis (world frame)
-    double          projection;      ///< fixed dot(ray, axis) = sin(steering angle)
-    Eigen::Vector3d basis_u;         ///< first unit vector spanning the plane orthogonal to axis
-    Eigen::Vector3d basis_v;         ///< second orthonormal vector (axis, basis_u, basis_v right-handed)
+    Eigen::Vector3d axis;       ///< unit array long axis (world frame)
+    double          projection; ///< fixed dot(ray, axis) = sin(steering angle)
+    Eigen::Vector3d basis_u;    ///< first unit vector spanning the plane orthogonal to axis
+    Eigen::Vector3d basis_v;    ///< second orthonormal vector (axis, basis_u, basis_v right-handed)
     double          sine_half_angle; ///< radius of the cone circle = sqrt(1 - projection^2)
 
     /**
@@ -288,18 +289,18 @@ struct SteeringCone
         , projection(axis_projection)
     {
         // any vector not (near) parallel to the axis gives a stable orthogonal basis
-        const Eigen::Vector3d helper =
-            (std::abs(axis.z()) < 0.9) ? Eigen::Vector3d(0.0, 0.0, 1.0) : Eigen::Vector3d(1.0, 0.0, 0.0);
-        basis_u         = axis.cross(helper).normalized();
-        basis_v         = axis.cross(basis_u);
-        sine_half_angle = std::sqrt(std::max(0.0, 1.0 - projection * projection));
+        const Eigen::Vector3d helper = (std::abs(axis.z()) < 0.9) ? Eigen::Vector3d(0.0, 0.0, 1.0)
+                                                                  : Eigen::Vector3d(1.0, 0.0, 0.0);
+        basis_u                      = axis.cross(helper).normalized();
+        basis_v                      = axis.cross(basis_u);
+        sine_half_angle              = std::sqrt(std::max(0.0, 1.0 - projection * projection));
     }
 
     /// @brief Unit ray at rotation angle @p around_axis (rad) around the cone.
     Eigen::Vector3d ray(double around_axis) const
     {
-        return projection * axis +
-               sine_half_angle * (std::cos(around_axis) * basis_u + std::sin(around_axis) * basis_v);
+        return projection * axis + sine_half_angle * (std::cos(around_axis) * basis_u +
+                                                      std::sin(around_axis) * basis_v);
     }
 
     /// @brief Cone rotation angle (rad) whose ray best matches @p direction.
@@ -331,11 +332,13 @@ struct SteeringCone
  * @param transmit_installation_ypr_in_degrees (yaw, pitch, roll) mounting of the transmit array.
  * @param transmit_attitude_ypr_in_degrees     (yaw, pitch, roll) vessel attitude at transmit time.
  * @param transmit_steering_angle_in_degrees   electronic transmit steering (positive forward).
- * @param transmit_position_xyz                transmit array position (forward, starboard, down) [m].
+ * @param transmit_position_xyz                transmit array position (forward, starboard, down)
+ * [m].
  * @param receive_installation_ypr_in_degrees  (yaw, pitch, roll) mounting of the receive array.
  * @param receive_attitude_ypr_in_degrees      (yaw, pitch, roll) vessel attitude at receive time.
  * @param receive_steering_angle_in_degrees    electronic receive steering (positive to port).
- * @param receive_position_xyz                 receive array position (forward, starboard, down) [m].
+ * @param receive_position_xyz                 receive array position (forward, starboard, down)
+ * [m].
  * @param two_way_travel_time_in_seconds       measured two-way travel time [s].
  * @param sound_velocity_profile               layered profile to trace through.
  * @param concentric_beam_direction            ship-frame unit guess (fwd, stbd, down),
@@ -345,7 +348,7 @@ struct SteeringCone
  *                                             nominal slant range (default 0.001).
  * @param surface_sound_speed_in_meters_per_second sound speed (m/s) at which the beams were
  *                                             formed (the measured surface/transducer SSV);
- *                                             applied to both legs' ray parameters. <= 0
+ *                                             applied to both legs' ray parameters. std::nullopt
  *                                             (default) uses the profile value at each array depth.
  * @param reference_heading_in_degrees         heading (deg) removed from both vessel attitudes so
  *                                             the result is in the ship frame; use the same value
@@ -365,9 +368,9 @@ inline BistaticBeamTrace trace_bistatic_beam(
     double                       two_way_travel_time_in_seconds,
     const SoundVelocityProfile&  sound_velocity_profile,
     const std::array<float, 3>&  concentric_beam_direction,
-    int                          max_iterations       = 30,
-    float                        tolerance_in_percent = 0.001f,
-    double                       surface_sound_speed_in_meters_per_second = -1.0,
+    int                          max_iterations                           = 30,
+    float                        tolerance_in_percent                     = 0.001f,
+    std::optional<double>        surface_sound_speed_in_meters_per_second = std::nullopt,
     double                       reference_heading_in_degrees             = 0.0)
 {
     using tools::rotationfunctions::quaternion_from_ypr;
@@ -416,9 +419,8 @@ inline BistaticBeamTrace trace_bistatic_beam(
     const bistatic_detail::SteeringCone receive_cone(receive_axis, receive_projection);
 
     // seed the two cone angles from the concentric beam direction
-    const Eigen::Vector3d guess_direction(concentric_beam_direction[0],
-                                          concentric_beam_direction[1],
-                                          concentric_beam_direction[2]);
+    const Eigen::Vector3d guess_direction(
+        concentric_beam_direction[0], concentric_beam_direction[1], concentric_beam_direction[2]);
     const double initial_transmit_angle = transmit_cone.angle_of(guess_direction);
     const double initial_receive_angle  = receive_cone.angle_of(guess_direction);
     const double guess_takeoff_angle =
@@ -440,7 +442,7 @@ inline BistaticBeamTrace trace_bistatic_beam(
         double depth_high = profile_bottom_depth;
         for (int iteration = 0; iteration < 60 && depth_high - depth_low > 1e-4; ++iteration)
         {
-            initial_depth   = 0.5 * (depth_low + depth_high);
+            initial_depth    = 0.5 * (depth_low + depth_high);
             const auto probe = trace_beam_to_depth(sound_velocity_profile,
                                                    midpoint_depth,
                                                    guess_takeoff_angle,
@@ -481,43 +483,46 @@ inline BistaticBeamTrace trace_bistatic_beam(
         transmit_zenith = std::acos(std::clamp(transmit_ray.z(), -1.0, 1.0));
         receive_zenith  = std::acos(std::clamp(receive_ray.z(), -1.0, 1.0));
 
-        const auto transmit_leg = trace_beam_to_depth(
-            sound_velocity_profile, transmit_position.z(), transmit_zenith, depth,
-            surface_sound_speed_in_meters_per_second);
-        const auto receive_leg = trace_beam_to_depth(
-            sound_velocity_profile, receive_position.z(), receive_zenith, depth,
-            surface_sound_speed_in_meters_per_second);
+        const auto transmit_leg = trace_beam_to_depth(sound_velocity_profile,
+                                                      transmit_position.z(),
+                                                      transmit_zenith,
+                                                      depth,
+                                                      surface_sound_speed_in_meters_per_second);
+        const auto receive_leg  = trace_beam_to_depth(sound_velocity_profile,
+                                                     receive_position.z(),
+                                                     receive_zenith,
+                                                     depth,
+                                                     surface_sound_speed_in_meters_per_second);
         if (!transmit_leg.reached_target || !receive_leg.reached_target)
             return false;
 
         const double transmit_azimuth = std::atan2(transmit_ray.y(), transmit_ray.x());
         const double receive_azimuth  = std::atan2(receive_ray.y(), receive_ray.x());
 
-        const double transmit_x =
-            transmit_position.x() + transmit_leg.horizontal_offset_in_meters * std::cos(transmit_azimuth);
-        const double transmit_y =
-            transmit_position.y() + transmit_leg.horizontal_offset_in_meters * std::sin(transmit_azimuth);
-        const double receive_x =
-            receive_position.x() + receive_leg.horizontal_offset_in_meters * std::cos(receive_azimuth);
-        const double receive_y =
-            receive_position.y() + receive_leg.horizontal_offset_in_meters * std::sin(receive_azimuth);
+        const double transmit_x = transmit_position.x() + transmit_leg.horizontal_offset_in_meters *
+                                                              std::cos(transmit_azimuth);
+        const double transmit_y = transmit_position.y() + transmit_leg.horizontal_offset_in_meters *
+                                                              std::sin(transmit_azimuth);
+        const double receive_x = receive_position.x() + receive_leg.horizontal_offset_in_meters *
+                                                            std::cos(receive_azimuth);
+        const double receive_y = receive_position.y() + receive_leg.horizontal_offset_in_meters *
+                                                            std::sin(receive_azimuth);
 
         residual[0] = transmit_x - receive_x;
         residual[1] = transmit_y - receive_y;
-        residual[2] = reference_sound_speed *
-                      (double(transmit_leg.one_way_travel_time_in_seconds) +
-                       double(receive_leg.one_way_travel_time_in_seconds) -
-                       two_way_travel_time_in_seconds);
+        residual[2] = reference_sound_speed * (double(transmit_leg.one_way_travel_time_in_seconds) +
+                                               double(receive_leg.one_way_travel_time_in_seconds) -
+                                               two_way_travel_time_in_seconds);
         return true;
     };
 
     Eigen::Vector3d residual;
     double          transmit_zenith = guess_takeoff_angle;
     double          receive_zenith  = guess_takeoff_angle;
-    bool            ok = evaluate(state, residual, transmit_zenith, receive_zenith);
+    bool            ok              = evaluate(state, residual, transmit_zenith, receive_zenith);
 
-    Eigen::Vector3d best_state           = state;
-    double          best_residual_norm   = ok ? residual.norm() : std::numeric_limits<double>::max();
+    Eigen::Vector3d best_state         = state;
+    double          best_residual_norm = ok ? residual.norm() : std::numeric_limits<double>::max();
     double          best_transmit_zenith = transmit_zenith;
     double          best_receive_zenith  = receive_zenith;
 
@@ -536,12 +541,16 @@ inline BistaticBeamTrace trace_bistatic_beam(
             perturbed_state[column] += finite_difference_steps[column];
             Eigen::Vector3d perturbed_residual;
             double          dummy_transmit_zenith, dummy_receive_zenith;
-            if (!evaluate(perturbed_state, perturbed_residual, dummy_transmit_zenith, dummy_receive_zenith))
+            if (!evaluate(perturbed_state,
+                          perturbed_residual,
+                          dummy_transmit_zenith,
+                          dummy_receive_zenith))
             {
                 jacobian_ok = false;
                 break;
             }
-            jacobian.col(column) = (perturbed_residual - residual) / finite_difference_steps[column];
+            jacobian.col(column) =
+                (perturbed_residual - residual) / finite_difference_steps[column];
         }
         if (!jacobian_ok)
             break;
@@ -551,11 +560,11 @@ inline BistaticBeamTrace trace_bistatic_beam(
             break;
 
         // damp the step: bounded depth move and bounded cone-angle move keep the solve stable
-        Eigen::Vector3d damped_step  = step;
+        Eigen::Vector3d damped_step    = step;
         const double    max_depth_step = std::max(1.0, 0.5 * (state[0] - deepest_array_depth));
-        damped_step[0]                = std::clamp(damped_step[0], -max_depth_step, max_depth_step);
-        damped_step[1]                = std::clamp(damped_step[1], -0.3, 0.3);
-        damped_step[2]                = std::clamp(damped_step[2], -0.3, 0.3);
+        damped_step[0] = std::clamp(damped_step[0], -max_depth_step, max_depth_step);
+        damped_step[1] = std::clamp(damped_step[1], -0.3, 0.3);
+        damped_step[2] = std::clamp(damped_step[2], -0.3, 0.3);
         state += damped_step;
 
         ok = evaluate(state, residual, transmit_zenith, receive_zenith);
@@ -582,36 +591,40 @@ inline BistaticBeamTrace trace_bistatic_beam(
         beam_direction_to_pointing_and_azimuth_in_degrees(
             float(receive_ray.x()), float(receive_ray.y()), float(receive_ray.z()));
 
-    const auto transmit_endpoint = trace_beam_to_depth(
-        sound_velocity_profile, transmit_position.z(), best_transmit_zenith, best_state[0],
-        surface_sound_speed_in_meters_per_second);
-    const auto receive_endpoint = trace_beam_to_depth(
-        sound_velocity_profile, receive_position.z(), best_receive_zenith, best_state[0],
-        surface_sound_speed_in_meters_per_second);
+    const auto transmit_endpoint = trace_beam_to_depth(sound_velocity_profile,
+                                                       transmit_position.z(),
+                                                       best_transmit_zenith,
+                                                       best_state[0],
+                                                       surface_sound_speed_in_meters_per_second);
+    const auto receive_endpoint  = trace_beam_to_depth(sound_velocity_profile,
+                                                      receive_position.z(),
+                                                      best_receive_zenith,
+                                                      best_state[0],
+                                                      surface_sound_speed_in_meters_per_second);
 
     BeamTrace transmit_leg = trace_beam(float(transmit_position.z()),
                                         transmit_pointing_azimuth[0],
                                         sound_velocity_profile,
                                         2.f * transmit_endpoint.one_way_travel_time_in_seconds,
-                                        float(surface_sound_speed_in_meters_per_second));
+                                        surface_sound_speed_in_meters_per_second);
     BeamTrace receive_leg  = trace_beam(float(receive_position.z()),
                                        receive_pointing_azimuth[0],
                                        sound_velocity_profile,
                                        2.f * receive_endpoint.one_way_travel_time_in_seconds,
-                                       float(surface_sound_speed_in_meters_per_second));
+                                       surface_sound_speed_in_meters_per_second);
 
     // seabed point from the transmit leg's last point, lifted by the transmit azimuth. This is
     // exactly the monostatic reconstruction, so with identical transmit/receive poses the
     // bistatic seabed matches the concentric one.
-    const auto&  transmit_depths           = transmit_leg.get_depths_in_meters();
-    const auto&  transmit_horizontal       = transmit_leg.get_horizontal_offsets_in_meters();
-    const float  last_horizontal_offset    = transmit_horizontal.size()
-                                                 ? transmit_horizontal.unchecked(transmit_horizontal.size() - 1)
-                                                 : 0.f;
-    const float  last_depth                = transmit_depths.size()
-                                                 ? transmit_depths.unchecked(transmit_depths.size() - 1)
-                                                 : float(best_state[0]);
-    const float  transmit_azimuth_radians  = transmit_pointing_azimuth[1] * float(degrees_to_radians);
+    const auto& transmit_depths     = transmit_leg.get_depths_in_meters();
+    const auto& transmit_horizontal = transmit_leg.get_horizontal_offsets_in_meters();
+    const float last_horizontal_offset =
+        transmit_horizontal.size() ? transmit_horizontal.unchecked(transmit_horizontal.size() - 1)
+                                   : 0.f;
+    const float last_depth               = transmit_depths.size()
+                                               ? transmit_depths.unchecked(transmit_depths.size() - 1)
+                                               : float(best_state[0]);
+    const float transmit_azimuth_radians = transmit_pointing_azimuth[1] * float(degrees_to_radians);
 
     const std::array<float, 3> bottom_position = {
         float(transmit_position.x()) - last_horizontal_offset * std::sin(transmit_azimuth_radians),

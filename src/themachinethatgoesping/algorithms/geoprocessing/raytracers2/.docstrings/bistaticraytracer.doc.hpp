@@ -1,4 +1,4 @@
-//sourcehash: 66e93bff01c3b341228e0149bd30509ad419c69c589f116dfb1e9e6f9a0bca80
+//sourcehash: 6a101bea2c136af54ed3da8a8da77536df0a43770066cce4d0eb62bb8f4f173a
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -222,10 +222,10 @@ Args:
                                               formed (the measured
                                               surface/transducer SSV);
                                               applied to both legs'
-                                              ray parameters. <= 0
-                                              (default) uses the
-                                              profile value at each
-                                              array depth.
+                                              ray parameters.
+                                              std::nullopt (default)
+                                              uses the profile value
+                                              at each array depth.
     reference_heading_in_degrees: heading (deg) removed from both
                                   vessel attitudes so the result is in
                                   the ship frame; use the same value

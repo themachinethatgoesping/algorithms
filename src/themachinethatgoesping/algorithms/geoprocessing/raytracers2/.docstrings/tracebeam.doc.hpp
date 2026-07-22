@@ -1,4 +1,4 @@
-//sourcehash: c3b065d72a7584b678e3c3cad3098947e62101a7a551a169ddc01deb58b151a4
+//sourcehash: 5b99008011edcf71003336b86f1de018e1b81601bd2e9513a1ec5d816a241073
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -94,10 +94,12 @@ Args:
                                               which the beam was
                                               formed; the ray
                                               parameter is
-                                              sin(angle)/this. <= 0
-                                              (default) falls back to
-                                              the profile value at the
-                                              launch depth.
+                                              sin(angle)/this.
+                                              std::nullopt (default,
+                                              i.e. not provided) falls
+                                              back to the profile
+                                              value at the launch
+                                              depth.
 
 Returns:
     BeamTrace with the launch point, layer crossings, turning points
@@ -130,10 +132,12 @@ Args:
                                               which the beam was
                                               formed; the ray
                                               parameter is
-                                              sin(zenith)/this. <= 0
-                                              (default) falls back to
-                                              the profile value at the
-                                              launch depth. Must match
+                                              sin(zenith)/this.
+                                              std::nullopt (default,
+                                              i.e. not provided) falls
+                                              back to the profile
+                                              value at the launch
+                                              depth. Must match
                                               trace_beam so
                                               mono/bistatic agree.
 

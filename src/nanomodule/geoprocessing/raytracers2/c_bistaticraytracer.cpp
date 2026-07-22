@@ -8,6 +8,7 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/optional.h>
 #include <nanobind/stl/string.h>
 
 #include <xtensor-python/nanobind/pytensor.hpp>
@@ -109,7 +110,7 @@ void init_c_bistaticraytracer(nb::module_& m)
           nb::arg("concentric_beam_direction"),
           nb::arg("max_iterations")       = 30,
           nb::arg("tolerance_in_percent") = 0.001f,
-          nb::arg("surface_sound_speed_in_meters_per_second") = -1.0,
+          nb::arg("surface_sound_speed_in_meters_per_second") = std::nullopt,
           nb::arg("reference_heading_in_degrees")             = 0.0);
 }
 

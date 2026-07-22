@@ -39,6 +39,7 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include <fmt/format.h>
 
@@ -76,6 +77,7 @@ class SoundVelocityProfile
     std::optional<double> _timestamp;
     std::optional<double> _latitude;
     std::optional<double> _longitude;
+    std::optional<double> _surface_sound_speed; // measured transducer/surface sound speed (m/s)
 
     static constexpr float ISO_EPS = 1e-6f; // |dc/dz| threshold for iso-velocity detection
 
@@ -111,7 +113,8 @@ class SoundVelocityProfile
     {
         return _depths == other._depths && _sound_speeds == other._sound_speeds &&
                _timestamp == other._timestamp &&
-               _latitude == other._latitude && _longitude == other._longitude;
+               _latitude == other._latitude && _longitude == other._longitude &&
+               _surface_sound_speed == other._surface_sound_speed;
     }
 
     /**
@@ -224,6 +227,96 @@ class SoundVelocityProfile
     /// @brief True iff both latitude and longitude are set.
     bool has_location() const { return _latitude.has_value() && _longitude.has_value(); }
 
+    // --- optional metadata: surface (transducer) sound speed ---
+
+    /// @brief Measured transducer/surface sound speed (m/s), or std::nullopt if unset.
+    std::optional<double> get_surface_sound_speed() const { return _surface_sound_speed; }
+    /// @brief Set the measured transducer/surface sound speed (m/s); pass std::nullopt to clear.
+    void set_surface_sound_speed(std::optional<double> surface_sound_speed)
+    {
+        _surface_sound_speed = surface_sound_speed;
+    }
+    /// @brief True iff a surface (transducer) sound speed is set.
+    bool has_surface_sound_speed() const { return _surface_sound_speed.has_value(); }
+
+    /**
+     * @brief Return a copy of this profile with a measured surface (transducer) sound speed
+     *        integrated at the transducer depth (Kongsberg "SHC=0" convention).
+     *
+     * The returned profile replaces every knot at or above @p transducer_depth_in_meters with an
+     * iso-velocity segment at @p surface_sound_speed_in_meters_per_second (from depth 0 down to the
+     * transducer depth) and keeps the archived knots strictly below the transducer depth. This makes
+     * the sound speed at the transducer equal to the real-time measured surface sound speed (SSV),
+     * which is what the echosounder uses when forming the beams; a beam launched at the transducer
+     * depth is then self-consistent (the Snell launch/reference speed and the profile value at the
+     * launch depth agree, removing the angle-dependent outer-beam depth bias that appears when the
+     * archived profile value at the transducer differs from the measured SSV).
+     *
+     * The measured surface sound speed is also stored as metadata on the returned profile
+     * (get_surface_sound_speed()).
+     *
+     * @param surface_sound_speed_in_meters_per_second measured sound speed at the transducer (m/s, >0).
+     * @param transducer_depth_in_meters               transducer depth below the surface (m, >= 0).
+     * @return SoundVelocityProfile extended with the surface sound speed.
+     */
+    SoundVelocityProfile get_profile_with_surface_sound_speed(
+        float surface_sound_speed_in_meters_per_second,
+        float transducer_depth_in_meters) const
+    {
+        if (!(surface_sound_speed_in_meters_per_second > 0.f))
+            throw std::runtime_error("SoundVelocityProfile::get_profile_with_surface_sound_speed: "
+                                     "surface sound speed must be positive");
+        if (!(transducer_depth_in_meters >= 0.f))
+            throw std::runtime_error("SoundVelocityProfile::get_profile_with_surface_sound_speed: "
+                                     "transducer depth must be >= 0");
+
+        std::vector<float> zs;
+        std::vector<float> cs;
+        zs.reserve(_depths.size() + 2);
+        cs.reserve(_depths.size() + 2);
+
+        // iso-velocity segment at the measured SSV from the surface to the transducer depth
+        zs.push_back(0.f);
+        cs.push_back(surface_sound_speed_in_meters_per_second);
+        if (transducer_depth_in_meters > 0.f)
+        {
+            zs.push_back(transducer_depth_in_meters);
+            cs.push_back(surface_sound_speed_in_meters_per_second);
+        }
+
+        // keep the archived knots strictly deeper than the transducer
+        for (size_t i = 0; i < _depths.size(); ++i)
+        {
+            if (_depths.unchecked(i) > transducer_depth_in_meters)
+            {
+                zs.push_back(_depths.unchecked(i));
+                cs.push_back(_sound_speeds.unchecked(i));
+            }
+        }
+
+        // if the transducer is at/below the whole archived profile, keep the deepest knot so the
+        // result still spans a positive depth range (and stays strictly increasing)
+        if (zs.size() < 2)
+        {
+            const size_t last   = _depths.size() - 1;
+            const float  deep_z = std::max(_depths.unchecked(last), transducer_depth_in_meters + 1.f);
+            zs.push_back(deep_z);
+            cs.push_back(_sound_speeds.unchecked(last));
+        }
+
+        SoundVelocityProfile extended;
+        xt::xtensor<float, 1> z_out = xt::xtensor<float, 1>::from_shape({ zs.size() });
+        xt::xtensor<float, 1> c_out = xt::xtensor<float, 1>::from_shape({ cs.size() });
+        std::copy(zs.begin(), zs.end(), z_out.begin());
+        std::copy(cs.begin(), cs.end(), c_out.begin());
+        extended.set(std::move(z_out), std::move(c_out));
+        extended._timestamp           = _timestamp;
+        extended._latitude            = _latitude;
+        extended._longitude           = _longitude;
+        extended._surface_sound_speed = double(surface_sound_speed_in_meters_per_second);
+        return extended;
+    }
+
     /**
      * @brief Format ``_timestamp`` as a date string.
      *
@@ -269,6 +362,10 @@ class SoundVelocityProfile
             printer.register_value("longitude", *_longitude, "deg");
         else
             printer.register_string("longitude", "not set");
+        if (_surface_sound_speed.has_value())
+            printer.register_value("surface_sound_speed", *_surface_sound_speed, "m/s");
+        else
+            printer.register_string("surface_sound_speed", "not set");
         return printer;
     }
 
@@ -302,9 +399,10 @@ class SoundVelocityProfile
         svp._sound_speeds = xt::xtensor<float, 1>::from_shape({ n });
         is.read(reinterpret_cast<char*>(svp._depths.data()),       sizeof(float) * n);
         is.read(reinterpret_cast<char*>(svp._sound_speeds.data()), sizeof(float) * n);
-        svp._timestamp = read_optional_(is);
-        svp._latitude  = read_optional_(is);
-        svp._longitude = read_optional_(is);
+        svp._timestamp           = read_optional_(is);
+        svp._latitude            = read_optional_(is);
+        svp._longitude           = read_optional_(is);
+        svp._surface_sound_speed = read_optional_(is);
         if (n >= 2)
             svp.recompute_layer_constants_();
         return svp;
@@ -319,6 +417,7 @@ class SoundVelocityProfile
         write_optional_(os, _timestamp);
         write_optional_(os, _latitude);
         write_optional_(os, _longitude);
+        write_optional_(os, _surface_sound_speed);
     }
 
   private:

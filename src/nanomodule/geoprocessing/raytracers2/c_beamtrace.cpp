@@ -8,6 +8,7 @@
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
 
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/optional.h>
 #include <nanobind/stl/string.h>
 
 #include <xtensor-python/nanobind/pytensor.hpp>
@@ -97,7 +98,7 @@ void init_c_beamtrace(nb::module_& m)
           nb::arg("launch_angle_in_degrees"),
           nb::arg("sound_velocity_profile"),
           nb::arg("two_way_travel_time_in_seconds"),
-          nb::arg("surface_sound_speed_in_meters_per_second") = -1.f);
+          nb::arg("surface_sound_speed_in_meters_per_second") = std::nullopt);
 
     nb::class_<RayToDepth>(
         m,
@@ -125,7 +126,7 @@ void init_c_beamtrace(nb::module_& m)
           nb::arg("launch_depth_in_meters"),
           nb::arg("launch_zenith_angle_in_radians"),
           nb::arg("target_depth_in_meters"),
-          nb::arg("surface_sound_speed_in_meters_per_second") = -1.0);
+          nb::arg("surface_sound_speed_in_meters_per_second") = std::nullopt);
 }
 
 } // namespace py_raytracers2
