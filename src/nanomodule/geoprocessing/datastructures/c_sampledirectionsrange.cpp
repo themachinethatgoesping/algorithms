@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-// automatically gernerated using  python -m pybind11_mkdoc -o docstrings.h
 // <headerfiles>
 
 // -- c++ library headers

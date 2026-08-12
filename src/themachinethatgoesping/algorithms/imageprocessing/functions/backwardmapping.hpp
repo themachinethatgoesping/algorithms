@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #include <themachinethatgoesping/tools/helper/xtensor.hpp>
 #include <xtensor/containers/xtensor.hpp>
@@ -264,7 +265,8 @@ xt::xtensor<typename t_xtensor_2d::value_type, 2> backward_map_nearest(
 {
     using value_type = typename t_xtensor_2d::value_type;
 
-    if (reference.shape()[0] != reference_x.size() || reference.shape()[1] != reference_y.size())
+    if (std::cmp_not_equal(reference.shape()[0], reference_x.size()) ||
+        std::cmp_not_equal(reference.shape()[1], reference_y.size()))
         throw std::invalid_argument("Reference coordinate arrays must match reference image shape");
 
     auto output = xt::xtensor<value_type, 2>::from_shape({ new_x.size(), new_y.size() });
@@ -353,7 +355,8 @@ xt::xtensor<typename t_xtensor_2d::value_type, 2> backward_map_bilinear(
 {
     using value_type = typename t_xtensor_2d::value_type;
 
-    if (reference.shape()[0] != reference_x.size() || reference.shape()[1] != reference_y.size())
+    if (std::cmp_not_equal(reference.shape()[0], reference_x.size()) ||
+        std::cmp_not_equal(reference.shape()[1], reference_y.size()))
         throw std::invalid_argument("Reference coordinate arrays must match reference image shape");
 
     auto output = xt::xtensor<value_type, 2>::from_shape({ new_x.size(), new_y.size() });
@@ -473,10 +476,12 @@ void backward_map_nearest_add(
 {
     using target_value_type = typename t_xtensor_target::value_type;
 
-    if (reference.shape()[0] != reference_x.size() || reference.shape()[1] != reference_y.size())
+    if (std::cmp_not_equal(reference.shape()[0], reference_x.size()) ||
+        std::cmp_not_equal(reference.shape()[1], reference_y.size()))
         throw std::invalid_argument("Reference coordinate arrays must match reference image shape");
 
-    if (target.shape()[0] != target_x.size() || target.shape()[1] != target_y.size())
+    if (std::cmp_not_equal(target.shape()[0], target_x.size()) ||
+        std::cmp_not_equal(target.shape()[1], target_y.size()))
         throw std::invalid_argument("Target coordinate arrays must match target image shape");
 
     const int threads = std::max(1, mp_cores);
@@ -563,10 +568,12 @@ void backward_map_bilinear_add(
 {
     using target_value_type = typename t_xtensor_target::value_type;
 
-    if (reference.shape()[0] != reference_x.size() || reference.shape()[1] != reference_y.size())
+    if (std::cmp_not_equal(reference.shape()[0], reference_x.size()) ||
+        std::cmp_not_equal(reference.shape()[1], reference_y.size()))
         throw std::invalid_argument("Reference coordinate arrays must match reference image shape");
 
-    if (target.shape()[0] != target_x.size() || target.shape()[1] != target_y.size())
+    if (std::cmp_not_equal(target.shape()[0], target_x.size()) ||
+        std::cmp_not_equal(target.shape()[1], target_y.size()))
         throw std::invalid_argument("Target coordinate arrays must match target image shape");
 
     const int threads = std::max(1, mp_cores);

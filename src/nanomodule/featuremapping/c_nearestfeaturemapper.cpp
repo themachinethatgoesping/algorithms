@@ -121,7 +121,7 @@ void init_c_nearestfeaturemapper(nb::module_& m)
                  &NearestFeatureMapper::operator==,
                  DOC_NearestFeatureMapper(operator_eq),
                  nb::arg("other"))
-        // ----- pybind macros -----
+        // ----- nanobind macros -----
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(NearestFeatureMapper)
         // default binary functions
