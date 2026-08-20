@@ -77,7 +77,7 @@ class SoundVelocityProfile
     std::optional<double> _timestamp;
     std::optional<double> _latitude;
     std::optional<double> _longitude;
-    std::optional<double> _surface_sound_speed; // measured transducer/surface sound speed (m/s)
+    std::optional<float> _surface_sound_speed; // measured transducer/surface sound speed (m/s)
 
     static constexpr float ISO_EPS = 1e-6f; // |dc/dz| threshold for iso-velocity detection
 
@@ -232,7 +232,7 @@ class SoundVelocityProfile
     /// @brief Measured transducer/surface sound speed (m/s), or std::nullopt if unset.
     std::optional<double> get_surface_sound_speed() const { return _surface_sound_speed; }
     /// @brief Set the measured transducer/surface sound speed (m/s); pass std::nullopt to clear.
-    void set_surface_sound_speed(std::optional<double> surface_sound_speed)
+    void set_surface_sound_speed(std::optional<float> surface_sound_speed)
     {
         _surface_sound_speed = surface_sound_speed;
     }
@@ -313,7 +313,7 @@ class SoundVelocityProfile
         extended._timestamp           = _timestamp;
         extended._latitude            = _latitude;
         extended._longitude           = _longitude;
-        extended._surface_sound_speed = double(surface_sound_speed_in_meters_per_second);
+        extended._surface_sound_speed = surface_sound_speed_in_meters_per_second;
         return extended;
     }
 
@@ -371,19 +371,21 @@ class SoundVelocityProfile
 
   private:
     // Helpers to (de)serialize std::optional<double> as a [flag(uint8), value(double)] pair.
-    static void write_optional_(std::ostream& os, const std::optional<double>& v)
+    template<std::floating_point t_float>
+    static void write_optional_(std::ostream& os, const std::optional<t_float>& v)
     {
         std::uint8_t flag = v.has_value() ? 1u : 0u;
         os.write(reinterpret_cast<const char*>(&flag), sizeof(flag));
-        double value = v.value_or(0.0);
-        os.write(reinterpret_cast<const char*>(&value), sizeof(double));
+        t_float value = v.value_or(0.0);
+        os.write(reinterpret_cast<const char*>(&value), sizeof(t_float));
     }
-    static std::optional<double> read_optional_(std::istream& is)
+    template<std::floating_point t_float>
+    static std::optional<t_float> read_optional_(std::istream& is)
     {
         std::uint8_t flag = 0;
         is.read(reinterpret_cast<char*>(&flag), sizeof(flag));
-        double value = 0.0;
-        is.read(reinterpret_cast<char*>(&value), sizeof(double));
+        t_float value = 0.0;
+        is.read(reinterpret_cast<char*>(&value), sizeof(t_float));
         if (flag)
             return value;
         return std::nullopt;
@@ -399,10 +401,10 @@ class SoundVelocityProfile
         svp._sound_speeds = xt::xtensor<float, 1>::from_shape({ n });
         is.read(reinterpret_cast<char*>(svp._depths.data()),       sizeof(float) * n);
         is.read(reinterpret_cast<char*>(svp._sound_speeds.data()), sizeof(float) * n);
-        svp._timestamp           = read_optional_(is);
-        svp._latitude            = read_optional_(is);
-        svp._longitude           = read_optional_(is);
-        svp._surface_sound_speed = read_optional_(is);
+        svp._timestamp           = read_optional_<double>(is);
+        svp._latitude            = read_optional_<double>(is);
+        svp._longitude           = read_optional_<double>(is);
+        svp._surface_sound_speed = read_optional_<float>(is);
         if (n >= 2)
             svp.recompute_layer_constants_();
         return svp;
