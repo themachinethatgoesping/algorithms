@@ -326,7 +326,8 @@ namespace bistatic_detail {
  * Given each array's world-frame long axis, position and steering projection (already
  * heading-removed via the poses), traces both legs through the layered profile and finds the
  * seabed point where they meet with a combined one-way time equal to the measured two-way time,
- * via a damped Newton iteration seeded by the concentric beam direction.
+ * via a damped Newton iteration seeded by the concentric beam direction. The seabed solve stays in
+ * double because its finite-difference Jacobian (steps ~5e-5) would lose all significance in float.
  * Positions and axes are in the common x=forward, y=starboard, z=down ship frame.
  */
 inline BistaticBeamTrace solve_bistatic_beam(
@@ -343,7 +344,7 @@ inline BistaticBeamTrace solve_bistatic_beam(
     float                       tolerance_in_percent,
     std::optional<float>        surface_sound_speed_in_meters_per_second)
 {
-    constexpr float degrees_to_radians = 3.1415926535f / 180.0f;
+    constexpr float degrees_to_radians = 1.0f / 180.0f * 3.1415926535f;
 
     const SteeringCone transmit_cone(transmit_axis, transmit_projection);
     const SteeringCone receive_cone(receive_axis, receive_projection);
@@ -365,14 +366,31 @@ inline BistaticBeamTrace solve_bistatic_beam(
     const float deepest_array_depth = std::max(transmit_position.z(), receive_position.z());
     const float midpoint_depth      = 0.5f * (transmit_position.z() + receive_position.z());
 
-    // initial seabed depth: use concentric beam depth directly (skip bisection for speed)
-    float initial_depth = midpoint_depth + 0.5f * (profile_bottom_depth - midpoint_depth);
-    // Clamp to valid range
-    initial_depth = std::clamp(initial_depth, deepest_array_depth + 1e-3f, profile_bottom_depth);
+    // initial seabed depth by concentric bisection so the one-way time is about half the TWTT
+    float initial_depth = 0.5f * (deepest_array_depth + profile_bottom_depth);
+    {
+        float depth_low  = deepest_array_depth + 1e-3f;
+        float depth_high = profile_bottom_depth;
+        for (int iteration = 0; iteration < 60 && depth_high - depth_low > 1e-4f; ++iteration)
+        {
+            initial_depth    = 0.5f * (depth_low + depth_high);
+            const auto probe = trace_beam_to_depth(sound_velocity_profile,
+                                                   midpoint_depth,
+                                                   guess_takeoff_angle,
+                                                   initial_depth,
+                                                   surface_sound_speed_in_meters_per_second);
+            if (!probe.reached_target ||
+                probe.one_way_travel_time_in_seconds > 0.5f * two_way_travel_time_in_seconds)
+                depth_high = initial_depth;
+            else
+                depth_low = initial_depth;
+        }
+    }
 
-    // MBES-appropriate tolerances: 0.1m horizontal, 0.05m depth/travel-time
-    const float horizontal_tolerance = 0.1f;
-    const float depth_tolerance      = 0.05f;
+    const float relative_tolerance = std::max(tolerance_in_percent * 0.01f, 1e-5f);
+    const float nominal_slant_range =
+        std::max(0.5f * reference_sound_speed * two_way_travel_time_in_seconds, 1.0f);
+    const float absolute_tolerance = relative_tolerance * nominal_slant_range;
 
     // solver state = (seabed depth, transmit cone angle, receive cone angle)
     Eigen::Vector3f state(initial_depth, initial_transmit_angle, initial_receive_angle);
@@ -390,13 +408,8 @@ inline BistaticBeamTrace solve_bistatic_beam(
 
         const Eigen::Vector3f transmit_ray = transmit_cone.ray(current[1]);
         const Eigen::Vector3f receive_ray  = receive_cone.ray(current[2]);
-
-        // Validate ray geometry: rays must point downward (z > 0.01)
-        if (transmit_ray.z() <= 0.01f || receive_ray.z() <= 0.01f)
-        {
-            residual = Eigen::Vector3f::Constant(1e6f); // Force solver away from invalid states
-            return false;
-        }
+        if (transmit_ray.z() <= 1e-6f || receive_ray.z() <= 1e-6f)
+            return false; // ray points up or horizontal - cannot reach the seabed
 
         transmit_zenith = std::acos(std::clamp(transmit_ray.z(), -1.0f, 1.0f));
         receive_zenith  = std::acos(std::clamp(receive_ray.z(), -1.0f, 1.0f));
@@ -443,36 +456,13 @@ inline BistaticBeamTrace solve_bistatic_beam(
     float           best_residual_norm   = ok ? residual.norm() : std::numeric_limits<float>::max();
     float           best_transmit_zenith = transmit_zenith;
     float           best_receive_zenith  = receive_zenith;
-    int             consecutive_divergence_count = 0;
 
-    // Larger finite-difference steps for float stability
-    const std::array<float, 3> finite_difference_steps = { 0.1f, 0.001f, 0.001f };
+    const std::array<float, 3> finite_difference_steps = { 5e-3f, 5e-5f, 5e-5f };
 
     for (int iteration = 0; ok && iteration < max_iterations; ++iteration)
     {
-        // MBES-appropriate stopping condition: component-wise thresholds
-        bool converged = (std::abs(residual[0]) < horizontal_tolerance &&
-                          std::abs(residual[1]) < horizontal_tolerance &&
-                          std::abs(residual[2]) < depth_tolerance);
-        if (converged)
+        if (residual.norm() < absolute_tolerance)
             break;
-
-        // Divergence detection: if residual grows significantly, abort
-        if (iteration > 2 && residual.norm() > best_residual_norm * 10.0f)
-        {
-            consecutive_divergence_count++;
-            if (consecutive_divergence_count >= 2)
-            {
-                state           = best_state;
-                transmit_zenith = best_transmit_zenith;
-                receive_zenith  = best_receive_zenith;
-                break;
-            }
-        }
-        else
-        {
-            consecutive_divergence_count = 0;
-        }
 
         Eigen::Matrix3f jacobian;
         bool            jacobian_ok = true;
@@ -500,13 +490,12 @@ inline BistaticBeamTrace solve_bistatic_beam(
         if (!step.allFinite())
             break;
 
-        // Damp the step: bounded depth move and bounded cone-angle move
+        // damp the step: bounded depth move and bounded cone-angle move keep the solve stable
         Eigen::Vector3f damped_step    = step;
-        const float     max_depth_step = std::max(0.1f * state[0], 1.0f); // ±10% of depth or ±1m
+        const float     max_depth_step = std::max(1.0f, 0.5f * (state[0] - deepest_array_depth));
         damped_step[0] = std::clamp(damped_step[0], -max_depth_step, max_depth_step);
-        // Angles: ±1° in radians
-        damped_step[1] = std::clamp(damped_step[1], -0.0175f, 0.0175f);
-        damped_step[2] = std::clamp(damped_step[2], -0.0175f, 0.0175f);
+        damped_step[1] = std::clamp(damped_step[1], -0.3f, 0.3f);
+        damped_step[2] = std::clamp(damped_step[2], -0.3f, 0.3f);
         state += damped_step;
 
         ok = evaluate(state, residual, transmit_zenith, receive_zenith);
@@ -555,7 +544,9 @@ inline BistaticBeamTrace solve_bistatic_beam(
                                        2.f * receive_endpoint.one_way_travel_time_in_seconds,
                                        surface_sound_speed_in_meters_per_second);
 
-    // seabed point from the transmit leg's last point, lifted by the transmit azimuth
+    // seabed point from the transmit leg's last point, lifted by the transmit azimuth. This is
+    // exactly the monostatic reconstruction, so with identical transmit/receive poses the
+    // bistatic seabed matches the concentric one.
     const auto& transmit_depths     = transmit_leg.get_depths_in_meters();
     const auto& transmit_horizontal = transmit_leg.get_horizontal_offsets_in_meters();
     const float last_horizontal_offset =
@@ -620,7 +611,7 @@ inline BistaticBeamTrace trace_bistatic_beam(
     if (sound_velocity_profile.get_number_of_layers() == 0)
         throw std::runtime_error("trace_bistatic_beam: sound velocity profile is not initialized");
 
-    constexpr float degrees_to_radians = 3.1415926535f / 180.0f;
+    constexpr float degrees_to_radians = 1.0f / 180.0f * 3.1415926535f;
 
     const Eigen::Vector3f transmit_position(transmit_pose.x, transmit_pose.y, transmit_pose.z);
     const Eigen::Vector3f receive_position(receive_pose.x, receive_pose.y, receive_pose.z);
@@ -699,7 +690,7 @@ inline std::vector<BistaticBeamTrace> trace_bistatic_beams(
     if (mp_cores < 1)
         mp_cores = 1;
 
-    constexpr float degrees_to_radians = 3.1415926535f / 180.0f;
+    constexpr float degrees_to_radians = 1.0f / 180.0f * 3.1415926535f;
 
     // Transmit side is shared by every beam; compute it once.
     const Eigen::Vector3f transmit_position(transmit_pose.x, transmit_pose.y, transmit_pose.z);

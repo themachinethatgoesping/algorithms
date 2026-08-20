@@ -1,4 +1,4 @@
-//sourcehash: 3032ee3f4475eda6f1c4ff830f4764ea9f1b7b808ad93d78d692490de17f0b76
+//sourcehash: 686e0491c622591515e7a1897d0b6d15e7b12fd5fb04a3f1c1bc1d485361f9ca
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -180,9 +180,10 @@ Given each array's world-frame long axis, position and steering
 projection (already heading-removed via the poses), traces both legs
 through the layered profile and finds the seabed point where they meet
 with a combined one-way time equal to the measured two-way time, via a
-damped Newton iteration seeded by the concentric beam direction.
-Positions and axes are in the common x=forward, y=starboard, z=down
-ship frame.)doc";
+damped Newton iteration seeded by the concentric beam direction. The
+seabed solve stays in double because its finite-difference Jacobian
+(steps ~5e-5) would lose all significance in float. Positions and axes
+are in the common x=forward, y=starboard, z=down ship frame.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_trace_bistatic_beam =
 R"doc(Solve the true-bistatic seabed trace of a single multibeam beam from
