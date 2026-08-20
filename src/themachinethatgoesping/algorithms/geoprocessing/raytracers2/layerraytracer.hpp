@@ -468,7 +468,7 @@ class LayerRaytracer
     // Inputs are exactly what comes out of a multibeam datagram (per-beam
     // tilt re TX array, beam crosstrack re RX array, two-way travel time,
     // optional per-beam sector TX delay) plus the static TX/RX mount
-    // PositionalOffsets and the absolute world depth of the TX face at
+    // SensorPose and the absolute world depth of the TX face at
     // ping time.
     //
     // The launch direction of each beam is computed inside the raytracer
@@ -535,8 +535,8 @@ class LayerRaytracer
         const xt::xtensor<float, 1>&                              crosstrack_deg,
         const xt::xtensor<float, 1>&                              two_way_travel_times,
         const xt::xtensor<float, 1>&                              tx_delays,
-        const navigation::datastructures::PositionalOffsets&      tx_mount,
-        const navigation::datastructures::PositionalOffsets&      rx_mount,
+        const navigation::datastructures::SensorPose&      tx_mount,
+        const navigation::datastructures::SensorPose&      rx_mount,
         float                                                     tx_face_depth_m,
         size_t                                                    n_knots,
         const navigation::NavigationInterpolatorLatLon*           nav         = nullptr,

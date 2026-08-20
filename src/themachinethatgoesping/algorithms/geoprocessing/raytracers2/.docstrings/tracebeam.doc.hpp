@@ -1,4 +1,4 @@
-//sourcehash: 5b99008011edcf71003336b86f1de018e1b81601bd2e9513a1ec5d816a241073
+//sourcehash: 37d6ed049de4fdbbd47a31a983d0af177c4a1291c752c685479efd1d97636221
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -151,9 +151,9 @@ gradient layer.
 For a ray with Snell parameter p in a layer of gradient ``gradient``
 (1/s, != 0), going from sound speed ``sound_speed_1`` (cosine
 ``cosine_1)`` to ``sound_speed_2`` (cosine ``cosine_2),`` returns the
-horizontal distance (>= 0), the signed one-way travel time (positive
-along increasing depth) and the along-ray path length. This is the
-shared kernel used by both trace_beam and trace_beam_to_depth.)doc";
+horizontal distance (>= 0) and the signed one-way travel time
+(positive along increasing depth). This is the shared kernel used by
+both trace_beam and trace_beam_to_depth.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_tracebeam_detail_layer_segment_iso =
 R"doc(Closed-form geometry of one straight ray segment in an iso-velocity
@@ -165,6 +165,19 @@ constant sound speed ``sound_speed,`` spanning a vertical extent
 way travel time and along-ray path length of that segment. The ray
 angle theta is constant across an iso-velocity layer. This is the
 shared kernel used by both trace_beam and trace_beam_to_depth.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_tracebeam_detail_trace_to_depth_impl =
+R"doc(Shared implementation of trace_beam_to_depth (see the public overload
+below).
+
+Takes sin(launch zenith) directly - the only trigonometric input the
+leg needs - and, when Template Args:
+    WithPathLength: is false, skips the along-ray path length so the
+                    bistatic solver's hot loop avoids the extra per-
+                    layer inverse trig. The sound speed is marched
+                    forward from knot to knot (knot value + gradient)
+                    instead of a binary-search profile lookup on every
+                    layer.)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

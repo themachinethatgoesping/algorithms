@@ -43,10 +43,10 @@ constexpr double RTD = 180.0 / M_PI;
 namespace nd = themachinethatgoesping::navigation::datastructures;
 
 // A flat (identity-orientation) pose at the given position.
-nd::PositionalOffsets pose_from(const Eigen::Vector3d& p,
+nd::SensorPose pose_from(const Eigen::Vector3d& p,
                                 const Rotation<float>& r = Rotation<float>())
 {
-    return nd::PositionalOffsets("", float(p.x()), float(p.y()), float(p.z()), r);
+    return nd::SensorPose("", float(p.x()), float(p.y()), float(p.z()), r);
 }
 
 // Synthesise a single-beam bistatic problem (flat orientation) from a known seabed point
@@ -214,7 +214,7 @@ TEST_CASE("trace_bistatic_beam matches monostatic trace_beam for identical poses
 
         // bistatic trace with identical transmit and receive poses
         const auto pose =
-            nd::PositionalOffsets("", position[0], position[1], position[2], Rotation<float>());
+            nd::SensorPose("", position[0], position[1], position[2], Rotation<float>());
         auto bistatic = trace_bistatic_beam(pose,
                                             float(steering.transmit),
                                             pose,
@@ -257,7 +257,7 @@ TEST_CASE("trace_bistatic_beams matches the single-beam trace per beam", TESTTAG
     auto        svp         = SoundVelocityProfile::uniform(sound_speed, 12000.f);
 
     const auto                               transmit_pose = pose_from(Eigen::Vector3d(0.0, 0.0, 0.0));
-    const std::vector<nd::PositionalOffsets> receive_poses = {
+    const std::vector<nd::SensorPose> receive_poses = {
         pose_from(Eigen::Vector3d(2.0, 0.0, 0.3)),
         pose_from(Eigen::Vector3d(2.1, 0.0, 0.3)),
         pose_from(Eigen::Vector3d(1.9, 0.0, 0.25)),

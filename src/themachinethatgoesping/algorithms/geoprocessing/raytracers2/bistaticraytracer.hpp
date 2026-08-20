@@ -356,6 +356,7 @@ inline BistaticBeamTrace solve_bistatic_beam(
     const float initial_receive_angle  = receive_cone.angle_of(guess_direction);
     const float guess_takeoff_angle =
         std::atan2(std::hypot(guess_direction.x(), guess_direction.y()), guess_direction.z());
+    const float guess_takeoff_sin_zenith = std::sin(guess_takeoff_angle);
 
     const size_t number_of_layers = sound_velocity_profile.get_number_of_layers();
     const float  profile_bottom_depth =
@@ -374,11 +375,12 @@ inline BistaticBeamTrace solve_bistatic_beam(
         for (int iteration = 0; iteration < 60 && depth_high - depth_low > 1e-4f; ++iteration)
         {
             initial_depth    = 0.5f * (depth_low + depth_high);
-            const auto probe = trace_beam_to_depth(sound_velocity_profile,
-                                                   midpoint_depth,
-                                                   guess_takeoff_angle,
-                                                   initial_depth,
-                                                   surface_sound_speed_in_meters_per_second);
+            const auto probe = tracebeam_detail::trace_to_depth_impl<false>(
+                sound_velocity_profile,
+                midpoint_depth,
+                guess_takeoff_sin_zenith,
+                initial_depth,
+                surface_sound_speed_in_meters_per_second);
             if (!probe.reached_target ||
                 probe.one_way_travel_time_in_seconds > 0.5f * two_way_travel_time_in_seconds)
                 depth_high = initial_depth;
@@ -400,8 +402,8 @@ inline BistaticBeamTrace solve_bistatic_beam(
     //                     ref_c * (transmit_one_way + receive_one_way - TWTT) )
     auto evaluate = [&](const Eigen::Vector3f& current,
                         Eigen::Vector3f&       residual,
-                        float&                 transmit_zenith,
-                        float&                 receive_zenith) -> bool {
+                        float&                 transmit_sin_zenith,
+                        float&                 receive_sin_zenith) -> bool {
         const float depth = current[0];
         if (!(depth > deepest_array_depth) || depth > profile_bottom_depth + 1e-3f)
             return false;
@@ -411,19 +413,23 @@ inline BistaticBeamTrace solve_bistatic_beam(
         if (transmit_ray.z() <= 1e-6f || receive_ray.z() <= 1e-6f)
             return false; // ray points up or horizontal - cannot reach the seabed
 
-        transmit_zenith = std::acos(std::clamp(transmit_ray.z(), -1.0f, 1.0f));
-        receive_zenith  = std::acos(std::clamp(receive_ray.z(), -1.0f, 1.0f));
+        // sin(zenith) = sqrt(1 - cos^2) straight from the ray's down component (ray.z > 0 here),
+        // avoiding an acos here and a sin inside the depth trace.
+        transmit_sin_zenith = std::sqrt(std::max(0.0f, 1.0f - transmit_ray.z() * transmit_ray.z()));
+        receive_sin_zenith  = std::sqrt(std::max(0.0f, 1.0f - receive_ray.z() * receive_ray.z()));
 
-        const auto transmit_leg = trace_beam_to_depth(sound_velocity_profile,
-                                                      transmit_position.z(),
-                                                      transmit_zenith,
-                                                      depth,
-                                                      surface_sound_speed_in_meters_per_second);
-        const auto receive_leg  = trace_beam_to_depth(sound_velocity_profile,
-                                                     receive_position.z(),
-                                                     receive_zenith,
-                                                     depth,
-                                                     surface_sound_speed_in_meters_per_second);
+        const auto transmit_leg = tracebeam_detail::trace_to_depth_impl<false>(
+            sound_velocity_profile,
+            transmit_position.z(),
+            transmit_sin_zenith,
+            depth,
+            surface_sound_speed_in_meters_per_second);
+        const auto receive_leg = tracebeam_detail::trace_to_depth_impl<false>(
+            sound_velocity_profile,
+            receive_position.z(),
+            receive_sin_zenith,
+            depth,
+            surface_sound_speed_in_meters_per_second);
         if (!transmit_leg.reached_target || !receive_leg.reached_target)
             return false;
 
@@ -448,14 +454,14 @@ inline BistaticBeamTrace solve_bistatic_beam(
     };
 
     Eigen::Vector3f residual;
-    float           transmit_zenith = guess_takeoff_angle;
-    float           receive_zenith  = guess_takeoff_angle;
-    bool            ok              = evaluate(state, residual, transmit_zenith, receive_zenith);
+    float           transmit_sin_zenith = guess_takeoff_sin_zenith;
+    float           receive_sin_zenith  = guess_takeoff_sin_zenith;
+    bool            ok = evaluate(state, residual, transmit_sin_zenith, receive_sin_zenith);
 
-    Eigen::Vector3f best_state           = state;
-    float           best_residual_norm   = ok ? residual.norm() : std::numeric_limits<float>::max();
-    float           best_transmit_zenith = transmit_zenith;
-    float           best_receive_zenith  = receive_zenith;
+    Eigen::Vector3f best_state               = state;
+    float           best_residual_norm       = ok ? residual.norm() : std::numeric_limits<float>::max();
+    float           best_transmit_sin_zenith = transmit_sin_zenith;
+    float           best_receive_sin_zenith  = receive_sin_zenith;
 
     const std::array<float, 3> finite_difference_steps = { 5e-3f, 5e-5f, 5e-5f };
 
@@ -471,11 +477,11 @@ inline BistaticBeamTrace solve_bistatic_beam(
             Eigen::Vector3f perturbed_state = state;
             perturbed_state[column] += finite_difference_steps[column];
             Eigen::Vector3f perturbed_residual;
-            float           dummy_transmit_zenith, dummy_receive_zenith;
+            float           dummy_transmit_sin_zenith, dummy_receive_sin_zenith;
             if (!evaluate(perturbed_state,
                           perturbed_residual,
-                          dummy_transmit_zenith,
-                          dummy_receive_zenith))
+                          dummy_transmit_sin_zenith,
+                          dummy_receive_sin_zenith))
             {
                 jacobian_ok = false;
                 break;
@@ -498,16 +504,16 @@ inline BistaticBeamTrace solve_bistatic_beam(
         damped_step[2] = std::clamp(damped_step[2], -0.3f, 0.3f);
         state += damped_step;
 
-        ok = evaluate(state, residual, transmit_zenith, receive_zenith);
+        ok = evaluate(state, residual, transmit_sin_zenith, receive_sin_zenith);
         if (!ok)
             break;
 
         if (residual.norm() < best_residual_norm)
         {
-            best_residual_norm   = residual.norm();
-            best_state           = state;
-            best_transmit_zenith = transmit_zenith;
-            best_receive_zenith  = receive_zenith;
+            best_residual_norm       = residual.norm();
+            best_state               = state;
+            best_transmit_sin_zenith = transmit_sin_zenith;
+            best_receive_sin_zenith  = receive_sin_zenith;
         }
     }
 
@@ -522,16 +528,18 @@ inline BistaticBeamTrace solve_bistatic_beam(
         beam_direction_to_pointing_and_azimuth_in_degrees(
             receive_ray.x(), receive_ray.y(), receive_ray.z());
 
-    const auto transmit_endpoint = trace_beam_to_depth(sound_velocity_profile,
-                                                       transmit_position.z(),
-                                                       best_transmit_zenith,
-                                                       best_state[0],
-                                                       surface_sound_speed_in_meters_per_second);
-    const auto receive_endpoint  = trace_beam_to_depth(sound_velocity_profile,
-                                                      receive_position.z(),
-                                                      best_receive_zenith,
-                                                      best_state[0],
-                                                      surface_sound_speed_in_meters_per_second);
+    const auto transmit_endpoint = tracebeam_detail::trace_to_depth_impl<false>(
+        sound_velocity_profile,
+        transmit_position.z(),
+        best_transmit_sin_zenith,
+        best_state[0],
+        surface_sound_speed_in_meters_per_second);
+    const auto receive_endpoint = tracebeam_detail::trace_to_depth_impl<false>(
+        sound_velocity_profile,
+        receive_position.z(),
+        best_receive_sin_zenith,
+        best_state[0],
+        surface_sound_speed_in_meters_per_second);
 
     BeamTrace transmit_leg = trace_beam(float(transmit_position.z()),
                                         transmit_pointing_azimuth[0],
@@ -597,9 +605,9 @@ inline BistaticBeamTrace solve_bistatic_beam(
  * @return BistaticBeamTrace with both legs, azimuths, seabed point and residual.
  */
 inline BistaticBeamTrace trace_bistatic_beam(
-    const navigation::datastructures::PositionalOffsets& transmit_pose,
+    const navigation::datastructures::SensorPose& transmit_pose,
     float                                                transmit_steering_angle_in_degrees,
-    const navigation::datastructures::PositionalOffsets& receive_pose,
+    const navigation::datastructures::SensorPose& receive_pose,
     float                                                receive_steering_angle_in_degrees,
     float                                                two_way_travel_time_in_seconds,
     const SoundVelocityProfile&                          sound_velocity_profile,
@@ -663,9 +671,9 @@ inline BistaticBeamTrace trace_bistatic_beam(
  * @return vector of BistaticBeamTrace, one per beam.
  */
 inline std::vector<BistaticBeamTrace> trace_bistatic_beams(
-    const navigation::datastructures::PositionalOffsets& transmit_pose,
+    const navigation::datastructures::SensorPose& transmit_pose,
     float                                                transmit_steering_angle_in_degrees,
-    const std::vector<navigation::datastructures::PositionalOffsets>& receive_poses,
+    const std::vector<navigation::datastructures::SensorPose>& receive_poses,
     const xt::xtensor<float, 1>& receive_steering_angles_in_degrees,
     const xt::xtensor<float, 1>& two_way_travel_times_in_seconds,
     const SoundVelocityProfile&  sound_velocity_profile,

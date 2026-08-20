@@ -21,7 +21,7 @@ namespace py_raytracers2 {
 namespace nb = nanobind;
 using namespace themachinethatgoesping::algorithms::geoprocessing::raytracers2;
 using themachinethatgoesping::navigation::datastructures::Geolocation;
-using themachinethatgoesping::navigation::datastructures::PositionalOffsets;
+using themachinethatgoesping::navigation::datastructures::SensorPose;
 using themachinethatgoesping::navigation::NavigationInterpolatorLatLon;
 
 void init_c_layerraytracer(nb::module_& m)
@@ -132,8 +132,8 @@ void init_c_layerraytracer(nb::module_& m)
                 const xt::nanobind::pytensor<float, 1>&     crosstrack_deg,
                 const xt::nanobind::pytensor<float, 1>&     two_way_travel_times,
                 const xt::nanobind::pytensor<float, 1>&     tx_delays,
-                const PositionalOffsets&                    tx_mount,
-                const PositionalOffsets&                    rx_mount,
+                const SensorPose&                    tx_mount,
+                const SensorPose&                    rx_mount,
                 float                                       tx_face_depth_m,
                 size_t                                      n_knots,
                 const NavigationInterpolatorLatLon*         nav,
@@ -161,7 +161,7 @@ void init_c_layerraytracer(nb::module_& m)
              "crosstrack_deg:  [N] beam pointing re RX array, +starboard (deg)\n"
              "two_way_travel_times: [N] (s)\n"
              "tx_delays:       [N] per-beam sector TX delay re t_tx_ping (s)\n"
-             "tx_mount, rx_mount: PositionalOffsets of the TX and RX arrays\n"
+             "tx_mount, rx_mount: SensorPose of the TX and RX arrays\n"
              "tx_face_depth_m: absolute world depth of TX face at t_tx_ping (m)\n"
              "n_knots:         number of trace knots (>=2). Knot k is at\n"
              "                 one-way time twtt[i]*k/(2*(n_knots-1));\n"
