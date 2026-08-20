@@ -88,8 +88,8 @@ class BTConstantSVP : public I_Backtracer
         auto r = vec_hypot(dx, dy, dz);
 
         // TODO: check if this subtraction is correct (or approx correct)
-        targets.alongtrack_angle = xt::degrees(xt::asin(dx / r)) - get_sensor_location().pitch;
-        targets.crosstrack_angle = xt::degrees(-xt::asin(dy / r)) - get_sensor_location().roll;
+        targets.alongtrack_angle = xt::degrees(xt::asin(dx / r)) - get_sensor_location().pitch();
+        targets.crosstrack_angle = xt::degrees(-xt::asin(dy / r)) - get_sensor_location().roll();
         targets.range            = r;
 
         return targets;
@@ -131,10 +131,10 @@ class BTConstantSVP : public I_Backtracer
             // Compute the alongtrack angle, crosstrack angle, and range for the current point.
             xt::row(targets.alongtrack_angle, i) =
                 xt::eval(xt::degrees(xt::degrees(xt::asin(dx / r)))) -
-                get_sensor_location().pitch; // Subtract the sensor pitch from the alongtrack angle.
+                get_sensor_location().pitch(); // Subtract the sensor pitch from the alongtrack angle.
             xt::row(targets.crosstrack_angle, i) =
                 xt::eval(xt::degrees(-xt::asin(xt::eval(dy[i] / r)))) -
-                get_sensor_location().roll; // Subtract the sensor roll from the crosstrack angle.
+                get_sensor_location().roll(); // Subtract the sensor roll from the crosstrack angle.
             xt::row(targets.range, i) = std::move(r);
         }
 

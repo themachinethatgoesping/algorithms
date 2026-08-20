@@ -1,4 +1,4 @@
-//sourcehash: ffce2a3eb21187e2a5e68f86d9a6716666b4219f016ff9696a6ada7459f9e898
+//sourcehash: 321021c8e84e97d29c0c6e776f38da55a7697161427eaba1a527ad3cf5a6c6d6
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -294,7 +294,8 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_geolocation =
 R"doc(Apply a Geolocation (depth + ypr) to the geometry.
 
-Equivalent to with_rigid_transform(g.yaw, g.pitch, g.roll, 0, 0, g.z).)doc";
+Equivalent to with_rigid_transform(g.yaw(), g.pitch(), g.roll(), 0, 0,
+g.z).)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_geolocation_2 =
 R"doc(Apply a GeolocationLocal (northing/easting/depth + ypr) to the

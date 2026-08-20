@@ -9,6 +9,7 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/array.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 #include <xtensor-python/nanobind/pytensor.hpp>
 
@@ -70,13 +71,10 @@ void init_c_beamdirections(nb::module_& m)
     m.def("compute_beam_directions",
           &compute_beam_directions,
           DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers2, compute_beam_directions),
-          nb::arg("transmit_installation_ypr_in_degrees"),
-          nb::arg("receive_installation_ypr_in_degrees"),
-          nb::arg("transmit_attitude_ypr_in_degrees"),
-          nb::arg("receive_attitude_ypr_in_degrees"),
-          nb::arg("transmit_steering_angles_in_degrees"),
+          nb::arg("transmit_rotation"),
+          nb::arg("transmit_steering_angle_in_degrees"),
+          nb::arg("receive_rotations"),
           nb::arg("receive_steering_angles_in_degrees"),
-          nb::arg("reference_heading_in_degrees"),
           nb::arg("mp_cores") = 1);
 
     m.def("beam_direction_to_pointing_and_azimuth_in_degrees",

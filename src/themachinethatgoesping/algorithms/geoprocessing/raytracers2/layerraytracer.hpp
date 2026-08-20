@@ -148,7 +148,7 @@ class LayerRaytracer
         std::vector<Eigen::Quaternion<float>> tx_q(K1);
         for (size_t k = 0; k < K1; ++k)
             tx_q[k] = tools::rotationfunctions::quaternion_from_ypr<float>(
-                tx_poses[k].yaw, tx_poses[k].pitch, tx_poses[k].roll, true);
+                tx_poses[k].yaw(), tx_poses[k].pitch(), tx_poses[k].roll(), true);
 
         // Absolute launch depth (m) of every ray: the TX pose's z at TX time.
         // The SVP is in absolute world depth, so we start ray integration at
@@ -577,9 +577,9 @@ class LayerRaytracer
 
         // Constant mount rotations.
         const auto q_tx_mount = tools::rotationfunctions::quaternion_from_ypr<float>(
-            tx_mount.yaw, tx_mount.pitch, tx_mount.roll, true);
+            tx_mount.yaw(), tx_mount.pitch(), tx_mount.roll(), true);
         const auto q_rx_mount = tools::rotationfunctions::quaternion_from_ypr<float>(
-            rx_mount.yaw, rx_mount.pitch, rx_mount.roll, true);
+            rx_mount.yaw(), rx_mount.pitch(), rx_mount.roll(), true);
 
         // Inverse vessel-attitude rotation at t_tx_ping (defines the output frame).
         Eigen::Quaternion<float> q_v_ping_inv = Eigen::Quaternion<float>::Identity();
@@ -587,9 +587,9 @@ class LayerRaytracer
         {
             const auto sd = nav->get_sensor_data(t_tx_ping);
             q_v_ping_inv  = tools::rotationfunctions::quaternion_from_ypr<float>(
-                                static_cast<float>(sd.heading),
-                                static_cast<float>(sd.pitch),
-                                static_cast<float>(sd.roll),
+                                static_cast<float>(sd.heading()),
+                                static_cast<float>(sd.pitch()),
+                                static_cast<float>(sd.roll()),
                                 true)
                                 .inverse();
         }
@@ -651,14 +651,14 @@ class LayerRaytracer
                 const auto   sd_tx    = nav->get_sensor_data(t_tx_eff);
                 const auto   sd_rx    = nav->get_sensor_data(t_rx_eff);
                 q_v_tx_eff = tools::rotationfunctions::quaternion_from_ypr<float>(
-                    static_cast<float>(sd_tx.heading),
-                    static_cast<float>(sd_tx.pitch),
-                    static_cast<float>(sd_tx.roll),
+                    static_cast<float>(sd_tx.heading()),
+                    static_cast<float>(sd_tx.pitch()),
+                    static_cast<float>(sd_tx.roll()),
                     true);
                 q_v_rx_eff = tools::rotationfunctions::quaternion_from_ypr<float>(
-                    static_cast<float>(sd_rx.heading),
-                    static_cast<float>(sd_rx.pitch),
-                    static_cast<float>(sd_rx.roll),
+                    static_cast<float>(sd_rx.heading()),
+                    static_cast<float>(sd_rx.pitch()),
+                    static_cast<float>(sd_rx.roll()),
                     true);
             }
 

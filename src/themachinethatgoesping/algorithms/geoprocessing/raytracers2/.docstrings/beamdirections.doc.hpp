@@ -1,4 +1,4 @@
-//sourcehash: 18347264b42f2564edeeef86aeaafdc91e01023b0baa3dc4e60cd04afad461e0
+//sourcehash: 38e41b587e2abe0c382c15cb8d450b316bc5d2ab43fefd96fb3deb69eedf3303
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -170,22 +170,15 @@ exact and reverse mounts are handled by the installation quaternion
 alone (no manual sign flips).
 
 Args:
-    transmit_installation_ypr_in_degrees: (yaw, pitch, roll) mounting
-                                          orientation of the transmit
-                                          array.
-    receive_installation_ypr_in_degrees: (yaw, pitch, roll) mounting
-                                         orientation of the receive
-                                         array.
-    transmit_attitude_ypr_in_degrees: [n_beams, 3] vessel (yaw, pitch,
-                                      roll) at transmit time.
-    receive_attitude_ypr_in_degrees: [n_beams, 3] vessel (yaw, pitch,
-                                     roll) at receive time.
-    transmit_steering_angles_in_degrees: [n_beams] fore-aft transmit
-                                         tilt (positive forward).
+    transmit_rotation: world/ship-frame orientation (Rotation) of the
+                       transmit array (heading removed).
+    transmit_steering_angle_in_degrees: fore-aft transmit tilt
+                                        (positive forward), shared by
+                                        all beams.
+    receive_rotations: per-beam world/ship-frame orientation
+                       (Rotation) of the receive array (size n_beams).
     receive_steering_angles_in_degrees: [n_beams] across-track receive
                                         angle (positive to PORT).
-    reference_heading_in_degrees: heading the output is expressed
-                                  relative to.
     mp_cores: number of OpenMP cores for the per-beam solve (default
               1).
 

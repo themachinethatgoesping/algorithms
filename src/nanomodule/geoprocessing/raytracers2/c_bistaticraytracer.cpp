@@ -10,6 +10,7 @@
 #include <nanobind/stl/array.h>
 #include <nanobind/stl/optional.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 #include <xtensor-python/nanobind/pytensor.hpp>
 
@@ -97,21 +98,31 @@ void init_c_bistaticraytracer(nb::module_& m)
     m.def("trace_bistatic_beam",
           &trace_bistatic_beam,
           DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers2, trace_bistatic_beam),
-          nb::arg("transmit_installation_ypr_in_degrees"),
-          nb::arg("transmit_attitude_ypr_in_degrees"),
+          nb::arg("transmit_pose"),
           nb::arg("transmit_steering_angle_in_degrees"),
-          nb::arg("transmit_position_xyz"),
-          nb::arg("receive_installation_ypr_in_degrees"),
-          nb::arg("receive_attitude_ypr_in_degrees"),
+          nb::arg("receive_pose"),
           nb::arg("receive_steering_angle_in_degrees"),
-          nb::arg("receive_position_xyz"),
           nb::arg("two_way_travel_time_in_seconds"),
           nb::arg("sound_velocity_profile"),
           nb::arg("concentric_beam_direction"),
           nb::arg("max_iterations")       = 30,
           nb::arg("tolerance_in_percent") = 0.001f,
+          nb::arg("surface_sound_speed_in_meters_per_second") = std::nullopt);
+
+    m.def("trace_bistatic_beams",
+          &trace_bistatic_beams,
+          DOC(themachinethatgoesping, algorithms, geoprocessing, raytracers2, trace_bistatic_beams),
+          nb::arg("transmit_pose"),
+          nb::arg("transmit_steering_angle_in_degrees"),
+          nb::arg("receive_poses"),
+          nb::arg("receive_steering_angles_in_degrees"),
+          nb::arg("two_way_travel_times_in_seconds"),
+          nb::arg("sound_velocity_profile"),
+          nb::arg("concentric_beam_directions"),
+          nb::arg("max_iterations")       = 30,
+          nb::arg("tolerance_in_percent") = 0.001f,
           nb::arg("surface_sound_speed_in_meters_per_second") = std::nullopt,
-          nb::arg("reference_heading_in_degrees")             = 0.0);
+          nb::arg("mp_cores")             = 1);
 }
 
 } // namespace py_raytracers2

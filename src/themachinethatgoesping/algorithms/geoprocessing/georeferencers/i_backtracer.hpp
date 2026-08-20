@@ -121,7 +121,7 @@ class I_Backtracer
         _sensor_y        = sensor_y;
 
         _sensor_orientation_quat = tools::rotationfunctions::quaternion_from_ypr(
-            0.0f, _sensor_location.pitch, _sensor_location.roll);
+            0.0f, _sensor_location.pitch(), _sensor_location.roll());
     }
 
     // ----- accessors -----

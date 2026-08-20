@@ -38,6 +38,7 @@
 
 using namespace themachinethatgoesping::algorithms::geoprocessing::raytracers2;
 using themachinethatgoesping::tools::rotationfunctions::quaternion_from_ypr;
+using themachinethatgoesping::tools::rotationfunctions::Rotation;
 
 #define TESTTAG "[beamdirections][raytracers2]"
 
@@ -130,6 +131,37 @@ Eigen::Vector3d array_axis(const std::array<double, 3>& installation_ypr,
     return q * local_axis;
 }
 
+// Build a single-orientation Rotation from a (yaw, pitch, roll) array (degrees).
+Rotation<float> rotation_from_ypr(const std::array<double, 3>& ypr)
+{
+    return Rotation<float>(float(ypr[0]), float(ypr[1]), float(ypr[2]));
+}
+
+// World rotation consumed by compute_beam_directions: Rz(-reference_heading) * attitude * installation.
+Rotation<float> world_rotation(const std::array<double, 3>& installation_ypr,
+                               const std::array<double, 3>& attitude_ypr,
+                               double                       reference_heading = 0.0)
+{
+    return Rotation<float>(float(-reference_heading), 0.f, 0.f) * rotation_from_ypr(attitude_ypr) *
+           rotation_from_ypr(installation_ypr);
+}
+
+// Per-beam world rotations from one installation and an [n, 3] attitude tensor (degrees).
+std::vector<Rotation<float>> world_rotations(const std::array<double, 3>& installation_ypr,
+                                             const xt::xtensor<float, 2>& attitude_ypr,
+                                             double                       reference_heading = 0.0)
+{
+    const Rotation<float>        ref(float(-reference_heading), 0.f, 0.f);
+    const Rotation<float>        inst = rotation_from_ypr(installation_ypr);
+    std::vector<Rotation<float>> out;
+    out.reserve(attitude_ypr.shape(0));
+    for (size_t i = 0; i < attitude_ypr.shape(0); ++i)
+        out.push_back(
+            ref * Rotation<float>(attitude_ypr(i, 0), attitude_ypr(i, 1), attitude_ypr(i, 2)) *
+            inst);
+    return out;
+}
+
 // Single-beam wrapper around compute_beam_directions.
 std::array<float, 3> one_beam(const std::array<double, 3>& transmit_installation_ypr,
                               const std::array<double, 3>& receive_installation_ypr,
@@ -139,22 +171,16 @@ std::array<float, 3> one_beam(const std::array<double, 3>& transmit_installation
                               double                       receive_steering,
                               double                       reference_heading = 0.0)
 {
-    xt::xtensor<float, 2> tx_att = { { float(transmit_attitude_ypr[0]),
-                                       float(transmit_attitude_ypr[1]),
-                                       float(transmit_attitude_ypr[2]) } };
-    xt::xtensor<float, 2> rx_att = { { float(receive_attitude_ypr[0]),
-                                       float(receive_attitude_ypr[1]),
-                                       float(receive_attitude_ypr[2]) } };
-    xt::xtensor<float, 1> tx_steer = { float(transmit_steering) };
+    const std::vector<Rotation<float>> rx_rot = {
+        world_rotation(receive_installation_ypr, receive_attitude_ypr, reference_heading)
+    };
     xt::xtensor<float, 1> rx_steer = { float(receive_steering) };
 
-    auto bd = compute_beam_directions(transmit_installation_ypr,
-                                      receive_installation_ypr,
-                                      tx_att,
-                                      rx_att,
-                                      tx_steer,
-                                      rx_steer,
-                                      reference_heading);
+    auto bd = compute_beam_directions(
+        world_rotation(transmit_installation_ypr, transmit_attitude_ypr, reference_heading),
+        float(transmit_steering),
+        rx_rot,
+        rx_steer);
     const auto& d = bd.get_directions();
     return { d(0, 0), d(0, 1), d(0, 2) };
 }
@@ -168,9 +194,9 @@ TEST_CASE("compute_beam_directions points straight down for a flat, unsteered be
     REQUIRE_THAT(d[1], Catch::Matchers::WithinAbs(0.f, 1e-6f)); // starboard
     REQUIRE_THAT(d[2], Catch::Matchers::WithinAbs(1.f, 1e-6f)); // down
 
-    xt::xtensor<float, 2> att   = { { 0.f, 0.f, 0.f } };
-    xt::xtensor<float, 1> steer = { 0.f };
-    auto bd = compute_beam_directions({ 0, 0, 0 }, { 0, 0, 0 }, att, att, steer, steer, 0.0);
+    std::vector<Rotation<float>> rx    = { Rotation<float>() };
+    xt::xtensor<float, 1>        steer = { 0.f };
+    auto bd = compute_beam_directions(Rotation<float>(), 0.f, rx, steer);
     REQUIRE_THAT(bd.get_beam_pointing_angles_in_degrees()(0),
                  Catch::Matchers::WithinAbs(0.f, 1e-3f));
     REQUIRE_THAT(bd.get_beam_takeoff_angles_in_degrees()(0),
@@ -310,16 +336,19 @@ TEST_CASE("compute_beam_directions handles a reverse-mounted receive array", TES
 
 TEST_CASE("compute_beam_directions reference heading rotates the directions", TESTTAG)
 {
-    const std::array<double, 3> tx_inst = { 0.0, 0.0, 0.0 };
-    const std::array<double, 3> rx_inst = { 0.0, 0.0, 0.0 };
-    xt::xtensor<float, 2>       att      = { { 5.f, 2.f, -3.f }, { -10.f, 1.f, 4.f } };
-    xt::xtensor<float, 1>       tx_steer = { 3.f, -2.f };
-    xt::xtensor<float, 1>       rx_steer = { 40.f, -55.f };
+    // one transmit orientation, two receive orientations; heading is baked into the rotations.
+    const Rotation<float>        tx_rot0(5.f, 2.f, -3.f);
+    std::vector<Rotation<float>> rx_rot0  = { Rotation<float>(5.f, 2.f, -3.f),
+                                              Rotation<float>(-10.f, 1.f, 4.f) };
+    const float                  tx_steer = 3.f;
+    xt::xtensor<float, 1>        rx_steer = { 40.f, -55.f };
 
-    auto bd0 = compute_beam_directions(tx_inst, rx_inst, att, att, tx_steer, rx_steer, 0.0);
+    auto bd0 = compute_beam_directions(tx_rot0, tx_steer, rx_rot0, rx_steer);
 
-    const double delta = 37.0;
-    auto bdd = compute_beam_directions(tx_inst, rx_inst, att, att, tx_steer, rx_steer, delta);
+    const double                 delta = 37.0;
+    const Rotation<float>        ref(float(-delta), 0.f, 0.f);
+    std::vector<Rotation<float>> rx_rotd = { ref * rx_rot0[0], ref * rx_rot0[1] };
+    auto bdd = compute_beam_directions(ref * tx_rot0, tx_steer, rx_rotd, rx_steer);
 
     const auto& d0 = bd0.get_directions();
     const auto& dd = bdd.get_directions();
@@ -341,30 +370,24 @@ TEST_CASE("BeamDirections pointing angle and azimuth reconstruct the direction",
 {
     std::mt19937                           rng(31);
     std::uniform_real_distribution<double> inst(-6, 6), att_yaw(-30, 30), att_rp(-15, 15),
-        tx_tilt(-12, 12), rx_cross(-60, 60);
+        rx_cross(-60, 60);
 
     const std::array<double, 3> tx_inst = { inst(rng), inst(rng), inst(rng) };
     const std::array<double, 3> rx_inst = { inst(rng), inst(rng), inst(rng) };
 
-    const size_t          n      = 300;
-    xt::xtensor<float, 2> tx_att = xt::xtensor<float, 2>::from_shape({ n, 3 });
-    xt::xtensor<float, 2> rx_att = xt::xtensor<float, 2>::from_shape({ n, 3 });
-    xt::xtensor<float, 1> tx_steer = xt::xtensor<float, 1>::from_shape({ n });
+    const size_t          n        = 300;
+    xt::xtensor<float, 2> rx_att   = xt::xtensor<float, 2>::from_shape({ n, 3 });
     xt::xtensor<float, 1> rx_steer = xt::xtensor<float, 1>::from_shape({ n });
     for (size_t i = 0; i < n; ++i)
     {
-        tx_att(i, 0)  = float(att_yaw(rng));
-        tx_att(i, 1)  = float(att_rp(rng));
-        tx_att(i, 2)  = float(att_rp(rng));
-        rx_att(i, 0)  = float(att_yaw(rng));
-        rx_att(i, 1)  = float(att_rp(rng));
-        rx_att(i, 2)  = float(att_rp(rng));
-        tx_steer(i)   = float(tx_tilt(rng));
-        rx_steer(i)   = float(rx_cross(rng));
+        rx_att(i, 0) = float(att_yaw(rng));
+        rx_att(i, 1) = float(att_rp(rng));
+        rx_att(i, 2) = float(att_rp(rng));
+        rx_steer(i)  = float(rx_cross(rng));
     }
 
     auto        bd       = compute_beam_directions(
-        tx_inst, rx_inst, tx_att, rx_att, tx_steer, rx_steer, 0.0);
+        world_rotation(tx_inst, { 0, 0, 0 }), 0.f, world_rotations(rx_inst, rx_att), rx_steer);
     const auto& d        = bd.get_directions();
     const auto  pointing = bd.get_beam_pointing_angles_in_degrees();
     const auto  azimuth  = bd.get_beam_azimuth_angles_in_degrees();
@@ -391,10 +414,9 @@ TEST_CASE("BeamDirections pointing angle uses the port-positive across-track con
 {
     for (double rx : { 30.0, -30.0, 55.0, -60.0 })
     {
-        xt::xtensor<float, 2> att      = { { 0.f, 0.f, 0.f } };
-        xt::xtensor<float, 1> tx_steer = { 0.f };
-        xt::xtensor<float, 1> rx_steer = { float(rx) };
-        auto bd = compute_beam_directions({ 0, 0, 0 }, { 0, 0, 0 }, att, att, tx_steer, rx_steer, 0.0);
+        std::vector<Rotation<float>> rx_rot   = { Rotation<float>() };
+        xt::xtensor<float, 1>        rx_steer = { float(rx) };
+        auto bd = compute_beam_directions(Rotation<float>(), 0.f, rx_rot, rx_steer);
         REQUIRE_THAT(bd.get_beam_pointing_angles_in_degrees()(0),
                      Catch::Matchers::WithinAbs(float(rx), 1e-3f));
         REQUIRE_THAT(bd.get_beam_azimuth_angles_in_degrees()(0),

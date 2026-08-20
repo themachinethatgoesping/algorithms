@@ -9,17 +9,36 @@ import numpy as np
 from pytest import approx
 
 import themachinethatgoesping.algorithms.geoprocessing.raytracers2 as rt2
+from themachinethatgoesping.tools.rotationfunctions import Rotation
+
+
+def _rot(ypr):
+    return Rotation([float(v) for v in ypr])
+
+
+def _world(install, att, heading=0.0):
+    # world rotation consumed by compute_beam_directions: Rz(-heading) * attitude * installation
+    return Rotation([-float(heading), 0.0, 0.0]) * _rot(att) * _rot(install)
+
+
+def _world_rows(install, att_rows, heading=0.0):
+    ref = Rotation([-float(heading), 0.0, 0.0])
+    inst = _rot(install)
+    return [
+        ref * Rotation([float(v) for v in row]) * inst
+        for row in np.asarray(att_rows, dtype=float)
+    ]
 
 
 def _call(tx_install, rx_install, tx_att, rx_att, tx_steer, rx_steer, heading=0.0):
+    # transmit is shared across beams (scalar rotation + steering); use the first entry
+    tx_att_arr = np.atleast_2d(np.asarray(tx_att, dtype=float))
+    tx_steer_arr = np.atleast_1d(np.asarray(tx_steer, dtype=float))
     return rt2.compute_beam_directions(
-        np.array(tx_install, dtype=float),
-        np.array(rx_install, dtype=float),
-        np.array(tx_att, dtype=np.float32),
-        np.array(rx_att, dtype=np.float32),
-        np.array(tx_steer, dtype=np.float32),
-        np.array(rx_steer, dtype=np.float32),
-        heading,
+        _world(tx_install, tx_att_arr[0], heading),
+        float(tx_steer_arr[0]),
+        _world_rows(rx_install, rx_att, heading),
+        np.asarray(rx_steer, dtype=np.float32),
     )
 
 

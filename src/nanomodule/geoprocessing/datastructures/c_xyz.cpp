@@ -49,12 +49,17 @@ void init_c_xyz_dim(nb::module_& m)
         .def_static("concat", &XYZ<Dim>::concat, DOC_XYZ(concat))
 
         .def("rotate",
-             nb::overload_cast<const Eigen::Quaternionf&>(&XYZ<Dim>::rotate),
+             nb::overload_cast<const themachinethatgoesping::tools::rotationfunctions::Rotation<float>&>(
+                 &XYZ<Dim>::rotate),
              DOC_XYZ(rotate),
+             nb::arg("rotation"))
+        .def("rotate",
+             nb::overload_cast<const Eigen::Quaternionf&>(&XYZ<Dim>::rotate),
+             DOC_XYZ(rotate_2),
              nb::arg("quat"))
         .def("rotate",
              nb::overload_cast<float, float, float>(&XYZ<Dim>::rotate),
-             DOC_XYZ(rotate_2),
+             DOC_XYZ(rotate_3),
              nb::arg("yaw")   = 0.f,
              nb::arg("pitch") = 0.f,
              nb::arg("roll")  = 0.f)

@@ -24,9 +24,9 @@ TEST_CASE("BTConstantSVP should support common functions", TESTTAG)
     auto location = Geolocation();
 
     location.z     = 3;
-    location.yaw   = 10;
-    location.pitch = 20;
-    location.roll  = 30;
+    location.set_yaw(10);
+    location.set_pitch(20);
+    location.set_roll(30);
 
     float x = 10;
     float y = -5;
@@ -67,13 +67,13 @@ TEST_CASE("BTConstantSVP should support common functions", TESTTAG)
 
     auto ypr = backtracer.get_sensor_orientation_quat_ypr();
 
-    // REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw, 0.0001));
+    // REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw(), 0.0001));
     REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
-    REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch, 0.0001));
-    REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));
+    REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch(), 0.0001));
+    REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll(), 0.0001));
 
     // test hash (should be stable if class is not changed)
-    REQUIRE(backtracer.binary_hash() == 3830516406371434649);
+    REQUIRE(backtracer.binary_hash() == 7869702274749529868);
     REQUIRE(backtracer.binary_hash() == BTConstantSVP(backtracer).binary_hash());
     REQUIRE(backtracer.binary_hash() ==
             BTConstantSVP(backtracer.from_binary(backtracer.to_binary())).binary_hash());
@@ -85,9 +85,9 @@ TEST_CASE("BTConstantSVP reproduce some pre computed results (single points)", T
     auto location = Geolocation();
 
     location.z     = 3;
-    location.yaw   = 0;
-    location.pitch = 0;
-    location.roll  = 0;
+    location.set_yaw(0);
+    location.set_pitch(0);
+    location.set_roll(0);
 
     float x = -2;
     float y = 5;

@@ -20,6 +20,7 @@
 #include <array>
 #include <cmath>
 #include <sstream>
+#include <vector>
 
 #include <Eigen/Geometry>
 
@@ -31,6 +32,7 @@
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/raytracers2/tracebeam.hpp"
 
 using namespace themachinethatgoesping::algorithms::geoprocessing::raytracers2;
+using themachinethatgoesping::tools::rotationfunctions::Rotation;
 
 #define TESTTAG "[bistaticraytracer][raytracers2]"
 
@@ -38,7 +40,14 @@ namespace {
 
 constexpr double RTD = 180.0 / M_PI;
 
-const std::array<double, 3> ZERO = { 0.0, 0.0, 0.0 };
+namespace nd = themachinethatgoesping::navigation::datastructures;
+
+// A flat (identity-orientation) pose at the given position.
+nd::PositionalOffsets pose_from(const Eigen::Vector3d& p,
+                                const Rotation<float>& r = Rotation<float>())
+{
+    return nd::PositionalOffsets("", float(p.x()), float(p.y()), float(p.z()), r);
+}
 
 // Synthesise a single-beam bistatic problem (flat orientation) from a known seabed point
 // and array positions, seed the solver with the concentric beam direction and return the
@@ -64,30 +73,17 @@ BistaticBeamTrace solve_single(const Eigen::Vector3d&      transmit_position,
         double(sound_speed);
 
     // concentric beam direction (both arrays collapsed to a point) as the solver seed
-    xt::xtensor<float, 2> transmit_attitude = { { 0.f, 0.f, 0.f } };
-    xt::xtensor<float, 2> receive_attitude  = { { 0.f, 0.f, 0.f } };
-    xt::xtensor<float, 1> transmit_steer    = { float(transmit_steering) };
-    xt::xtensor<float, 1> receive_steer     = { float(receive_steering) };
-    auto beam_directions =
-        compute_beam_directions(ZERO, ZERO, transmit_attitude, receive_attitude, transmit_steer, receive_steer, 0.0);
+    std::vector<Rotation<float>> receive_rotation = { Rotation<float>() };
+    xt::xtensor<float, 1>        receive_steer    = { float(receive_steering) };
+    auto                         beam_directions  = compute_beam_directions(
+        Rotation<float>(), float(transmit_steering), receive_rotation, receive_steer);
     const std::array<float, 3> concentric_guess = beam_directions.get_beam_direction(0);
 
-    const std::array<double, 3> transmit_xyz = {
-        transmit_position.x(), transmit_position.y(), transmit_position.z()
-    };
-    const std::array<double, 3> receive_xyz = {
-        receive_position.x(), receive_position.y(), receive_position.z()
-    };
-
-    return trace_bistatic_beam(ZERO,
-                               ZERO,
-                               transmit_steering,
-                               transmit_xyz,
-                               ZERO,
-                               ZERO,
-                               receive_steering,
-                               receive_xyz,
-                               two_way_travel_time,
+    return trace_bistatic_beam(pose_from(transmit_position),
+                               float(transmit_steering),
+                               pose_from(receive_position),
+                               float(receive_steering),
+                               float(two_way_travel_time),
                                svp,
                                concentric_guess,
                                40,
@@ -188,8 +184,8 @@ TEST_CASE("trace_bistatic_beam matches monostatic trace_beam for identical poses
     xt::xtensor<float, 1> speeds = { 1500.f, 1480.f, 1495.f, 1525.f };
     SoundVelocityProfile  svp(depths, speeds);
 
-    const std::array<double, 3> position = { 0.0, 0.0, 0.0 };
-    const float                 two_way_travel_time = 0.2f;
+    const std::array<float, 3> position = { 0.f, 0.f, 0.f };
+    const float                two_way_travel_time = 0.2f;
 
     struct Steering
     {
@@ -203,12 +199,10 @@ TEST_CASE("trace_bistatic_beam matches monostatic trace_beam for identical poses
          { Steering{ 0.0, 25.0 }, Steering{ 0.0, -40.0 }, Steering{ 6.0, 35.0 }, Steering{ -4.0, -15.0 } })
     {
         // concentric beam direction and its pointing/azimuth decomposition
-        xt::xtensor<float, 2> transmit_attitude = { { 0.f, 0.f, 0.f } };
-        xt::xtensor<float, 2> receive_attitude  = { { 0.f, 0.f, 0.f } };
-        xt::xtensor<float, 1> transmit_steer    = { float(steering.transmit) };
-        xt::xtensor<float, 1> receive_steer     = { float(steering.receive) };
-        auto                  beam_directions   = compute_beam_directions(
-            ZERO, ZERO, transmit_attitude, receive_attitude, transmit_steer, receive_steer, 0.0);
+        std::vector<Rotation<float>> receive_rotation = { Rotation<float>() };
+        xt::xtensor<float, 1>        receive_steer    = { float(steering.receive) };
+        auto                         beam_directions  = compute_beam_directions(
+            Rotation<float>(), float(steering.transmit), receive_rotation, receive_steer);
         const std::array<float, 3> direction = beam_directions.get_beam_direction(0);
         const std::array<float, 2> pointing_azimuth =
             beam_direction_to_pointing_and_azimuth_in_degrees(direction[0], direction[1], direction[2]);
@@ -219,15 +213,13 @@ TEST_CASE("trace_bistatic_beam matches monostatic trace_beam for identical poses
         BeamTrace monostatic = trace_beam(0.f, pointing, svp, two_way_travel_time);
 
         // bistatic trace with identical transmit and receive poses
-        auto bistatic = trace_bistatic_beam(ZERO,
-                                            ZERO,
-                                            steering.transmit,
-                                            position,
-                                            ZERO,
-                                            ZERO,
-                                            steering.receive,
-                                            position,
-                                            double(two_way_travel_time),
+        const auto pose =
+            nd::PositionalOffsets("", position[0], position[1], position[2], Rotation<float>());
+        auto bistatic = trace_bistatic_beam(pose,
+                                            float(steering.transmit),
+                                            pose,
+                                            float(steering.receive),
+                                            two_way_travel_time,
                                             svp,
                                             direction,
                                             40,
@@ -256,6 +248,46 @@ TEST_CASE("trace_bistatic_beam matches monostatic trace_beam for identical poses
         REQUIRE_THAT(bottom[0], Catch::Matchers::WithinAbs(expected_x, 2e-2f));
         REQUIRE_THAT(bottom[1], Catch::Matchers::WithinAbs(expected_y, 2e-2f));
         REQUIRE_THAT(bottom[2], Catch::Matchers::WithinAbs(last_depth, 2e-2f));
+    }
+}
+
+TEST_CASE("trace_bistatic_beams matches the single-beam trace per beam", TESTTAG)
+{
+    const float sound_speed = 1500.f;
+    auto        svp         = SoundVelocityProfile::uniform(sound_speed, 12000.f);
+
+    const auto                               transmit_pose = pose_from(Eigen::Vector3d(0.0, 0.0, 0.0));
+    const std::vector<nd::PositionalOffsets> receive_poses = {
+        pose_from(Eigen::Vector3d(2.0, 0.0, 0.3)),
+        pose_from(Eigen::Vector3d(2.1, 0.0, 0.3)),
+        pose_from(Eigen::Vector3d(1.9, 0.0, 0.25)),
+    };
+    const float           transmit_steering = 3.f;
+    xt::xtensor<float, 1> receive_steer     = { 25.f, -40.f, 10.f };
+    xt::xtensor<float, 1> twtt              = { 0.07f, 0.08f, 0.06f };
+
+    std::vector<Rotation<float>> receive_rotations = { Rotation<float>(),
+                                                       Rotation<float>(),
+                                                       Rotation<float>() };
+    auto                         beam_directions   = compute_beam_directions(
+        Rotation<float>(), transmit_steering, receive_rotations, receive_steer);
+
+    auto batched = trace_bistatic_beams(
+        transmit_pose, transmit_steering, receive_poses, receive_steer, twtt, svp, beam_directions, 40, 1e-4f);
+
+    REQUIRE(batched.size() == receive_poses.size());
+    for (size_t i = 0; i < receive_poses.size(); ++i)
+    {
+        auto single = trace_bistatic_beam(transmit_pose,
+                                          transmit_steering,
+                                          receive_poses[i],
+                                          receive_steer(i),
+                                          twtt(i),
+                                          svp,
+                                          beam_directions.get_beam_direction(i),
+                                          40,
+                                          1e-4f);
+        REQUIRE(batched[i] == single);
     }
 }
 

@@ -70,8 +70,10 @@
 #include <cmath>
 #include <cstddef>
 #include <limits>
+#include <optional>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 #include <fmt/format.h>
 
@@ -81,6 +83,9 @@
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
 #include <themachinethatgoesping/tools/classhelper/stream.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+#include <themachinethatgoesping/tools/rotationfunctions/rotation.hpp>
+
+#include <themachinethatgoesping/navigation/datastructures/positionaloffsets.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -312,111 +317,36 @@ struct SteeringCone
 
 } // namespace bistatic_detail
 
+namespace bistatic_detail {
+
 /**
- * @brief Solve the true-bistatic seabed trace of a single multibeam beam.
+ * @brief Core bistatic seabed solve, shared by the single-beam and batched entry points.
  *
- * Traces the transmit ray from the transmit array and the receive ray from the receive
- * array through the layered sound-velocity profile and finds the seabed point where the
- * two legs meet with a combined one-way travel time equal to the measured two-way travel
- * time. The seabed depth and each leg's cone rotation angle (see bistatic_detail::
- * SteeringCone) are found with a damped Newton iteration seeded by the concentric beam
- * direction. Each converged leg is then re-traced with trace_beam so the returned legs
- * are identical to the monostatic model when the transmit and receive poses coincide.
- *
- * All poses are in the common x=forward, y=starboard, z=down frame. The vessel attitudes may
- * carry the full heading in their yaw component; pass that same heading as
- * @p reference_heading_in_degrees so it is removed from both arrays (exactly like
- * compute_beam_directions), which puts the solved seabed point in the ship frame. The
- * concentric guess must be in that same (heading-removed) frame.
- *
- * @param transmit_installation_ypr_in_degrees (yaw, pitch, roll) mounting of the transmit array.
- * @param transmit_attitude_ypr_in_degrees     (yaw, pitch, roll) vessel attitude at transmit time.
- * @param transmit_steering_angle_in_degrees   electronic transmit steering (positive forward).
- * @param transmit_position_xyz                transmit array position (forward, starboard, down)
- * [m].
- * @param receive_installation_ypr_in_degrees  (yaw, pitch, roll) mounting of the receive array.
- * @param receive_attitude_ypr_in_degrees      (yaw, pitch, roll) vessel attitude at receive time.
- * @param receive_steering_angle_in_degrees    electronic receive steering (positive to port).
- * @param receive_position_xyz                 receive array position (forward, starboard, down)
- * [m].
- * @param two_way_travel_time_in_seconds       measured two-way travel time [s].
- * @param sound_velocity_profile               layered profile to trace through.
- * @param concentric_beam_direction            ship-frame unit guess (fwd, stbd, down),
- *                                             e.g. BeamDirections::get_beam_direction(beam).
- * @param max_iterations                       maximum Newton iterations (default 30).
- * @param tolerance_in_percent                 convergence tolerance as a percentage of the
- *                                             nominal slant range (default 0.001).
- * @param surface_sound_speed_in_meters_per_second sound speed (m/s) at which the beams were
- *                                             formed (the measured surface/transducer SSV);
- *                                             applied to both legs' ray parameters. std::nullopt
- *                                             (default) uses the profile value at each array depth.
- * @param reference_heading_in_degrees         heading (deg) removed from both vessel attitudes so
- *                                             the result is in the ship frame; use the same value
- *                                             passed to compute_beam_directions. 0 (default) keeps
- *                                             the attitudes as given.
- * @return BistaticBeamTrace with both legs, azimuths, seabed point and residual.
+ * Given each array's world-frame long axis, position and steering projection (already
+ * heading-removed via the poses), traces both legs through the layered profile and finds the
+ * seabed point where they meet with a combined one-way time equal to the measured two-way time,
+ * via a damped Newton iteration seeded by the concentric beam direction. The seabed solve stays in
+ * double because its finite-difference Jacobian (steps ~5e-5) would lose all significance in float.
+ * Positions and axes are in the common x=forward, y=starboard, z=down ship frame.
  */
-inline BistaticBeamTrace trace_bistatic_beam(
-    const std::array<double, 3>& transmit_installation_ypr_in_degrees,
-    const std::array<double, 3>& transmit_attitude_ypr_in_degrees,
-    double                       transmit_steering_angle_in_degrees,
-    const std::array<double, 3>& transmit_position_xyz,
-    const std::array<double, 3>& receive_installation_ypr_in_degrees,
-    const std::array<double, 3>& receive_attitude_ypr_in_degrees,
-    double                       receive_steering_angle_in_degrees,
-    const std::array<double, 3>& receive_position_xyz,
-    double                       two_way_travel_time_in_seconds,
-    const SoundVelocityProfile&  sound_velocity_profile,
-    const std::array<float, 3>&  concentric_beam_direction,
-    int                          max_iterations                           = 30,
-    float                        tolerance_in_percent                     = 0.001f,
-    std::optional<double>        surface_sound_speed_in_meters_per_second = std::nullopt,
-    double                       reference_heading_in_degrees             = 0.0)
+inline BistaticBeamTrace solve_bistatic_beam(
+    const Eigen::Vector3d&      transmit_position,
+    const Eigen::Vector3d&      transmit_axis,
+    double                      transmit_projection,
+    const Eigen::Vector3d&      receive_position,
+    const Eigen::Vector3d&      receive_axis,
+    double                      receive_projection,
+    float                       two_way_travel_time_in_seconds,
+    const SoundVelocityProfile& sound_velocity_profile,
+    const std::array<float, 3>& concentric_beam_direction,
+    int                         max_iterations,
+    float                       tolerance_in_percent,
+    std::optional<double>       surface_sound_speed_in_meters_per_second)
 {
-    using tools::rotationfunctions::quaternion_from_ypr;
-
-    if (sound_velocity_profile.get_number_of_layers() == 0)
-        throw std::runtime_error("trace_bistatic_beam: sound velocity profile is not initialized");
-
     constexpr double degrees_to_radians = M_PI / 180.0;
 
-    const Eigen::Vector3d transmit_position(
-        transmit_position_xyz[0], transmit_position_xyz[1], transmit_position_xyz[2]);
-    const Eigen::Vector3d receive_position(
-        receive_position_xyz[0], receive_position_xyz[1], receive_position_xyz[2]);
-
-    // World orientation of each array: world = Rz(-reference_heading) * attitude * installation
-    // (as in compute_beam_directions). Removing the reference heading is equivalent to subtracting
-    // it from each attitude yaw and puts the solved seabed point in the ship frame.
-    // Transmit long axis = forward, receive long axis = starboard.
-    const Eigen::Quaterniond reference_heading_quaternion =
-        quaternion_from_ypr<double>(-reference_heading_in_degrees, 0.0, 0.0, true);
-    const Eigen::Quaterniond transmit_quaternion =
-        reference_heading_quaternion *
-        quaternion_from_ypr<double>(transmit_attitude_ypr_in_degrees[0],
-                                    transmit_attitude_ypr_in_degrees[1],
-                                    transmit_attitude_ypr_in_degrees[2],
-                                    true) *
-        quaternion_from_ypr<double>(transmit_installation_ypr_in_degrees, true);
-    const Eigen::Quaterniond receive_quaternion =
-        reference_heading_quaternion *
-        quaternion_from_ypr<double>(receive_attitude_ypr_in_degrees[0],
-                                    receive_attitude_ypr_in_degrees[1],
-                                    receive_attitude_ypr_in_degrees[2],
-                                    true) *
-        quaternion_from_ypr<double>(receive_installation_ypr_in_degrees, true);
-
-    const Eigen::Vector3d transmit_axis = transmit_quaternion * Eigen::Vector3d(1.0, 0.0, 0.0);
-    const Eigen::Vector3d receive_axis  = receive_quaternion * Eigen::Vector3d(0.0, 1.0, 0.0);
-
-    // steering fixes the projection of the beam onto each array axis (receive positive to port)
-    const double transmit_projection =
-        std::sin(degrees_to_radians * transmit_steering_angle_in_degrees);
-    const double receive_projection =
-        -std::sin(degrees_to_radians * receive_steering_angle_in_degrees);
-
-    const bistatic_detail::SteeringCone transmit_cone(transmit_axis, transmit_projection);
-    const bistatic_detail::SteeringCone receive_cone(receive_axis, receive_projection);
+    const SteeringCone transmit_cone(transmit_axis, transmit_projection);
+    const SteeringCone receive_cone(receive_axis, receive_projection);
 
     // seed the two cone angles from the concentric beam direction
     const Eigen::Vector3d guess_direction(
@@ -638,6 +568,166 @@ inline BistaticBeamTrace trace_bistatic_beam(
                              receive_pointing_azimuth[1],
                              bottom_position,
                              float(best_residual_norm));
+}
+
+} // namespace bistatic_detail
+
+/**
+ * @brief Solve the true-bistatic seabed trace of a single multibeam beam from ready-made poses.
+ *
+ * The transmit and receive poses already carry the array installation, the vessel attitude and
+ * the removal of a common reference heading (e.g. from SensorConfiguration::compute_target_pose),
+ * so this only places each array's long axis (transmit = forward, receive = starboard), applies
+ * the electronic steering and runs the shared bistatic solve. All quantities are in the common
+ * x=forward, y=starboard, z=down ship frame; the concentric guess must be in that same frame.
+ *
+ * @param transmit_pose transmit array pose (position + ship-frame orientation).
+ * @param transmit_steering_angle_in_degrees electronic transmit steering (positive forward).
+ * @param receive_pose receive array pose (position + ship-frame orientation).
+ * @param receive_steering_angle_in_degrees electronic receive steering (positive to port).
+ * @param two_way_travel_time_in_seconds measured two-way travel time [s].
+ * @param sound_velocity_profile layered profile to trace through.
+ * @param concentric_beam_direction ship-frame unit guess (fwd, stbd, down), e.g.
+ *        BeamDirections::get_beam_direction(beam).
+ * @param max_iterations maximum Newton iterations (default 30).
+ * @param tolerance_in_percent convergence tolerance as a percentage of the nominal slant range.
+ * @param surface_sound_speed_in_meters_per_second sound speed (m/s) the beams were formed at;
+ *        std::nullopt (default) uses the profile value at each array depth.
+ * @return BistaticBeamTrace with both legs, azimuths, seabed point and residual.
+ */
+inline BistaticBeamTrace trace_bistatic_beam(
+    const navigation::datastructures::PositionalOffsets& transmit_pose,
+    float                                                transmit_steering_angle_in_degrees,
+    const navigation::datastructures::PositionalOffsets& receive_pose,
+    float                                                receive_steering_angle_in_degrees,
+    float                                                two_way_travel_time_in_seconds,
+    const SoundVelocityProfile&                          sound_velocity_profile,
+    const std::array<float, 3>&                          concentric_beam_direction,
+    int                                                  max_iterations       = 30,
+    float                                                tolerance_in_percent = 0.001f,
+    std::optional<double> surface_sound_speed_in_meters_per_second = std::nullopt)
+{
+    if (sound_velocity_profile.get_number_of_layers() == 0)
+        throw std::runtime_error("trace_bistatic_beam: sound velocity profile is not initialized");
+
+    constexpr double degrees_to_radians = M_PI / 180.0;
+
+    const Eigen::Vector3d transmit_position(transmit_pose.x, transmit_pose.y, transmit_pose.z);
+    const Eigen::Vector3d receive_position(receive_pose.x, receive_pose.y, receive_pose.z);
+
+    // The poses already carry installation + attitude + heading removal, so each world axis is just
+    // pose.rotation applied to the array long axis (transmit = forward, receive = starboard).
+    const Eigen::Vector3d transmit_axis =
+        (transmit_pose.rotation * Eigen::Vector3f(1.f, 0.f, 0.f)).cast<double>();
+    const Eigen::Vector3d receive_axis =
+        (receive_pose.rotation * Eigen::Vector3f(0.f, 1.f, 0.f)).cast<double>();
+
+    const double transmit_projection =
+        std::sin(degrees_to_radians * transmit_steering_angle_in_degrees);
+    const double receive_projection =
+        -std::sin(degrees_to_radians * receive_steering_angle_in_degrees);
+
+    return bistatic_detail::solve_bistatic_beam(transmit_position,
+                                                transmit_axis,
+                                                transmit_projection,
+                                                receive_position,
+                                                receive_axis,
+                                                receive_projection,
+                                                two_way_travel_time_in_seconds,
+                                                sound_velocity_profile,
+                                                concentric_beam_direction,
+                                                max_iterations,
+                                                tolerance_in_percent,
+                                                surface_sound_speed_in_meters_per_second);
+}
+
+/**
+ * @brief Batched true-bistatic trace of a sector: one shared transmit pose, N receive poses.
+ *
+ * Equivalent to calling trace_bistatic_beam once per beam, but the transmit side is placed once and
+ * the per-beam solves run in a single C++ loop (parallelisable via @p mp_cores), avoiding the
+ * per-beam Python round-trips. The concentric guesses come from @p concentric_beam_directions
+ * (e.g. the output of compute_beam_directions).
+ *
+ * @param transmit_pose shared transmit array pose (position + ship-frame orientation).
+ * @param transmit_steering_angle_in_degrees shared electronic transmit steering (positive forward).
+ * @param receive_poses per-beam receive array poses (size n_beams).
+ * @param receive_steering_angles_in_degrees [n_beams] electronic receive steering (positive to port).
+ * @param two_way_travel_times_in_seconds [n_beams] measured two-way travel times [s].
+ * @param sound_velocity_profile layered profile to trace through.
+ * @param concentric_beam_directions [n_beams] ship-frame concentric guesses.
+ * @param max_iterations maximum Newton iterations (default 30).
+ * @param tolerance_in_percent convergence tolerance (% of nominal slant range).
+ * @param surface_sound_speed_in_meters_per_second sound speed (m/s) the beams were formed at.
+ * @param mp_cores number of OpenMP cores for the per-beam solve (default 1).
+ * @return vector of BistaticBeamTrace, one per beam.
+ */
+inline std::vector<BistaticBeamTrace> trace_bistatic_beams(
+    const navigation::datastructures::PositionalOffsets&              transmit_pose,
+    float                                                             transmit_steering_angle_in_degrees,
+    const std::vector<navigation::datastructures::PositionalOffsets>& receive_poses,
+    const xt::xtensor<float, 1>&                                      receive_steering_angles_in_degrees,
+    const xt::xtensor<float, 1>&                                      two_way_travel_times_in_seconds,
+    const SoundVelocityProfile&                                       sound_velocity_profile,
+    const BeamDirections&                                             concentric_beam_directions,
+    int                                                               max_iterations       = 30,
+    float                                                             tolerance_in_percent = 0.001f,
+    std::optional<double> surface_sound_speed_in_meters_per_second = std::nullopt,
+    int                   mp_cores                                 = 1)
+{
+    const size_t number_of_beams = receive_poses.size();
+
+    if (receive_steering_angles_in_degrees.size() != number_of_beams ||
+        two_way_travel_times_in_seconds.size() != number_of_beams ||
+        concentric_beam_directions.get_number_of_beams() != number_of_beams)
+        throw std::invalid_argument(
+            "trace_bistatic_beams: inconsistent input shapes (receive_poses, receive steering, "
+            "two-way travel times and concentric_beam_directions must all have size n_beams).");
+
+    if (sound_velocity_profile.get_number_of_layers() == 0)
+        throw std::runtime_error("trace_bistatic_beams: sound velocity profile is not initialized");
+
+    if (mp_cores < 1)
+        mp_cores = 1;
+
+    constexpr double degrees_to_radians = M_PI / 180.0;
+
+    // Transmit side is shared by every beam; compute it once.
+    const Eigen::Vector3d transmit_position(transmit_pose.x, transmit_pose.y, transmit_pose.z);
+    const Eigen::Vector3d transmit_axis =
+        (transmit_pose.rotation * Eigen::Vector3f(1.f, 0.f, 0.f)).cast<double>();
+    const double transmit_projection =
+        std::sin(degrees_to_radians * transmit_steering_angle_in_degrees);
+
+    std::vector<BistaticBeamTrace> results(number_of_beams);
+
+#pragma omp parallel for num_threads(mp_cores)
+    for (int64_t beam_index = 0; beam_index < int64_t(number_of_beams); ++beam_index)
+    {
+        const Eigen::Vector3d receive_position(receive_poses[beam_index].x,
+                                               receive_poses[beam_index].y,
+                                               receive_poses[beam_index].z);
+        const Eigen::Vector3d receive_axis =
+            (receive_poses[beam_index].rotation * Eigen::Vector3f(0.f, 1.f, 0.f)).cast<double>();
+        const double receive_projection =
+            -std::sin(degrees_to_radians * receive_steering_angles_in_degrees(beam_index));
+
+        results[beam_index] = bistatic_detail::solve_bistatic_beam(
+            transmit_position,
+            transmit_axis,
+            transmit_projection,
+            receive_position,
+            receive_axis,
+            receive_projection,
+            two_way_travel_times_in_seconds(beam_index),
+            sound_velocity_profile,
+            concentric_beam_directions.get_beam_direction(beam_index),
+            max_iterations,
+            tolerance_in_percent,
+            surface_sound_speed_in_meters_per_second);
+    }
+
+    return results;
 }
 
 } // namespace raytracers2

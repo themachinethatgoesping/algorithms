@@ -297,11 +297,11 @@ struct BeamSampleGeometry
     /**
      * @brief Apply a Geolocation (depth + ypr) to the geometry.
      *
-     * Equivalent to with_rigid_transform(g.yaw, g.pitch, g.roll, 0, 0, g.z).
+     * Equivalent to with_rigid_transform(g.yaw(), g.pitch(), g.roll(), 0, 0, g.z).
      */
     BeamSampleGeometry& with_geolocation(const navigation::datastructures::Geolocation& g)
     {
-        return with_rigid_transform(g.yaw, g.pitch, g.roll, 0.f, 0.f, g.z);
+        return with_rigid_transform(g.yaw(), g.pitch(), g.roll(), 0.f, 0.f, g.z);
     }
 
     /**
@@ -313,9 +313,9 @@ struct BeamSampleGeometry
      */
     BeamSampleGeometry& with_geolocation(const navigation::datastructures::GeolocationLocal& g)
     {
-        return with_rigid_transform(g.yaw,
-                                    g.pitch,
-                                    g.roll,
+        return with_rigid_transform(g.yaw(),
+                                    g.pitch(),
+                                    g.roll(),
                                     static_cast<float>(g.northing),
                                     static_cast<float>(g.easting),
                                     g.z);
@@ -343,9 +343,9 @@ struct BeamSampleGeometry
                                          double ref_northing = 0.0,
                                          double ref_easting  = 0.0)
     {
-        return with_rigid_transform(g.yaw,
-                                    g.pitch,
-                                    g.roll,
+        return with_rigid_transform(g.yaw(),
+                                    g.pitch(),
+                                    g.roll(),
                                     static_cast<float>(g.northing - ref_northing),
                                     static_cast<float>(g.easting - ref_easting),
                                     g.z);

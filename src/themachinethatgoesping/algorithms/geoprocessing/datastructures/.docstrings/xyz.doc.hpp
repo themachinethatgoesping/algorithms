@@ -1,4 +1,4 @@
-//sourcehash: 8bba975580bf534f3e0c5b7bc255d76f67bdcd5f11dd48698bd578a53e7efe86
+//sourcehash: 7efa2d03ef7420e7a97e13b2ed16fa2d0c0a9ff0fa67d7305d9253e4b84d8c80
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -91,12 +91,20 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_printer = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_rotate =
+R"doc(Rotate the XYZ object using a Rotation
+
+The rotation matrix is computed once and applied to every sample.
+
+Args:
+    rotation: orientation to apply)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_rotate_2 =
 R"doc(Rotate the XYZ object using a quaternion
 
 Args:
     q: quaternion)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_rotate_2 =
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_XYZ_rotate_3 =
 R"doc(Rotate the XYZ object using yaw, pitch, roll in °
 
 Args:

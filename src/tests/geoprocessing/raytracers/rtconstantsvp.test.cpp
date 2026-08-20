@@ -24,9 +24,9 @@ TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
     auto location = Geolocation();
 
     location.z     = 3;
-    location.yaw   = 10;
-    location.pitch = 20;
-    location.roll  = 30;
+    location.set_yaw(10);
+    location.set_pitch(20);
+    location.set_roll(30);
 
     float c = 1450.f;
 
@@ -66,15 +66,15 @@ TEST_CASE("RTConstantSVP should support common functions", TESTTAG)
 
     auto ypr = raytracer.get_sensor_orientation_quat_ypr();
 
-    // REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw, 0.0001));
+    // REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(location.yaw(), 0.0001));
     REQUIRE_THAT(ypr[0], Catch::Matchers::WithinAbs(0.f, 0.0001));
-    REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch, 0.0001));
-    REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll, 0.0001));
+    REQUIRE_THAT(ypr[1], Catch::Matchers::WithinAbs(location.pitch(), 0.0001));
+    REQUIRE_THAT(ypr[2], Catch::Matchers::WithinAbs(location.roll(), 0.0001));
 
     REQUIRE_THAT(raytracer.get_sound_velocity(), Catch::Matchers::WithinAbs(c, 0.0001));
 
     // test hash (should be stable if class is not changed)
-    REQUIRE(raytracer.binary_hash() == 16667922773826043259llu);
+    REQUIRE(raytracer.binary_hash() == 16831937844819746220llu);
     REQUIRE(raytracer.binary_hash() == RTConstantSVP(raytracer).binary_hash());
     REQUIRE(raytracer.binary_hash() ==
             RTConstantSVP(raytracer.from_binary(raytracer.to_binary())).binary_hash());
@@ -86,9 +86,9 @@ TEST_CASE("RTConstantSVP reproduce some pre computed results (single points)", T
     auto location = Geolocation();
 
     location.z     = 3;
-    location.yaw   = 0;
-    location.pitch = 0;
-    location.roll  = 0;
+    location.set_yaw(0);
+    location.set_pitch(0);
+    location.set_roll(0);
 
     float c   = 1450.f;
     float c_2 = c * 0.5;
@@ -185,9 +185,9 @@ TEST_CASE("RTConstantSVP multi point computations should be equal to single poin
     auto location = Geolocation();
 
     location.z     = 3;
-    location.yaw   = 0;
-    location.pitch = 0;
-    location.roll  = 0;
+    location.set_yaw(0);
+    location.set_pitch(0);
+    location.set_roll(0);
 
     float c = 1450.f;
 
@@ -222,9 +222,9 @@ TEST_CASE("RTConstantSVP beam computations should be equal to single point compu
     auto location = Geolocation();
 
     location.z     = 3;
-    location.yaw   = 0;
-    location.pitch = 0;
-    location.roll  = 0;
+    location.set_yaw(0);
+    location.set_pitch(0);
+    location.set_roll(0);
 
     float c = 1450.f;
 
@@ -282,9 +282,9 @@ TEST_CASE("RTConstantSVP swath computations should be equal to beam computations
     auto location = Geolocation();
 
     location.z     = 3;
-    location.yaw   = 0;
-    location.pitch = 0;
-    location.roll  = 0;
+    location.set_yaw(0);
+    location.set_pitch(0);
+    location.set_roll(0);
 
     float c = 1450.f;
 

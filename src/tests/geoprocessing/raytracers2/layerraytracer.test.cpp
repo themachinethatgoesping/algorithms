@@ -30,7 +30,7 @@ TEST_CASE("LayerRaytracer constant SVP analytic check", TESTTAG)
     xt::xtensor<float, 1> knot_times = { 1.f, 2.f, 3.f };
 
     Geolocation pose;
-    pose.z = 0.f; pose.yaw = 0.f; pose.pitch = 0.f; pose.roll = 0.f;
+    pose.z = 0.f; pose.set_yaw(0.f); pose.set_pitch(0.f); pose.set_roll(0.f);
     std::vector<Geolocation> poses(knot_times.size(), pose);
 
     auto out = rt.trace_at_times(launch_dirs, knot_times, poses, 1);

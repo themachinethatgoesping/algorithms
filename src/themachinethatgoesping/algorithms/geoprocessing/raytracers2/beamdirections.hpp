@@ -72,6 +72,7 @@
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
 #include <themachinethatgoesping/tools/classhelper/stream.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+#include <themachinethatgoesping/tools/rotationfunctions/rotation.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -349,55 +350,37 @@ inline float correct_steering_angle_for_surface_sound_speed(
  * non-orthogonality is exact and reverse mounts are handled by the installation
  * quaternion alone (no manual sign flips).
  *
- * @param transmit_installation_ypr_in_degrees (yaw, pitch, roll) mounting orientation of the transmit array.
- * @param receive_installation_ypr_in_degrees  (yaw, pitch, roll) mounting orientation of the receive array.
- * @param transmit_attitude_ypr_in_degrees     [n_beams, 3] vessel (yaw, pitch, roll) at transmit time.
- * @param receive_attitude_ypr_in_degrees      [n_beams, 3] vessel (yaw, pitch, roll) at receive time.
- * @param transmit_steering_angles_in_degrees  [n_beams] fore-aft transmit tilt (positive forward).
- * @param receive_steering_angles_in_degrees   [n_beams] across-track receive angle (positive to PORT).
- * @param reference_heading_in_degrees         heading the output is expressed relative to.
- * @param mp_cores                             number of OpenMP cores for the per-beam solve (default 1).
+ * @param transmit_rotation world/ship-frame orientation (Rotation) of the transmit array (heading removed).
+ * @param transmit_steering_angle_in_degrees  fore-aft transmit tilt (positive forward), shared by all beams.
+ * @param receive_rotations  per-beam world/ship-frame orientation (Rotation) of the receive array (size n_beams).
+ * @param receive_steering_angles_in_degrees  [n_beams] across-track receive angle (positive to PORT).
+ * @param mp_cores  number of OpenMP cores for the per-beam solve (default 1).
  * @return BeamDirections with one ship-referenced unit pointing vector per beam.
  */
 inline BeamDirections compute_beam_directions(
-    const std::array<double, 3>& transmit_installation_ypr_in_degrees,
-    const std::array<double, 3>& receive_installation_ypr_in_degrees,
-    const xt::xtensor<float, 2>& transmit_attitude_ypr_in_degrees,
-    const xt::xtensor<float, 2>& receive_attitude_ypr_in_degrees,
-    const xt::xtensor<float, 1>& transmit_steering_angles_in_degrees,
-    const xt::xtensor<float, 1>& receive_steering_angles_in_degrees,
-    double                       reference_heading_in_degrees,
-    int                          mp_cores = 1)
+    const tools::rotationfunctions::Rotation<float>&              transmit_rotation,
+    float                                                         transmit_steering_angle_in_degrees,
+    const std::vector<tools::rotationfunctions::Rotation<float>>& receive_rotations,
+    const xt::xtensor<float, 1>&                                  receive_steering_angles_in_degrees,
+    int                                                           mp_cores = 1)
 {
-    using tools::rotationfunctions::quaternion_from_ypr;
+    const size_t number_of_beams = receive_rotations.size();
 
-    const size_t number_of_beams = transmit_steering_angles_in_degrees.size();
-
-    if (transmit_attitude_ypr_in_degrees.shape(0) != number_of_beams ||
-        transmit_attitude_ypr_in_degrees.shape(1) != 3 ||
-        receive_attitude_ypr_in_degrees.shape(0) != number_of_beams ||
-        receive_attitude_ypr_in_degrees.shape(1) != 3 ||
-        receive_steering_angles_in_degrees.size() != number_of_beams)
-        throw std::invalid_argument("compute_beam_directions: inconsistent input shapes "
-                                    "(need attitudes [n_beams, 3] and steering [n_beams]).");
+    if (receive_steering_angles_in_degrees.size() != number_of_beams)
+        throw std::invalid_argument(
+            "compute_beam_directions: inconsistent input shapes "
+            "(receive_rotations and receive steering must have equal size).");
 
     if (mp_cores < 1)
         mp_cores = 1;
 
-    constexpr double degrees_to_radians = M_PI / 180.0;
+    constexpr float degrees_to_radians = float(M_PI / 180.0);
 
-    // Installation quaternions (shared by all beams) and the reference-heading
-    // rotation Rz(-reference_heading) that expresses the result ship-referenced.
-    const Eigen::Quaterniond transmit_installation_quaternion =
-        quaternion_from_ypr<double>(transmit_installation_ypr_in_degrees, true);
-    const Eigen::Quaterniond receive_installation_quaternion =
-        quaternion_from_ypr<double>(receive_installation_ypr_in_degrees, true);
-    const Eigen::Quaterniond reference_heading_quaternion =
-        quaternion_from_ypr<double>(-reference_heading_in_degrees, 0.0, 0.0, true);
-
-    // Each array's long axis in its own frame: transmit = forward, receive = starboard.
-    const Eigen::Vector3d transmit_axis_in_array_frame(1.0, 0.0, 0.0);
-    const Eigen::Vector3d receive_axis_in_array_frame(0.0, 1.0, 0.0);
+    // Transmit array long axis = forward; it is shared by every beam, so place it and its steering
+    // projection once. (The rotations already have installation/attitude/heading applied.)
+    const Eigen::Vector3f transmit_array_axis = transmit_rotation * Eigen::Vector3f(1.f, 0.f, 0.f);
+    const float           projection_on_transmit_axis =
+        std::sin(degrees_to_radians * transmit_steering_angle_in_degrees);
 
     xt::xtensor<float, 2> directions =
         xt::xtensor<float, 2>::from_shape({ number_of_beams, size_t(3) });
@@ -405,73 +388,54 @@ inline BeamDirections compute_beam_directions(
 #pragma omp parallel for num_threads(mp_cores)
     for (int64_t beam_index = 0; beam_index < int64_t(number_of_beams); ++beam_index)
     {
-        // World orientation of each array:  world = attitude * installation.
-        const Eigen::Quaterniond transmit_quaternion =
-            quaternion_from_ypr<double>(double(transmit_attitude_ypr_in_degrees(beam_index, 0)),
-                                        double(transmit_attitude_ypr_in_degrees(beam_index, 1)),
-                                        double(transmit_attitude_ypr_in_degrees(beam_index, 2)),
-                                        true) *
-            transmit_installation_quaternion;
-        const Eigen::Quaterniond receive_quaternion =
-            quaternion_from_ypr<double>(double(receive_attitude_ypr_in_degrees(beam_index, 0)),
-                                        double(receive_attitude_ypr_in_degrees(beam_index, 1)),
-                                        double(receive_attitude_ypr_in_degrees(beam_index, 2)),
-                                        true) *
-            receive_installation_quaternion;
+        // World-frame receive array long axis (receive array long axis = starboard).
+        const Eigen::Vector3f receive_array_axis =
+            receive_rotations[beam_index] * Eigen::Vector3f(0.f, 1.f, 0.f);
 
-        // World-frame array long axes.
-        const Eigen::Vector3d transmit_array_axis = transmit_quaternion * transmit_axis_in_array_frame;
-        const Eigen::Vector3d receive_array_axis  = receive_quaternion * receive_axis_in_array_frame;
-
-        // Steering constraints: projection of the beam onto each array axis. Receive
-        // steering is positive to port, hence the minus sign on the starboard axis.
-        const double projection_on_transmit_axis =
-            std::sin(degrees_to_radians * double(transmit_steering_angles_in_degrees(beam_index)));
-        const double projection_on_receive_axis =
-            -std::sin(degrees_to_radians * double(receive_steering_angles_in_degrees(beam_index)));
+        // Receive steering is positive to port, hence the minus sign on the starboard axis.
+        const float projection_on_receive_axis =
+            -std::sin(degrees_to_radians * receive_steering_angles_in_degrees(beam_index));
 
         // Solve  d . transmit_axis = projection_transmit,  d . receive_axis = projection_receive
         // for the unit beam direction, then pick the downward (max +z) root. Exact for
         // any non-degenerate angle between the two axes (array non-orthogonality).
-        const double axis_dot        = transmit_array_axis.dot(receive_array_axis);
-        const double inverse_gramian = 1.0 / std::max(1.0 - axis_dot * axis_dot, 1e-12);
+        const float axis_dot        = transmit_array_axis.dot(receive_array_axis);
+        const float inverse_gramian = 1.f / std::max(1.f - axis_dot * axis_dot, 1e-12f);
 
-        const double transmit_coefficient =
+        const float transmit_coefficient =
             (projection_on_transmit_axis - axis_dot * projection_on_receive_axis) * inverse_gramian;
-        const double receive_coefficient =
+        const float receive_coefficient =
             (projection_on_receive_axis - axis_dot * projection_on_transmit_axis) * inverse_gramian;
 
-        const Eigen::Vector3d in_plane_component =
+        const Eigen::Vector3f in_plane_component =
             transmit_coefficient * transmit_array_axis + receive_coefficient * receive_array_axis;
         // plane_normal = transmit_axis x receive_axis, with |plane_normal|^2 = 1 - axis_dot^2.
-        const Eigen::Vector3d plane_normal = transmit_array_axis.cross(receive_array_axis);
+        const Eigen::Vector3f plane_normal = transmit_array_axis.cross(receive_array_axis);
 
         // squared coefficient on the (unnormalized) plane normal that makes |d| = 1.
-        const double normal_coefficient_squared =
-            (1.0 - in_plane_component.squaredNorm()) * inverse_gramian;
+        const float normal_coefficient_squared =
+            (1.f - in_plane_component.squaredNorm()) * inverse_gramian;
 
-        Eigen::Vector3d beam_direction;
-        if (normal_coefficient_squared > 0.0)
+        Eigen::Vector3f beam_direction;
+        if (normal_coefficient_squared > 0.f)
         {
-            const double          normal_coefficient = std::sqrt(normal_coefficient_squared);
-            const Eigen::Vector3d beam_down = in_plane_component + normal_coefficient * plane_normal;
-            const Eigen::Vector3d beam_up   = in_plane_component - normal_coefficient * plane_normal;
+            const float           normal_coefficient = std::sqrt(normal_coefficient_squared);
+            const Eigen::Vector3f beam_down = in_plane_component + normal_coefficient * plane_normal;
+            const Eigen::Vector3f beam_up   = in_plane_component - normal_coefficient * plane_normal;
             beam_direction = (beam_down.z() >= beam_up.z()) ? beam_down : beam_up;
         }
         else
         {
             // Requested steering lies beyond the horizon: clamp to horizontal.
             beam_direction     = in_plane_component;
-            beam_direction.z() = 0.0;
+            beam_direction.z() = 0.f;
         }
 
-        // Express relative to the reference heading and normalize.
-        beam_direction = reference_heading_quaternion * beam_direction;
         beam_direction.normalize();
 
-        directions.unchecked(beam_index, 0) = float(beam_direction.x());
-        directions.unchecked(beam_index, 1) = float(beam_direction.y());
-        directions.unchecked(beam_index, 2) = float(beam_direction.z());
+        directions.unchecked(beam_index, 0) = beam_direction.x();
+        directions.unchecked(beam_index, 1) = beam_direction.y();
+        directions.unchecked(beam_index, 2) = beam_direction.z();
     }
 
     return BeamDirections(std::move(directions));

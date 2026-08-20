@@ -229,7 +229,7 @@ class I_Raytracer
         _sensor_location = std::move(sensor_location);
 
         _sensor_orientation_quat = tools::rotationfunctions::quaternion_from_ypr(
-            0.0f, _sensor_location.pitch, _sensor_location.roll);
+            0.0f, _sensor_location.pitch(), _sensor_location.roll());
     }
 
     // ----- accessors -----

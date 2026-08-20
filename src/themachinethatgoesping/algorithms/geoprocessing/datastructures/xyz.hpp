@@ -18,6 +18,7 @@
 
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
+#include <themachinethatgoesping/tools/rotationfunctions/rotation.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -113,6 +114,28 @@ struct XYZ
     }
 
     /**
+     * @brief Rotate the XYZ object using a Rotation
+     *
+     * The rotation matrix is computed once and applied to every sample.
+     *
+     * @param rotation orientation to apply
+     *
+     */
+    void rotate(const tools::rotationfunctions::Rotation<float>& rotation)
+    {
+        // compute the rotation matrix once and apply it to every sample
+        const Eigen::Matrix3f R = rotation.toRotationMatrix();
+        for (size_t i = 0; i < size(); ++i)
+        {
+            const Eigen::Vector3f rotated =
+                R * Eigen::Vector3f(x.unchecked(i), y.unchecked(i), z.unchecked(i));
+            x.unchecked(i) = rotated.x();
+            y.unchecked(i) = rotated.y();
+            z.unchecked(i) = rotated.z();
+        }
+    }
+
+    /**
      * @brief Rotate the XYZ object using a quaternion
      *
      * @param q quaternion
@@ -120,15 +143,7 @@ struct XYZ
      */
     void rotate(const Eigen::Quaternionf& q)
     {
-        // rotate the xyz object
-        for (size_t i = 0; i < size(); ++i)
-        {
-            auto rotated = tools::rotationfunctions::rotateXYZ(
-                q, x.unchecked(i), y.unchecked(i), z.unchecked(i));
-            x.unchecked(i) = rotated[0];
-            y.unchecked(i) = rotated[1];
-            z.unchecked(i) = rotated[2];
-        }
+        rotate(tools::rotationfunctions::Rotation<float>(q));
     }
 
     /**
@@ -141,18 +156,7 @@ struct XYZ
      */
     void rotate(float yaw, float pitch, float roll)
     {
-        // rotate the xyz object
-        for (size_t i = 0; i < size(); ++i)
-        {
-            auto rotated = tools::rotationfunctions::rotateXYZ(
-                tools::rotationfunctions::quaternion_from_ypr(yaw, pitch, roll),
-                x.unchecked(i),
-                y.unchecked(i),
-                z.unchecked(i));
-            x.unchecked(i) = rotated[0];
-            y.unchecked(i) = rotated[1];
-            z.unchecked(i) = rotated[2];
-        }
+        rotate(tools::rotationfunctions::Rotation<float>(yaw, pitch, roll));
     }
 
     void translate(float x_, float y_, float z_)

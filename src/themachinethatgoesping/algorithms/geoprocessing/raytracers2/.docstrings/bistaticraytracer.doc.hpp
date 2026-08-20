@@ -1,4 +1,4 @@
-//sourcehash: 6a101bea2c136af54ed3da8a8da77536df0a43770066cce4d0eb62bb8f4f173a
+//sourcehash: 6c81eaa2368f8989026699e64d5dd97d588eb92f6fcff0566162bae2311a9490
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -172,43 +172,41 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_bistatic_detail_SteeringCone_sine_half_angle = R"doc(radius of the cone circle = sqrt(1 - projection^2))doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_bistatic_detail_solve_bistatic_beam =
+R"doc(Core bistatic seabed solve, shared by the single-beam and batched
+entry points.
+
+Given each array's world-frame long axis, position and steering
+projection (already heading-removed via the poses), traces both legs
+through the layered profile and finds the seabed point where they meet
+with a combined one-way time equal to the measured two-way time, via a
+damped Newton iteration seeded by the concentric beam direction. The
+seabed solve stays in double because its finite-difference Jacobian
+(steps ~5e-5) would lose all significance in float. Positions and axes
+are in the common x=forward, y=starboard, z=down ship frame.)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_trace_bistatic_beam =
-R"doc(Solve the true-bistatic seabed trace of a single multibeam beam.
+R"doc(Solve the true-bistatic seabed trace of a single multibeam beam from
+ready-made poses.
 
-Traces the transmit ray from the transmit array and the receive ray
-from the receive array through the layered sound-velocity profile and
-finds the seabed point where the two legs meet with a combined one-way
-travel time equal to the measured two-way travel time. The seabed
-depth and each leg's cone rotation angle (see bistatic_detail::
-SteeringCone) are found with a damped Newton iteration seeded by the
-concentric beam direction. Each converged leg is then re-traced with
-trace_beam so the returned legs are identical to the monostatic model
-when the transmit and receive poses coincide.
-
-All poses are in the common x=forward, y=starboard, z=down frame. The
-vessel attitudes may carry the full heading in their yaw component;
-pass that same heading as ``reference_heading_in_degrees`` so it is
-removed from both arrays (exactly like compute_beam_directions), which
-puts the solved seabed point in the ship frame. The concentric guess
-must be in that same (heading-removed) frame.
+The transmit and receive poses already carry the array installation,
+the vessel attitude and the removal of a common reference heading
+(e.g. from SensorConfiguration::compute_target_pose), so this only
+places each array's long axis (transmit = forward, receive =
+starboard), applies the electronic steering and runs the shared
+bistatic solve. All quantities are in the common x=forward,
+y=starboard, z=down ship frame; the concentric guess must be in that
+same frame.
 
 Args:
-    transmit_installation_ypr_in_degrees: (yaw, pitch, roll) mounting
-                                          of the transmit array.
-    transmit_attitude_ypr_in_degrees: (yaw, pitch, roll) vessel
-                                      attitude at transmit time.
+    transmit_pose: transmit array pose (position + ship-frame
+                   orientation).
     transmit_steering_angle_in_degrees: electronic transmit steering
                                         (positive forward).
-    transmit_position_xyz: transmit array position (forward,
-                           starboard, down) [m].
-    receive_installation_ypr_in_degrees: (yaw, pitch, roll) mounting
-                                         of the receive array.
-    receive_attitude_ypr_in_degrees: (yaw, pitch, roll) vessel
-                                     attitude at receive time.
+    receive_pose: receive array pose (position + ship-frame
+                  orientation).
     receive_steering_angle_in_degrees: electronic receive steering
                                        (positive to port).
-    receive_position_xyz: receive array position (forward, starboard,
-                          down) [m].
     two_way_travel_time_in_seconds: measured two-way travel time [s].
     sound_velocity_profile: layered profile to trace through.
     concentric_beam_direction: ship-frame unit guess (fwd, stbd,
@@ -216,26 +214,51 @@ Args:
                                rection(beam).
     max_iterations: maximum Newton iterations (default 30).
     tolerance_in_percent: convergence tolerance as a percentage of the
-                          nominal slant range (default 0.001).
-    surface_sound_speed_in_meters_per_second: sound speed (m/s) at
-                                              which the beams were
-                                              formed (the measured
-                                              surface/transducer SSV);
-                                              applied to both legs'
-                                              ray parameters.
+                          nominal slant range.
+    surface_sound_speed_in_meters_per_second: sound speed (m/s) the
+                                              beams were formed at;
                                               std::nullopt (default)
                                               uses the profile value
                                               at each array depth.
-    reference_heading_in_degrees: heading (deg) removed from both
-                                  vessel attitudes so the result is in
-                                  the ship frame; use the same value
-                                  passed to compute_beam_directions. 0
-                                  (default) keeps the attitudes as
-                                  given.
 
 Returns:
     BistaticBeamTrace with both legs, azimuths, seabed point and
     residual.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_trace_bistatic_beams =
+R"doc(Batched true-bistatic trace of a sector: one shared transmit pose, N
+receive poses.
+
+Equivalent to calling trace_bistatic_beam once per beam, but the
+transmit side is placed once and the per-beam solves run in a single
+C++ loop (parallelisable via ``mp_cores),`` avoiding the per-beam
+Python round-trips. The concentric guesses come from
+``concentric_beam_directions`` (e.g. the output of
+compute_beam_directions).
+
+Args:
+    transmit_pose: shared transmit array pose (position + ship-frame
+                   orientation).
+    transmit_steering_angle_in_degrees: shared electronic transmit
+                                        steering (positive forward).
+    receive_poses: per-beam receive array poses (size n_beams).
+    receive_steering_angles_in_degrees: [n_beams] electronic receive
+                                        steering (positive to port).
+    two_way_travel_times_in_seconds: [n_beams] measured two-way travel
+                                     times [s].
+    sound_velocity_profile: layered profile to trace through.
+    concentric_beam_directions: [n_beams] ship-frame concentric
+                                guesses.
+    max_iterations: maximum Newton iterations (default 30).
+    tolerance_in_percent: convergence tolerance (% of nominal slant
+                          range).
+    surface_sound_speed_in_meters_per_second: sound speed (m/s) the
+                                              beams were formed at.
+    mp_cores: number of OpenMP cores for the per-beam solve (default
+              1).
+
+Returns:
+    vector of BistaticBeamTrace, one per beam.)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
