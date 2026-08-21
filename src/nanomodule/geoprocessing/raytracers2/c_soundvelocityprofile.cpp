@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 #include "../../../themachinethatgoesping/algorithms/geoprocessing/raytracers2/soundvelocityprofile.hpp"
+#include "../../../themachinethatgoesping/algorithms/geoprocessing/raytracers2/soundvelocityprofileresampling.hpp"
 
 #include <themachinethatgoesping/tools_nanobind/classhelper.hpp>
 
@@ -142,6 +143,25 @@ void init_c_soundvelocityprofile(nb::module_& m)
              nb::arg("surface_sound_speed_in_meters_per_second"),
              nb::arg("transducer_depth_in_meters"),
              DOC_SoundVelocityProfile(get_profile_with_surface_sound_speed))
+        .def("get_resampled",
+             &resample_soundvelocityprofile,
+             nb::arg("max_sound_speed_error_in_meters_per_second") = std::nullopt,
+             nb::arg("max_raytrace_error_in_meters")               = std::nullopt,
+             nb::arg("number_of_entries")                          = std::nullopt,
+             nb::arg("launch_depth_in_meters")                     = 0.f,
+             nb::arg("max_depth_in_meters")                        = -1.f,
+             nb::arg("max_launch_angle_in_degrees")                = 75.f,
+             nb::arg("number_of_test_angles")                      = 8,
+             "Return a copy of the profile with fewer depth/sound-speed knots so the raytracer "
+             "traverses fewer layers (a direct speed-up) while keeping the raytracing error bounded.\n\n"
+             "Set exactly ONE target:\n"
+             "- max_sound_speed_error_in_meters_per_second: Douglas-Peucker on c(z); keeps the "
+             "interpolated sound speed within this tolerance (self-contained, fastest).\n"
+             "- max_raytrace_error_in_meters: ray-error greedy; guarantees the seabed position error "
+             "(horizontal and depth) stays within this budget for launch angles up to "
+             "max_launch_angle_in_degrees down to max_depth_in_meters (fewest layers for a given accuracy).\n"
+             "- number_of_entries: simplify until about this many knots remain (ray-error ranking).\n\n"
+             "max_depth_in_meters <= 0 uses the profile bottom. Metadata is preserved.")
         .def("get_date_string",
              &SoundVelocityProfile::get_date_string,
              nb::arg("fractionalSecondsDigits") = 2,

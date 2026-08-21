@@ -711,10 +711,10 @@ inline std::vector<BistaticBeamTrace> trace_bistatic_beams(
 #pragma omp parallel for num_threads(mp_cores)
     for (int64_t beam_index = 0; beam_index < int64_t(number_of_beams); ++beam_index)
     {
-        const Eigen::Vector3f receive_position(
-            receive_poses[beam_index].x, receive_poses[beam_index].y, receive_poses[beam_index].z);
+        const auto&           receive_pose = receive_poses[beam_index];
+        const Eigen::Vector3f receive_position(receive_pose.x, receive_pose.y, receive_pose.z);
         const Eigen::Vector3f receive_axis =
-            (receive_poses[beam_index].rotation * Eigen::Vector3f(0.f, 1.f, 0.f));
+            (receive_pose.rotation * Eigen::Vector3f(0.f, 1.f, 0.f));
         const float receive_projection =
             -std::sin(degrees_to_radians * receive_steering_angles_in_degrees(beam_index));
 
