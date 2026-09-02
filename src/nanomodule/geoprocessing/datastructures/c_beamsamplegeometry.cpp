@@ -77,11 +77,11 @@ void init_c_beamsamplegeometry(nb::module_& m)
              DOC_BeamSampleGeometry(get_n_beams))
         .def("get_first_sample_numbers",
              &BeamSampleGeometry::get_first_sample_numbers,
-             DOC_BeamSampleGeometry(get_first_sample_numbers),
+             DOC_BeamSampleGeometry(first_sample_numbers),
              nb::rv_policy::reference_internal)
         .def("get_number_of_samples",
              &BeamSampleGeometry::get_number_of_samples,
-             DOC_BeamSampleGeometry(get_number_of_samples),
+             DOC_BeamSampleGeometry(number_of_samples),
              nb::rv_policy::reference_internal)
         .def("get_last_sample_numbers",
              &BeamSampleGeometry::get_last_sample_numbers,

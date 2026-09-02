@@ -87,7 +87,7 @@ void init_i_backtracer(nb::module_& m)
         .def("get_sensor_y", &I_Backtracer::get_sensor_y, DOC_I_Backtracer(get_sensor_y))
         .def("get_sensor_location",
              &I_Backtracer::get_sensor_location,
-             DOC_I_Backtracer(get_sensor_location))
+             DOC_I_Backtracer(sensor_location))
         .def("get_sensor_orientation_quat_ypr",
              &I_Backtracer::get_sensor_orientation_quat_ypr,
              DOC_I_Backtracer(get_sensor_orientation_quat_ypr))

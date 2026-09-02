@@ -53,7 +53,7 @@ void init_c_backtracedwci(nb::module_& m)
              nb::arg("range"))
         .def("size", &BacktracedWCI::size, DOC_BacktracedWCI(size))
         .def("shape", &BacktracedWCI::shape, DOC_BacktracedWCI(shape))
-        .def("get_wci", &BacktracedWCI::get_wci, DOC_BacktracedWCI(get_wci))
+        .def("get_wci", &BacktracedWCI::get_wci, DOC_BacktracedWCI(wci))
         .def("get_angle_beamnumber_interpolator",
              &BacktracedWCI::get_angle_beamnumber_interpolator,
              DOC_BacktracedWCI(get_angle_beamnumber_interpolator))

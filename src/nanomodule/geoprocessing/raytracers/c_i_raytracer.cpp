@@ -119,7 +119,7 @@ void init_c_i_raytracer(nb::module_& m)
              nb::arg("sensor_location"))
         .def("get_sensor_location",
              &I_Raytracer::get_sensor_location,
-             DOC_I_Raytracer(get_sensor_location))
+             DOC_I_Raytracer(sensor_location))
         .def("get_sensor_orientation_quat_ypr",
              &I_Raytracer::get_sensor_orientation_quat_ypr,
              DOC_I_Raytracer(get_sensor_orientation_quat_ypr))

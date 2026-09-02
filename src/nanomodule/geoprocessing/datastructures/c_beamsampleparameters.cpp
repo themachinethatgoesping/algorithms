@@ -64,23 +64,23 @@ void init_c_beamsampleparameters(nb::module_& m)
         //----- accessors -----
         .def("get_alongtrack_angles",
              &BeamSampleParameters::get_alongtrack_angles,
-             DOC_BeamSampleParameters(get_alongtrack_angles),
+             DOC_BeamSampleParameters(alongtrack_angles),
              nb::rv_policy::reference_internal)
         .def("get_crosstrack_angles",
              &BeamSampleParameters::get_crosstrack_angles,
-             DOC_BeamSampleParameters(get_crosstrack_angles),
+             DOC_BeamSampleParameters(crosstrack_angles),
              nb::rv_policy::reference_internal)
         .def("get_first_sample_offset",
              &BeamSampleParameters::get_first_sample_offset,
-             DOC_BeamSampleParameters(get_first_sample_offset),
+             DOC_BeamSampleParameters(first_sample_offset),
              nb::rv_policy::reference_internal)
         .def("get_sample_interval",
              &BeamSampleParameters::get_sample_interval,
-             DOC_BeamSampleParameters(get_sample_interval),
+             DOC_BeamSampleParameters(sample_interval),
              nb::rv_policy::reference_internal)
         .def("get_number_of_samples",
              &BeamSampleParameters::get_number_of_samples,
-             DOC_BeamSampleParameters(get_number_of_samples),
+             DOC_BeamSampleParameters(number_of_samples),
              nb::rv_policy::reference_internal)
 
         // ----- setters -----

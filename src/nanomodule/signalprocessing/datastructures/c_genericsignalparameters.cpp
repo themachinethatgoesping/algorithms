@@ -64,7 +64,7 @@ void init_c_genericsignalparameters(nb::module_& m)
              DOC_GenericSignalParameters(effective_pulse_duration))
         .def("get_tx_signal_type",
              &GenericSignalParameters::get_tx_signal_type,
-             DOC_GenericSignalParameters(get_tx_signal_type))
+             DOC_GenericSignalParameters(signal_type))
 
         .def("set_center_frequency",
              &GenericSignalParameters::set_center_frequency,
