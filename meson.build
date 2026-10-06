@@ -9,7 +9,7 @@ project(
   'cpp',
   license: 'MPL-2.0',
 
-  version: '0.12.0',
+  version: '0.13.0.dev',
   default_options: ['warning_level=0', 'buildtype=release', 'cpp_std=c++26'],
   meson_version: '>=1.8.1' #there is a problem with meson 1.8.0 so just use a higher version
 )
@@ -43,8 +43,18 @@ if get_option('build_pythonmodule').enabled()
   pymod = import('python').find_installation(get_option('python_path'), pure: false)
 
   python3_dep = pymod.dependency()
-  nanobind_dep = dependency('nanobind',  version : '>=2.9.1')
-  
+  # nanobind: split mode uses a header-only frontend dependency + abi3 stable
+  # ABI (the libnanobind backend lives in a separate 'nanobind_backend' module
+  # imported at runtime); classic mode links libnanobind into the extension.
+  # See https://nanobind.readthedocs.io/en/latest/split_mode.html
+  if get_option('split_mode').allowed()
+    nanobind_subp = subproject('nanobind')
+    nanobind_dep = nanobind_subp.get_variable('nanobind_frontend_dep')
+    nanobind_limited_api = nanobind_subp.get_variable('nanobind_stable_abi')
+  else
+    nanobind_dep = dependency('nanobind',  version : '>=2.9.1')
+    nanobind_limited_api = ''
+  endif
   tools_nanobind_dep = dependency('themachinethatgoesping_tools_nanobind', required: false)
 
   if not tools_nanobind_dep.found()
