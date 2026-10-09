@@ -19,6 +19,7 @@
 
 #include <array>
 #include <cmath>
+#include <optional>
 #include <sstream>
 #include <vector>
 
@@ -288,6 +289,51 @@ TEST_CASE("trace_bistatic_beams matches the single-beam trace per beam", TESTTAG
                                           40,
                                           1e-4f);
         REQUIRE(batched[i] == single);
+    }
+}
+
+TEST_CASE("trace_bistatic_beams accepts above-surface receive poses (heave) without aborting", TESTTAG)
+{
+    // Regression test: when heave lifts the receive transducer above the instantaneous waterline its
+    // pose depth is negative. The parallel per-beam solve must handle that (trace from the top layer
+    // extended upward) and must never let an exception escape the OpenMP region (which would call
+    // std::terminate and abort the process). This is the EM304 + #SKM-heave case that aborted
+    // trace_non_concentric in the notebook.
+    const float sound_speed = 1500.f;
+    auto        svp         = SoundVelocityProfile::uniform(sound_speed, 12000.f);
+
+    const auto                        transmit_pose = pose_from(Eigen::Vector3d(0.0, 0.0, 0.0));
+    const std::vector<nd::SensorPose> receive_poses = {
+        pose_from(Eigen::Vector3d(2.0, 0.0, -0.01)), // 1 cm above the waterline
+        pose_from(Eigen::Vector3d(2.0, 0.0, -0.50)), // 0.5 m above the waterline
+    };
+    const float           transmit_steering = 3.f;
+    xt::xtensor<float, 1> receive_steer     = { 25.f, -40.f };
+    xt::xtensor<float, 1> twtt              = { 0.07f, 0.08f };
+
+    std::vector<Rotation<float>> receive_rotations = { Rotation<float>(), Rotation<float>() };
+    auto                         beam_directions   = compute_beam_directions(
+        Rotation<float>(), transmit_steering, receive_rotations, receive_steer);
+
+    std::vector<BistaticBeamTrace> results;
+    REQUIRE_NOTHROW(results = trace_bistatic_beams(transmit_pose,
+                                                   transmit_steering,
+                                                   receive_poses,
+                                                   receive_steer,
+                                                   twtt,
+                                                   svp,
+                                                   beam_directions,
+                                                   40,
+                                                   1e-4f,
+                                                   std::nullopt,
+                                                   2 /* mp_cores: exercise the parallel path */));
+
+    REQUIRE(results.size() == receive_poses.size());
+    for (const auto& result : results)
+    {
+        const auto& bottom = result.get_bottom_position();
+        REQUIRE(std::isfinite(bottom[2]));
+        REQUIRE(bottom[2] > 0.f); // a seabed point below the surface was found
     }
 }
 

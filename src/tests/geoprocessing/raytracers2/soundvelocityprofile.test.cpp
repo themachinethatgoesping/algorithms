@@ -130,3 +130,35 @@ TEST_CASE("SoundVelocityProfile hash_value ignores optional metadata", TESTTAG)
     SoundVelocityProfile  d(z2, c2);
     REQUIRE(hash_value(a) != hash_value(d));
 }
+
+TEST_CASE("SoundVelocityProfile get_profile_with_surface_sound_speed accepts an above-water transducer",
+          TESTTAG)
+{
+    xt::xtensor<float, 1> z = { 0.f, 100.f, 1000.f };
+    xt::xtensor<float, 1> c = { 1500.f, 1480.f, 1510.f };
+    SoundVelocityProfile  svp(z, c);
+
+    SECTION("a positive transducer depth works as before")
+    {
+        auto ext = svp.get_profile_with_surface_sound_speed(1490.f, 5.f);
+        REQUIRE_THAT(ext.get_sound_speed(5.f), Catch::Matchers::WithinAbs(1490.f, 1e-3f));
+        REQUIRE(ext.get_depths_in_meters().unchecked(0) == Catch::Approx(0.f));
+    }
+
+    SECTION("a transducer above the waterline (negative depth) is accepted, not rejected")
+    {
+        // heave lifted the transducer 0.2 m above the surface: must not throw, and the measured
+        // surface sound speed must apply at that (negative) transducer depth
+        REQUIRE_NOTHROW(svp.get_profile_with_surface_sound_speed(1490.f, -0.2f));
+        auto ext = svp.get_profile_with_surface_sound_speed(1490.f, -0.2f);
+
+        // the profile now starts at (or above) the transducer and the sound speed there is the SSV
+        REQUIRE(ext.get_depths_in_meters().unchecked(0) <= -0.2f + 1e-6f);
+        REQUIRE_THAT(ext.get_sound_speed(-0.2f), Catch::Matchers::WithinAbs(1490.f, 1e-3f));
+
+        // depths stay strictly increasing (valid profile)
+        const auto& zd = ext.get_depths_in_meters();
+        for (size_t i = 1; i < zd.size(); ++i)
+            REQUIRE(zd.unchecked(i) > zd.unchecked(i - 1));
+    }
+}

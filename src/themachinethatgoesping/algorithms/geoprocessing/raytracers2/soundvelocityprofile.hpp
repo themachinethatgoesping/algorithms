@@ -244,8 +244,9 @@ class SoundVelocityProfile
      *        integrated at the transducer depth (Kongsberg "SHC=0" convention).
      *
      * The returned profile replaces every knot at or above @p transducer_depth_in_meters with an
-     * iso-velocity segment at @p surface_sound_speed_in_meters_per_second (from depth 0 down to the
-     * transducer depth) and keeps the archived knots strictly below the transducer depth. This makes
+     * iso-velocity segment at @p surface_sound_speed_in_meters_per_second (from the top of the
+     * profile down to the transducer depth) and keeps the archived knots strictly below the
+     * transducer depth. This makes
      * the sound speed at the transducer equal to the real-time measured surface sound speed (SSV),
      * which is what the echosounder uses when forming the beams; a beam launched at the transducer
      * depth is then self-consistent (the Snell launch/reference speed and the profile value at the
@@ -256,7 +257,8 @@ class SoundVelocityProfile
      * (get_surface_sound_speed()).
      *
      * @param surface_sound_speed_in_meters_per_second measured sound speed at the transducer (m/s, >0).
-     * @param transducer_depth_in_meters               transducer depth below the surface (m, >= 0).
+     * @param transducer_depth_in_meters               transducer depth (m, positive down); may be
+     *        negative when heave lifts the transducer above the waterline.
      * @return SoundVelocityProfile extended with the surface sound speed.
      */
     SoundVelocityProfile get_profile_with_surface_sound_speed(
@@ -266,19 +268,20 @@ class SoundVelocityProfile
         if (!(surface_sound_speed_in_meters_per_second > 0.f))
             throw std::runtime_error("SoundVelocityProfile::get_profile_with_surface_sound_speed: "
                                      "surface sound speed must be positive");
-        if (!(transducer_depth_in_meters >= 0.f))
-            throw std::runtime_error("SoundVelocityProfile::get_profile_with_surface_sound_speed: "
-                                     "transducer depth must be >= 0");
 
         std::vector<float> zs;
         std::vector<float> cs;
         zs.reserve(_depths.size() + 2);
         cs.reserve(_depths.size() + 2);
 
-        // iso-velocity segment at the measured SSV from the surface to the transducer depth
-        zs.push_back(0.f);
+        // Iso-velocity segment at the measured SSV from the top of the profile down to the
+        // transducer depth. The transducer may sit above the waterline (negative depth) when heave
+        // lifts it clear of the surface - there is still water above depth 0 - so the top knot is
+        // placed at min(0, transducer_depth) instead of assuming the surface is the shallowest point.
+        const float top_depth = std::min(0.f, transducer_depth_in_meters);
+        zs.push_back(top_depth);
         cs.push_back(surface_sound_speed_in_meters_per_second);
-        if (transducer_depth_in_meters > 0.f)
+        if (transducer_depth_in_meters > top_depth)
         {
             zs.push_back(transducer_depth_in_meters);
             cs.push_back(surface_sound_speed_in_meters_per_second);

@@ -69,6 +69,7 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <exception>
 #include <limits>
 #include <optional>
 #include <stdexcept>
@@ -708,30 +709,50 @@ inline std::vector<BistaticBeamTrace> trace_bistatic_beams(
 
     std::vector<BistaticBeamTrace> results(number_of_beams);
 
+    // A C++ exception must not escape an OpenMP structured block - doing so calls std::terminate and
+    // aborts the whole process (e.g. the Python kernel). Capture the first exception thrown by any
+    // beam and rethrow it after the parallel region as a normal, catchable error. This runs only on
+    // the (cold) error path, so it adds no cost to a successful trace.
+    std::exception_ptr first_exception;
+
 #pragma omp parallel for num_threads(mp_cores)
     for (int64_t beam_index = 0; beam_index < int64_t(number_of_beams); ++beam_index)
     {
-        const auto&           receive_pose = receive_poses[beam_index];
-        const Eigen::Vector3f receive_position(receive_pose.x, receive_pose.y, receive_pose.z);
-        const Eigen::Vector3f receive_axis =
-            (receive_pose.rotation * Eigen::Vector3f(0.f, 1.f, 0.f));
-        const float receive_projection =
-            -std::sin(degrees_to_radians * receive_steering_angles_in_degrees(beam_index));
+        try
+        {
+            const auto&           receive_pose = receive_poses[beam_index];
+            const Eigen::Vector3f receive_position(receive_pose.x, receive_pose.y, receive_pose.z);
+            const Eigen::Vector3f receive_axis =
+                (receive_pose.rotation * Eigen::Vector3f(0.f, 1.f, 0.f));
+            const float receive_projection =
+                -std::sin(degrees_to_radians * receive_steering_angles_in_degrees(beam_index));
 
-        results[beam_index] = bistatic_detail::solve_bistatic_beam(
-            transmit_position,
-            transmit_axis,
-            transmit_projection,
-            receive_position,
-            receive_axis,
-            receive_projection,
-            two_way_travel_times_in_seconds(beam_index),
-            sound_velocity_profile,
-            concentric_beam_directions.get_beam_direction(beam_index),
-            max_iterations,
-            tolerance_in_percent,
-            surface_sound_speed_in_meters_per_second);
+            results[beam_index] = bistatic_detail::solve_bistatic_beam(
+                transmit_position,
+                transmit_axis,
+                transmit_projection,
+                receive_position,
+                receive_axis,
+                receive_projection,
+                two_way_travel_times_in_seconds(beam_index),
+                sound_velocity_profile,
+                concentric_beam_directions.get_beam_direction(beam_index),
+                max_iterations,
+                tolerance_in_percent,
+                surface_sound_speed_in_meters_per_second);
+        }
+        catch (...)
+        {
+#pragma omp critical
+            {
+                if (!first_exception)
+                    first_exception = std::current_exception();
+            }
+        }
     }
+
+    if (first_exception)
+        std::rethrow_exception(first_exception);
 
     return results;
 }

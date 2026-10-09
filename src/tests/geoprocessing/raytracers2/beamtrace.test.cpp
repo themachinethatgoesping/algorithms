@@ -244,3 +244,33 @@ TEST_CASE("BeamTrace rejects mismatched table sizes", TESTTAG)
                              xt::xtensor<float, 1>{ 0.f, 1.f },
                              xt::xtensor<float, 1>{ 1.f, 1.f }));
 }
+
+TEST_CASE("trace_beam accepts a launch above the surface (heave)", TESTTAG)
+{
+    // A transducer lifted above the instantaneous waterline by heave has a negative depth. That is
+    // valid input (there is still water above depth 0): the beam launches in the top layer extended
+    // upward and must not throw or abort.
+    auto svp = SoundVelocityProfile::uniform(1500.f, 6000.f);
+
+    REQUIRE_NOTHROW(trace_beam(-0.5f, 0.f, svp, 2.f));
+
+    auto         trace = trace_beam(-0.5f, 0.f, svp, 2.f);
+    const size_t last  = trace.get_number_of_points() - 1;
+
+    // launch point is recorded at the (above-surface) launch depth
+    REQUIRE_THAT(trace.get_depths_in_meters().unchecked(0), Catch::Matchers::WithinAbs(-0.5f, 1e-4f));
+    // straight down in iso water: depth advances c*t = 1500 m from the launch depth
+    REQUIRE_THAT(trace.get_depths_in_meters().unchecked(last),
+                 Catch::Matchers::WithinAbs(-0.5f + 1500.f, 1e-1f));
+    REQUIRE_THAT(trace.get_horizontal_offsets_in_meters().unchecked(last),
+                 Catch::Matchers::WithinAbs(0.f, 1e-2f));
+
+    // an above-surface launch differs from a surface launch only by the (tiny) heave offset
+    auto trace0 = trace_beam(0.f, 0.f, svp, 2.f);
+    REQUIRE_THAT(trace.get_depths_in_meters().unchecked(last) -
+                     trace0.get_depths_in_meters().unchecked(trace0.get_number_of_points() - 1),
+                 Catch::Matchers::WithinAbs(-0.5f, 1e-2f));
+
+    // a launch below the deepest knot is still rejected (the profile carries no data there)
+    REQUIRE_THROWS(trace_beam(7000.f, 0.f, svp, 2.f));
+}

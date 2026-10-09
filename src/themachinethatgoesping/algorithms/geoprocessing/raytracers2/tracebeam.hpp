@@ -138,13 +138,15 @@ inline BeamTrace trace_beam(float                       launch_depth_in_meters,
     if (number_of_layers == 0)
         throw std::runtime_error("trace_beam: sound velocity profile is not initialized");
 
-    const double surface_depth = depths.unchecked(0);
-    const double bottom_depth   = depths.unchecked(number_of_layers);
-    if (!(launch_depth_in_meters >= surface_depth) || !(launch_depth_in_meters <= bottom_depth))
+    const double bottom_depth = depths.unchecked(number_of_layers);
+    // A launch above the top of the profile (e.g. a transducer lifted above the instantaneous
+    // waterline by heave) is valid: the beam simply starts in the top layer, which is extended
+    // upward with its own sound-speed law (get_sound_speed returns the surface value there). Only a
+    // launch below the deepest knot is rejected, since the profile carries no sound speed there.
+    if (!(launch_depth_in_meters <= bottom_depth))
         throw std::runtime_error(
-            fmt::format("trace_beam: launch depth {} m is outside the profile range [{}, {}] m",
+            fmt::format("trace_beam: launch depth {} m is below the profile bottom {} m",
                         launch_depth_in_meters,
-                        surface_depth,
                         bottom_depth));
 
     // --- launch setup (double precision for the integration) ---
@@ -368,13 +370,15 @@ inline RayToDepth trace_to_depth_impl(
     if (number_of_layers == 0)
         throw std::runtime_error("trace_beam_to_depth: sound velocity profile is not initialized");
 
-    const double surface_depth = depths.unchecked(0);
-    const double bottom_depth   = depths.unchecked(number_of_layers);
+    const double bottom_depth = depths.unchecked(number_of_layers);
 
     if (!(target_depth_in_meters > launch_depth_in_meters))
         return result; // nothing to trace (target at or above the launch depth)
 
-    if (launch_depth_in_meters < surface_depth - 1e-3 || target_depth_in_meters > bottom_depth + 1e-3)
+    // A launch above the top of the profile (a heave-lifted transducer above the waterline) is
+    // valid - the leg starts in the top layer extended upward. Only a target below the deepest knot
+    // is out of range, since the profile carries no sound speed there.
+    if (target_depth_in_meters > bottom_depth + 1e-3)
     {
         result.reached_target = false;
         return result; // profile does not cover the requested depth range
