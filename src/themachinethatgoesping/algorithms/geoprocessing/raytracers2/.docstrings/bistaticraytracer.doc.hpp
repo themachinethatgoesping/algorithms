@@ -1,4 +1,4 @@
-//sourcehash: aa899e346034fd0fb2fff6a1c42ffba30d058e418c9c2be95d633320bbf6f20b
+//sourcehash: a2d6364d83284eb6647edab1debf1f6aa6292ee7422027824b62ff1fa3211ca0
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -78,51 +78,124 @@ Args:
                                 the receive plane.
     bottom_position: solved seabed point (forward, starboard, down) in
                      m.
-    solver_residual_in_meters: final solver residual in m.)doc";
+    solver_residual_in_meters: final solver residual in m.
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_binary_hash =
+R"doc(compute a 64 bit hash of the object using xxhash and the       \
+to_binary function. This  function is called binary because the
+\ to_binary  function of the object is used
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_bottom_position = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_from_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    check_buffer_is_read_completely: variable for interface
+                                     compatibility, does not do    \
+                                     anything
+                                     \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_from_stream = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_bottom_incidence_angle_in_degrees =
 R"doc(Seabed incidence angle (deg from nadir, signed) of the TRANSMIT ray,
-for backscatter.)doc";
+for backscatter.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_bottom_position =
 R"doc(Solved seabed point (forward, starboard, down) in the common input
-frame [m].)doc";
+frame [m].
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_receive_azimuth_in_degrees =
 R"doc(Receive leg azimuth (deg): rotation about the down axis,
-BeamDirections convention.)doc";
+BeamDirections convention.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_receive_launch_angle_in_degrees =
 R"doc(Receive-leg launch angle (deg from nadir, port +) at the receive
-array.)doc";
+array.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_receive_leg = R"doc(Receive leg polyline (per-layer points in the receive vertical plane).)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_solver_residual_in_meters =
 R"doc(Final solver residual [m]; small values indicate a converged bistatic
-solve.)doc";
+solve.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_transmit_azimuth_in_degrees =
 R"doc(Transmit leg azimuth (deg): rotation about the down axis,
-BeamDirections convention.)doc";
+BeamDirections convention.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_transmit_launch_angle_in_degrees =
 R"doc(Transmit-leg launch angle (deg from nadir, port +) at the transmit
-array.)doc";
+array.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_transmit_leg =
 R"doc(Transmit leg polyline (per-layer points in the transmit vertical
-plane).)doc";
+plane).
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_get_two_way_travel_time_in_seconds = R"doc(Modelled two-way travel time [s] = transmit one-way + receive one-way.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_info_string =
+R"doc(                                                                                           \
+return an info string using the class __printer__ object
+\
+
+Args:
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+Returns:
+    std::string
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_last_two_way = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_operator_eq = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_print =
+R"doc(                                                                                           \
+print the object information to the given outpustream
+\ \
+
+Args:
+    os: output stream, e.g. file stream or std::out or std::cerr
+        \
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_printer = R"doc()doc";
 
@@ -131,6 +204,20 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_receive_leg = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_solver_residual_in_meters = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_to_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    resize_buffer: variable for interface compatibility, does not do
+                   anything             \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_BistaticBeamTrace_to_stream = R"doc()doc";
 
@@ -154,9 +241,12 @@ seabed depth.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_bistatic_detail_SteeringCone_SteeringCone =
 R"doc(Build the cone for a given array axis and steering projection.
+
 Args:
     array_axis: unit array long axis in the world frame.
-    axis_projection: required dot(ray, axis) = sin(steering angle).)doc";
+    axis_projection: required dot(ray, axis) = sin(steering angle).
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_bistatic_detail_SteeringCone_angle_of = R"doc(Cone rotation angle (rad) whose ray best matches ``direction.``)doc";
 
@@ -183,7 +273,9 @@ with a combined one-way time equal to the measured two-way time, via a
 damped Newton iteration seeded by the concentric beam direction. The
 seabed solve stays in double because its finite-difference Jacobian
 (steps ~5e-5) would lose all significance in float. Positions and axes
-are in the common x=forward, y=starboard, z=down ship frame.)doc";
+are in the common x=forward, y=starboard, z=down ship frame.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_trace_bistatic_beam =
 R"doc(Solve the true-bistatic seabed trace of a single multibeam beam from
@@ -223,7 +315,9 @@ Args:
 
 Returns:
     BistaticBeamTrace with both legs, azimuths, seabed point and
-    residual.)doc";
+    residual.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_trace_bistatic_beams =
 R"doc(Batched true-bistatic trace of a sector: one shared transmit pose, N
@@ -258,7 +352,9 @@ Args:
               1).
 
 Returns:
-    vector of BistaticBeamTrace, one per beam.)doc";
+    vector of BistaticBeamTrace, one per beam.
+
+)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
