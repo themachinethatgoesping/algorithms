@@ -14,7 +14,12 @@ sources = [
   'featuremapping/nearestfeaturemapper.cpp',
   'geoprocessing/datastructures/beamsampleparameters.cpp',
   'geoprocessing/functions/backward.cpp',
+  'geoprocessing/raytracers2/i_mbesrawdetectioninfos.cpp',
+  'geoprocessing/raytracers2/mbesrawdetectiondata.cpp',
   'echogramprocessing/bottomdetector.cpp',
+  'pingtools/beamsampleselection.cpp',
+  'pingtools/beamselection.cpp',
+  'pingtools/readsamplerange.cpp',
 ]
 
 headers = [
@@ -131,15 +136,18 @@ headers = [
   'geoprocessing/raytracers2/beamdirections.hpp',
   'geoprocessing/raytracers2/beamtrace.hpp',
   'geoprocessing/raytracers2/bistaticraytracer.hpp',
+  'geoprocessing/raytracers2/i_mbesrawdetectioninfos.hpp',
   'geoprocessing/raytracers2/layerraytracer.hpp',
-  'geoprocessing/raytracers2/mbesdetectioninfos.hpp',
+  'geoprocessing/raytracers2/mbesrawdetectiondata.hpp',
   'geoprocessing/raytracers2/soundvelocityprofile.hpp',
   'geoprocessing/raytracers2/soundvelocityprofileresampling.hpp',
   'geoprocessing/raytracers2/tracebeam.hpp',
   'geoprocessing/raytracers2/.docstrings/beamdirections.doc.hpp',
   'geoprocessing/raytracers2/.docstrings/beamtrace.doc.hpp',
   'geoprocessing/raytracers2/.docstrings/bistaticraytracer.doc.hpp',
+  'geoprocessing/raytracers2/.docstrings/i_mbesrawdetectioninfos.doc.hpp',
   'geoprocessing/raytracers2/.docstrings/layerraytracer.doc.hpp',
+  'geoprocessing/raytracers2/.docstrings/mbesrawdetectiondata.doc.hpp',
   'geoprocessing/raytracers2/.docstrings/soundvelocityprofile.doc.hpp',
   'geoprocessing/raytracers2/.docstrings/soundvelocityprofileresampling.doc.hpp',
   'geoprocessing/raytracers2/.docstrings/tracebeam.doc.hpp',
@@ -149,6 +157,12 @@ headers = [
   'echogramprocessing/.docstrings/functions.doc.hpp',
   'echogramprocessing/functions/bottom_detection.hpp',
   'echogramprocessing/functions/.docstrings/bottom_detection.doc.hpp',
+  'pingtools/beamsampleselection.hpp',
+  'pingtools/beamselection.hpp',
+  'pingtools/readsamplerange.hpp',
+  'pingtools/.docstrings/beamsampleselection.doc.hpp',
+  'pingtools/.docstrings/beamselection.doc.hpp',
+  'pingtools/.docstrings/readsamplerange.doc.hpp',
 ]
 
 # -- targets --

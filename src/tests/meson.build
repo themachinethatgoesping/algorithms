@@ -48,8 +48,12 @@ sources = [
   'geoprocessing/raytracers2/beamtrace.test.cpp',
   'geoprocessing/raytracers2/bistaticraytracer.test.cpp',
   'geoprocessing/raytracers2/layerraytracer.test.cpp',
+  'geoprocessing/raytracers2/mbesrawdetectiondata.test.cpp',
   'geoprocessing/raytracers2/soundvelocityprofile.test.cpp',
   'echogramprocessing/bottom_detection.test.cpp',
+  'pingtools/beamsampleselection.test.cpp',
+  'pingtools/beamselection.test.cpp',
+  'pingtools/readsamplerange.test.cpp',
 ]
 
 foreach source : sources

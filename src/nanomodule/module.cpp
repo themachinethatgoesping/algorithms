@@ -12,6 +12,7 @@
 #include "imageprocessing/module.hpp"
 #include "pointprocessing/module.hpp"
 #include "signalprocessing/module.hpp"
+#include "py_pingtools/module.hpp"
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -36,6 +37,7 @@ NB_MODULE(MODULE_NAME, m)
     py_geoprocessing::init_m_geoprocessing(m);
     py_signalprocessing::init_m_signalprocessing(m);
     py_gridding::init_m_gridding(m);
+    py_pingtools::init_m_pingtools(m);
 }
 
 } // namespace pymodule
