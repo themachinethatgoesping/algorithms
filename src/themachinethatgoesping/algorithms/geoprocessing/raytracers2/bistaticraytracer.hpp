@@ -86,7 +86,7 @@
 #include <themachinethatgoesping/tools/rotationfunctions/quaternions.hpp>
 #include <themachinethatgoesping/tools/rotationfunctions/rotation.hpp>
 
-#include <themachinethatgoesping/navigation/datastructures/positionaloffsets.hpp>
+#include <themachinethatgoesping/navigation/datastructures/sensorpose.hpp>
 
 namespace themachinethatgoesping {
 namespace algorithms {

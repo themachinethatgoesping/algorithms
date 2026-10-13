@@ -56,7 +56,7 @@
 #include <xtensor/core/xmath.hpp>
 
 #include <themachinethatgoesping/navigation/datastructures/geolocation.hpp>
-#include <themachinethatgoesping/navigation/datastructures/positionaloffsets.hpp>
+#include <themachinethatgoesping/navigation/datastructures/sensorpose.hpp>
 #include <themachinethatgoesping/navigation/datastructures/sensordatalatlon.hpp>
 #include <themachinethatgoesping/navigation/navigationinterpolatorlatlon.hpp>
 #include <themachinethatgoesping/tools/classhelper/objectprinter.hpp>

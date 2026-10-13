@@ -1,4 +1,4 @@
-//sourcehash: a1b59c5d741bd1289def9d8ed58f65fe3e218794863a125f3cc6d51def8da343
+//sourcehash: 9144b45da6151acb63911306e6a4ca36ae4028ae72a18d6f74796716364e5c73
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -51,13 +51,53 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_LayerRaytracer_2 = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_binary_hash =
+R"doc(compute a 64 bit hash of the object using xxhash and the       \
+to_binary function. This  function is called binary because the
+\ to_binary  function of the object is used
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_from_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    check_buffer_is_read_completely: variable for interface
+                                     compatibility, does not do    \
+                                     anything
+                                     \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_from_stream = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_get_svp = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_info_string =
+R"doc(                                                                                           \
+return an info string using the class __printer__ object
+\
+
+Args:
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+Returns:
+    std::string
+    \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_launch_dirs_from_angles =
 R"doc(Convert per-beam (tilt, crosstrack) angles in degrees to vehicle-frame
-       unit launch directions (forward, starboard, down).
+unit launch directions (forward, starboard, down).
 
   tilt_deg:        positive bow-up about the starboard axis (i.e.
                    positive tilt -> beam points forward).
@@ -69,9 +109,26 @@ R"doc(Convert per-beam (tilt, crosstrack) angles in degrees to vehicle-frame
   (down)
 
 Caller-side launch-direction maths should not be done elsewhere; route
-all tracing through this method or its trace_at_angles overload.)doc";
+all tracing through this method or its trace_at_angles overload.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_operator_eq = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_print =
+R"doc(                                                                                           \
+print the object information to the given outpustream
+\ \
+
+Args:
+    os: output stream, e.g. file stream or std::out or std::cerr
+        \
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_printer = R"doc()doc";
 
@@ -79,11 +136,28 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytr
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_svp = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_to_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    resize_buffer: variable for interface compatibility, does not do
+                   anything             \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_to_stream = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_trace_at_angles =
 R"doc(Trace beams given per-beam (tilt, crosstrack) angles in degrees.
-       See ::launch_dirs_from_angles for the angle convention.)doc";
+
+See ::launch_dirs_from_angles for the angle convention.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_trace_at_angles_2 = R"doc(Convenience overload: same TX and RX pose at each knot.)doc";
 
@@ -107,7 +181,9 @@ Args:
 
 Returns:
     [K+1, n_beams, 3] world-frame xyz (positive z down), in the same
-    units as the poses' xyz (typically metres).)doc";
+    units as the poses' xyz (typically metres).
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_raytracers2_LayerRaytracer_trace_at_times_2 = R"doc(Convenience overload: same TX and RX pose at each knot.)doc";
 
@@ -146,7 +222,9 @@ Args:
 Returns:
     [n_knots, n_beams, 3] xyz in TX-body-at-t_tx_ping frame, origin at
     TX transducer face. NaN where the ray turned/exited the SVP or
-    input was non-finite.)doc";
+    input was non-finite.
+
+)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

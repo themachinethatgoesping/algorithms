@@ -132,6 +132,7 @@ headers = [
   'geoprocessing/raytracers2/beamtrace.hpp',
   'geoprocessing/raytracers2/bistaticraytracer.hpp',
   'geoprocessing/raytracers2/layerraytracer.hpp',
+  'geoprocessing/raytracers2/mbesdetectioninfos.hpp',
   'geoprocessing/raytracers2/soundvelocityprofile.hpp',
   'geoprocessing/raytracers2/soundvelocityprofileresampling.hpp',
   'geoprocessing/raytracers2/tracebeam.hpp',
