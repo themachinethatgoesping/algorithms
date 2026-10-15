@@ -107,8 +107,18 @@ class BacktracedWCI
         _range_samplenumber_interpolators.reserve(beam_reference_directions.size());
         for (size_t bn = 0; bn < beam_reference_directions.size(); ++bn)
         {
+            // A beam without a valid bottom detection has a reference range of 0 (or a
+            // non-finite value). Building the range->sample interpolator from {0, range}
+            // would then collapse to {0, 0} (duplicate x), throw in the interpolator's
+            // input check and abort the ENTIRE image build. Use a tiny positive
+            // reference range so such a beam simply maps every query to an out-of-range
+            // (NaN) sample instead of crashing the whole water column image.
+            float beam_range = float(beam_reference_directions.range[bn]);
+            if (!(beam_range > 0.f))
+                beam_range = 1e-3f;
+
             _range_samplenumber_interpolators.emplace_back(
-                std::vector<float>{ 0.f, float(beam_reference_directions.range[bn]) },
+                std::vector<float>{ 0.f, beam_range },
                 std::vector<float>{
                     0.f,
                     std::roundf(float(beam_reference_sample_numbers[bn]) / wci_sample_number_step) });

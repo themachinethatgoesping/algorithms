@@ -1,4 +1,4 @@
-//sourcehash: d0e6333b5889bd5c6e0594fb23e051fd4cc086ffbc654750d9611bb8e489ace3
+//sourcehash: 4e547f013d41566a7b265f5a71ac36ebee1df458a97e4d79bc0ba132c043836b
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -56,9 +56,36 @@ Args:
          does not matter
     beam_reference_directions: beam reference directions: reference
                                points that describe beam angle and
-                               reference range for each beam)doc";
+                               reference range for each beam
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_angle_beamnumber_interpolator = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_binary_hash =
+R"doc(compute a 64 bit hash of the object using xxhash and the       \
+to_binary function. This  function is called binary because the
+\ to_binary  function of the object is used
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_check_shape = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_from_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    check_buffer_is_read_completely: variable for interface
+                                     compatibility, does not do    \
+                                     anything
+                                     \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_from_stream = R"doc()doc";
 
@@ -76,13 +103,33 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backt
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_wci_first_sample_number_internal =
 R"doc(Get the internally saved wci first sample number.
-       Internally: the first_sample_number of the image is divided by
-                   sample_number_step
+
+Internally: the first_sample_number of the image is divided by
+            sample_number_step
 
 Returns:
-    uint16_t)doc";
+    uint16_t
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_get_wci_sample_number_step = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_info_string =
+R"doc(                                                                                           \
+return an info string using the class __printer__ object
+\
+
+Args:
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+Returns:
+    std::string
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_lookup = R"doc()doc";
 
@@ -92,6 +139,21 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backt
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_operator_eq = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_print =
+R"doc(                                                                                           \
+print the object information to the given outpustream
+\ \
+
+Args:
+    os: output stream, e.g. file stream or std::out or std::cerr
+        \
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_printer = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_range_samplenumber_interpolators = R"doc()doc";
@@ -99,6 +161,20 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backt
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_shape = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_size = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_to_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    resize_buffer: variable for interface compatibility, does not do
+                   anything             \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_backtracers_BacktracedWCI_to_stream = R"doc()doc";
 
