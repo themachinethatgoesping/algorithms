@@ -1,4 +1,4 @@
-//sourcehash: edd43f87a67f1b1d0abb14b53bd8487f2c98884b01b2ee7cf24150d58f99f0d3
+//sourcehash: 6c6402217e4e88b7eef916b5d86c52c074661ba12ce05f5087d0a8d2d760972f
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -54,14 +54,25 @@ R"doc(Construct a BeamAffine1D for a given number of beams (uninitialized
 values)
 
 Args:
-    n_beams: number of beams)doc";
+    n_beams: number of beams
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_BeamAffine1D_3 =
 R"doc(Construct a BeamAffine1D from existing offsets and slopes
 
 Args:
     offsets_: base value per beam [n_beams]
-    slopes_: slope per beam [n_beams])doc";
+    slopes_: slope per beam [n_beams]
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_binary_hash =
+R"doc(compute a 64 bit hash of the object using xxhash and the       \
+to_binary function. This  function is called binary because the
+\ to_binary  function of the object is used
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_forward =
 R"doc(Compute value = offset + slope * sample_nr for a single beam
@@ -71,7 +82,10 @@ Args:
     sample_nr: sample number (float for sub-sample interpolation)
 
 Returns:
-    float)doc";
+    float the interpolated value = offset[beam_index] +
+    slope[beam_index] * sample_nr
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_from_base_and_endpoints =
 R"doc(Create a BeamAffine1D from a base value and per-beam end values at
@@ -87,9 +101,45 @@ Args:
                         [n_beams]
 
 Returns:
-    BeamAffine1D)doc";
+    BeamAffine1D with offset = base_value and slope = (end_value -
+    base_value) / end_sample_number per beam
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_from_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    check_buffer_is_read_completely: variable for interface
+                                     compatibility, does not do    \
+                                     anything
+                                     \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_from_stream = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_info_string =
+R"doc(                                                                                           \
+return an info string using the class __printer__ object
+\
+
+Args:
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+Returns:
+    std::string
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_inverse =
 R"doc(Compute sample_nr = (value - offset) / slope for a single beam
@@ -99,17 +149,48 @@ Args:
     value: the value to invert
 
 Returns:
-    float sample number)doc";
+    float sample number
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_offsets = R"doc([n_beams] base value per beam)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_operator_eq = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_print =
+R"doc(                                                                                           \
+print the object information to the given outpustream
+\ \
+
+Args:
+    os: output stream, e.g. file stream or std::out or std::cerr
+        \
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_printer = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_size = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_slopes = R"doc([n_beams] slope (change per sample) per beam)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_to_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    resize_buffer: variable for interface compatibility, does not do
+                   anything             \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamAffine1D_to_stream = R"doc()doc";
 

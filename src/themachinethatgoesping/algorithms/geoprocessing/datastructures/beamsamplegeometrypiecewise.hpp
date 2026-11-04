@@ -112,6 +112,7 @@ struct BeamSampleGeometryPiecewise
      * @param number_of_samples    per-beam sample count [n_beams]
      * @param knot_sample_nrs      [K+1] monotone segment boundaries
      * @param knot_xyz             [K+1, n_beams, 3] world-frame knot xyz
+     * @return BeamSampleGeometryPiecewise with all three (x, y, z) per-segment affines set
      */
     static BeamSampleGeometryPiecewise from_layer_xyz(
         xt::xtensor<float, 1>        first_sample_numbers,
@@ -184,6 +185,10 @@ struct BeamSampleGeometryPiecewise
      *
      * Selects the segment k with knot_sample_nrs[k] <= sample_nr <= knot_sample_nrs[k+1].
      * Outside the knot range, clamps to the first/last segment (linear extrapolation).
+     *
+     * @param beam beam index, must be in [0, n_beams)
+     * @param sample_nr sample number to evaluate (float for sub-sample interpolation)
+     * @return std::array<float, 3> the (x, y, z) coordinate; an axis without a set affine is 0
      */
     std::array<float, 3> eval_xyz(size_t beam, float sample_nr) const
     {
@@ -201,6 +206,9 @@ struct BeamSampleGeometryPiecewise
      * @brief Returns true if all K segments collapse (within tolerance) to a
      *        single affine per beam — i.e. piecewise representation is
      *        equivalent to a plain BeamSampleGeometry.
+     *
+     * @param tol absolute tolerance on per-segment offset/slope differences (default COLLAPSE_TOL)
+     * @return true if the geometry is equivalent to a single-segment affine, false otherwise
      */
     bool is_single_affine(float tol = COLLAPSE_TOL) const
     {
@@ -231,6 +239,8 @@ struct BeamSampleGeometryPiecewise
      * Caller is responsible for checking is_single_affine() if equivalence
      * matters. Otherwise this returns the first segment's affine (useful for
      * shallow-water / fast path).
+     *
+     * @return BeamSampleGeometry built from segment 0's per-beam affine (only set axes are copied)
      */
     BeamSampleGeometry to_single_affine() const
     {

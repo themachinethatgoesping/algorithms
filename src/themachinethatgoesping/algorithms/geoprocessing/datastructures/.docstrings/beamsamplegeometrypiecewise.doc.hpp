@@ -1,4 +1,4 @@
-//sourcehash: 5595360c6602148fabeca4a22a700f62f4f01e710bd7420d5ed1582e06d2fd8f
+//sourcehash: 31d8a67beb167355dafd76f7ed97716308ea2e5582e187e602ed02d45d42ca2c
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -51,14 +51,48 @@ Shared:
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_BeamSampleGeometryPiecewise = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_binary_hash =
+R"doc(compute a 64 bit hash of the object using xxhash and the       \
+to_binary function. This  function is called binary because the
+\ to_binary  function of the object is used
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_eval_xyz =
 R"doc(Evaluate (x, y, z) for a given beam and sample number.
 
 Selects the segment k with knot_sample_nrs[k] <= sample_nr <=
 knot_sample_nrs[k+1]. Outside the knot range, clamps to the first/last
-segment (linear extrapolation).)doc";
+segment (linear extrapolation).
+
+Args:
+    beam: beam index, must be in [0, n_beams)
+    sample_nr: sample number to evaluate (float for sub-sample
+               interpolation)
+
+Returns:
+    std::array<float, 3> the (x, y, z) coordinate; an axis without a
+    set affine is 0
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_first_sample_numbers = R"doc([n_beams] first valid sample nr)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_from_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    check_buffer_is_read_completely: variable for interface
+                                     compatibility, does not do    \
+                                     anything
+                                     \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_from_layer_xyz =
 R"doc(Build from a [K+1, n_beams, 3] tensor of world-frame knot xyz.
@@ -76,7 +110,13 @@ Args:
     first_sample_numbers: per-beam first valid sample [n_beams]
     number_of_samples: per-beam sample count [n_beams]
     knot_sample_nrs: [K+1] monotone segment boundaries
-    knot_xyz: [K+1, n_beams, 3] world-frame knot xyz)doc";
+    knot_xyz: [K+1, n_beams, 3] world-frame knot xyz
+
+Returns:
+    BeamSampleGeometryPiecewise with all three (x, y, z) per-segment
+    affines set
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_from_stream = R"doc()doc";
 
@@ -114,10 +154,37 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_has_z_2 = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_info_string =
+R"doc(                                                                                           \
+return an info string using the class __printer__ object
+\
+
+Args:
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+Returns:
+    std::string
+    \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_is_single_affine =
-R"doc(Returns true if all K segments collapse (within tolerance) to a
-       single affine per beam — i.e. piecewise representation is
-       equivalent to a plain BeamSampleGeometry.)doc";
+R"doc(Returns true if all K segments collapse (within tolerance) to a single
+affine per beam — i.e. piecewise representation is equivalent to a
+plain BeamSampleGeometry.
+
+Args:
+    tol: absolute tolerance on per-segment offset/slope differences
+         (default COLLAPSE_TOL)
+
+Returns:
+    true if the geometry is equivalent to a single-segment affine,
+    false otherwise
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_knot_sample_nrs = R"doc([K+1] monotone segment boundaries)doc";
 
@@ -137,6 +204,21 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_operator_eq = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_print =
+R"doc(                                                                                           \
+print the object information to the given outpustream
+\ \
+
+Args:
+    os: output stream, e.g. file stream or std::out or std::cerr
+        \
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_printer = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_slp_x = R"doc()doc";
@@ -145,12 +227,32 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_slp_z = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_to_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    resize_buffer: variable for interface compatibility, does not do
+                   anything             \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_to_single_affine =
 R"doc(Convert to a single-segment BeamSampleGeometry by taking segment 0.
 
 Caller is responsible for checking is_single_affine() if equivalence
 matters. Otherwise this returns the first segment's affine (useful for
-shallow-water / fast path).)doc";
+shallow-water / fast path).
+
+Returns:
+    BeamSampleGeometry built from segment 0's per-beam affine (only
+    set axes are copied)
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometryPiecewise_to_stream = R"doc()doc";
 

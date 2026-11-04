@@ -1,4 +1,4 @@
-//sourcehash: 321021c8e84e97d29c0c6e776f38da55a7697161427eaba1a527ad3cf5a6c6d6
+//sourcehash: 27192390107e1ac3553c47821270b5a20c78318acfd3d2cc982ef4eb0a620b46
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -60,13 +60,41 @@ set)
 
 Args:
     first_sample_numbers: first valid sample number per beam [n_beams]
-    number_of_samples: number of samples per beam [n_beams])doc";
+    number_of_samples: number of samples per beam [n_beams]
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds =
+R"doc(Bounding box of all beam endpoints in (x, y, z) space.
+
+Coordinates are NaN for dimensions without a set affine.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_operator_eq = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_x_max = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_x_min = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_y_max = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_y_min = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_z_max = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_Bounds_z_min = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_x = R"doc(sample_nr → x per beam)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_y = R"doc(sample_nr → y per beam)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_affine_z = R"doc(sample_nr → z per beam)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_binary_hash =
+R"doc(compute a 64 bit hash of the object using xxhash and the       \
+to_binary function. This  function is called binary because the
+\ to_binary  function of the object is used
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_check_affine_size = R"doc()doc";
 
@@ -79,7 +107,9 @@ For each beam b, fills positions [flat_offsets[b] ..
 +number_of_samples[b]-1]
 with: affine.offset[b] + affine.slope[b] * (first_sample_numbers[b] +
       j)
-One SIMD FMA call per beam.)doc";
+One SIMD FMA call per beam.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_coord_flat = R"doc()doc";
 
@@ -96,7 +126,9 @@ Args:
     sample_numbers: float sample number per entry [N]
 
 Returns:
-    xt::xtensor<float, 1> x coordinate per entry [N])doc";
+    xt::xtensor<float, 1> x coordinate per entry [N]
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_x_2 =
 R"doc(Compute x coordinate for sample ranges per beam.
@@ -113,7 +145,9 @@ Args:
     sample_step: step between consecutive samples (default 1)
 
 Returns:
-    xt::xtensor<float, 2> [B x max_samples])doc";
+    xt::xtensor<float, 2> [B x max_samples]
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_x_flat =
 R"doc(Compute the full flat x coordinate array for all beams and samples.
@@ -121,33 +155,129 @@ R"doc(Compute the full flat x coordinate array for all beams and samples.
 The result has get_total_samples() elements laid out contiguously per
 beam. Index with:
   flat_index = get_flat_offsets()[beam] + (sample_nr -
-  first_sample_numbers[beam]))doc";
+  first_sample_numbers[beam])
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz =
+R"doc(Fused (x, y, z) for (beam_index, sample_number) pairs.
+
+Equivalent to (forward_x, forward_y, forward_z) but ~3x faster from
+Python (one call, one beam-run scan, three SIMD FMAs per run).
+
+Returns:
+    std::tuple<x, y, z>, each of shape [N]
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz_2 =
+R"doc(Fused (x, y, z) for sample ranges per beam.
+
+Returns three 2D arrays [B x max_samples], NaN-padded.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz_all = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz_flat = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz_flat_2 =
+R"doc(Fused full flat (x, y, z) for all beams and samples.
+
+Each output has get_total_samples() elements (same flat layout as
+forward_x_flat).
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_xyz_range = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_y =
-R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_sn&)
-const)doc";
+R"doc(Compute y coordinate for (beam_index, sample_number) pairs.
+
+When beam_indices are sorted (consecutive same-beam entries), each run
+is dispatched as a single SIMD FMA call for maximum throughput.
+
+Args:
+    beam_indices: beam index per entry [N], values in [0, n_beams)
+    sample_numbers: float sample number per entry [N]
+
+Returns:
+    xt::xtensor<float, 1> y coordinate per entry [N]
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_y_2 =
-R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_fs&,
-const t_xtensor_1d_ls&, uint32_t) const)doc";
+R"doc(Compute y coordinate for sample ranges per beam.
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_y_flat = R"doc(@copydoc forward_x_flat)doc";
+For each selected beam, generates sample numbers [first, first+step,
+..., <= last] and computes y = offset + slope * sample_nr via SIMD
+FMA. Result is 2D [n_selected_beams x max_samples]; trailing unused
+cells are NaN.
+
+Args:
+    beam_indices: per selected beam [B], values in [0, n_beams)
+    first_sample_numbers: first sample number per beam [B]
+    last_sample_numbers: last sample number per beam [B]
+    sample_step: step between consecutive samples (default 1)
+
+Returns:
+    xt::xtensor<float, 2> [B x max_samples]
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_y_flat =
+R"doc(Compute the full flat y coordinate array for all beams and samples.
+
+The result has get_total_samples() elements laid out contiguously per
+beam. Index with:
+  flat_index = get_flat_offsets()[beam] + (sample_nr -
+  first_sample_numbers[beam])
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_z =
-R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_sn&)
-const)doc";
+R"doc(Compute z coordinate for (beam_index, sample_number) pairs.
+
+When beam_indices are sorted (consecutive same-beam entries), each run
+is dispatched as a single SIMD FMA call for maximum throughput.
+
+Args:
+    beam_indices: beam index per entry [N], values in [0, n_beams)
+    sample_numbers: float sample number per entry [N]
+
+Returns:
+    xt::xtensor<float, 1> z coordinate per entry [N]
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_z_2 =
-R"doc(@copydoc forward_x(const t_xtensor_1d_bi&, const t_xtensor_1d_fs&,
-const t_xtensor_1d_ls&, uint32_t) const)doc";
+R"doc(Compute z coordinate for sample ranges per beam.
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_z_flat = R"doc(@copydoc forward_x_flat)doc";
+For each selected beam, generates sample numbers [first, first+step,
+..., <= last] and computes z = offset + slope * sample_nr via SIMD
+FMA. Result is 2D [n_selected_beams x max_samples]; trailing unused
+cells are NaN.
+
+Args:
+    beam_indices: per selected beam [B], values in [0, n_beams)
+    first_sample_numbers: first sample number per beam [B]
+    last_sample_numbers: last sample number per beam [B]
+    sample_step: step between consecutive samples (default 1)
+
+Returns:
+    xt::xtensor<float, 2> [B x max_samples]
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_forward_z_flat =
+R"doc(Compute the full flat z coordinate array for all beams and samples.
+
+The result has get_total_samples() elements laid out contiguously per
+beam. Index with:
+  flat_index = get_flat_offsets()[beam] + (sample_nr -
+  first_sample_numbers[beam])
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_angle_and_range =
 R"doc(Create a BeamSampleGeometry from crosstrack angles and ranges.
@@ -169,7 +299,9 @@ Args:
     number_of_samples: number of samples per beam [n_beams]
 
 Returns:
-    BeamSampleGeometry with y and z affines set)doc";
+    BeamSampleGeometry with y and z affines set
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_angles_and_range =
 R"doc(Create a BeamSampleGeometry from alongtrack angles, crosstrack angles,
@@ -194,7 +326,25 @@ Args:
     number_of_samples: number of samples per beam [n_beams]
 
 Returns:
-    BeamSampleGeometry with x, y, z affines set)doc";
+    BeamSampleGeometry with x, y, z affines set
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    check_buffer_is_read_completely: variable for interface
+                                     compatibility, does not do    \
+                                     anything
+                                     \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_bottom_xyz =
 R"doc(Create a BeamSampleGeometry from a base XYZ location and per-beam
@@ -214,7 +364,9 @@ Args:
     number_of_samples: per-beam number of samples [n_beams]
 
 Returns:
-    BeamSampleGeometry with x, y, z affines set)doc";
+    BeamSampleGeometry with x, y, z affines set
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_bottom_z =
 R"doc(Create a BeamSampleGeometry with z affine only, from a base depth and
@@ -229,7 +381,9 @@ Args:
     number_of_samples: per-beam number of samples [n_beams]
 
 Returns:
-    BeamSampleGeometry with z affine set)doc";
+    BeamSampleGeometry with z affine set
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_from_stream = R"doc()doc";
 
@@ -238,7 +392,9 @@ R"doc(Compute the bounding box of all beam/sample coordinates.
 
 Evaluates the forward transform at the first and last sample of every
 beam and takes min/max.  Only populates bounds for dimensions that
-have a set affine; others stay NaN.)doc";
+have a set affine; others stay NaN.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_first_sample_numbers = R"doc()doc";
 
@@ -251,27 +407,75 @@ Use with: flat_index = flat_offsets[beam] + (sample_nr -
 first_sample_numbers[beam])
 
 Returns:
-    xt::xtensor<unsigned int, 1> [n_beams])doc";
+    xt::xtensor<unsigned int, 1> [n_beams]
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_last_sample_numbers = R"doc()doc";
+)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_n_beams = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_last_sample_numbers =
+R"doc(Per-beam last valid sample number.
+
+Computed as first_sample_numbers + number_of_samples - 1.
+
+Returns:
+    xt::xtensor<float, 1> last sample number per beam [n_beams]
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_n_beams = R"doc(Return the number of beams (n_beams).)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_number_of_samples = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_total_samples = R"doc(Total number of samples across all beams.)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_x_affine = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_x_affine =
+R"doc(Get the x affine (sample_nr -> x per beam).
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_y_affine = R"doc()doc";
+Returns:
+    const reference to the x BeamAffine1D (throws if the x affine is
+    not set)
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_z_affine = R"doc()doc";
+)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_has_x_affine = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_y_affine =
+R"doc(Get the y affine (sample_nr -> y per beam).
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_has_y_affine = R"doc()doc";
+Returns:
+    const reference to the y BeamAffine1D (throws if the y affine is
+    not set)
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_has_z_affine = R"doc()doc";
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_get_z_affine =
+R"doc(Get the z affine (sample_nr -> z per beam).
+
+Returns:
+    const reference to the z BeamAffine1D (throws if the z affine is
+    not set)
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_has_x_affine = R"doc(Return true if the x affine (sample_nr -> x per beam) is set.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_has_y_affine = R"doc(Return true if the y affine (sample_nr -> y per beam) is set.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_has_z_affine = R"doc(Return true if the z affine (sample_nr -> z per beam) is set.)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_info_string =
+R"doc(                                                                                           \
+return an info string using the class __printer__ object
+\
+
+Args:
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+Returns:
+    std::string
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_n_beams = R"doc()doc";
 
@@ -279,15 +483,76 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_operator_eq = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_print =
+R"doc(                                                                                           \
+print the object information to the given outpustream
+\ \
+
+Args:
+    os: output stream, e.g. file stream or std::out or std::cerr
+        \
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_printer = R"doc()doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_x_affine = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_x_affine =
+R"doc(Set the x affine (sample_nr -> x per beam).
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_xyz_affines = R"doc()doc";
+Args:
+    affine: per-beam affine mapping sample number to x; its size must
+            equal n_beams
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_y_affine = R"doc()doc";
+)doc";
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_z_affine = R"doc()doc";
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_xyz_affines =
+R"doc(Set all three (x, y, z) affines at once.
+
+Args:
+    affine_x: per-beam affine mapping sample number to x; its size
+              must equal n_beams
+    affine_y: per-beam affine mapping sample number to y; its size
+              must equal n_beams
+    affine_z: per-beam affine mapping sample number to z; its size
+              must equal n_beams
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_y_affine =
+R"doc(Set the y affine (sample_nr -> y per beam).
+
+Args:
+    affine: per-beam affine mapping sample number to y; its size must
+            equal n_beams
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_set_z_affine =
+R"doc(Set the z affine (sample_nr -> z per beam).
+
+Args:
+    affine: per-beam affine mapping sample number to z; its size must
+            equal n_beams
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_to_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    resize_buffer: variable for interface compatibility, does not do
+                   anything             \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_to_stream = R"doc()doc";
 
@@ -295,7 +560,9 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 R"doc(Apply a Geolocation (depth + ypr) to the geometry.
 
 Equivalent to with_rigid_transform(g.yaw(), g.pitch(), g.roll(), 0, 0,
-g.z).)doc";
+g.z).
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_geolocation_2 =
 R"doc(Apply a GeolocationLocal (northing/easting/depth + ypr) to the
@@ -303,7 +570,9 @@ geometry.
 
 The resulting (x, y, z) will be expressed as (northing, easting,
 depth).
-Note: x ↔ northing and y ↔ easting (northing-first convention).)doc";
+Note: x ↔ northing and y ↔ easting (northing-first convention).
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_geolocation_3 =
 R"doc(Apply a GeolocationUTM (UTM northing/easting/depth + ypr) to the
@@ -326,13 +595,17 @@ Args:
     ref_northing: reference UTM northing in metres (subtracted from
                   g.northing)
     ref_easting: reference UTM easting in metres (subtracted from
-                 g.easting))doc";
+                 g.easting)
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_offset =
 R"doc(Bake a translation (dx, dy, dz) into the geometry's affines.
 
 Only the per-beam offsets of set affines are modified; slopes are
-untouched. Axes whose affine is unset are ignored silently.)doc";
+untouched. Axes whose affine is unset are ignored silently.
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleGeometry_with_rigid_transform =
 R"doc(Bake a rigid transform (yaw/pitch/roll rotation + translation) into
@@ -346,7 +619,9 @@ Args:
     yaw_deg: yaw in °, 0° == north, 90° == east
     pitch_deg: pitch in °, positive bow up
     roll_deg: roll in °, positive port up
-    tx: ,ty,tz     translation applied AFTER rotation)doc";
+    tx: ,ty,tz     translation applied AFTER rotation
+
+)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

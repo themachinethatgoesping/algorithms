@@ -13,8 +13,8 @@
 
 // -- include nanobind headers
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/optional.h>
+#include <nanobind/stl/string.h>
 
 namespace themachinethatgoesping {
 namespace algorithms {
@@ -26,18 +26,20 @@ namespace nb = nanobind;
 using namespace themachinethatgoesping::algorithms::geoprocessing::datastructures;
 
 #define DOC_BeamSampleGeometry(ARG)                                                                \
-    DOC(themachinethatgoesping,                                                                    \
-        algorithms,                                                                                \
-        geoprocessing,                                                                             \
-        datastructures,                                                                            \
-        BeamSampleGeometry,                                                                        \
-        ARG)
+    DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, BeamSampleGeometry, ARG)
+
+// backward_nearest / backward_bilinear are bound as methods (self == geom) but
+// implemented as free functions in geoprocessing::functions; reuse the free
+// functions' docstrings (which describe geom in prose rather than as a @param,
+// so the parameter list matches the Python method).
+#define DOC_functions(...)                                                                         \
+    DOC(themachinethatgoesping, algorithms, geoprocessing, functions, __VA_ARGS__)
 
 void init_c_beamsamplegeometry(nb::module_& m)
 {
     // Register Bounds struct
-    nb::class_<BeamSampleGeometry::Bounds>(m, "BeamSampleGeometryBounds",
-                                            "Bounding box of beam/sample coordinates.")
+    nb::class_<BeamSampleGeometry::Bounds>(
+        m, "BeamSampleGeometryBounds", "Bounding box of beam/sample coordinates.")
         .def(nb::init<>())
         .def_rw("x_min", &BeamSampleGeometry::Bounds::x_min)
         .def_rw("x_max", &BeamSampleGeometry::Bounds::x_max)
@@ -47,19 +49,19 @@ void init_c_beamsamplegeometry(nb::module_& m)
         .def_rw("z_max", &BeamSampleGeometry::Bounds::z_max)
         .def("__eq__", &BeamSampleGeometry::Bounds::operator==, nb::arg("other"))
         .def("__repr__", [](const BeamSampleGeometry::Bounds& b) {
-            return fmt::format(
-                "BeamSampleGeometryBounds(x=[{}, {}], y=[{}, {}], z=[{}, {}])",
-                b.x_min, b.x_max, b.y_min, b.y_max, b.z_min, b.z_max);
-        })
-        ;
+            return fmt::format("BeamSampleGeometryBounds(x=[{}, {}], y=[{}, {}], z=[{}, {}])",
+                               b.x_min,
+                               b.x_max,
+                               b.y_min,
+                               b.y_max,
+                               b.z_min,
+                               b.z_max);
+        });
 
-    nb::class_<BeamSampleGeometry>(m,
-                                   "BeamSampleGeometry",
-                                   DOC(themachinethatgoesping,
-                                       algorithms,
-                                       geoprocessing,
-                                       datastructures,
-                                       BeamSampleGeometry))
+    nb::class_<BeamSampleGeometry>(
+        m,
+        "BeamSampleGeometry",
+        DOC(themachinethatgoesping, algorithms, geoprocessing, datastructures, BeamSampleGeometry))
         // constructors
         .def(nb::init<>(), "Construct an empty BeamSampleGeometry")
         .def(nb::init<xt::xtensor<float, 1>, xt::xtensor<unsigned int, 1>>(),
@@ -72,9 +74,7 @@ void init_c_beamsamplegeometry(nb::module_& m)
              nb::arg("other"))
 
         // --- accessors ---
-        .def("get_n_beams",
-             &BeamSampleGeometry::get_n_beams,
-             DOC_BeamSampleGeometry(get_n_beams))
+        .def("get_n_beams", &BeamSampleGeometry::get_n_beams, DOC_BeamSampleGeometry(get_n_beams))
         .def("get_first_sample_numbers",
              &BeamSampleGeometry::get_first_sample_numbers,
              DOC_BeamSampleGeometry(first_sample_numbers),
@@ -88,15 +88,12 @@ void init_c_beamsamplegeometry(nb::module_& m)
              DOC_BeamSampleGeometry(get_last_sample_numbers))
 
         // --- affine queries ---
-        .def("has_x_affine",
-             &BeamSampleGeometry::has_x_affine,
-             DOC_BeamSampleGeometry(has_x_affine))
-        .def("has_y_affine",
-             &BeamSampleGeometry::has_y_affine,
-             DOC_BeamSampleGeometry(has_y_affine))
-        .def("has_z_affine",
-             &BeamSampleGeometry::has_z_affine,
-             DOC_BeamSampleGeometry(has_z_affine))
+        .def(
+            "has_x_affine", &BeamSampleGeometry::has_x_affine, DOC_BeamSampleGeometry(has_x_affine))
+        .def(
+            "has_y_affine", &BeamSampleGeometry::has_y_affine, DOC_BeamSampleGeometry(has_y_affine))
+        .def(
+            "has_z_affine", &BeamSampleGeometry::has_z_affine, DOC_BeamSampleGeometry(has_z_affine))
 
         // --- affine getters ---
         .def("get_x_affine",
@@ -133,151 +130,170 @@ void init_c_beamsamplegeometry(nb::module_& m)
              nb::arg("affine_z"))
 
         // --- factory methods ---
-        .def_static("from_bottom_xyz",
-                     [](const XYZ<1>& bottom_xyz,
-                        float base_x, float base_y, float base_z,
-                        const xt::nanobind::pytensor<float, 1>& bottom_sample_numbers,
-                        xt::nanobind::pytensor<float, 1> first_sample_numbers,
-                        xt::nanobind::pytensor<unsigned int, 1> number_of_samples) {
-                         return BeamSampleGeometry::from_bottom_xyz(
-                             bottom_xyz, base_x, base_y, base_z,
-                             bottom_sample_numbers, first_sample_numbers, number_of_samples);
-                     },
-                     DOC_BeamSampleGeometry(from_bottom_xyz),
-                     nb::arg("bottom_xyz"),
-                     nb::arg("base_x"),
-                     nb::arg("base_y"),
-                     nb::arg("base_z"),
-                     nb::arg("bottom_sample_numbers"),
-                     nb::arg("first_sample_numbers"),
-                     nb::arg("number_of_samples"))
-        .def_static("from_bottom_z",
-                     [](float base_z,
-                        const xt::nanobind::pytensor<float, 1>& bottom_depths,
-                        const xt::nanobind::pytensor<float, 1>& bottom_sample_numbers,
-                        xt::nanobind::pytensor<float, 1> first_sample_numbers,
-                        xt::nanobind::pytensor<unsigned int, 1> number_of_samples) {
-                         return BeamSampleGeometry::from_bottom_z(
-                             base_z, bottom_depths, bottom_sample_numbers,
-                             first_sample_numbers, number_of_samples);
-                     },
-                     DOC_BeamSampleGeometry(from_bottom_z),
-                     nb::arg("base_z"),
-                     nb::arg("bottom_depths"),
-                     nb::arg("bottom_sample_numbers"),
-                     nb::arg("first_sample_numbers"),
-                     nb::arg("number_of_samples"))
-        .def_static("from_angle_and_range",
-                     [](const xt::nanobind::pytensor<float, 1>& crosstrack_angles,
-                        const xt::nanobind::pytensor<float, 1>& ranges,
-                        const xt::nanobind::pytensor<float, 1>& range_sample_numbers,
-                        xt::nanobind::pytensor<float, 1> first_sample_numbers,
-                        xt::nanobind::pytensor<unsigned int, 1> number_of_samples) {
-                         return BeamSampleGeometry::from_angle_and_range(
-                             crosstrack_angles, ranges, range_sample_numbers,
-                             first_sample_numbers, number_of_samples);
-                     },
-                     DOC_BeamSampleGeometry(from_angle_and_range),
-                     nb::arg("crosstrack_angles"),
-                     nb::arg("ranges"),
-                     nb::arg("range_sample_numbers"),
-                     nb::arg("first_sample_numbers"),
-                     nb::arg("number_of_samples"))
-        .def_static("from_angles_and_range",
-                     [](const xt::nanobind::pytensor<float, 1>& alongtrack_angles,
-                        const xt::nanobind::pytensor<float, 1>& crosstrack_angles,
-                        const xt::nanobind::pytensor<float, 1>& ranges,
-                        const xt::nanobind::pytensor<float, 1>& range_sample_numbers,
-                        xt::nanobind::pytensor<float, 1> first_sample_numbers,
-                        xt::nanobind::pytensor<unsigned int, 1> number_of_samples) {
-                         return BeamSampleGeometry::from_angles_and_range(
-                             alongtrack_angles, crosstrack_angles, ranges,
-                             range_sample_numbers, first_sample_numbers, number_of_samples);
-                     },
-                     DOC_BeamSampleGeometry(from_angles_and_range),
-                     nb::arg("alongtrack_angles"),
-                     nb::arg("crosstrack_angles"),
-                     nb::arg("ranges"),
-                     nb::arg("range_sample_numbers"),
-                     nb::arg("first_sample_numbers"),
-                     nb::arg("number_of_samples"))
+        .def_static(
+            "from_bottom_xyz",
+            [](const XYZ<1>&                           bottom_xyz,
+               float                                   base_x,
+               float                                   base_y,
+               float                                   base_z,
+               const xt::nanobind::pytensor<float, 1>& bottom_sample_numbers,
+               xt::nanobind::pytensor<float, 1>        first_sample_numbers,
+               xt::nanobind::pytensor<unsigned int, 1> number_of_samples) {
+                return BeamSampleGeometry::from_bottom_xyz(bottom_xyz,
+                                                           base_x,
+                                                           base_y,
+                                                           base_z,
+                                                           bottom_sample_numbers,
+                                                           first_sample_numbers,
+                                                           number_of_samples);
+            },
+            DOC_BeamSampleGeometry(from_bottom_xyz),
+            nb::arg("bottom_xyz"),
+            nb::arg("base_x"),
+            nb::arg("base_y"),
+            nb::arg("base_z"),
+            nb::arg("bottom_sample_numbers"),
+            nb::arg("first_sample_numbers"),
+            nb::arg("number_of_samples"))
+        .def_static(
+            "from_bottom_z",
+            [](float                                   base_z,
+               const xt::nanobind::pytensor<float, 1>& bottom_depths,
+               const xt::nanobind::pytensor<float, 1>& bottom_sample_numbers,
+               xt::nanobind::pytensor<float, 1>        first_sample_numbers,
+               xt::nanobind::pytensor<unsigned int, 1> number_of_samples) {
+                return BeamSampleGeometry::from_bottom_z(base_z,
+                                                         bottom_depths,
+                                                         bottom_sample_numbers,
+                                                         first_sample_numbers,
+                                                         number_of_samples);
+            },
+            DOC_BeamSampleGeometry(from_bottom_z),
+            nb::arg("base_z"),
+            nb::arg("bottom_depths"),
+            nb::arg("bottom_sample_numbers"),
+            nb::arg("first_sample_numbers"),
+            nb::arg("number_of_samples"))
+        .def_static(
+            "from_angle_and_range",
+            [](const xt::nanobind::pytensor<float, 1>& crosstrack_angles,
+               const xt::nanobind::pytensor<float, 1>& ranges,
+               const xt::nanobind::pytensor<float, 1>& range_sample_numbers,
+               xt::nanobind::pytensor<float, 1>        first_sample_numbers,
+               xt::nanobind::pytensor<unsigned int, 1> number_of_samples) {
+                return BeamSampleGeometry::from_angle_and_range(crosstrack_angles,
+                                                                ranges,
+                                                                range_sample_numbers,
+                                                                first_sample_numbers,
+                                                                number_of_samples);
+            },
+            DOC_BeamSampleGeometry(from_angle_and_range),
+            nb::arg("crosstrack_angles"),
+            nb::arg("ranges"),
+            nb::arg("range_sample_numbers"),
+            nb::arg("first_sample_numbers"),
+            nb::arg("number_of_samples"))
+        .def_static(
+            "from_angles_and_range",
+            [](const xt::nanobind::pytensor<float, 1>& alongtrack_angles,
+               const xt::nanobind::pytensor<float, 1>& crosstrack_angles,
+               const xt::nanobind::pytensor<float, 1>& ranges,
+               const xt::nanobind::pytensor<float, 1>& range_sample_numbers,
+               xt::nanobind::pytensor<float, 1>        first_sample_numbers,
+               xt::nanobind::pytensor<unsigned int, 1> number_of_samples) {
+                return BeamSampleGeometry::from_angles_and_range(alongtrack_angles,
+                                                                 crosstrack_angles,
+                                                                 ranges,
+                                                                 range_sample_numbers,
+                                                                 first_sample_numbers,
+                                                                 number_of_samples);
+            },
+            DOC_BeamSampleGeometry(from_angles_and_range),
+            nb::arg("alongtrack_angles"),
+            nb::arg("crosstrack_angles"),
+            nb::arg("ranges"),
+            nb::arg("range_sample_numbers"),
+            nb::arg("first_sample_numbers"),
+            nb::arg("number_of_samples"))
 
         // --- forward transformations: flat overloads ---
-        .def("forward_x",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
-                const xt::nanobind::pytensor<float, 1>& sample_numbers) {
-                 return self.forward_x(beam_indices, sample_numbers);
-             },
-             "Compute x for (beam_index, sample_number) pairs. "
-             "Sorted beam_indices yield best SIMD throughput.",
-             nb::arg("beam_indices"),
-             nb::arg("sample_numbers"))
-        .def("forward_y",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
-                const xt::nanobind::pytensor<float, 1>& sample_numbers) {
-                 return self.forward_y(beam_indices, sample_numbers);
-             },
-             "Compute y for (beam_index, sample_number) pairs.",
-             nb::arg("beam_indices"),
-             nb::arg("sample_numbers"))
-        .def("forward_z",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
-                const xt::nanobind::pytensor<float, 1>& sample_numbers) {
-                 return self.forward_z(beam_indices, sample_numbers);
-             },
-             "Compute z for (beam_index, sample_number) pairs.",
-             nb::arg("beam_indices"),
-             nb::arg("sample_numbers"))
+        .def(
+            "forward_x",
+            [](const BeamSampleGeometry&                  self,
+               const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+               const xt::nanobind::pytensor<float, 1>&    sample_numbers) {
+                return self.forward_x(beam_indices, sample_numbers);
+            },
+            DOC_BeamSampleGeometry(forward_x),
+            nb::arg("beam_indices"),
+            nb::arg("sample_numbers"))
+        .def(
+            "forward_y",
+            [](const BeamSampleGeometry&                  self,
+               const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+               const xt::nanobind::pytensor<float, 1>&    sample_numbers) {
+                return self.forward_y(beam_indices, sample_numbers);
+            },
+            DOC_BeamSampleGeometry(forward_y),
+            nb::arg("beam_indices"),
+            nb::arg("sample_numbers"))
+        .def(
+            "forward_z",
+            [](const BeamSampleGeometry&                  self,
+               const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+               const xt::nanobind::pytensor<float, 1>&    sample_numbers) {
+                return self.forward_z(beam_indices, sample_numbers);
+            },
+            DOC_BeamSampleGeometry(forward_z),
+            nb::arg("beam_indices"),
+            nb::arg("sample_numbers"))
 
         // --- forward transformations: range overloads ---
-        .def("forward_x",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
-                const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
-                const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
-                uint32_t sample_step) {
-                 return self.forward_x(beam_indices, first_sample_numbers,
-                                       last_sample_numbers, sample_step);
-             },
-             "Compute x for sample ranges per beam. "
-             "Returns 2D [n_beams x max_samples], NaN-padded.",
-             nb::arg("beam_indices"),
-             nb::arg("first_sample_numbers"),
-             nb::arg("last_sample_numbers"),
-             nb::arg("sample_step") = 1)
-        .def("forward_y",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
-                const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
-                const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
-                uint32_t sample_step) {
-                 return self.forward_y(beam_indices, first_sample_numbers,
-                                       last_sample_numbers, sample_step);
-             },
-             "Compute y for sample ranges per beam. "
-             "Returns 2D [n_beams x max_samples], NaN-padded.",
-             nb::arg("beam_indices"),
-             nb::arg("first_sample_numbers"),
-             nb::arg("last_sample_numbers"),
-             nb::arg("sample_step") = 1)
-        .def("forward_z",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
-                const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
-                const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
-                uint32_t sample_step) {
-                 return self.forward_z(beam_indices, first_sample_numbers,
-                                       last_sample_numbers, sample_step);
-             },
-             "Compute z for sample ranges per beam. "
-             "Returns 2D [n_beams x max_samples], NaN-padded.",
-             nb::arg("beam_indices"),
-             nb::arg("first_sample_numbers"),
-             nb::arg("last_sample_numbers"),
-             nb::arg("sample_step") = 1)
+        .def(
+            "forward_x",
+            [](const BeamSampleGeometry&                  self,
+               const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+               const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
+               const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
+               uint32_t                                   sample_step) {
+                return self.forward_x(
+                    beam_indices, first_sample_numbers, last_sample_numbers, sample_step);
+            },
+            DOC_BeamSampleGeometry(forward_x_2),
+            nb::arg("beam_indices"),
+            nb::arg("first_sample_numbers"),
+            nb::arg("last_sample_numbers"),
+            nb::arg("sample_step") = 1)
+        .def(
+            "forward_y",
+            [](const BeamSampleGeometry&                  self,
+               const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+               const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
+               const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
+               uint32_t                                   sample_step) {
+                return self.forward_y(
+                    beam_indices, first_sample_numbers, last_sample_numbers, sample_step);
+            },
+            DOC_BeamSampleGeometry(forward_y_2),
+            nb::arg("beam_indices"),
+            nb::arg("first_sample_numbers"),
+            nb::arg("last_sample_numbers"),
+            nb::arg("sample_step") = 1)
+        .def(
+            "forward_z",
+            [](const BeamSampleGeometry&                  self,
+               const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+               const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
+               const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
+               uint32_t                                   sample_step) {
+                return self.forward_z(
+                    beam_indices, first_sample_numbers, last_sample_numbers, sample_step);
+            },
+            DOC_BeamSampleGeometry(forward_z_2),
+            nb::arg("beam_indices"),
+            nb::arg("first_sample_numbers"),
+            nb::arg("last_sample_numbers"),
+            nb::arg("sample_step") = 1)
 
         // --- flat-index helpers ---
         .def("get_flat_offsets",
@@ -299,42 +315,41 @@ void init_c_beamsamplegeometry(nb::module_& m)
              DOC_BeamSampleGeometry(forward_z_flat))
 
         // --- fused XYZ forward (allocates output as pytensor: zero-copy return) ---
-        .def("forward_xyz",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
-                const xt::nanobind::pytensor<float, 1>&    sample_numbers) {
-                 return self.forward_xyz<xt::nanobind::pytensor<float, 1>>(
-                     beam_indices, sample_numbers);
-             },
-             "Compute (x, y, z) for (beam_index, sample_number) pairs in a single pass. "
-             "Returns a tuple (x, y, z) of shape [N]. ~3x faster than three separate calls.",
-             nb::arg("beam_indices"),
-             nb::arg("sample_numbers"))
-        .def("forward_xyz",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
-                const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
-                const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
-                uint32_t                                   sample_step) {
-                 return self.forward_xyz<xt::nanobind::pytensor<float, 2>>(
-                     beam_indices, first_sample_numbers, last_sample_numbers, sample_step);
-             },
-             "Compute (x, y, z) for sample ranges per beam in a single pass. "
-             "Returns a tuple of three 2D arrays [B x max_samples], NaN-padded.",
-             nb::arg("beam_indices"),
-             nb::arg("first_sample_numbers"),
-             nb::arg("last_sample_numbers"),
-             nb::arg("sample_step") = 1)
-        .def("forward_xyz_flat",
-             [](const BeamSampleGeometry& self) {
-                 return self.forward_xyz_flat<xt::nanobind::pytensor<float, 1>>();
-             },
-             "Compute the full flat (x, y, z) arrays for all beams and samples in a single pass.")
+        .def(
+            "forward_xyz",
+            [](const BeamSampleGeometry&                  self,
+               const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+               const xt::nanobind::pytensor<float, 1>&    sample_numbers) {
+                return self.forward_xyz<xt::nanobind::pytensor<float, 1>>(beam_indices,
+                                                                          sample_numbers);
+            },
+            DOC_BeamSampleGeometry(forward_xyz),
+            nb::arg("beam_indices"),
+            nb::arg("sample_numbers"))
+        .def(
+            "forward_xyz",
+            [](const BeamSampleGeometry&                  self,
+               const xt::nanobind::pytensor<uint32_t, 1>& beam_indices,
+               const xt::nanobind::pytensor<uint32_t, 1>& first_sample_numbers,
+               const xt::nanobind::pytensor<uint32_t, 1>& last_sample_numbers,
+               uint32_t                                   sample_step) {
+                return self.forward_xyz<xt::nanobind::pytensor<float, 2>>(
+                    beam_indices, first_sample_numbers, last_sample_numbers, sample_step);
+            },
+            DOC_BeamSampleGeometry(forward_xyz_2),
+            nb::arg("beam_indices"),
+            nb::arg("first_sample_numbers"),
+            nb::arg("last_sample_numbers"),
+            nb::arg("sample_step") = 1)
+        .def(
+            "forward_xyz_flat",
+            [](const BeamSampleGeometry& self) {
+                return self.forward_xyz_flat<xt::nanobind::pytensor<float, 1>>();
+            },
+            DOC_BeamSampleGeometry(forward_xyz_flat))
 
         // --- bounds ---
-        .def("get_bounds",
-             &BeamSampleGeometry::get_bounds,
-             DOC_BeamSampleGeometry(get_bounds))
+        .def("get_bounds", &BeamSampleGeometry::get_bounds, DOC_BeamSampleGeometry(get_bounds))
 
         // --- rigid transforms (mutating; return self for chaining) ---
         .def("with_offset",
@@ -357,71 +372,67 @@ void init_c_beamsamplegeometry(nb::module_& m)
         // GeolocationUTM overload registered FIRST so exact-type match wins
         // over the GeolocationLocal base-class overload below.
         .def("with_geolocation",
-             nb::overload_cast<const themachinethatgoesping::navigation::datastructures::GeolocationUTM&,
-                               double,
-                               double>(
-                 &BeamSampleGeometry::with_geolocation),
+             nb::overload_cast<
+                 const themachinethatgoesping::navigation::datastructures::GeolocationUTM&,
+                 double,
+                 double>(&BeamSampleGeometry::with_geolocation),
              DOC_BeamSampleGeometry(with_geolocation_3),
              nb::arg("geolocation_utm"),
              nb::arg("ref_northing") = 0.0,
              nb::arg("ref_easting")  = 0.0,
              nb::rv_policy::reference_internal)
         .def("with_geolocation",
-             nb::overload_cast<const themachinethatgoesping::navigation::datastructures::Geolocation&>(
+             nb::overload_cast<
+                 const themachinethatgoesping::navigation::datastructures::Geolocation&>(
                  &BeamSampleGeometry::with_geolocation),
              DOC_BeamSampleGeometry(with_geolocation),
              nb::arg("geolocation"),
              nb::rv_policy::reference_internal)
         .def("with_geolocation",
-             nb::overload_cast<const themachinethatgoesping::navigation::datastructures::GeolocationLocal&>(
+             nb::overload_cast<
+                 const themachinethatgoesping::navigation::datastructures::GeolocationLocal&>(
                  &BeamSampleGeometry::with_geolocation),
              DOC_BeamSampleGeometry(with_geolocation_2),
              nb::arg("geolocation_local"),
              nb::rv_policy::reference_internal)
 
         // --- backward mapping ---
-        .def("backward_nearest",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<float, 2>& data,
-                const xt::nanobind::pytensor<float, 1>& y_coordinates,
-                const xt::nanobind::pytensor<float, 1>& z_coordinates,
-                unsigned int supersampling,
-                int mp_cores) {
-                 return themachinethatgoesping::algorithms::geoprocessing::functions::
-                     backward_nearest<xt::nanobind::pytensor<float, 2>>(
-                         self, data, y_coordinates, z_coordinates,
-                         supersampling, mp_cores);
-             },
-             "Backward-map WCI data to (y, z) image via nearest-neighbor.\n"
-             "Sample numbers use Euclidean range from the sensor to each pixel.\n"
-             "When supersampling > 1, probes S*S sub-pixel locations per pixel\n"
-             "and averages (equivalent to render-at-high-res-then-downsample).",
-             nb::arg("data"),
-             nb::arg("y_coordinates"),
-             nb::arg("z_coordinates"),
-             nb::arg("supersampling") = 1,
-             nb::arg("mp_cores") = 1)
-        .def("backward_bilinear",
-             [](const BeamSampleGeometry& self,
-                const xt::nanobind::pytensor<float, 2>& data,
-                const xt::nanobind::pytensor<float, 1>& y_coordinates,
-                const xt::nanobind::pytensor<float, 1>& z_coordinates,
-                unsigned int supersampling,
-                int mp_cores) {
-                 return themachinethatgoesping::algorithms::geoprocessing::functions::
-                     backward_bilinear<xt::nanobind::pytensor<float, 2>>(
-                         self, data, y_coordinates, z_coordinates,
-                         supersampling, mp_cores);
-             },
-             "Backward-map WCI data to (y, z) image via bilinear interpolation.\n"
-             "Sample numbers use Euclidean range from the sensor to each pixel.\n"
-             "When supersampling > 1, probes S*S sub-pixel locations per pixel\n"
-             "and averages (equivalent to render-at-high-res-then-downsample).",
-             nb::arg("data"),
-             nb::arg("y_coordinates"),
-             nb::arg("z_coordinates"),
-             nb::arg("supersampling") = 1,
-             nb::arg("mp_cores") = 1)
+        .def(
+            "backward_nearest",
+            [](const BeamSampleGeometry&               self,
+               const xt::nanobind::pytensor<float, 2>& data,
+               const xt::nanobind::pytensor<float, 1>& y_coordinates,
+               const xt::nanobind::pytensor<float, 1>& z_coordinates,
+               unsigned int                            supersampling,
+               int                                     mp_cores) {
+                return themachinethatgoesping::algorithms::geoprocessing::functions::
+                    backward_nearest<xt::nanobind::pytensor<float, 2>>(
+                        self, data, y_coordinates, z_coordinates, supersampling, mp_cores);
+            },
+            DOC_functions(backward_nearest),
+            nb::arg("data"),
+            nb::arg("y_coordinates"),
+            nb::arg("z_coordinates"),
+            nb::arg("supersampling") = 1,
+            nb::arg("mp_cores")      = 1)
+        .def(
+            "backward_bilinear",
+            [](const BeamSampleGeometry&               self,
+               const xt::nanobind::pytensor<float, 2>& data,
+               const xt::nanobind::pytensor<float, 1>& y_coordinates,
+               const xt::nanobind::pytensor<float, 1>& z_coordinates,
+               unsigned int                            supersampling,
+               int                                     mp_cores) {
+                return themachinethatgoesping::algorithms::geoprocessing::functions::
+                    backward_bilinear<xt::nanobind::pytensor<float, 2>>(
+                        self, data, y_coordinates, z_coordinates, supersampling, mp_cores);
+            },
+            DOC_functions(backward_bilinear),
+            nb::arg("data"),
+            nb::arg("y_coordinates"),
+            nb::arg("z_coordinates"),
+            nb::arg("supersampling") = 1,
+            nb::arg("mp_cores")      = 1)
 
         // default copy functions
         __PYCLASS_DEFAULT_COPY__(BeamSampleGeometry)

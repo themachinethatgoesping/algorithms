@@ -1,4 +1,4 @@
-//sourcehash: 8d226c65f1c9882cf3a47b222815937d90b1c9aa6e2cc8ad7f1a00a98b9d56d4
+//sourcehash: 881f1c53f82568bd8b42118b6c01cbd3ef9127589a3e0b4d2d58aa897043e71d
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -42,34 +42,63 @@
 
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_backward_bilinear =
-R"doc(Backward-map WCI data into a (y, z) image via bilinear interpolation.
+R"doc(Backward-map water-column (WCI) data into a (y, z) image via bilinear
+interpolation.
 
-For each output pixel, brackets the nearest two beams and the
-fractional sample number, then bilinearly interpolates. Sample numbers
-come from the Euclidean range to the sensor.
-
-@copydetails backward_nearest)doc";
-
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_backward_nearest =
-R"doc(Backward-map WCI data into a (y, z) image via nearest-neighbor.
-
-For each output pixel, finds the nearest beam via depth-invariant
-tangent matching and computes the sample number from the pixel's
-Euclidean range to the sensor (matching BTConstantSVP behaviour).
+The geometry must have both its y and z affines set. For each output
+pixel, brackets the nearest two beams and the fractional sample
+number, then bilinearly interpolates the four surrounding samples.
+Sample numbers come from the pixel's Euclidean range to the sensor
+(matching BTConstantSVP behaviour).
 
 When supersampling > 1, each pixel probes S×S sub-pixel locations and
 averages the results for anti-aliasing.
 
 Args:
-    geom: beam/sample geometry (must have y and z affines)
-    data: WCI data [n_beams x max_samples]
-    y_coordinates: target crosstrack coordinates [n_y], must be sorted
-    z_coordinates: target depth coordinates [n_z], must be sorted
-    supersampling: sub-pixel factor per axis (default 1)
-    mp_cores: OpenMP threads (default 1)
+    data: water-column amplitude data to resample, shape [n_beams x
+          max_samples]
+    y_coordinates: target crosstrack coordinates in m [n_y], must be
+                   sorted ascending
+    z_coordinates: target depth coordinates in m [n_z], must be sorted
+                   ascending
+    supersampling: sub-pixel super-sampling factor per axis (>= 1,
+                   default 1)
+    mp_cores: number of OpenMP threads to use (default 1)
 
 Returns:
-    image [n_y x n_z], NaN where no valid data)doc";
+    resampled image of shape [n_y x n_z]; pixels with no valid data
+    are NaN
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_backward_nearest =
+R"doc(Backward-map water-column (WCI) data into a (y, z) image via nearest-
+neighbor sampling.
+
+The geometry must have both its y and z affines set. For each output
+pixel, finds the nearest beam via depth-invariant tangent matching and
+computes the sample number from the pixel's Euclidean range to the
+sensor (matching BTConstantSVP behaviour).
+
+When supersampling > 1, each pixel probes S×S sub-pixel locations and
+averages the results for anti-aliasing.
+
+Args:
+    data: water-column amplitude data to resample, shape [n_beams x
+          max_samples]
+    y_coordinates: target crosstrack coordinates in m [n_y], must be
+                   sorted ascending
+    z_coordinates: target depth coordinates in m [n_z], must be sorted
+                   ascending
+    supersampling: sub-pixel super-sampling factor per axis (>= 1,
+                   default 1)
+    mp_cores: number of OpenMP threads to use (default 1)
+
+Returns:
+    resampled image of shape [n_y x n_z]; pixels with no valid data
+    are NaN
+
+)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

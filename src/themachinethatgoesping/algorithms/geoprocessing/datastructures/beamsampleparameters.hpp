@@ -1,4 +1,4 @@
-// Kiel SPDX-FileCopyrightText: 2022 - 2025 Peter Urban, Ghent University
+// SPDX-FileCopyrightText: 2022 - 2025 Peter Urban, Ghent University
 //
 // SPDX-License-Identifier: MPL-2.0
 
@@ -19,7 +19,7 @@ namespace geoprocessing {
 namespace datastructures {
 
 /**
- * @brief A structure to store directional parameters of multibeam system. Usefull as input for
+ * @brief A structure to store directional parameters of a multibeam system. Useful as input for
  * raytracing water column images.
  */
 class BeamSampleParameters
@@ -47,7 +47,7 @@ class BeamSampleParameters
     }
 
     /**
-     * @brief Construct a new Sample Indices object from existing beam parameters
+     * @brief Construct a new BeamSampleParameters object from existing beam parameters
      *
      * @param alongtrack_angles alongtrack angles of the MBES in °
      * @param crosstrack_angles crosstrack angles of the MBES in °

@@ -50,22 +50,23 @@ namespace geoprocessing {
 namespace functions {
 
 /**
- * @brief Backward-map WCI data into a (y, z) image via nearest-neighbor.
+ * @brief Backward-map water-column (WCI) data into a (y, z) image via
+ * nearest-neighbor sampling.
  *
- * For each output pixel, finds the nearest beam via depth-invariant tangent
- * matching and computes the sample number from the pixel's Euclidean range
- * to the sensor (matching BTConstantSVP behaviour).
+ * The geometry must have both its y and z affines set. For each output pixel,
+ * finds the nearest beam via depth-invariant tangent matching and computes the
+ * sample number from the pixel's Euclidean range to the sensor (matching
+ * BTConstantSVP behaviour).
  *
  * When supersampling > 1, each pixel probes S×S sub-pixel locations and
  * averages the results for anti-aliasing.
  *
- * @param geom            beam/sample geometry (must have y and z affines)
- * @param data            WCI data [n_beams x max_samples]
- * @param y_coordinates   target crosstrack coordinates [n_y], must be sorted
- * @param z_coordinates   target depth coordinates [n_z], must be sorted
- * @param supersampling   sub-pixel factor per axis (default 1)
- * @param mp_cores        OpenMP threads (default 1)
- * @return image [n_y x n_z], NaN where no valid data
+ * @param data water-column amplitude data to resample, shape [n_beams x max_samples]
+ * @param y_coordinates target crosstrack coordinates in m [n_y], must be sorted ascending
+ * @param z_coordinates target depth coordinates in m [n_z], must be sorted ascending
+ * @param supersampling sub-pixel super-sampling factor per axis (>= 1, default 1)
+ * @param mp_cores number of OpenMP threads to use (default 1)
+ * @return resampled image of shape [n_y x n_z]; pixels with no valid data are NaN
  */
 template<tools::helper::c_xtensor_2d t_xtensor_out,
          tools::helper::c_xtensor_2d t_xtensor_2d,
@@ -215,8 +216,7 @@ t_xtensor_out backward_nearest(const datastructures::BeamSampleGeometry& geom,
                             static_cast<unsigned int>(si) < number_of_samples.unchecked(bp) &&
                             static_cast<size_t>(si) < max_si)
                         {
-                            float val =
-                                static_cast<float>(data(bp, static_cast<size_t>(si)));
+                            float val = static_cast<float>(data(bp, static_cast<size_t>(si)));
                             if (S == 1)
                                 output(iy, iz) = val;
                             else
@@ -242,13 +242,24 @@ t_xtensor_out backward_nearest(const datastructures::BeamSampleGeometry& geom,
 }
 
 /**
- * @brief Backward-map WCI data into a (y, z) image via bilinear interpolation.
+ * @brief Backward-map water-column (WCI) data into a (y, z) image via bilinear
+ * interpolation.
  *
- * For each output pixel, brackets the nearest two beams and the fractional
- * sample number, then bilinearly interpolates. Sample numbers come from the
- * Euclidean range to the sensor.
+ * The geometry must have both its y and z affines set. For each output pixel,
+ * brackets the nearest two beams and the fractional sample number, then
+ * bilinearly interpolates the four surrounding samples. Sample numbers come
+ * from the pixel's Euclidean range to the sensor (matching BTConstantSVP
+ * behaviour).
  *
- * @copydetails backward_nearest
+ * When supersampling > 1, each pixel probes S×S sub-pixel locations and
+ * averages the results for anti-aliasing.
+ *
+ * @param data water-column amplitude data to resample, shape [n_beams x max_samples]
+ * @param y_coordinates target crosstrack coordinates in m [n_y], must be sorted ascending
+ * @param z_coordinates target depth coordinates in m [n_z], must be sorted ascending
+ * @param supersampling sub-pixel super-sampling factor per axis (>= 1, default 1)
+ * @param mp_cores number of OpenMP threads to use (default 1)
+ * @return resampled image of shape [n_y x n_z]; pixels with no valid data are NaN
  */
 template<tools::helper::c_xtensor_2d t_xtensor_out,
          tools::helper::c_xtensor_2d t_xtensor_2d,
@@ -356,8 +367,7 @@ t_xtensor_out backward_bilinear(const datastructures::BeamSampleGeometry& geom,
         };
 
         auto interp_sample = [&](size_t b, float si_f) -> float {
-            if (si_f < -0.5f ||
-                si_f > static_cast<float>(number_of_samples.unchecked(b)) - 0.5f)
+            if (si_f < -0.5f || si_f > static_cast<float>(number_of_samples.unchecked(b)) - 0.5f)
                 return std::numeric_limits<float>::quiet_NaN();
             int   si_lo = static_cast<int>(std::floor(si_f));
             int   si_hi = si_lo + 1;
@@ -426,9 +436,8 @@ t_xtensor_out backward_bilinear(const datastructures::BeamSampleGeometry& geom,
                             float by_lo = yz_intercept[b_lo] + yz_slope[b_lo] * z_f;
                             float by_hi = yz_intercept[b_hi] + yz_slope[b_hi] * z_f;
                             float d_by  = by_hi - by_lo;
-                            float wy    = (d_by != 0.0f)
-                                              ? std::clamp((y_f - by_lo) / d_by, 0.0f, 1.0f)
-                                              : 0.0f;
+                            float wy = (d_by != 0.0f) ? std::clamp((y_f - by_lo) / d_by, 0.0f, 1.0f)
+                                                      : 0.0f;
 
                             float si_hi_f =
                                 range * inv_rps[b_hi] - first_sample_numbers.unchecked(b_hi);

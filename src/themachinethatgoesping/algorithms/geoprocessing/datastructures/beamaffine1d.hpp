@@ -75,7 +75,7 @@ struct BeamAffine1D
      *
      * @param beam_index beam index
      * @param sample_nr sample number (float for sub-sample interpolation)
-     * @return float
+     * @return float the interpolated value = offset[beam_index] + slope[beam_index] * sample_nr
      */
     float forward(size_t beam_index, float sample_nr) const
     {
@@ -106,7 +106,8 @@ struct BeamAffine1D
      * @param base_value scalar base value (at sample 0)
      * @param end_values per-beam values at the end sample [n_beams]
      * @param end_sample_numbers per-beam sample number of the end values [n_beams]
-     * @return BeamAffine1D
+     * @return BeamAffine1D with offset = base_value and slope = (end_value - base_value) /
+     * end_sample_number per beam
      */
     template<tools::helper::c_xtensor_1d t_xtensor_1d_vals,
              tools::helper::c_xtensor_1d t_xtensor_1d_snr>

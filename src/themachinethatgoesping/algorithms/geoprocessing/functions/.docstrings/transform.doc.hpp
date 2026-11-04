@@ -1,4 +1,4 @@
-//sourcehash: 917a3aa8f65733d88619a47b22a1c17d4429e2a225470d869e5dbe7cdae19887
+//sourcehash: 33431a7f43275d590dd8b708732e29ebb34ea9e0e1e4a78406571fa6352eb363
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -42,20 +42,110 @@
 
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_geolocation =
-R"doc(@copydoc datastructures::BeamSampleGeometry::with_geolocation(const
-navigation::datastructures::Geolocation&))doc";
+R"doc(Return a copy of the geometry with a Geolocation (depth +
+yaw/pitch/roll) applied (non-mutating wrapper around
+BeamSampleGeometry::with_geolocation).
+
+Equivalent to with_rigid_transform(g.yaw(), g.pitch(), g.roll(), 0, 0,
+g.z).
+
+Args:
+    geom: geometry to transform (taken by value, moved into the
+          result)
+    g: geolocation providing the depth and yaw/pitch/roll to apply
+
+Returns:
+    a new BeamSampleGeometry with the geolocation applied
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_geolocation_2 =
-R"doc(@copydoc datastructures::BeamSampleGeometry::with_geolocation(const
-navigation::datastructures::GeolocationLocal&))doc";
+R"doc(Return a copy of the geometry with a GeolocationLocal
+(northing/easting/ depth + yaw/pitch/roll) applied (non-mutating
+wrapper around BeamSampleGeometry::with_geolocation).
+
+The resulting (x, y, z) are expressed as (northing, easting, depth): x
+<-> northing and y <-> easting (northing-first convention).
+
+Args:
+    geom: geometry to transform (taken by value, moved into the
+          result)
+    g: local geolocation providing northing/easting/depth and
+       yaw/pitch/roll
+
+Returns:
+    a new BeamSampleGeometry with the geolocation applied
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_geolocation_3 =
-R"doc(@copydoc datastructures::BeamSampleGeometry::with_geolocation(const
-navigation::datastructures::GeolocationUTM&, double, double))doc";
+R"doc(Return a copy of the geometry with a GeolocationUTM (UTM
+northing/easting/ depth + yaw/pitch/roll) applied, subtracting a
+float64 reference origin to preserve precision (non-mutating wrapper
+around BeamSampleGeometry::with_geolocation).
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_offset = R"doc(@copydoc datastructures::BeamSampleGeometry::with_offset)doc";
+Absolute UTM coordinates (~10^6 m) cannot be represented accurately in
+the float32 affines; the reference origin is subtracted in double
+precision before casting to float, so the result is expressed in
+metres relative to that reference. Output convention: x <-> northing-
+relative, y <-> easting-relative, z <-> depth.
 
-static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_rigid_transform = R"doc(@copydoc datastructures::BeamSampleGeometry::with_rigid_transform)doc";
+Args:
+    geom: geometry to transform (taken by value, moved into the
+          result)
+    g: UTM pose (northing/easting in m, yaw/pitch/roll in °)
+    ref_northing: reference UTM northing in m, subtracted from
+                  g.northing (default 0)
+    ref_easting: reference UTM easting in m, subtracted from g.easting
+                 (default 0)
+
+Returns:
+    a new BeamSampleGeometry with the geolocation applied
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_offset =
+R"doc(Return a copy of the geometry with a translation (dx, dy, dz) baked
+into its affines (non-mutating wrapper around
+BeamSampleGeometry::with_offset).
+
+Only the per-beam offsets of set affines are modified; slopes are
+untouched. Axes whose affine is unset are ignored silently.
+
+Args:
+    geom: geometry to transform (taken by value, moved into the
+          result)
+    dx: translation along x in m (default 0)
+    dy: translation along y in m (default 0)
+    dz: translation along z in m (default 0)
+
+Returns:
+    a new BeamSampleGeometry with the translation applied
+
+)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_functions_with_rigid_transform =
+R"doc(Return a copy of the geometry with a rigid transform (yaw/pitch/roll
+rotation + translation) baked into its affines (non-mutating wrapper
+around BeamSampleGeometry::with_rigid_transform).
+
+Requires that all three (x, y, z) affines are set, since a rotation
+mixes the axes.
+
+Args:
+    geom: geometry to transform (taken by value, moved into the
+          result)
+    yaw_deg: yaw in °, 0° == north, 90° == east
+    pitch_deg: pitch in °, positive bow up
+    roll_deg: roll in °, positive port up
+    tx: translation along x in m, applied AFTER rotation (default 0)
+    ty: translation along y in m, applied AFTER rotation (default 0)
+    tz: translation along z in m, applied AFTER rotation (default 0)
+
+Returns:
+    a new BeamSampleGeometry with the rigid transform applied
+
+)doc";
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop

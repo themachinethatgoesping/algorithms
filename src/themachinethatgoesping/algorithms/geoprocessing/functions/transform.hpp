@@ -29,7 +29,19 @@ namespace algorithms {
 namespace geoprocessing {
 namespace functions {
 
-/// @copydoc datastructures::BeamSampleGeometry::with_offset
+/**
+ * @brief Return a copy of the geometry with a translation (dx, dy, dz) baked into
+ * its affines (non-mutating wrapper around BeamSampleGeometry::with_offset).
+ *
+ * Only the per-beam offsets of set affines are modified; slopes are untouched.
+ * Axes whose affine is unset are ignored silently.
+ *
+ * @param geom geometry to transform (taken by value, moved into the result)
+ * @param dx translation along x in m (default 0)
+ * @param dy translation along y in m (default 0)
+ * @param dz translation along z in m (default 0)
+ * @return a new BeamSampleGeometry with the translation applied
+ */
 inline datastructures::BeamSampleGeometry with_offset(datastructures::BeamSampleGeometry geom,
                                                       float dx = 0.f,
                                                       float dy = 0.f,
@@ -39,7 +51,23 @@ inline datastructures::BeamSampleGeometry with_offset(datastructures::BeamSample
     return geom;
 }
 
-/// @copydoc datastructures::BeamSampleGeometry::with_rigid_transform
+/**
+ * @brief Return a copy of the geometry with a rigid transform (yaw/pitch/roll
+ * rotation + translation) baked into its affines (non-mutating wrapper around
+ * BeamSampleGeometry::with_rigid_transform).
+ *
+ * Requires that all three (x, y, z) affines are set, since a rotation mixes the
+ * axes.
+ *
+ * @param geom geometry to transform (taken by value, moved into the result)
+ * @param yaw_deg yaw in °, 0° == north, 90° == east
+ * @param pitch_deg pitch in °, positive bow up
+ * @param roll_deg roll in °, positive port up
+ * @param tx translation along x in m, applied AFTER rotation (default 0)
+ * @param ty translation along y in m, applied AFTER rotation (default 0)
+ * @param tz translation along z in m, applied AFTER rotation (default 0)
+ * @return a new BeamSampleGeometry with the rigid transform applied
+ */
 inline datastructures::BeamSampleGeometry with_rigid_transform(
     datastructures::BeamSampleGeometry geom,
     float                              yaw_deg,
@@ -53,7 +81,16 @@ inline datastructures::BeamSampleGeometry with_rigid_transform(
     return geom;
 }
 
-/// @copydoc datastructures::BeamSampleGeometry::with_geolocation(const navigation::datastructures::Geolocation&)
+/**
+ * @brief Return a copy of the geometry with a Geolocation (depth + yaw/pitch/roll)
+ * applied (non-mutating wrapper around BeamSampleGeometry::with_geolocation).
+ *
+ * Equivalent to with_rigid_transform(g.yaw(), g.pitch(), g.roll(), 0, 0, g.z).
+ *
+ * @param geom geometry to transform (taken by value, moved into the result)
+ * @param g geolocation providing the depth and yaw/pitch/roll to apply
+ * @return a new BeamSampleGeometry with the geolocation applied
+ */
 inline datastructures::BeamSampleGeometry with_geolocation(
     datastructures::BeamSampleGeometry             geom,
     const navigation::datastructures::Geolocation& g)
@@ -62,7 +99,18 @@ inline datastructures::BeamSampleGeometry with_geolocation(
     return geom;
 }
 
-/// @copydoc datastructures::BeamSampleGeometry::with_geolocation(const navigation::datastructures::GeolocationLocal&)
+/**
+ * @brief Return a copy of the geometry with a GeolocationLocal (northing/easting/
+ * depth + yaw/pitch/roll) applied (non-mutating wrapper around
+ * BeamSampleGeometry::with_geolocation).
+ *
+ * The resulting (x, y, z) are expressed as (northing, easting, depth):
+ * x <-> northing and y <-> easting (northing-first convention).
+ *
+ * @param geom geometry to transform (taken by value, moved into the result)
+ * @param g local geolocation providing northing/easting/depth and yaw/pitch/roll
+ * @return a new BeamSampleGeometry with the geolocation applied
+ */
 inline datastructures::BeamSampleGeometry with_geolocation(
     datastructures::BeamSampleGeometry                  geom,
     const navigation::datastructures::GeolocationLocal& g)
@@ -71,7 +119,24 @@ inline datastructures::BeamSampleGeometry with_geolocation(
     return geom;
 }
 
-/// @copydoc datastructures::BeamSampleGeometry::with_geolocation(const navigation::datastructures::GeolocationUTM&, double, double)
+/**
+ * @brief Return a copy of the geometry with a GeolocationUTM (UTM northing/easting/
+ * depth + yaw/pitch/roll) applied, subtracting a float64 reference origin to
+ * preserve precision (non-mutating wrapper around
+ * BeamSampleGeometry::with_geolocation).
+ *
+ * Absolute UTM coordinates (~10^6 m) cannot be represented accurately in the
+ * float32 affines; the reference origin is subtracted in double precision before
+ * casting to float, so the result is expressed in metres relative to that
+ * reference. Output convention: x <-> northing-relative, y <-> easting-relative,
+ * z <-> depth.
+ *
+ * @param geom geometry to transform (taken by value, moved into the result)
+ * @param g UTM pose (northing/easting in m, yaw/pitch/roll in °)
+ * @param ref_northing reference UTM northing in m, subtracted from g.northing (default 0)
+ * @param ref_easting reference UTM easting in m, subtracted from g.easting (default 0)
+ * @return a new BeamSampleGeometry with the geolocation applied
+ */
 inline datastructures::BeamSampleGeometry with_geolocation(
     datastructures::BeamSampleGeometry                geom,
     const navigation::datastructures::GeolocationUTM& g,

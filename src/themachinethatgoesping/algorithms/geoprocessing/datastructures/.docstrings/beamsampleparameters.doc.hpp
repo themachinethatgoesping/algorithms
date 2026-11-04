@@ -1,4 +1,4 @@
-//sourcehash: 0035dc107f5a7fd2170f855433dbe616120267562a0ac61ade5e423cc08cd910
+//sourcehash: d32b3f7ea4fc997ba274450ff16acf31c3e1aa2a1db0d0d1825c7e73edb8372d
 
 /*
   This file contains docstrings for use in the Python bindings.
@@ -42,17 +42,20 @@
 
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters =
-R"doc(A structure to store directional parameters of multibeam system.
-Usefull as input for raytracing water column images.)doc";
+R"doc(A structure to store directional parameters of a multibeam system.
+Useful as input for raytracing water column images.)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_BeamSampleParameters =
 R"doc(Construct a new BeamSampleParameters object (all values uninitialized)
 
 Args:
-    number_of_beams: number of beams)doc";
+    number_of_beams: number of beams
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_BeamSampleParameters_2 =
-R"doc(Construct a new Sample Indices object from existing beam parameters
+R"doc(Construct a new BeamSampleParameters object from existing beam
+parameters
 
 Args:
     alongtrack_angles: alongtrack angles of the MBES in °
@@ -62,15 +65,41 @@ Args:
     sample_interval: time interval between samples in s
     number_of_samples: number of samples per beam
 
-@note all parameters must have the same size)doc";
+Note:
+    all parameters must have the same size
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_alongtrack_angles = R"doc(in °, positive bow up, 0 == downwards)doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_binary_hash =
+R"doc(compute a 64 bit hash of the object using xxhash and the       \
+to_binary function. This  function is called binary because the
+\ to_binary  function of the object is used
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_check_size = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_crosstrack_angles = R"doc(in °, positive portside up, 0 == downwards)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_first_sample_offset = R"doc(in s, time offset of the first sample (sample number 0))doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_from_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    check_buffer_is_read_completely: variable for interface
+                                     compatibility, does not do    \
+                                     anything
+                                     \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_from_stream = R"doc()doc";
 
@@ -84,9 +113,41 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_get_sample_interval = R"doc()doc";
 
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_info_string =
+R"doc(                                                                                           \
+return an info string using the class __printer__ object
+\
+
+Args:
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+Returns:
+    std::string
+    \
+
+)doc";
+
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_number_of_samples = R"doc(number of samples per beam)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_operator_eq = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_print =
+R"doc(                                                                                           \
+print the object information to the given outpustream
+\ \
+
+Args:
+    os: output stream, e.g. file stream or std::out or std::cerr
+        \
+    float_precision: number of digits for floating point values
+                     \
+    superscript_exponents: print exponents in superscript
+                           \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_printer = R"doc()doc";
 
@@ -101,6 +162,20 @@ static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datas
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_set_number_of_samples = R"doc()doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_set_sample_interval = R"doc()doc";
+
+static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_to_binary =
+R"doc(convert object to vector of bytes
+\ \
+
+Args:
+    resize_buffer: variable for interface compatibility, does not do
+                   anything             \ \
+
+Returns:
+    vector of bytes
+    \
+
+)doc";
 
 static const char *mkd_doc_themachinethatgoesping_algorithms_geoprocessing_datastructures_BeamSampleParameters_to_stream = R"doc()doc";
 
